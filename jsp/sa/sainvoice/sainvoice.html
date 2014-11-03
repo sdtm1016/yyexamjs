@@ -1,0 +1,527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>销售发票</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
+<link rel="stylesheet" type="text/css" href="css/invoice.css">
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
+<!-- 引入日期组件 -->
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+
+<script type="text/javascript" src="js/sa_invoice_component.js"></script>
+<script type="text/javascript" src="js/sa_invoice_control.js"></script>
+<script type="text/javascript" src="js/saBillVouch.js"></script>
+
+
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:650px;height:490px;background-color: #fff;position:absolute;top:0px;left:0px;">
+		
+		
+<div class="buttongroup" style="position:relative;z-index:1;">
+	<div class="group">
+	
+		<div style="width:45px;height:35px;padding:0px;">
+			
+			<div style="width:100%;padding:0px;">
+					<input type="button" id = "addSa"  value="增加" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/add.gif');margin-top:0px;" onclick="addSaInvoice();" onmousedown="buttonGroupLeftButtonClick(this)"/>
+					<input type="button" id = "addSa1"  style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
+			</div>
+			<ul style="display:none;width:120px;">
+				<li onclick="setCVOUCHTYPE('27');">普通发票</li>
+				<li onclick="setCVOUCHTYPE('26');">专用发票</li>
+				<li onclick="setCVOUCHTYPE('37');">普通发票（红字）</li>
+				<li onclick="setCVOUCHTYPE('36');">专用发票（红字）</li>
+			</ul>
+		</div>
+		
+		<div>
+			<input type="button" id = "editSa" value="修改" onclick="updateSaBill();" style="background-image:url('../../../images/icon/update.gif');" />
+		</div>
+		
+		<div>
+			<input type="button" id = "delSa" value="删除"  onclick="delSaBill();"  style="background-image:url('../../../images/icon/delete.gif');" />
+		</div>
+		
+		<div>
+			<input type="button" id = "saveSa" value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="savesaleBill();" />
+		</div>
+		
+		<div>
+			<input type="button" id = "abortSa" value="放弃" id="btnGiveUp" style="background-image:url('../../../images/icon/cancel.gif');" onClick="abortSaBill()" disabled="disabled"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "addrowSa" value="增行" style="background-image:url('../../../images/icon/insertrow.gif');" disabled="disabled"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "delrowSa" value="删行" style="background-image:url('../../../images/icon/deleterow.gif');" disabled="disabled"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "auditSa" value="复核" style="background-image:url('../../../images/icon/audit.gif');"  onclick = "auditSa()" disabled="disabled"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "locationSa" value="定位" style="background-image:url('../../../images/icon/return.gif');"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "firstSa" value="首张" style="background-image:url('../../../images/icon/firstcard.gif');" onclick="firstSale()"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "upSa" value="上张" style="background-image:url('../../../images/icon/prevcard.gif');" onclick="upSale()"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "downSa" value="下张" style="background-image:url('../../../images/icon/nextcard.gif');" onclick="downSale()"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "lastSa" value="末张" style="background-image:url('../../../images/icon/lastcard.gif');" onclick="lastSale()"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "refreshSa"  value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/>
+		</div>
+		
+		<div style="width:45px;height:35px;padding:0px;">
+			
+			<div style="width:100%;padding:0px;">
+					<input type="button" disabled="disabled" value="流转" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/return.gif');margin-top:0px;" onmousedown="buttonGroupLeftButtonClick(this)"/>
+					<input type="button" disabled="disabled" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
+			</div>
+			<ul style="display:none;">
+				<li onclick="alert(this.innerHTML);">菜单1</li>
+				<li onclick="alert(this.innerHTML);">菜单2</li>
+				<li onclick="alert(this.innerHTML);">菜单3</li>
+			</ul>
+		</div>
+		
+		
+		<div style="width:45px;height:35px;padding:0px;">
+			
+			<div style="width:100%;padding:0px;">
+					<input type="button" disabled="disabled" value="联查" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/refresh.gif');margin-top:0px;" onmousedown="buttonGroupLeftButtonClick(this)"/>
+					<input type="button" disabled="disabled" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
+			</div>
+			<ul style="display:none;">
+				<li onclick="alert(this.innerHTML);">菜单1</li>
+				<li onclick="alert(this.innerHTML);">菜单2</li>
+				<li onclick="alert(this.innerHTML);">菜单3</li>
+			</ul>
+		</div>
+		
+		
+		
+		<div>
+			<input type="button" value="退出" onclick="exitSale()" style="background-image:url('../../../images/icon/exit.gif');"/>
+		</div>
+		
+	</div>
+</div>
+		<div style="position:relative;z-index:0;">
+		
+			<div style="width:638px;height:436px;position:absolute;margin-top:10px;margin-left:7px;border:1px solid #000;background-color:#fff;"></div>
+			
+			<div style="width:638px;height:436px;position:absolute;margin-top:8px;margin-left:5px;border:1px solid #000;background-color:#fff;"></div>
+			
+			<div style="width:638px;height:436px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;">
+		
+				<div style="margin-top:6px;margin-left:6px;">
+					
+					<div>
+							<div id="auditImg" style="position:absolute;display:none;margin-top:0px;margin-left:0px;"><img src="../../../images/icon/audit.jpg" style="width:60px;height:20px;"/></div>
+        
+						<div id="putTitleName" class="colblu" style="text-align:center;font-size:18px;font-weight:bold;text-decoration:underline;">销售普通发票</div>
+				
+						<div id="topTextBoxContainer">
+							<table class="inputtable" border="0">
+								<tr>
+									<td align="right"><label  class="colblu">开票日期</label></td>
+									<td>
+										<div>
+											<input type="text" id="DDATE" style="width:80px;" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">发票号</label></td>
+									<td>
+                                    	<div>
+											<input type="text" id="CSBVCODE" style="width:100px;"  onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">销售类型</label></td>
+									<td>
+										<select id="CSTCODE">
+											<option value="21" >销售出库</option>
+											<option value="22" >材料领用出库</option>
+											<option value="23" >半成品出库</option>
+											<option value="24" >产品自用出库</option>
+											<option value="25" >其他出库</option>
+											
+										</select>
+									</td>
+									
+									<td align="right"><label>订单号</label></td>
+									<td>
+										<div>
+                                        
+											<input type="text" id="CSOCODE" style="width:106px;" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+                                <tr>
+									<td align="right"><label class="colblu">客户名称</label></td>
+									<td  colspan="3">
+										<div>
+											<input type="text" id="CCUSCODE" style="width:252px;" dbvalue = ""  dbvalueId = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>客户地址</label></td>
+									<td colspan="3">
+										<div>
+											<input type="text" id="khdz" style="width:252px;" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+                                </tr>
+                                <tr>
+									<td align="right"><label>开户银行</label></td>
+									<td  colspan="3">
+										<div>
+											<input type="text" id="CBCODE" style="width:252px;" dbvalue = ""  dbvalueId = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>银行账号</label></td>
+									<td colspan="3">
+										<div>
+											<input type="text" id="yhzh" style="width:252px;" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+                                </tr>
+                                <tr>
+									<td align="right"><label class="colblu">销售部门</label></td>
+									<td  colspan="3">
+										<div>
+											<input type="text" id="CDEPCODE" style="width:252px;" dbvalue = ""  dbvalueId = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+                                    <td align="right"><label>业务员</label></td>
+									<td >
+										<div>
+											<input type="text" id="CPERSONCODE" dbvalue = ""  dbvalueId = "" style="width:90px;" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>付款条件</label></td>
+									<td >
+										<div>
+											<input type="text" id="CPAYCODE" style="width:106px;" dbvalue = ""  dbvalueId = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+                                </tr>                                                                
+								<tr>
+									<td align="right"><label>备注</label></td>
+									<td  colspan="7">
+										<div>
+											<input type="text" id="CMEMO"  style="width:252px;" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>                                
+                                </tr>
+                                <tr>
+									<td align="right"><label>账期管理</label></td>
+									<td  colspan="1">
+										<div>
+											<input type="text" id="ZQCODE" style="width:110px;" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label class="colblu">到期日</label></td>
+									<td colspan="3">
+										<div>
+											<input type="text" id="DQDATE" style="width:100px;" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+                                </tr>		
+							</table>
+						</div>
+					</div>
+					
+					
+					
+					
+					<div onscroll="tableScroll(this);" style="width:620px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
+				
+						<table cellpadding="0" id="datatable_header" border=0 class="table_header" style="width:890px;">
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;">仓库</td>
+								<td style="width:90px;">货物名称</td>
+								<td style="width:80px;">规格型号</td>
+								<td style="width:60px;">计量单位</td>
+								<td style="width:60px;">数量</td>
+								<td style="width:70px;">含税单价</td>
+								<td style="width:80px;">价税合计</td>
+								<td style="width:60px;">报价</td>
+								<td style="width:70px;">折扣额</td>
+								<td style="width:80px;">批号</td>
+								<td style="width:60px;">扣率(%)</td>
+								<td style="width:60px;">退补标志</td>
+								<td style="width:60px;">失效日期</td>
+								<td style="width:60px;">税率(%)</td>
+								<td style="width:60px;">扣率2(%)</td>                                                                
+                                
+							</tr>
+						</table>
+						
+						<table contextmenu="table_contextmenu" cellpadding="0" id="datatable_bodyer" border=0 class="table_bodyer" style="width:890px;">
+							
+							
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							
+							
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                
+							</tr>
+						</table>
+						<div style="height:18px;"></div>
+					</div>
+						<div id="datatable_footer_container" style="border-bottom:1px solid #000;width:603px;position:absolute;z-index:30;margin-top:143px;margin-left:2px;overflow:hidden;">
+						<table cellpadding="0" id="datatable_footer" border=0 class="table_footer" style="width:890px;">
+							
+							<tr>
+								<td style="width:20px;"></td>
+								<td style="width:70px;">合计</td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;text-align:right;">0.00</td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;text-align:right;">0.00</td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;text-align:right;">0.00</td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:60px;"></td>                                                                                                                                
+							</tr>
+								
+						</table>
+						</div>
+					<div id="bottomTextBoxContainer">
+					
+							<table>
+								<tr>
+									<td align="right"><label>单位名称</label></td>
+									<td colspan="3"><input type="text" id="dwmc"  style="width:200px;"/></td>
+									<td align="right"><label >开户行</label></td>
+									<td><input type="text" id="khh" style="width:150px;"/></td>
+									
+									
+								</tr>
+								<tr>
+                                	<td align="right"><label>制单人</label></td>
+									<td colspan="3"><input type="text" id="zdr" style="width:70px;"/>                                
+                                        			<label>审核人</label>
+                                                    <input type="text" id="shr" style="width:70px;"/>
+                                                    </td>
+                                    <td align="right"><label>单位账号</label></td>
+									<td ><input type="text" id="dwzh" style="width:100px;"/></td>
+                                	
+                                </tr>
+								<tr>
+                                	<td align="right"><label>复核人</label></td>
+									<td colspan="3"><input type="text" id="CCHECKER"  style="width:58px;"/>
+                                     	<label>审核日期</label>
+                                        <input type="text" id="shrq"  style="width:70px;"/>
+                                     </td>
+                                    <td align="right"><label>发货单号</label></td>
+									<td>										<div>
+											<input type="text" id="fhdh" style="width:100px;" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div></td>
+								</tr>
+                                <tr>
+                                	<td align="right"><label>记账人</label></td>
+									<td><input type="text" id="CACCOUNTER"  style="width:58px;"/></td>
+                                </tr>
+							</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!----- 表格右键菜单 ---->
+<div id="table_contextmenu" class="winui_contextmenu">
+<a onclick="" style="color:#999;">总额分摊商业折扣</a>
+<a onclick="" style="color:#999;">取消总额分摊商业折扣</a>
+<ul></ul>
+<a onclick="">查看库存量</a>
+<a onclick="">客户档案</a>
+<a onclick="">存货档案</a>
+<a onclick="">部门档案</a>
+<a onclick="">职员档案</a>
+</div>
+	
+	
+	
+</body>
+
+
+<script type="text/javascript">
+
+	
+
+pageInit();
+	
+	
+</script>
+
+
+</html>

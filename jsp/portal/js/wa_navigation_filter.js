@@ -18,7 +18,7 @@
 function wa_navigation_filter(){
 	
 	var flag = true;
-	$.ajax({
+	/*$.ajax({
 		url:'wageCategories!queryWageSets.action',
 		type:'post',
 		dataType:'json',
@@ -110,7 +110,7 @@ function wa_navigation_filter(){
 				wa_wageTypeId = 0;
 			}
 		}
-	});
+	});*/
 	
 	return flag;
 	

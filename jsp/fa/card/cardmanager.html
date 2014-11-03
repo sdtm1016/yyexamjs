@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>卡片管理</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript">
+var disres=true;
+function iscansubmit(){
+	var res=false;
+	$.ajax({
+	    url: "faInitializa!iscansubmit",
+	    type: 'post',
+	    dataType: "json",
+	    cache:false,
+	    async:false,
+	    success: function(data){
+	    	var mark=data.mark;
+	    	if(mark=="0"){
+	    		res=true;
+	    	}else{
+	    		res=false;
+	    	}
+	    }
+	 });
+	return res;
+}
+	/**
+	获取树节点插入位置
+	*/
+	function getparent(znode,level){
+		var pare=znode.children;
+		for(var j=1;j<level;j++){
+			pare=pare[pare.length-1].children;
+		}
+		return pare;
+	}
+	//程序入口
+	$(document).ready(function(){
+		disres=iscansubmit();
+		if(!disres){
+			$("#chexiao").attr("disabled",true);
+		}
+		//显示选中的面板
+		showPanel();
+		//绑定查询类型  onchange事件
+		$("#queryType").unbind("change").bind("change",function(){
+			showPanel();
+		});
+		//绑定卡片类型  onchange事件
+		$("#cardsType").unbind("change").bind("change",function(){
+			queryCards();
+		});
+		//刷新按钮点击事件
+		$("#refresh").unbind("click").bind("click",function(){
+			queryCards();
+		});	
+	});
+	//根据查询类型显示不同的查询条件面板(左侧框的条件)
+	function showPanel(){
+		var index = $("#queryType").val();
+		$("#lp"+index).show().siblings().hide();
+		//显示面板内容
+		showPanelContent(index);
+	}
+	//根据显示的面板加载不同的面板内容
+	function showPanelContent(index){
+		//转换成数字类型
+		index = index*1;
+		switch (index){
+		case 1:
+			loadDepartment();
+			break;
+		case 2:
+			loadAssettypes();
+			break;
+		case 3:
+			break;
+		}
+	}
+	//加载部门树
+	function loadDepartment(){
+		$.ajax({
+		    url: "fadepartMents!findDepartMent",
+		    type: 'post',
+		    dataType: "json",
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+				var dptTreeSetting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback:{
+						onClick:departmentClick
+					}
+				};
+		    	var dptTreeNodes =null;
+		    	dptTreeNodes=[{code:"",name:"固定资产部门编码目录",ssubject:"",open:true,children:[]}];
+		    	var znode=dptTreeNodes[0];
+		    	departments=data.departments; 
+		    	for(var i=0;i<departments.length;i++){
+		    		var department=departments[i];
+		    		var ssubject="";
+		    		if(department.ssubjectnum!=null&&department.ssubjectnum!=""&&department.ssubjectname!=null&&department.ssubjectname!=""){
+		    			ssubject=department.ssubjectnum+","+department.ssubjectname;
+		    		}
+		    		var depart={code:department.snum,name:department.sname,ssubject:ssubject,open:false,children:[]};
+		    		var ilevel=department.ilevel-0;
+		    		var par=getparent(znode,ilevel);
+		    		par[par.length]=depart;
+		    	}
+		    	$.fn.zTree.init($("#dpttree"), dptTreeSetting, dptTreeNodes);
+		    	
+		    	var zTree = $.fn.zTree.getZTreeObj("dpttree");
+		    	var node = zTree.getNodes()[0];
+		    	zTree.selectNode(node);
+		    	//查询数据
+		    	queryCards();
+		    }
+		  });
+	};
+	//加载资产类别
+	function loadAssettypes(){
+		$.ajax({
+		    url: "ztree!loadFaAssettypesTree",
+		    type: 'post',
+		    dataType: "json",
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+				var astpTreeSetting = {
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback:{
+							onClick:assettypesClick
+						}
+					};
+		    	var zNodes =[];
+				var treeNodes = data.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	nodeObj.open=true;
+		        	zNodes.push(nodeObj);
+		        }
+		        $.fn.zTree.init($("#astptree"), astpTreeSetting, zNodes);
+		    	var zTree = $.fn.zTree.getZTreeObj("astptree");
+		    	var node = zTree.getNodes()[0];
+		    	zTree.selectNode(node);
+		    	//查询数据
+		    	queryCards();
+		    }
+		  });
+	};
+	/*
+	*树节点的点击事件
+	*/
+	function assettypesClick(event, treeId, treeNode, clickFlag) {
+		queryCards();
+	}
+	/*
+	*树节点的点击事件
+	*/
+	function departmentClick(event, treeId, treeNode, clickFlag) {
+		queryCards();
+	}
+	//获取使用年限
+	function getusedYear(months){
+		var year = parseInt(months/12);
+		var month = months%12;
+		var str = year+"年"+month+"月";
+		return str;
+	}
+	//查询卡片
+	function queryCards(){
+		//查询类型
+		var queryType =$("#queryType").val();
+		//卡片类型
+		var cardsType = $("#cardsType").val();
+		//参数
+		var params = {};
+		params.queryType = queryType;
+		params.cardsType = cardsType;
+		
+		var condtion = "";
+		if(queryType==1){
+			var zTree = $.fn.zTree.getZTreeObj("dpttree");
+			var node = zTree.getSelectedNodes()[0];
+			if(node.code!=""){
+				condtion+="snum="+node.code;
+			}
+			params.condtion = condtion;
+		}else if(queryType==2){
+			var zTree = $.fn.zTree.getZTreeObj("astptree");
+			var node = zTree.getSelectedNodes()[0];
+			if(node.id!=""){
+				condtion+="id="+node.id;
+			}
+			params.condtion = condtion;
+		}else if(queryType==3){
+			//有待开发
+			return false;
+		}else{
+			jAlert("参数错误!");
+			return false;
+		}
+		$.ajax({
+		    url: "faCards!findCardsBy",
+		    type: 'post',
+		    dataType: "json",
+		    data:params,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+		    	var strHtml ="";
+		    	var len = data.faCardlist.length;
+		    	//删除按钮是否可用
+		    	if(len>0){
+		    		$("#delete").removeAttr("disabled");
+		    		$("#openCards").removeAttr("disabled");
+		    		$("#operate").removeAttr("disabled");
+		    		if(!disres){
+		    			$("#delete").attr("disabled",true);
+		        		$("#operate").attr("disabled",true);
+		    		}
+		    	}else{
+		    		$("#delete").attr("disabled",true);
+		    		$("#openCards").attr("disabled",true);
+		    		$("#operate").attr("disabled",true);
+		    	}
+		    	//原值total
+		    	var totalValue=0;
+		    	for(var i=0;i<len;i++){
+			    	strHtml+="<tr type='"+data.faCardlist[i].inewtype+"' snum="+data.faCardlist[i].sassetnum+" scardnum="+data.faCardlist[i].scardnum+" >";
+			    	strHtml+="	<td style='text-align: left;'>"+strNullProc(data.faCardlist[i].scardnum)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.faCardlist[i].dstartdate)+"</td>";
+			    	strHtml+="	<td>"+getusedYear(data.faCardlist[i].llife)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.faCardlist[i].dblvalue)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.faCardlist[i].sassetnum)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.faCardlist[i].dblbvrate)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.faCardlist[i].soperator)+"</td>";
+			    	strHtml+="</tr>";
+			    	totalValue+=data.faCardlist[i].dblvalue;
+		    	}
+		    	//展示数据
+		    	$("#datatable_1_bodyer").empty().append(strHtml);
+		    	$("#datatable_1_bodyer >tr:first").attr("check",true).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000").attr("check",false);
+		    	$("#datatable_1_bodyer >tr").unbind("click").bind("click",function(){
+		    		$(this).attr("check",true).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000").attr("check",false);
+		    		$("#delete").removeAttr("disabled");
+		    		$("#openCards").removeAttr("disabled");
+		    		$("#operate").removeAttr("disabled");
+		    		if(!disres){
+		    			$("#delete").attr("disabled",true);
+		        		$("#operate").attr("disabled",true);
+		    		}
+		    	});
+		    	//绑定选中行的双击事件
+		    	$("#datatable_1_bodyer >tr").unbind("dblclick").bind("dblclick",function(){
+		    		doopenCards();
+		    	});
+		    	//显示合计
+		    	strHtml = "";
+		    	strHtml+="<tr>";
+		    	strHtml+="	<td>合计:</td>";
+		    	strHtml+="	<td style='text-align: center;'></td>";
+		    	strHtml+="	<td style='text-align: center;'></td>";
+		    	strHtml+="	<td style='text-align: center;'>"+totalValue+"</td>";
+		    	strHtml+="	<td style='text-align: center;'></td>";
+		    	strHtml+="	<td style='text-align: center;'></td>";
+		    	strHtml+="	<td style='text-align: center;'></td>";
+		    	strHtml+="</tr>";
+		    	$("#datatable_1_footer").empty().append(strHtml);
+		    	$("#datatable_1_footer >tr").unbind("click").bind("click",function(){
+		    		$("#delete").attr("disabled",true);
+		    		$("#openCards").attr("disabled",true);
+		    		$("#operate").attr("disabled",true);
+		    		$("#datatable_1_bodyer >tr").css("backgroundColor","#fff").css("color","#000").attr("check",false);
+		    	});
+		    }
+		});
+	}
+	function dodelete(){
+		var cardnum=$("#datatable_1_bodyer").find("tr[check='true']").attr("scardnum");
+		if(typeof(cardnum)=="undefined"||cardnum==null||cardnum=="null"||cardnum==""){
+			return;
+		}
+		jConfirm("确定删除["+cardnum+"]号卡片吗？",'确认对话框',function(confirmflag) {
+			if(confirmflag){
+				var cardsType=$("#cardsType").val();
+				if(cardsType=="1"){
+					$.ajax({
+						url: "faCards!truedeleteCard",
+						type: 'post',
+						async:false,
+						cache:false,
+						dataType:"json",
+						data:"scardnum="+cardnum,
+						success: function(data){
+							if(data.mark=="1"){
+								$("#datatable_1_bodyer").find("tr[check='true']").remove();
+			    				jAlert("删除成功!");
+			    			}else{
+			    				jAlert("操作失败!");
+			    			}
+						}
+					});
+				}else if(cardsType=="2"){
+					jAlert("现在还没到清理此卡片的时候.<br>卡片编号为"+cardnum);
+				}
+			}
+		});
+	}
+	function doopenCards(){//打开卡片
+		var type=$("#datatable_1_bodyer").find("tr[check='true']").attr("type");
+		var cardnum=$("#datatable_1_bodyer").find("tr[check='true']").attr("scardnum");
+		var param = {};
+		param.scardnum=cardnum;
+		param.smark="0";
+		if(type=="1"){
+			window.parent.openWindow("fa_card_entry","fa_card_cardmanager",param);
+		}else if(type=="2"){
+			window.parent.openWindow("fa_card_addAssets","fa_card_cardmanager",param);
+		}
+	}
+	function doupdate(){//修改卡片
+		var type=$("#datatable_1_bodyer").find("tr[check='true']").attr("type");
+		var cardnum=$("#datatable_1_bodyer").find("tr[check='true']").attr("scardnum");
+		var param = {};
+		param.scardnum=cardnum;
+		param.smark="1";
+		if(type=="1"){
+			window.parent.openWindow("fa_card_entry","fa_card_cardmanager",param);
+		}else if(type=="2"){
+			window.parent.openWindow("fa_card_addAssets","fa_card_cardmanager",param);
+		}
+	}
+	function cexiaojianshao(){//撤销卡片减少
+		if($("#datatable_1_bodyer").find("tr[check='true']").length==0){
+			return;
+		}
+		var cardnum=$("#datatable_1_bodyer").find("tr[check='true']").attr("scardnum");
+		var cardsType=$("#cardsType").val();
+		if(cardsType=="1"){
+			return;
+		}else{
+			jConfirm("确实要恢复["+cardnum+"]号卡片的资产吗？",'确认对话框',function(confirmflag) {
+				if(confirmflag){
+					$.ajax({
+						url: "faCards!rebackCarReduce",
+						type: 'post',
+						async:false,
+						cache:false,
+						dataType:"json",
+						data:"scardnum="+cardnum,
+						success: function(data){
+							var mark=data.mark;
+							if(mark=="1"){
+								jAlert(cardnum+"资产减少已经生成凭证。<br>请先删除凭证")
+							}else if(mark=="2"){
+								var db=$("#datatable_1_bodyer").find("tr[check='true']").children().eq(3).html();
+								$("#datatable_1_bodyer").find("tr[check='true']").remove();
+								var stotol=$("#datatable_1_footer").children().children().eq(3).html();
+								var now=stotol-db;
+								$("#datatable_1_footer").children().children().eq(3).html(now);
+							}else{
+								jAlert("请重新登陆系统，重新操作");
+							}
+						}
+					});
+				}
+			});
+		}
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:650px;height:460px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;margn-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>
+			<div class="buttongroup" style="width:410px;float:left">
+				<div class="group">
+					<div><input type="button" onclick="doopenCards()" id="openCards" value="打开" style="background-image:url('../../../images/icon/open.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('fa_card_cardmanager');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" id="refresh" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="操作" onclick="doupdate()" id="operate" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" onclick="dodelete()" id="delete" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+			</div>
+			<div style="float:left;margin-top:2px;"><input id="chexiao" type="button" style="width:30px;height:36px;padding:0px;color: red" value="撤销 &#13;&#10;减少" onclick="cexiaojianshao();"/></div>
+			
+			<div class="floatclear"></div>
+			<div style="width:100%;height:416px;">
+				<div style="width:144px;height:410px;float:left;margin-left:4px;">
+					<select id ="queryType" style="width:100%;height:22px;">
+						<option value="1">按部门查询</option>
+						<option value="2">按类别查询</option>
+						<option value="3">自定义查询</option>
+					</select>
+					<div style="width:144px;height:390px;background-color:#fff;">
+						<div id="lp1" style="width:140px;height:100%;border:2px inset #ccc;overflow:auto;">
+							<div id="dpttree" class="ztree" style="margin-left:-24px;"></div>
+						</div>
+						<div id="lp2" style="width:140px;height:100%;display:none;border:2px inset #ccc;overflow:auto;">
+							<div id="astptree" class="ztree" style="margin-left:-24px;"></div>
+						</div>
+						<div id="lp3" style="width:100%;height:100%;display:none;text-align:center;background-color:#D4D0C8;">
+							<div style="width:140px;height:290px;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+							</div>
+							<div style="margin-top:4px;">
+								<input type="button" value="查  找" style="width:140px;"/>
+								<input type="button" value="添加查询" style="width:140px;"/>
+								<input type="button" value="编辑查询" style="width:140px;"/>
+								<input type="button" value="删除查询" style="width:140px;"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="width:494px;height:410px;float:left;margin-left:4px;">
+					<select id="cardsType" style="width:100%;height:22px;">
+						<option value="1">在役资产</option>
+						<option value="2">已减少资产</option>
+					</select>
+					<div style="width:100%;height:390px;background-color:#fff;margin-top:2px;overflow:auto;">
+						<table id="datatable_1" border=1 class="table_style" style="width:760px;">
+							<thead>
+								<tr id="datatable_1_header">
+									<td style="width:px;">卡片编号</td>
+									<td style="width:px;">开始使用日期</td>
+									<td style="width:px;">使用年限</td>
+									<td style="width:px;">原值</td>
+									<td style="width:px;">固定资产编号</td>
+									<td style="width:px;">净残值率</td>
+									<td style="width:px;">录入人</td>
+								</tr>
+							</thead>
+							<tbody id="datatable_1_bodyer">
+							</tbody>
+							<tfoot id="datatable_1_footer">
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+	</div>
+</body>
+</html>

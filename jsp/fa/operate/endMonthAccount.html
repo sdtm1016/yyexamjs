@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>月末结账</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<style type="text/css">
+
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript">
+    var flag = false; 
+    //对账结果提示信息
+    var checkEndMonthAccountMessage="";
+	//程序入口
+	$(document).ready(function(){
+	    $("#account").unbind("click").bind("click",function(){
+	    	var checkFlag = checkEndMonthAccount();
+	    	if(!checkFlag){
+	    		return;
+	    	}
+	    	$.ajax({
+	    	    url: "faCardDepreciation!endMonthAccount",
+	    	    type: 'post',
+	    	    dataType: "json",
+	    	    async:false,
+	    	    error:function(data){
+	    	    	jAlert("请求失败!");
+	    	    },
+	    	    success: function(data){
+	    	    	if(data.depreciationsFlag){
+	    	    		if(checkEndMonthAccountMessage==""){
+	    	    			afterendMonthAccountMessage();
+	    	    		}else{
+		    	    		jAlert(checkEndMonthAccountMessage,"与账务对账结果",function(){
+		    	    			afterendMonthAccountMessage();
+		    	    		});
+	    	    		}
+	    	    	}else{
+	    	    		jAlert("结账失败!");
+	    	    	}
+	    	    }
+	    	 });
+	    });
+    	$("#cancle").unbind("click").bind("click",function(){
+	    	window.parent.closeWindow('fa_operate_endMonthAccount');
+    	});
+	});
+	//月末结账后的一些提示
+	function afterendMonthAccountMessage(){
+		var strHtml="";
+		strHtml+=" 月末结账成功完成!";
+		var time=new Date().format("yyyy年MM月dd日 hh时mm分ss秒");
+		strHtml+="<br> 开始时间:"+time;
+		strHtml+="<br> 结束时间:"+time;
+		jAlert(strHtml,"提示信息",function(){
+	    	$.ajax({
+	    	    url: "faCardDepreciation!getnextOper",
+	    	    type: 'post',
+	    	    dataType: "json",
+	    	    async:false,
+	    	    error:function(data){
+	    	    	jAlert("请求失败!");
+	    	    },
+	    	    success: function(data){
+	    			strHtml="本账套最新可修改日期已经更改为"+(data.uaPeriod.dbegin+"").split("T")[0]+",";
+	    			strHtml+="而您现在的登录日期为"+getCookie("operDate")+",";
+	    			strHtml+="您不能对此账套的任何数据进行修改!";
+	    			jAlert(strHtml,"提示信息",function(){
+	    				//注销固定资产页面
+	    				window.parent.closeWindow('fa_operate_endMonthAccount');
+	    				window.parent.location.href="../../portal/default.html";
+	    			});
+	    	    }
+	    	 });
+		});
+	}
+	//校验能否结账(与账务对账)
+	function checkEndMonthAccount(){
+		var checkFlag = true;
+		$.ajax({
+		    url: "faInitializa!findInitializInfo",
+		    type: 'post',
+		    dataType: "json",
+		    async:false,
+		    success: function(data){
+		    	var informations = data.informations;
+		    	//是否自动对账
+		    	var ifbAutoZW =true;
+		    	//是否结账标志
+		    	var ifEndMonthAccountFlag = true;
+		    	//固定资产科目编码
+		    	var sFixedAssetsSubjectNum="";
+				//累计折旧科目编码
+				var sDeprTotalSubjectNum="";
+		    	for(var i=0;i<informations.length;i++){
+			    	if(informations[i].cname=="bAllowUnequality"){
+			    		ifEndMonthAccountFlag = informations[i].cvalue;
+			    	}else if(informations[i].cname=="sFixedAssetsSubjectNum"){
+			    		sFixedAssetsSubjectNum = informations[i].cvalue;
+			    	}else if(informations[i].cname=="sDeprTotalSubjectNum"){
+			    		sDeprTotalSubjectNum = informations[i].cvalue;
+			    	}else if(informations[i].cname=="bAutoZW"){
+			    		ifbAutoZW =informations[i].cvalue; 
+			    	}	
+		    	}
+		    	//是否与账务系统对接
+		    	if(ifbAutoZW=="TRUE"){
+			    	//对账结果
+			    	$.ajax({
+				    	    url: "faCardDepreciation!reconciliation",
+				    	    data:{sfixedCode:sFixedAssetsSubjectNum,sdeprCode:sDeprTotalSubjectNum},
+				    	    type: 'post',
+				    	    dataType: "json",
+				    	    async:false,
+				    	    error:function(data){
+				    	    	jAlert("请求失败!");
+				    	    },
+				    	    success: function(data){
+				    	    	//固定资产账套原值
+				    	    	var sumDblvalue = data.reconciliationMap.sumDblvalue;
+				    	    	//账务账套原值
+				    	    	var accountsDblvalue = data.reconciliationMap.accountsDblvalue;
+				    	    	//固定资产账套累计折旧
+				    	    	var faDepreciation = data.reconciliationMap.faDepreciation;
+				    	    	//账务账套累计折旧
+				    	    	var accountsDepreciation = data.reconciliationMap.accountsDepreciation;
+
+				    	    	checkEndMonthAccountMessage="固定资产账套原值: "+sumDblvalue+"<br>";
+				    	    	checkEndMonthAccountMessage+="账务账套原值: "+accountsDblvalue+"<br><br>";
+				    	    	checkEndMonthAccountMessage+="固定资产账套累计折旧: "+faDepreciation+"<br>";
+				    	    	checkEndMonthAccountMessage+="账务账套累计折旧: "+accountsDepreciation+"<br><br>";
+				    	    	
+				    	    	if(sumDblvalue==accountsDblvalue&&faDepreciation==accountsDepreciation){
+				    	    		checkEndMonthAccountMessage+="结果:平衡<br>";
+				    	    	}else{
+				    	    		checkEndMonthAccountMessage+="结果:不平衡<br>";
+				    	    	}
+				    	    	
+						    	if(ifEndMonthAccountFlag=="TRUE"&&(sumDblvalue!=accountsDblvalue||faDepreciation!=accountsDepreciation)){
+						    		checkFlag = false;
+						    		jAlert(checkEndMonthAccountMessage,"提示信息",function(){
+						    			jAlert("由于对账不平衡,结账中断!","提示信息",function(){
+						    				window.parent.closeWindow('fa_operate_endMonthAccount');
+						    			});	
+						    		});
+						    	}
+				    	    	
+				    	    }
+			    	    });
+		    	}
+		    }
+		 });
+		return checkFlag;
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:450px;height:240px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;border:0px solid red;">
+		<div style="width:430px;height:220px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+            <div style="width:320px; float:left;">
+            <p>
+            此操作将花费一定的时间,请认真阅读以下说明后再确定
+            是否要进行[月末结账]:<br>
+            请确认已经完成本月的如下操作:<br>
+            1.正确的录入了所有原始资产卡片,新增资产卡片<br>
+            2.正确的录入了所有变动单<br>
+            3.正确进行了本月应进行的资产评估<br>
+            4.正确的录入了本月资产的所有工作量<br>
+            5.正确完成了业务数据备份<br>
+            月末结账将始本会计期间所有数据不许修改,而且将进行<br>
+            一系列的自动操作:<br>
+            1.备份月末结账前 固定资产 账套状态<br>
+            2.整理卡片数据<br>
+            3.准备报表数据<br>
+            4.对账(要求自动对账情况下)<br>
+            5.封账
+            </p>
+            </div>
+            <div style="width:100px; float:right;">
+            <input type="button" value=" 开始结账 " id="account"/>
+            <input type="button" value="    取消     " id="cancle"/>
+            </div>
+            
+			
+
+		
+		</div>
+	</div>
+</body>
+</html>

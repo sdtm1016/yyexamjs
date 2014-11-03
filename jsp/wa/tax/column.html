@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>栏目选择2</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+.optional_table{border-collapse: collapse;width:100%;height:100%;}
+.optional_table tbody tr {height: 12px;padding:0px;}
+.optional_table tbody tr td {height: 12px;padding:0px;cursor:default;}
+</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:290px;height:200px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:270px;height:180px;margin-top:10px;margin-left:10px;">
+			
+			
+			<div style="width:163px;float:left;">
+			
+				<fieldset class="v_a_m">
+					<legend>栏目</legend>
+					<div style="height:150px;">
+						
+						标准栏目：
+						<select size="4" style="width:140px;">
+							<option>人员编号</option>
+							<option>姓名</option>
+							<option>所得期间</option>
+							<option>所得项目</option>
+							<option>收入额合计</option>
+							<option>减费用额</option>
+							<option>应纳税所得额</option>
+							<option>税率</option>
+							<option>速算扣除数</option>
+							<option>扣缴所得税额</option>
+						</select>
+						<br><br>
+						可选栏目：
+						<div style="width:140px;height:30px;border:2px inset #ccc;overflow-y:auto;">
+							<table id="optional_table" class="optional_table" border="0">
+								<tbody>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>完税证字号</td>
+									</tr>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>纳税日期</td>
+									</tr>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>备注</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</fieldset>
+	
+			
+			</div>
+			
+			
+			<div style="width:106px;float:left;text-align:center;">
+				<br><br><br><br><br><br><br><br>
+				<input type="button" value="确认"/>&nbsp;&nbsp;
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_tax_column');"/>&nbsp;&nbsp;
+			</div>
+		
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+/************** 可选栏目 表格复选控制功能实现： *****************/
+	var ot = document.getElementById("optional_table");
+	for(var i=0;i<ot.rows.length;i++){
+		
+		ot.rows[i].cells[1].ondblclick=function(event){
+			var evt = (window.event || event);
+			var evtsrc = (evt.srcElement || evt.target);
+			var cb = evtsrc.parentNode.cells[0].getElementsByTagName("input")[0];
+			cb.click();
+		}
+		
+	}
+	
+/*******************************/
+</script>
+
+</html>

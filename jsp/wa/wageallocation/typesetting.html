@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>分摊类型设置</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	var currentSeletedRow=null; //当前行对象
+	var currentSeletedRowId=""; //当前行id
+	var currentSeletedRowJT_id="";//当前行 ijt_id
+	var datatable_1;
+	$(document).ready(function(){
+		loadData();
+		
+	});
+	
+	function add(){
+		window.parent.openWindow('wa_wageallocation_addproportion');
+	}
+	function onWindowClose(){
+		window.parent.getWindow('wa_wageallocation_first').initData();
+	}
+	function update(){
+		if(currentSeletedRow==null){
+			jAlert("请选择数据");
+			return;
+		}
+		var param = {};
+		param.cjtName = currentSeletedRow.cells[0].innerHTML;
+		param.ijtProp = currentSeletedRow.cells[1].innerHTML;
+		param.id = currentSeletedRow.cells[2].innerHTML;
+		param.ijtId = currentSeletedRow.cells[3].innerHTML;
+		window.parent.openWindow('wa_wageallocation_updproportion','wa_wageallocation_typesetting',param);
+	}
+	
+	/** add by lval 201366
+	**/
+	function del(){
+		currentSeletedRowId=$(currentSeletedRow).children('td').eq(2).html();
+		currentSeletedRowJT_id=$(currentSeletedRow).children('td').eq(3).html();
+		$.ajax({
+			url:'wagesSharing!delWageSharingType.action',
+			type:'post',
+			data:{'cgzgradenum':cgzgradenum,'waFtname.id':currentSeletedRowId,'waFtname.ijtId':currentSeletedRowJT_id},
+			dataType:'json',
+			async : false,
+			success:function(data){
+				//删除成功   重新加载数据
+				$("#typeName").val("");
+				loadData();
+			}
+		});
+	}
+	
+	function loadData(){
+		$.ajax({
+			url:'wagesSharing!queryWagesSharingSettingList.action',
+			type:'post',
+			data:'cgzgradenum='+cgzgradenum,
+			dataType:'json',
+			async : false,
+			success:function(data){
+				ftNameList = data.ftNameList;
+				var str = "";
+				$("#datatable_1_bodyer").html("");
+				var ftName;
+				for(var i=0; i<ftNameList.length; i++){
+					ftName = ftNameList[i];
+					str += '<tr><td width="60">' + ftName.cjtName +
+							'</td><td>' + ftName.ijtProp +
+							'</td><td style="display:none;">' + ftName.id +
+							'</td><td style="display:none;">' + ftName.ijtId +
+							'</td></tr>';
+						
+				}
+				$("#datatable_1_bodyer").append(str);
+			}
+		});
+		
+		/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+		//当前被点击选中的行全局变量
+		datatable_1 = document.getElementById("datatable_1_bodyer");
+		$("#datatable_1_bodyer").find("tr:eq(0)").removeAttr("style");
+		for(var i=0;i<datatable_1.rows.length;i++){
+			datatable_1.rows[i].onclick=function(e){
+				var evt=(window.event || e);//获得事件
+				var evtsrc = (evt.srcElement || evt.target);
+				if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+					currentSeletedRow.style.backgroundColor="#fff";
+					currentSeletedRow.style.color="#000";
+				}
+				if(evtsrc.tagName=="TD"){
+					document.getElementById("typeName").value = evtsrc.parentNode.cells[0].innerHTML;
+					evtsrc.parentNode.style.backgroundColor="#00f";
+					evtsrc.parentNode.style.color="#fff";
+					currentSeletedRow=evtsrc.parentNode;
+				}
+			}
+		}
+		/***** 选中行代码结束*******/
+		
+		/*默认选中第一行,设置类型名称缺省值 2013-9-3 lyl*/
+		var val=$("#datatable_1_bodyer").find("tr:eq(0)").find("td:eq(0)").html();
+		$("#typeName").val(val);
+		$("#datatable_1_bodyer").find("tr:eq(0)").css({"background-color":"blue","color":"white"});
+		currentSeletedRow=document.getElementById("datatable_1_bodyer").rows[0];
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:360px;height:200px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:320px;height:180px;margin-top:10px;margin-left:20px;">
+			<div style="width:240px;height:180px;float:left;">
+				<div>类型名称：<input readonly="readonly" type="text" id="typeName" style="width:164px;background-color:#D4D0C8;"/></div>
+				<div style="width:210px;height:150px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#fff;">
+					<table id="datatable_1" border=1 class="table_style" style="width:210px;">
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+				</div>
+				<div style="width:20px;height:150px;float:left;">
+					<input type="button" value="↑" onclick="upward();" style="width:14px;height:75px;padding:0px;text-align:center;"/>
+					<input type="button" value="↓" onclick="downward();" style="width:14px;height:75px;padding:0px;text-align:center;"/>
+				</div>
+			</div>
+			<div style="width:70px;height:180px;float:left;text-align:center;">
+				<br><br>
+				<input type="button" value="增加" onclick="add();"/><br><br>
+				<input type="button" value="修改" onclick="update()"/><br><br>
+				<input type="button" value="删除" onclick="del()"/><br><br>
+				<input type="button" value="返回" onclick="window.parent.closeWindow('wa_wageallocation_typesetting');"/>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+<script type="text/javascript">
+
+//向上移动
+function upward(){
+	var table = document.getElementById("datatable_1_bodyer");
+	if(currentSeletedRow!=null && currentSeletedRow.rowIndex>0){
+		currentSeletedRow.parentNode.insertBefore(currentSeletedRow, table.rows[currentSeletedRow.rowIndex-1]);
+	}
+}
+
+//向下移动
+function downward(){
+	var table = document.getElementById("datatable_1_bodyer");
+	if(currentSeletedRow!=null && currentSeletedRow.rowIndex<table.rows.length-1){
+		currentSeletedRow.parentNode.insertBefore(table.rows[currentSeletedRow.rowIndex+1],currentSeletedRow);
+	}
+}
+</script>
+</html>

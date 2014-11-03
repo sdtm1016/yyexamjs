@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>选择清零项目</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<style type="text/css">
+.ctrbtn input{width:20px;height:20px;padding:0px;text-align:center;margin-top:4px;}
+</style>
+<script type="text/javascript">
+	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	function moveUp(){
+		var s1 = document.getElementById("select_1");
+		var s2 = document.getElementById("select_2");
+		
+		try{
+			var so = s2.options[s2.selectedIndex];
+			s1.options.add(new Option(so.text,so.value));
+			s2.remove(s2.selectedIndex);
+		}catch(e){}
+	}
+
+	function moveDown(){
+	
+		var s1 = document.getElementById("select_1");
+		var s2 = document.getElementById("select_2");
+		
+		try{
+			var so = s1.options[s1.selectedIndex];
+			s2.options.add(new Option(so.text,so.value));
+			s1.remove(s1.selectedIndex);
+		}catch(e){}
+	}
+	function allMoveUp(){
+	
+		var s1 = document.getElementById("select_1");
+		var s2 = document.getElementById("select_2");
+		
+		try{
+			while(s2.options.length>0){
+				s1.options.add(new Option(s2.options[0].text,s2.options[0].value));
+				s2.remove(0);
+			}
+		}catch(e){}
+		
+	}
+
+	function allMoveDown(){
+	
+		var s1 = document.getElementById("select_1");
+		var s2 = document.getElementById("select_2");
+		try{
+			while(s1.options.length>0){
+				s2.options.add(new Option(s1.options[0].text,s1.options[0].value));
+				s1.remove(0);
+			}
+		}catch(e){}
+		
+	}
+//
+/**
+ * 李月玲 2013-6-27
+ * 加载工资项目 start
+ */
+    var status = window.parent.parent.wa_wageTypeId;//（1：已登录，0：未登录）
+	var wa_isWageSets = window.parent.parent.wa_isWageSets;//(0：未建立;1:单工资；2：多工资)
+	function loadItems(){
+		$.ajax({
+			url:"wageSetting!queryWageProject.action",
+			data:"stauts=" + status + "&waAccount.cgzgradenum=" + cgzgradenum+"&wa_isWageSets="+wa_isWageSets,
+			type:"post",
+			dataType:"json",
+			async:false,
+			success:function(data){
+				//工资项目
+				var gzxmList = data.objList[0];
+				var gzxmStr = "";
+				$("#select_1").empty();
+				for ( var i= 0; i <  gzxmList.length ; i++) {
+					gzxmStr += "<option value='"+gzxmList[i].igzitemId+"'>"+gzxmList[i].csetgzitemname+"</option>";
+				}	
+				$("#select_1").append(gzxmStr);
+			}
+		});
+	}
+/* end */
+function btnConfirm(){
+	/*获取需要清零项目ID串 李月玲 2013-6-27 start*/
+	var itemIdStr="";
+	$("#select_2").find("option").each(function(){
+		var val=$(this).val();
+		itemIdStr+=val+",";
+	});
+	itemIdStr=itemIdStr.substring(0,itemIdStr.length-1);
+	/*   end  */ 
+	var p = {"itemIdStr":itemIdStr,"cgzgradenum":cgzgradenum,"imonth":"5"};
+	$.ajax({
+		url:"wageBusiness!monthEndClosingCheckList.action",
+		data:p,
+		type:"post",
+		dataType:"json",
+		async:false,
+		success:function(data){
+			if(data.flag==1){
+				jAlert("工资类别  ["+cgzgradenum+"] 月末处理成功！","提示",function(){
+					window.parent.closeWindow("wa_checkout_reset");
+					window.parent.closeWindow("wa_checkout_endproccess");
+				});
+			}else{
+				jAlert("工资类别  ["+cgzgradenum+"] 月末处理失败！","提示",function(){
+					window.parent.closeWindow("wa_checkout_reset");
+					window.parent.closeWindow("wa_checkout_endproccess");	
+				});
+				
+			}
+			
+		}
+	});
+	
+}
+	$(function(){
+		//初始化工资项目
+		loadItems();
+	})
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:350px;height:170px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:314px;height:150px;margin-top:10px;margin-left:20px;">
+			
+			<div style="width:100%;height:24px;" class="v_a_m">
+				请选择清零项目...　　<input type="checkbox" id="cb_1"/><label for="cb_1">保存本次选择结果</label>
+			</div>
+			
+			<div style="width:100%;height:100px;">
+				
+				<div style="width:224px;height:100%;float:left;">
+					
+						<select style="height:100px;width:94px;float:left;" size="20" id="select_1">
+                        	<option value="基本工资">基本工资</option>
+                        	<option value="岗位工资">岗位工资</option>
+                        	<option value="交通补助">交通补助</option>
+                        	<option value="书报费">书报费</option>
+                        	<option value="餐补">餐补</option>
+                        	<option value="应发合计">应发合计</option>
+                        	<option value="……">……</option>
+                        </select>
+						
+						<div style="width:30px;height:100%;text-align:center;float:left;" class="ctrbtn">
+						
+							<input type="button" value=">" onclick="moveDown();"/>
+                        	<input type="button" value=">>"  onclick="allMoveDown();"/>
+                        	<input type="button" value="<"  onclick="moveUp();"/>
+                        	<input type="button" value="<<"  onclick="allMoveUp();"/>
+						
+						</div>
+					
+						<select style="height:100px;width:94px;float:left;" size="20" id="select_2">
+                        </select>
+					
+					
+					
+					
+				</div>
+				
+				<div style="width:90px;height:100%;float:left;text-align:center;">
+					<br><br><br><br><br>
+					<input type="button" value="确认" onclick="btnConfirm()"/><br>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('wa_checkout_reset')"/>
+				</div>
+				
+				
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

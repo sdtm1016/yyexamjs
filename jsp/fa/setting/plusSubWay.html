@@ -1,0 +1,660 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>增减方式</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<style type="text/css">
+	.normalInput{width:200px;}
+	.normalInput1{width:180px;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<script type="text/javascript">
+
+	var nodename="";//全局变量;节点全名
+
+
+
+	/*
+	*查找选中的节点
+	*treeId 页面上树标签的id
+	*treeAttr 匹配的属性
+	*treeAttrValue 匹配的属性值
+	*/
+	function getSelectedTreeNode(treeId,treeAttr,treeAttrValue){
+		var zTree = $.fn.zTree.getZTreeObj(treeId);
+	  	var node = zTree.getNodesByParam(treeAttr,treeAttrValue,null);
+	  	return node;
+	}
+	  /**
+	   * 节点单击事件
+	   * @param event
+	   * @param treeId 树id
+	   * @param treeNode jied
+	   * @param clickFlag
+	 */
+	function onClick(event, treeId, treeNode, clickFlag) {
+		//getFaOriginsTable(treeNode.id);
+	}
+	/*点击之前事件*/
+	function beforeClick(treeId, treeNode, clickFlag){
+		nodename=treeNode.name;
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		if($("#faOriginsId").val()!=treeNode.id){
+			if($("#editorState").val()==1){
+				
+				jConfirm('是否保存数据？', '确认对话框', function(confirmflag){
+					if(confirmflag){
+						//判断是否正常保存
+						var currentflag = saveFaOrigins();
+						if(!currentflag){
+							return;
+						}
+					}
+					var selNode = zTree.getNodeByParam("id", treeNode.id);
+	       			zTree.selectNode(selNode);
+	       			getFaOriginsTable(treeNode.id);
+				});
+			}else{
+				var selNode = zTree.getNodeByParam("id", treeNode.id);
+       			zTree.selectNode(selNode);
+       			getFaOriginsTable(treeNode.id);
+			}
+			nodename=treeNode.name;
+		}
+		return false;
+	}
+	/*保存增减情况的数据*/
+	function saveFaOrigins(){
+		var faOriginsId = $("#faOriginsId").val();
+		var faOrigins_sparentid = $("#faOrigins_sparentid").val();
+		var faOrigins_sname = $("#faOrigins_sname").val();
+		if(faOrigins_sname==null||faOrigins_sname==""||faOrigins_sname=="null"){
+			jAlert("增减方式不可以为空");
+			$("#faOrigins_sname").focus();
+			return false;
+		}
+		var faOrigins_ssubjectnum =null;
+		if($("#faOrigins_ssubjectnum").val()!=""){
+			if(typeof($("#faOrigins_ssubjectnum").attr("ssubjectnum"))!="undefined"){
+				faOrigins_ssubjectnum = $("#faOrigins_ssubjectnum").attr("ssubjectnum");
+			}
+		}
+		var flag = true;
+	  	var faOriginsdata=null;
+		if($("#editorType").val()==0){
+			/*增加*/
+			var node = getSelectedTreeNode("treeDemo","id",faOriginsId);
+		  	var level = node[0].level;
+		  	var numRule = node[0].numRule;
+		  	var thisnumvalue;
+		  	numRule = numRule.substring(level,level+1);
+		  	node = getSelectedTreeNode("treeDemo","parentid",$("#faOriginsId").val());
+		  	
+			var numvalue = 0;
+			var snumvalue;
+			for(var i=0;i<node.length;i++){
+				snumvalue = "num"+node[0].level;
+				/*转换成整形*/
+				snumvalue = node[i][snumvalue]-0;
+				if(snumvalue>numvalue){
+					numvalue = snumvalue;
+				}
+			}
+			numvalue = numvalue+1;
+			/*转换成字符串*/
+			numvalue=""+numvalue;
+			var len = numvalue.length;
+			
+			/*自动补零*/
+			var strHtml="";
+			if(numRule>len){
+				len = numRule-len;
+				for(var i=0;i<len;i++){
+					strHtml += ""+0;
+				}
+			}
+			numvalue = strHtml+numvalue;
+			
+			node = getSelectedTreeNode("treeDemo","id",faOriginsId);
+		  	var faorigins_num1 = null;
+		  	var faorigins_num2 = null;
+		  	var faorigins_num3 = null;
+	  		switch (level) {
+	  			case 0:
+	  				faorigins_num1 = numvalue;
+	  				break;
+	  			case 1:
+	  				faorigins_num1 =node[0].num1;
+	  				faorigins_num2 =numvalue;
+	  				break;
+	  			case 2:
+	  				faorigins_num1 =node[0].num1;
+	  				faorigins_num2 =node[0].num2;
+	  				faorigins_num3 =numvalue;
+	  				break;
+			}
+		  	level = node[0].level+1;
+		  	/*
+			$.post("faOrigins!addFaOrigins",{parentId:faOriginsId,snum1:faorigins_num1,snum2:faorigins_num2,snum3:faorigins_num3,sname:faOrigins_sname,ssubjectnum:faOrigins_ssubjectnum,ilevel:level},function(jsonData){
+				reloadZtree($("#faOriginsId").val());
+				/*启用选项卡
+				winui.tab.setDisabled(0,false);
+				$("#editorState").val(0);
+			},"json").error(function(){
+				jAlert("请求失败！");
+			});
+		  	*/
+			faOriginsdata = {parentId:faOriginsId,snum1:faorigins_num1,snum2:faorigins_num2,snum3:faorigins_num3,sname:faOrigins_sname,ssubjectnum:faOrigins_ssubjectnum,ilevel:level};
+			$.ajax({
+				url:"faOrigins!addFaOrigins",
+				type:"post",
+				dataType:"json",
+				data:faOriginsdata,
+				async : false,   
+				error: function () {
+		            jAlert('请求失败'); 
+		            flag=false;
+		        }, 
+		        success:function(){
+					reloadZtree($("#faOriginsId").val());
+					/*启用选项卡*/
+					winui.tab.setDisabled(0,false);
+					$("#editorState").val(0);
+		        }
+			});
+		}else{
+			faOriginsdata = {id:faOriginsId,parentId:faOrigins_sparentid,sname:faOrigins_sname,ssubjectnum:faOrigins_ssubjectnum};
+			$.ajax({
+				url:"faOrigins!updateFaOrigins",
+				type:"post",
+				dataType:"json",
+				data:faOriginsdata,
+				async : false,   
+				error: function () {
+		            jAlert('请求失败'); 
+		            flag=false;
+		        }, 
+		        success:function(){
+		    		reloadZtree($("#faOriginsId").val());
+					/*启用选项卡*/
+					winui.tab.setDisabled(0,false);
+					$("#editorState").val(0);
+		        }
+			});
+			/*
+			$.post("faOrigins!updateFaOrigins",{id:faOriginsId,parentId:faOrigins_sparentid,sname:faOrigins_sname,ssubjectnum:faOrigins_ssubjectnum},function(jsonData){
+				reloadZtree($("#faOriginsId").val());
+				/*启用选项卡
+				winui.tab.setDisabled(0,false);
+				$("#editorState").val(0);
+			},"json").error(function(){
+				jAlert("请求失败！");
+			});
+			*/
+		}
+		return flag;
+	}
+	/*取消操作*/
+	function cancelFaOrigins(){
+		jConfirm('是否取消本次操作？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				rebackstate();
+			}
+		});
+	}
+	/*刷新操作*/
+	function refreshFaOrigins(){
+		reloadZtree($("#faOriginsId").val());
+	}
+	/*删除操作*/
+	function delteFaOrigins(){
+		if($("#editorState").val()==1){
+			jAlert("没有保存数据,请先保存数据然后进行此操作.");
+			return false;
+		}
+		var snum=nodename.split(" ")[0];
+		if(snum.charAt(0)=="1"){
+			if(isExitsTableRef(snum,"FA_ORIGINS","SADDID")){
+				jAlert("该增减方式已经被使用不可删除");
+				return false;
+			}
+		}else if(snum.charAt(0)=="2"){
+			if(isExitsTableRef(snum,"FA_ORIGINS","SDECID")){
+				jAlert("该增减方式已经被使用不可删除");
+				return false;
+			}
+		}
+		jConfirm('确定删除当前记录吗？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				var faOriginsId = $("#faOriginsId").val();
+			  	var node = getSelectedTreeNode("treeDemo","id",faOriginsId,null);
+				$.post("faOrigins!deleteFaOrigins",{id:faOriginsId,parentId:node[0].parentid},function(jsonData){
+					reloadZtree(0);
+				},"json").error(function(){
+					jAlert("请求失败！");
+				});
+			}
+		});
+	}
+	/*操作或者保存按钮恢复以前状态*/
+	function rebackstate(){
+		getFaOriginsTable($("#faOriginsId").val());
+		$("#editorState").val(0);
+		/*启用选项卡*/
+		winui.tab.setDisabled(0,false);
+	}
+	function getFaOriginsTable(parentid){
+		$("#faOriginsId").val(parentid);
+		var faoriginData = {parentId:parentid};
+		$.ajax({
+			url:"faOrigins!findFaOriginsByparentid",
+			type:"post",
+			data:faoriginData,
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+	        	var strHtml = "";
+				for(var i=0;i<dataJson.faOriginsList.length;i++){
+					strHtml+="<tr>";
+					if(dataJson.faOriginsList[i].sname==null){
+						dataJson.faOriginsList[i].sname="";
+					}
+					if(dataJson.faOriginsList[i].ssubjectnum==null){
+						dataJson.faOriginsList[i].ssubjectnum="";
+					}
+					strHtml+="<td class='onerow'>"+dataJson.faOriginsList[i].sname+"</td>";
+					strHtml+="<td class='onerow'>"+dataJson.faOriginsList[i].ssubjectnum+"</td>";
+					strHtml+="</tr>";
+				}
+				/*填充列表*/
+				$("#datatable_1 tbody").empty();
+				$("#datatable_1 tbody").html(strHtml);
+				/*保存,操作的功能*/
+				$("#save").attr("disabled","true");
+				$("#cancel").attr("disabled","true");
+				
+				$("#refresh").removeAttr("disabled");
+				/*填充表单*/
+				if(dataJson.faOrigins.sparentid==-1){
+					$("#faOrigins_sparentname").val("").attr("disabled","true");
+					$("#faOrigins_sname").val(dataJson.faOrigins.sname).attr("disabled","true");
+					$("#faOrigins_ssubjectnum").val(dataJson.faOrigins.ssubjectnum).attr("disabled","true")
+					$("#faOrigins_ssubjectnum").attr("ssubjectnum",dataJson.faOrigins.ssubjectnum);
+					if(dataJson.code!=null){
+						$("#faOrigins_ssubjectnum").attr("ssubjectnumName",dataJson.code.ccodeName);
+					}
+					$("#faOrigins_ssubjectnumButton").attr("disabled","true");
+				}else{
+					$("#faOrigins_sparentid").val(dataJson.faOrigins.sparentid);
+				  	var node =getSelectedTreeNode("treeDemo","id",dataJson.faOrigins.sparentid);
+				  	$("#faOrigins_sparentname").val(node[0].name).attr("disabled","true");
+					$("#faOrigins_sname").val(dataJson.faOrigins.sname).attr("disabled","true");
+					$("#faOrigins_ssubjectnum").val(dataJson.faOrigins.ssubjectnum).attr("disabled","true")
+					$("#faOrigins_ssubjectnum").attr("ssubjectnum",dataJson.faOrigins.ssubjectnum);
+					if(dataJson.code!=null){
+						$("#faOrigins_ssubjectnum").attr("ssubjectnumName",dataJson.code.ccodeName);
+					}
+					$("#faOrigins_ssubjectnumButton").attr("disabled","true");
+				}
+				/*判断添加方法是否可用||dataJson.faOrigins.sparentid==-1*/
+				if(dataJson.faOrigins.lbyused>0||dataJson.faOrigins.ilevel>=3){
+					$("#add").attr("disabled",true);
+				}else{
+					if(dataJson.faOrigins.sparentid==-1){
+						$("#add").attr("disabled",true);
+					}else{
+						$("#add").attr("disabled",false);
+					}
+				}
+				/*判断删除按钮是否可用*/
+				if(dataJson.faOrigins.lbyused>0||dataJson.faOrigins.idefinetype==0||dataJson.faOrigins.lchilds>0){
+					$("#delete").attr("disabled",true);
+				}else{
+					$("#delete").attr("disabled",false);
+				}
+				/*判断操作按钮是否可用*/
+				if(dataJson.faOrigins.ilevel>1){
+					$("#operate").attr("disabled",false);
+				}else{
+					$("#operate").attr("disabled",true);
+				}
+	        }
+		});
+		//设置成不可编辑状态
+		$("#editorState").val(0);
+	}
+	/*重新加载树*/
+	function reloadZtree(treeid){
+		$.ajax({
+			url:"ztree!loadFaOriginsTree",
+			type:"post",
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+	        	var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+				if(treeid==0){
+				  	getFaOriginsTable(node.id);
+					zTree.selectNode(zTree.getNodeByParam("parentid", -1));
+				}else{
+					getFaOriginsTable(treeid);
+					zTree.selectNode(zTree.getNodeByParam("id",treeid));
+				}
+	        }
+		});
+		/*
+		$.post("ztree!loadFaOriginsTree",function(dataJson){
+			var setting = {	
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						beforeClick:beforeClick,
+						onClick: onClick
+					}
+			};
+			var zNodes =[];
+			treeNodes = dataJson.listTree;
+	        for (var i = 0; i<treeNodes.length; i++) {
+	        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	        	zNodes.push(nodeObj);
+	        }
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		  	var node = zTree.getNodes()[0];
+			if(treeid==0){
+			  	getFaOriginsTable(node.id);
+				zTree.selectNode(zTree.getNodeByParam("parentid", -1));
+			}else{
+				getFaOriginsTable(treeid);
+				zTree.selectNode(zTree.getNodeByParam("id",treeid));
+			}
+		},"json").error(function(){
+			jAlert("请求失败！");
+		});
+		*/
+	}
+	//接收弹窗返回值
+	function deliverValue(param){
+		//jAlert("科目编码："+param.selKemuCode+"，科目名称："+param.selKemuName);
+		$("#faOrigins_ssubjectnum").val(param.selKemuCode+","+param.selKemuName);
+		$("#faOrigins_ssubjectnum").attr("ssubjectnum",param.selKemuCode);
+	}
+	$(function(){
+		$.ajax({
+			url:"ztree!loadFaOriginsTree",
+			type:"post",
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+	        	var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+			  	getFaOriginsTable(node.id);
+				zTree.selectNode(node);
+	        }
+		});
+		/*
+		$.post("ztree!loadFaOriginsTree",function(dataJson){
+			var setting = {	
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						beforeClick:beforeClick,
+						onClick: onClick
+					}
+			};
+			var zNodes =[];
+			treeNodes = dataJson.listTree;
+	        for (var i = 0; i<treeNodes.length; i++) {
+	        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	        	zNodes.push(nodeObj);
+	        }
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		  	var node = zTree.getNodes()[0];
+		  	getFaOriginsTable(node.id);
+			zTree.selectNode(node);
+		},"json").error(function(){
+			jAlert("请求失败！");
+		});
+		*/
+		/*
+		*为保存按钮添加点击事件
+		*/
+		$("#save").unbind("click").click(function(){
+			saveFaOrigins();
+		});
+		/*
+		*为取消按钮添加点击事件
+		*/
+		$("#cancel").unbind("click").click(function(){
+			cancelFaOrigins();
+		});
+		/*为刷新按钮添加点击事件*/
+		$("#refresh").unbind("click").click(function(){
+			refreshFaOrigins();
+		});
+		/*
+		*为添加按钮添加点击事件
+		*/
+		$("#add").unbind("click").click(function(){
+			/*编辑状态*/
+			$("#editorState").val(1);
+			/*操作类型*/
+			$("#editorType").val(0);
+			
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			
+			$("#operate").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#delete").attr("disabled","true");
+			
+			$("#faOrigins_sparentname").val($("#faOrigins_sname").val()).attr("disabled","true");
+			$("#faOrigins_sname").val("").removeAttr("disabled");
+			
+			//$("#faOrigins_ssubjectnum").attr("ssubjectnumName")
+			$("#faOrigins_ssubjectnum").removeAttr("disabled");
+			if(typeof($("#faOrigins_ssubjectnum").attr("ssubjectnum"))!="undefined"){
+				$("#faOrigins_ssubjectnum").val($("#faOrigins_ssubjectnum").attr("ssubjectnum")+","+$("#faOrigins_ssubjectnum").attr("ssubjectnumName"));
+			}
+			$("#faOrigins_ssubjectnumButton").removeAttr("disabled");
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+		});
+		/*
+		*为编辑按钮添加点击事件
+		*/
+		$("#operate").unbind("click").click(function(){
+			/*
+			var snum=nodename.split(" ")[0];
+			if(snum.charAt(0)=="1"){
+				if(isExitsTableRef(snum,"FA_ORIGINS","SADDID")){
+					jAlert("该增减方式已经被使用不可修改");
+					return false;
+				}
+			}else if(snum.charAt(0)=="2"){
+				if(isExitsTableRef(snum,"FA_ORIGINS","SDECID")){
+					jAlert("该增减方式已经被使用不可修改");
+					return false;
+				}
+			}
+			*/
+			/*编辑状态*/
+			$("#editorState").val(1);
+			/*操作类型*/
+			$("#editorType").val(1);
+			
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			
+			$("#operate").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#delete").attr("disabled","true");
+			
+			
+			$("#faOrigins_sname").removeAttr("disabled");
+			$("#faOrigins_ssubjectnum").removeAttr("disabled");
+			if(typeof($("#faOrigins_ssubjectnum").attr("ssubjectnum"))!="undefined"){
+				$("#faOrigins_ssubjectnum").val($("#faOrigins_ssubjectnum").attr("ssubjectnum")+","+$("#faOrigins_ssubjectnum").attr("ssubjectnumName"));
+			}
+			$("#faOrigins_ssubjectnumButton").removeAttr("disabled");
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+		});
+		/*
+		*为删除按钮添加点击事件
+		*/
+		$("#delete").unbind("click").click(function(){
+			delteFaOrigins();
+		});
+	})
+	
+	//打开科目参照窗体
+	function openSubjectsreference(){
+		var param = new Object();
+		param.treeSetting=new Object();
+		param.treeSetting.justFinalNode=true;//限定弹出的科目参照窗体只允许选择末级节点
+		window.parent.openWindow('dsign_subjectsreference','fa_setting_plusSubWay',param);
+		
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+             <div class="buttongroup">
+				<div class="group">
+                    <div><input type="button" value="操作"  class="operateIco" id="operate"/></div>
+					<div><input type="button" value="添加"  class="addIco" id="add"/></div>
+					<div><input type="button" value="删除"  class="delIco" id="delete"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" value="保存"  class="saveIco" id="save"/></div>
+					<div><input type="button" value="取消"  class="cancelIco" id="cancel"/></div>
+                    <div><input type="button" value="刷新"  class="refreshIco" id="refresh"/></div>
+				</div>
+			</div>
+            
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                	<div class="zTreeDemoBackground left">
+                         <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right;">
+                	<div type="tab" style="float:left;">
+		                <div>
+			               <div>列表视图</div>
+			               <div>单张视图</div>
+		                </div>
+		                <div style="width:388px;height:316px;">
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="datatable_1" class="table_style" style="width:420px;margin:-4px;">
+						        <thead>
+							       <tr id="datatable_1_header" style="height:16px;">
+								      <!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								        <td style="width:150px;">增减方式名称</td>
+								        <td style="width:150px;">对应入账科目</td>
+							       </tr>
+						        </thead>
+						        <tbody id="datatable_1_bodyer">
+						        </tbody>
+					          </table>
+                           </div>
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="content_zhou">
+                               	  
+                                  <tr>
+                                  	<td>上级名称：</td>
+                                    <td><input id="faOrigins_sparentname" class="normalInput" disabled /><input type="hidden" id="faOrigins_sparentid" class="normalInput" disabled /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>增减方式名称：</td>
+                                    <td><input id="faOrigins_sname" class="normalInput" disabled /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>对应入账科目：</td>
+                                    <td><input id="faOrigins_ssubjectnum"  class="normalInput1" onfocus="dofocustoenter('code',this,'','','','')"/><input id="faOrigins_ssubjectnumButton" class="finder" type="button" onclick="openSubjectsreference()"/></td>
+                                  </tr>
+                               </table>
+                           </div>
+		                </div>
+	                </div>
+                </div>
+            </div>
+            
+            
+		</div>
+	</div>
+	<!-- 使用情况id -->
+	<input type="hidden" id="faOriginsId"/>
+	<!-- 根据editorType来判断增加还是修改 0:是增加。1:是修改-->
+	<input type="hidden" id="editorType" value="0"/>
+	<!-- 根据editorState来判断编辑状态 0:不可编辑。1:可编辑-->
+	<input type="hidden" id="editorState" value="0"/>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>业务应收账龄分析</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<script type="text/javascript">
+
+//程序入口
+$(document).ready(function(){
+	
+	//表格第一列背景变灰
+	$("#datatable_1_bodyer tr").find("td:eq(0)").css("background-color","#ccffcc").css("border-top","1px solid #fff").css("border-left","1px solid #fff");
+	$("#datatable_1_bodyer tr").find("td:eq(1)").css("text-align","right");
+	$("#datatable_1_bodyer tr").find("td:eq(2)").css("text-align","right");
+	
+	
+	
+});
+
+
+
+//确定按钮
+function btnConfirm(){
+
+	var param = new Object();
+	window.parent.closeWindow('sa_stists_ywzlfx_tj');
+	window.parent.openWindow("sa_stists_ywzlfxb","sa_stists_ywzlfx_tj",param);
+	
+}
+
+
+</script>
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:442px;height:186px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:422px;height:166px;margin-top:10px;margin-left:8px;">
+			
+			
+			
+			
+			<div class="border_outside" style="width:216px;height:166px;float:left;">
+				<div class="border_inside" style="width:214px;height:164px;">
+				
+					<table style="margin-left:3px;">
+						<tr>
+							<td>分析单据</td>
+							<td>
+								<select style="width:146px;">
+									<option>发货单</option>
+									<option>发票</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>分析对象</td>
+							<td>
+								<select style="width:146px;">
+									<option>客户</option>
+									<option>部门</option>
+									<option>业务员</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td align="center">〓</td>
+							<td><input id="customerClass1" type="text" style="width:122px;"/><input type="button" class="finder" id="customerClass1"/></td>
+						</tr>
+						<tr>
+							<td class="v_a_m"><input type="checkbox" id="cb1" onclick=""/><label for="cb1">范围</label></td>
+							<td><input id="customerClass2" type="text" style="width:122px;"/><input type="button" class="finder" id="customerClass2"/></td>
+						</tr>
+						<tr>
+							<td>分析日期</td>
+							<td>
+							
+								<select style="width:146px;">
+									<option>单据日期</option>
+									<option>到期日</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>截止日期</td>
+							<td>
+							<input id="endDate" type="text" style="width:122px;" onclick="WdatePicker()"/><input type="button" class="finder" id="cb1queryboxfinder" onClick="WdatePicker({el:'endDate'})"/>
+						
+						</tr>
+					</table>
+					
+					
+				
+				</div>
+			</div>
+	
+			
+			
+			<div style="width:196px;height:166px;float:left;margin-left:6px;">
+				
+				<div style="width:192px;height:136px;border:2px inset #ccc;">
+					
+					<table id="datatable_1" border=1 class="table_style" style="width:156px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<td style="width:30px;">序号</td>
+								<td style="width:80px;">起止天数</td>
+								<td style="width:46px;">总天数</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+							<tr>
+								<td>01</td>
+								<td>1-30天</td>
+								<td>30</td>
+							</tr>
+							<tr>
+								<td>02</td>
+								<td>31-60天</td>
+								<td>60</td>
+							</tr>
+							<tr>
+								<td>03</td>
+								<td>61-90</td>
+								<td>90</td>
+							</tr>
+							<tr>
+								<td>04</td>
+								<td>91-120</td>
+								<td>120</td>
+							</tr>
+							<tr>
+								<td>05</td>
+								<td>121-365</td>
+								<td>365</td>
+							</tr>
+							<tr>
+								<td>06</td>
+								<td>365天以上</td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+					
+					
+					
+				</div>
+				
+				
+				<div style="width:192px;height:26px;margin-top:4px;">
+					
+					<input type="button" value="账龄区间设置" onclick=""/>
+					
+					<input type="button" value="确定" onclick="btnConfirm();"/>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('sa_stists_ywzlfx_tj');"/>
+			
+				</div>
+				
+				
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

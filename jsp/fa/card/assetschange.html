@@ -1,0 +1,1791 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>固定资产变动单</title>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="js/originalValueAdd_gdjcbdd.js"></script>
+	<script type="text/javascript" src="js/entry.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+		.tabpanel{background-color:#fff;padding:0px;width:604px;height:314px;margin-top:-3px;margin-left:-4px;border:2px inset #ccc;border-top:none;text-align:center;}
+		.panelcontent {width:570px;margin:auto;text-align:left;}
+		.fa_card_column_1 {width:92px;height:14px;margin-top:4px;float:left;text-align:right;}
+		.fa_card_column_2 {width:94px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		.fa_card_column_3 {width:286px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		.fa_card_column_4 {width:474px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		.fa_card_column_5 {width:185px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		.cardTable {border-collapse: collapse;cursor:default;border:1px solid #000;width:567px}
+		.cardTable tr{height:20px;}
+		.cardTable thead td{border:1px solid #000;text-align:center;}
+		.cardTable tbody td{border:1px solid #000;text-align:left;padding:0px;}
+	</style>
+    <script type="text/javascript">
+		/*单据编码*/
+		var snum;
+		/*卡片编号*/
+		var scardnum;
+		/*业务号*/
+		var loptid;
+		/*凭证类别*/
+		var szwvouchertype;
+		/*凭证号*/
+		var szwvouchernum;
+		/*变动前卡片业务号*/
+		var lpreoptid;
+		/*变动单类型*/
+		var ivouchertype;
+		/*卡片项目编号*/
+		var sitemid;
+		/*变动单名称*/
+		var svouchername;
+		/*变动单英文名称*/
+		var svoucherengname;
+		/*变动前内容*/
+		var sbeforevoucher;
+		/*变动后内容*/
+		var saftervoucher;
+		/*变动原因*/
+		var memreason;
+		/*变动日期*/
+		var dtransdate;
+		/*变动期间*/
+		var itransperiod;
+		/*经手人*/
+		var soperator;
+		/*币种*/
+		var scurrency;
+		/*汇率*/
+		var dblexchangerate;
+		/*变动后存放地点*/
+		var ssiteafter;
+		/*锁定计算机名称*/
+		var slockedby;
+		//净残值率
+		var dblbvrate;
+		
+		/*开始日期*/
+		var startdate;
+		/*固定资产名称*/
+		var fixedAssetsName;
+		/*规格号*/
+		var normsNum;
+		/*增加金额*/
+		var addmoney;
+		/*变动前净残值*/
+		var beforechangeresidual;
+		/*变动后净残值*/
+		var afterchangeresidual;
+    	/*删除操作*/
+    	function deleteFaVouchers(){
+    		//1.不在本期间的不能删除
+    		//2.不是最大单号的不能删除
+    		var faVouchersType = $("#typesel >option:selected").val();
+    		faVouchersType = faVouchersType-0;
+	   		switch(faVouchersType){
+				case 1:
+					snum = getdatavalue("add_bddbh");
+					if(deletecheck(snum)){
+						deleteOriginalValueAdd();
+					}
+					              break;
+				case 2:
+					snum = getdatavalue("reduce_bddbh");
+					if(deletecheck(snum)){
+						deleteOriginalValueReduce();
+					}
+					              break;
+				case 3:
+					deleteDepartmentTransfer();
+					              break;
+				case 4:
+					deleteUsedConditionChange();
+				                  break;
+				}
+    	}
+    	//删除时检查是否允许删除
+    	function deletecheck(snum){
+    		var deleteflag = true;
+			 $.ajax({
+				    url: "faZwvouchers!checkdeletechangebills",
+					type: 'post',
+					data: {coutnoId:snum,coutsign:"变动单"},
+	   			    async:false,
+					dataType: "json",
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						//如果已经生成凭证则不让删除(先删除凭证在删除变动单)
+						if(data.flag){
+							jAlert("已经生成凭证,请先删除凭证然后再删除变动单.","提示信息",function(){
+								deleteflag=false;
+							});
+						}
+					}
+			 });
+    		return deleteflag;
+    	}
+    	/*删除原值增加*/
+    	function deleteOriginalValueAdd(){
+			jConfirm('确定删除当前记录吗？','确认对话框',function(confirmflag) {
+				if(confirmflag){
+	    			var snum = getdatavalue("add_bddbh");
+		    		$.post("faVouchers!deleteFaVouchers",{faVouchersid:$("#faVouchersId").val(),snum:snum},function(jsondata){
+		    			if(jsondata.successFlag==1){
+		    				jAlert("删除成功!","提示信息",function(){
+			    				getmaxFaVouchers();
+		    				});
+		    			}else{
+		    				jAlert("操作失败!");
+		    			}
+		    		},"json").error(function(){
+						jAlert("请求失败！");
+					});
+				}
+			});
+    	}
+    	/*删除原值减少*/
+    	function deleteOriginalValueReduce(){
+			jConfirm('确定删除当前记录吗？','确认对话框',function(confirmflag) {
+				if(confirmflag){
+	    			var snum = getdatavalue("reduce_bddbh");
+		    		$.post("faVouchers!deleteFaVouchers",{faVouchersid:$("#faVouchersId").val(),snum:snum},function(jsondata){
+		    			if(jsondata.successFlag==1){
+		    				jAlert("删除成功!","提示信息",function(){
+			    				getmaxFaVouchers();
+		    				});
+		    			}else{
+		    				jAlert("操作失败!");
+		    			}
+		    		},"json").error(function(){
+						jAlert("请求失败！");
+					});
+				}
+			});
+    	}
+    	/*删除部门转移*/
+    	function deleteDepartmentTransfer(){
+			jConfirm('确定删除当前记录吗？','确认对话框',function(confirmflag) {
+				if(confirmflag){
+		   			var snum = getdatavalue("dept_bddbh");
+		    		$.post("faVouchers!deleteFaVouchers",{faVouchersid:$("#faVouchersId").val(),snum:snum},function(jsondata){
+		    			if(jsondata.successFlag==1){
+		    				jAlert("删除成功!","提示信息",function(){
+			    				getmaxFaVouchers();
+		    				});
+		    			}else{
+		    				jAlert("操作失败!");
+		    			}
+		    		},"json").error(function(){
+						jAlert("请求失败！");
+					});
+				}
+			});
+    	}
+    	/*删除使用状况调整*/
+    	function deleteUsedConditionChange(){
+			jConfirm('确定删除当前记录吗？','确认对话框',function(confirmflag) {
+				if(confirmflag){
+	    			var snum = getdatavalue("usestate_bddbh");
+		    		$.post("faVouchers!deleteFaVouchers",{faVouchersid:$("#faVouchersId").val(),snum:snum},function(jsondata){
+		    			if(jsondata.successFlag==1){
+		    				jAlert("删除成功!","提示信息",function(){
+			    				getmaxFaVouchers();
+		    				});
+		    			}else{
+		    				jAlert("操作失败!");
+		    			}
+		    		},"json").error(function(){
+						jAlert("请求失败！");
+					});
+				}
+			});
+    	}
+    	//保存时检查是否符合保存条件
+    	function checkSaveFaVouchers(){
+    		var faVouchersType = $("#typesel >option:selected").val();
+    		faVouchersType = faVouchersType-0;
+    		var flag = false;
+	   		switch(faVouchersType){
+				case 1:
+					var changedate = getdatavalue("add_rq").split("-");
+					var changeyear = changedate[0];
+					var changemonth = changedate[1];
+					var startdate = getdatavalue("add_kssyrq").split("-");
+					var startyear = startdate[0];
+					var startmonth = startdate[1];
+					if(isNaN(getdatavalue("add_zjje"))){
+						jAlert("增加金额必须是数字!","提示信息",function(){
+							$("#add_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("add_bdhyz")=="0.00"){
+						jAlert("变动后原值不能为空!","提示信息",function(){
+							$("#add_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("add_bdhyz")*1==getdatavalue("add_bdcyz")*1){
+						jAlert("变动后内容不能和变动前内容相同!","提示信息",function(){
+							$("#add_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("add_bdyy")==""){
+						jAlert("变动原因不能为空!","提示信息",function(){
+							$("#add_bdyy")[0].click();
+	    				});
+					}else if(changeyear==startyear&&changemonth==startmonth){
+						jAlert("当月新增的资产不允许做此种变动业务!","提示信息",function(){
+							$("#add_kpbh")[0].click();
+	    				});
+					}else{
+						flag = true;
+					}
+					              break;
+				case 2:
+					var changedate = getdatavalue("reduce_rq").split("-");
+					var changeyear = changedate[0];
+					var changemonth = changedate[1];
+					var startdate = getdatavalue("reduce_kssyrq").split("-");
+					var startyear = startdate[0];
+					var startmonth = startdate[1];
+					if(isNaN(getdatavalue("reduce_zjje"))){
+						jAlert("减少金额必须是数字!","提示信息",function(){
+							$("#reduce_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("reduce_bdhyz")=="0.00"){
+						jAlert("变动后原值不能为空!","提示信息",function(){
+							$("#reduce_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("reduce_bdhyz")*1==getdatavalue("reduce_bdcyz")*1){
+						jAlert("变动后内容不能和变动前内容相同!","提示信息",function(){
+							$("#reduce_zjje")[0].click();
+	    				});
+					}else if(getdatavalue("reduce_bdyy")==""){
+						jAlert("变动原因不能为空!","提示信息",function(){
+							$("#reduce_bdyy")[0].click();
+	    				});
+					}else if(changeyear==startyear&&changemonth==startmonth){
+						jAlert("当月新增的资产不允许做此种变动业务!","提示信息",function(){
+							$("#reduce_kpbh")[0].click();
+	    				});
+					}else{
+						flag = true;
+					}
+					              break;
+				case 3:
+					var changedate = getdatavalue("dept_rq").split("-");
+					var changeyear = changedate[0];
+					var changemonth = changedate[1];
+					var startdate = getdatavalue("dept_kssyrq").split("-");
+					var startyear = startdate[0];
+					var startmonth = startdate[1];
+					if(getdatavalue("dept_bdhbm")==""){
+						jAlert("变动后内容不能为空!","提示信息",function(){
+							$("#dept_bdhbm")[0].click();
+	    				});
+					}else if(getdatavalue("dept_bdqbm")==getdatavalue("dept_bdhbm")){
+						jAlert("变动后内容不能和变动前内容相同!","提示信息",function(){
+							$("#dept_bdhbm")[0].click();
+	    				});
+					}else if(getdatavalue("dept_bdyy")==""){
+						jAlert("变动原因不能为空!","提示信息",function(){
+							$("#dept_bdyy")[0].click();
+	    				});
+					}else if(changeyear==startyear&&changemonth==startmonth){
+						jAlert("当月新增的资产不允许做此种变动业务!","提示信息",function(){
+							$("#dept_kpbh")[0].click();
+	    				});
+					}else{
+						flag = true;
+					}
+					              break;
+				case 4:
+					var changedate = getdatavalue("usestate_rq").split("-");
+					var changeyear = changedate[0];
+					var changemonth = changedate[1];
+					var startdate = getdatavalue("usestate_kssyrq").split("-");
+					var startyear = startdate[0];
+					var startmonth = startdate[1];
+					if(getdatavalue("usestate_bdhsyzk")==""){
+						jAlert("变动后内容不能为空!","提示信息",function(){
+							$("#usestate_bdhsyzk")[0].click();
+	    				});
+					}else if(getdatavalue("usestate_bdqsyzk")==getdatavalue("usestate_bdhsyzk")){
+						jAlert("变动后内容不能和变动前内容相同!","提示信息",function(){
+							$("#usestate_bdhsyzk")[0].click();
+	    				});
+					}else if(getdatavalue("usestate_bdyy")==""){
+						jAlert("变动原因不能为空!","提示信息",function(){
+							$("#usestate_bdyy")[0].click();
+	    				});
+					}else if(changeyear==startyear&&changemonth==startmonth){
+						jAlert("当月新增的资产不允许做此种变动业务!","提示信息",function(){
+							$("#usestate_kpbh")[0].click();
+	    				});
+					}else{
+						flag = true;
+					}
+				                  break;
+			}
+	   		return flag;
+    	}
+    	/*保存操作*/
+    	function saveFaVouchers(){
+    		var faVouchersType = $("#typesel >option:selected").val();
+    		faVouchersType = faVouchersType-0;
+    		//保存检查
+    		var flag = checkSaveFaVouchers();
+    		if(!flag){
+    			return false;
+    		}
+	   		switch(faVouchersType){
+				case 1:
+					saveOriginalValueAdd();
+					              break;
+				case 2:
+					saveOriginalValueReduce();
+					              break;
+				case 3:
+					saveDepartmentTransfer();
+					              break;
+				case 4:
+					saveUsedConditionChange();
+				                  break;
+			}
+    	}
+    	/*获取网页上div或着input标签中的值*/
+    	function getdatavalue(id){
+    		var value;
+    		if($("#"+id+" :input").length>0){
+    			value = $("#"+id+" >input:last").val();
+    		}else{
+    			value= $("#"+id).html();
+    		}
+    		
+    		if(value!=""){
+    			//ie8下没有trim方法
+    			//value = value.trim();
+    			//value = value.replace(/(^\s*)|(\s*$)/g, "");
+    			value =$.trim(value);
+    		}
+    		return value;
+    	}
+    	//保存成功后提示
+    	function sucssSave(){
+			jAlert("数据成功保存！","提示信息",function(){
+				//获取最大编号的变动单
+				getmaxFaVouchers();
+			});
+    	}
+    	//判断是否立即制单
+    	function isCreateBills(snum){
+			$.ajax({
+	   		    url: "faVouchers!isCreateBills",
+	   		    type: 'post',
+	   		    dataType: "json",
+	   		    async:false,
+	   		    error:function(){
+	   		    	jAlert("请求失败!");
+	   		    },
+	   		    success: function(data){
+	   		    	if(data.createBillsflag){
+						var coutnoIds=new Array();
+						//传递业务号和业务类型
+						coutnoIds.push({index:snum,coutsign:"变动单"});
+						window.parent.openWindow('fa_operate_dsign','fa_card_assetschange',{coutnoIds:coutnoIds});
+	   		    	}else{
+	   		    		sucssSave();
+	   		    	}
+	   		    }
+			});
+    	}
+    	/*保存原值增加*/
+    	function saveOriginalValueAdd(){
+    		/*变动单编号*/
+    		snum = getdatavalue("add_bddbh");
+    		/*变动单日期*/
+    		dtransdate = getdatavalue("add_rq");
+    		/*变动单类型*/
+    		ivouchertype = $("#typesel >option:selected").val();
+    		/*变动单名称*/
+    		svouchername = $("#typesel >option:selected").text();
+    		/*变动单英文名称*/
+    		svoucherengname = $("#typesel >option:selected").text();
+    		/*卡片编号*/
+    		scardnum = getdatavalue("add_kpbh");
+    		/*固定资产编号*/
+    		sitemid= getdatavalue("add_gdzcbh");
+    		/*开始使用日期*/
+    		startdate= getdatavalue("add_kssyrq");
+    		/*固定资产名称*/
+    		fixedAssetsName= getdatavalue("add_gdzcmc");
+    		/*规格号*/
+    		normsNum= getdatavalue("add_ggxh");
+    		/*增加金额*/
+    		addmoney= getdatavalue("add_zjje");
+    		/*币种*/
+    		scurrency = getdatavalue("add_bz");
+    		/*汇率*/
+    		dblexchangerate = getdatavalue("add_hl");
+    		/*变动的净残值率 中间计算的值*/ 
+    		dblbvrate= getdatavalue("add_jczl");
+    		dblbvrate = dblbvrate.substring(0,dblbvrate.length-1)/100;
+    		/*变动的净残值*/
+    		//= getdatavalue("add_jcz");
+    		/*变动前原值*/
+    		sbeforevoucher = getdatavalue("add_bdcyz");
+    		/*变动后原值*/
+    		saftervoucher = getdatavalue("add_bdhyz");
+    		/*变动前净残值*/
+    		beforechangeresidual= getdatavalue("add_bdcjcz");
+    		/*变动后净残值*/
+    		afterchangeresidual= getdatavalue("add_bdhjcz");
+    		/*变动原因*/
+    		memreason = getdatavalue("add_bdyy");
+    		/*经手人*/
+    		soperator = getdatavalue("add_lrr");
+    		//卡片id
+    		var cardid = $("#cardId").val();
+    		//卡片业务类型号
+    		loptid = 4;
+    		/*提交数据*/
+    		$.post("faVouchers!saveFaVouchers",{cardid:cardid,loptid:loptid,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,sbeforevoucher:sbeforevoucher,saftervoucher:saftervoucher,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,fixedAssetsName:fixedAssetsName,normsNum:normsNum,addmoney:addmoney,beforechangeresidual:beforechangeresidual,afterchangeresidual:afterchangeresidual,soperator:soperator,scurrency:scurrency,dblbvrate:dblbvrate,dblexchangerate:dblexchangerate},function(jsondata){
+    			isCreateBills(snum);
+    		},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    	}
+    	
+    	/*保存原值减少*/
+    	function saveOriginalValueReduce(){
+    		/*变动单编号*/
+    		snum = getdatavalue("reduce_bddbh");
+    		/*变动单日期*/
+    		dtransdate = getdatavalue("reduce_rq");
+    		/*变动单类型*/
+    		ivouchertype = $("#typesel >option:selected").val();
+    		/*变动单名称*/
+    		svouchername = $("#typesel >option:selected").text();
+    		/*变动单英文名称*/
+    		svoucherengname = $("#typesel >option:selected").text();
+    		/*卡片编号*/
+    		scardnum = getdatavalue("reduce_kpbh");
+    		/*固定资产编号*/
+    		sitemid= getdatavalue("reduce_gdzcbh");
+    		/*开始使用日期*/
+    		startdate= getdatavalue("reduce_kssyrq");
+    		/*固定资产名称*/
+    		fixedAssetsName= getdatavalue("reduce_gdzcmc");
+    		/*规格号*/
+    		normsNum= getdatavalue("reduce_ggxh");
+    		/*减少金额*/
+    		addmoney= getdatavalue("reduce_zjje");
+    		/*币种*/
+    		scurrency = getdatavalue("reduce_bz");
+    		/*汇率*/
+    		dblexchangerate = getdatavalue("reduce_hl");
+    		/*变动前原值*/
+    		sbeforevoucher = getdatavalue("reduce_bdcyz");
+    		/*变动后原值*/
+    		saftervoucher = getdatavalue("reduce_bdhyz");
+    		/*变动前净残值*/
+    		beforechangeresidual= getdatavalue("reduce_bdcjcz");
+    		/*变动后净残值*/
+    		afterchangeresidual= getdatavalue("reduce_bdhjcz");
+    		/*变动的净残值率 中间计算的值*/ 
+    		dblbvrate= getdatavalue("reduce_jczl");
+    		dblbvrate = dblbvrate.substring(0,dblbvrate.length-1)/100;
+    		/*变动原因*/
+    		memreason = getdatavalue("reduce_bdyy");
+    		/*经手人*/
+    		soperator = getdatavalue("reduce_lrr");
+    		//卡片id
+    		var cardid = $("#cardId").val();
+    		//卡片业务类型号
+    		loptid = 5;
+    		/*提交数据*/
+    		$.post("faVouchers!saveFaVouchers",{cardid:cardid,loptid:loptid,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,sbeforevoucher:sbeforevoucher,saftervoucher:saftervoucher,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,fixedAssetsName:fixedAssetsName,normsNum:normsNum,addmoney:addmoney,beforechangeresidual:beforechangeresidual,afterchangeresidual:afterchangeresidual,soperator:soperator,scurrency:scurrency,dblbvrate:dblbvrate,dblexchangerate:dblexchangerate},function(jsondata){
+    			isCreateBills(snum);
+    		},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    	}
+    	/*保存部门转移*/
+    	function saveDepartmentTransfer(){
+    		/*变动单编号*/
+    		snum = getdatavalue("dept_bddbh");
+    		/*变动单日期*/
+    		dtransdate = getdatavalue("dept_rq");
+    		/*变动单类型*/
+    		ivouchertype = $("#typesel >option:selected").val();
+    		/*变动单名称*/
+    		svouchername = $("#typesel >option:selected").text();
+    		/*变动单英文名称*/
+    		svoucherengname = $("#typesel >option:selected").text();
+    		/*卡片编号*/
+    		scardnum = getdatavalue("dept_kpbh");
+    		/*固定资产编号*/
+    		sitemid= getdatavalue("dept_gdzcbh");
+    		/*开始使用日期*/
+    		startdate= getdatavalue("dept_kssyrq");
+    		/*固定资产名称*/
+    		fixedAssetsName= getdatavalue("dept_gdzcmc");
+    		/*变动原因*/
+    		memreason = getdatavalue("dept_bdyy");
+    		/*经手人*/
+    		soperator = getdatavalue("dept_lrr");
+    		
+    		/*变动前部门编码*/
+    		var befordeptnum = $("#dept_bdqbm").attr("code");
+    		/*变动后部门编码*/
+    		var befordeptname =getdatavalue("dept_bdqbm");
+    		/*变动后部门名称*/
+    		var afterdeptname =getdatavalue("dept_bdhbm");
+    		/*变动后部门编码*/
+    		var afterdeptnum = $("#dept_bdhbm").attr("code");
+    		/*新存放地点*/
+    		ssiteafter = getdatavalue("dept_xcfdd");
+    		//卡片id
+    		var cardid = $("#cardId").val();
+    		/*提交数据*/
+    		$.post("faVouchers!saveDeptFaVouchers",{cardid:cardid,ssiteafter:ssiteafter,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,befordeptnum:befordeptnum,befordeptname:befordeptname,afterdeptname:afterdeptname,afterdeptnum:afterdeptnum,fixedAssetsName:fixedAssetsName,soperator:soperator},function(jsondata){
+    			var str = "";
+    			str+="数据成功保存!";
+    			str+="<br> 部门已改变,请检查资产对应折旧科目是否正确!";
+    			jAlert(str,"提示信息",function(){
+    				//获取最大编号的变动单
+    				getmaxFaVouchers()
+    			});
+    		},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    		
+    	}
+    	/*保存使用状况调整*/
+    	function saveUsedConditionChange(){
+    		/*变动单编号*/
+    		snum = getdatavalue("usestate_bddbh");
+    		/*变动单日期*/
+    		dtransdate = getdatavalue("usestate_rq");
+    		/*变动单类型*/
+    		ivouchertype = $("#typesel >option:selected").val();
+    		/*变动单名称*/
+    		svouchername = $("#typesel >option:selected").text();
+    		/*变动单英文名称*/
+    		svoucherengname = $("#typesel >option:selected").text();
+    		/*卡片编号*/
+    		scardnum = getdatavalue("usestate_kpbh");
+    		/*固定资产编号*/
+    		sitemid= getdatavalue("usestate_gdzcbh");
+    		/*开始使用日期*/
+    		startdate= getdatavalue("usestate_kssyrq");
+    		/*固定资产名称*/
+    		fixedAssetsName= getdatavalue("usestate_gdzcmc");
+    		/*变动原因*/
+    		memreason = getdatavalue("usestate_bdyy");
+    		/*经手人*/
+    		soperator = getdatavalue("usestate_lrr");
+    		
+    		/*变动前使用状况编码*/
+    		var beforusestatenum = $("#usestate_bdqsyzk").attr("code")+","+getdatavalue("usestate_bdqsyzk");
+    		/*变动后使用状况名称*/
+    		var afterusestatename =getdatavalue("usestate_bdhsyzk");
+    		/*变动后使用状况编码*/
+    		var afterusestatenum = $("#usestate_bdhsyzk").attr("code")+","+afterusestatename;
+    		//卡片id
+    		var cardid = $("#cardId").val();
+    		/*提交数据*/
+    		$.post("faVouchers!saveUsestateFaVouchers",{cardid:cardid,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,beforusestatenum:beforusestatenum,afterusestatename:afterusestatename,afterusestatenum:afterusestatenum,fixedAssetsName:fixedAssetsName,soperator:soperator},function(jsondata){
+    			jAlert("保存成功！","提示信息",function(){
+    				//获取最大编号的变动单
+    				getmaxFaVouchers();
+    			});
+    		},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    		
+    	}
+    	/*取消操作的方法*/
+    	function cancelFaVouchers(){
+			jConfirm('是否取消本次操作？','确认对话框',function(confirmflag) {
+				if(confirmflag){
+					var ivouchertype = $("#typesel >option:selected").val();
+		    		ivouchertype = ivouchertype-0;
+			   		switch(ivouchertype){
+					case 0:
+						jAlert("发生错误");
+						break;
+					case 1:
+						if($("#add_bddbh").html()=="00001"||$("#add_bddbh >input").val()=="00001"){
+							window.parent.closeWindow("fa_card_assetschange");
+						}else{
+							//获取最大编号的变动单
+							getmaxFaVouchers();				
+						}
+						//启用变动单编号的编辑功能
+						$("#add_bddbh").attr("editstate","0");
+						              break;
+					case 2:
+						if($("#reduce_bddbh").html()=="00001"||$("#reduce_bddbh >input").val()=="00001"){
+							window.parent.closeWindow("fa_card_assetschange");
+						}else{
+							//获取最大编号的变动单
+							getmaxFaVouchers();				
+						}
+						//启用变动单编号的编辑功能
+						$("#reduce_bddbh").attr("editstate","0");
+						              break;
+					case 3:
+						if($("#dept_bddbh").html()=="00001"||$("#dept_bddbh >input").val()=="00001"){
+							window.parent.closeWindow("fa_card_assetschange");
+						}else{
+							//获取最大编号的变动单
+							getmaxFaVouchers();				
+						}
+						//启用变动单编号的编辑功能
+						$("#dept_bddbh").attr("editstate","0");
+						              break;
+					case 4:
+						if($("#usestate_bddbh").html()=="00001"||$("#usestate_bddbh >input").val()=="00001"){
+							window.parent.closeWindow("fa_card_assetschange");
+						}else{
+							//获取最大编号的变动单
+							getmaxFaVouchers();				
+						}
+						//启用变动单编号的编辑功能
+						$("#usestate_bddbh").attr("editstate","0");
+					                  break;
+					}
+				}
+			});
+    	}
+    	//设置成非编辑状态
+    	function setEitorFalse(){
+			$("#save").attr("disabled","true");
+			$("#cancel").attr("disabled","true");
+			$("#typesel").attr("disabled","true");
+			
+			var iscanoprate = $("#iscanoprate").val();
+			//判断添加,删除按钮是否可用
+			if(iscanoprate=="true"){
+				$("#add").removeAttr("disabled");
+				$("#delete").removeAttr("disabled");	
+			}else{
+				$("#add").attr("disabled",true);
+				$("#delete").attr("disabled",true);
+			}
+			setEitorState(false);
+    	}
+    	/*设置编辑状态 eitorState=true:可编辑，false:不可编辑*/
+    	function setEitorState(eitorState){
+    		var ivouchertype = $("#typesel >option:selected").val();
+    		ivouchertype = ivouchertype-0;
+	   		switch(ivouchertype){
+			case 0:
+				jAlert("发生错误");
+				break;
+			case 1:
+				if(eitorState){
+					//=======可编辑状态=======
+					/*变动单编码*/
+					$("#add_bddbh").attr("editstate",1);
+		    		/*卡片编号*/
+		    		$("#add_kpbh").attr("editstate",1);
+		    		/*变动日期*/
+		    		$("#add_rq").attr("editstate",1);
+		    		/*固定资产编号*/
+		    		$("#add_gdzcbh").attr("editstate",1);
+		    		/*开始使用日期*/
+		    		$("#add_kssyrq").attr("editstate",1);
+		    		/*固定资产名称*/
+		    		$("#add_gdzcmc").attr("editstate",1);
+		    		/*规格号*/
+		    		$("#add_ggxh").attr("editstate",1);
+		    		/*币种*/
+		    		$("#add_bz").attr("editstate",1);
+		    		/*汇率*/
+		    		$("#add_hl").attr("editstate",1);
+		    		/*变动前原值*/
+		    		$("#add_bdcyz").attr("editstate",1);
+		    		/*变动后原值*/
+		    		$("#add_bdhyz").attr("editstate",1);
+		    		/*变动前净残值*/
+		    		$("#add_bdcjcz").attr("editstate",1);
+		    		/*变动后净残值*/
+		    		$("#add_bdhjcz").attr("editstate",1);
+		    		/*经手人*/
+		    		$("#add_lrr").attr("editstate",1);
+		    		/*判断是否可编辑*/
+		    		if(getdatavalue("add_kpbh")!=""&&getdatavalue("add_kpbh")!=null){
+			    		/*增加金额*/
+			    		$("#add_zjje").attr("editstate",0);
+			    		/*变动的净残值率 中间计算的值*/ 
+			    		$("#add_jczl").attr("editstate",0);
+			    		/*变动的净残值*/
+			    		$("#add_jcz").attr("editstate",0);
+		    			/*变动原因*/
+			    		$("#add_bdyy").attr("editstate",0);
+		    		}else{
+		    			/*增加金额*/
+			    		$("#add_zjje").attr("editstate",1);
+			    		/*变动的净残值率 中间计算的值*/ 
+			    		$("#add_jczl").attr("editstate",1);
+			    		/*变动的净残值*/
+			    		$("#add_jcz").attr("editstate",1);
+		    			/*变动原因*/
+			    		$("#add_bdyy").attr("editstate",1);
+		    		}
+				}else{
+					/*变动单编码*/
+					$("#add_bddbh").attr("editstate",0);
+		    		/*卡片编号*/
+		    		$("#add_kpbh").attr("editstate",2);
+		    		/*变动日期*/
+		    		$("#add_rq").attr("editstate",2);
+		    		/*固定资产编号*/
+		    		$("#add_gdzcbh").attr("editstate",2);
+		    		/*开始使用日期*/
+		    		$("#add_kssyrq").attr("editstate",2);
+		    		/*固定资产名称*/
+		    		$("#add_gdzcmc").attr("editstate",2);
+		    		/*规格号*/
+		    		$("#add_ggxh").attr("editstate",2);
+		    		/*增加金额*/
+		    		$("#add_zjje").attr("editstate",2);
+		    		/*币种*/
+		    		$("#add_bz").attr("editstate",2);
+		    		/*汇率*/
+		    		$("#add_hl").attr("editstate",2);
+		    		/*变动的净残值率 中间计算的值*/ 
+		    		$("#add_jczl").attr("editstate",2);
+		    		/*变动的净残值*/
+		    		$("#add_jcz").attr("editstate",2);
+		    		/*变动前原值*/
+		    		$("#add_bdcyz").attr("editstate",2);
+		    		/*变动后原值*/
+		    		$("#add_bdhyz").attr("editstate",2);
+		    		/*变动前净残值*/
+		    		$("#add_bdcjcz").attr("editstate",2);
+		    		/*变动后净残值*/
+		    		$("#add_bdhjcz").attr("editstate",2);
+		    		/*变动原因*/
+		    		$("#add_bdyy").attr("editstate",2);
+		    		/*经手人*/
+		    		$("#add_lrr").attr("editstate",2);
+				}
+				              break;
+			case 2:
+				if(eitorState){
+					//=======可编辑状态=======
+					/*变动单编码*/
+					$("#reduce_bddbh").attr("editstate",1);
+		    		/*卡片编号*/
+		    		$("#reduce_kpbh").attr("editstate",1);
+		    		/*变动日期*/
+		    		$("#reduce_rq").attr("editstate",1);
+		    		/*固定资产编号*/
+		    		$("#reduce_gdzcbh").attr("editstate",1);
+		    		/*开始使用日期*/
+		    		$("#reduce_kssyrq").attr("editstate",1);
+		    		/*固定资产名称*/
+		    		$("#reduce_gdzcmc").attr("editstate",1);
+		    		/*规格号*/
+		    		$("#reduce_ggxh").attr("editstate",1);
+		    		/*币种*/
+		    		$("#reduce_bz").attr("editstate",1);
+		    		/*汇率*/
+		    		$("#reduce_hl").attr("editstate",1);
+		    		/*变动前原值*/
+		    		$("#reduce_bdcyz").attr("editstate",1);
+		    		/*变动后原值*/
+		    		$("#reduce_bdhyz").attr("editstate",1);
+		    		/*变动前净残值*/
+		    		$("#reduce_bdcjcz").attr("editstate",1);
+		    		/*变动后净残值*/
+		    		$("#reduce_bdhjcz").attr("editstate",1);
+		    		/*经手人*/
+		    		$("#reduce_lrr").attr("editstate",1);
+		    		/*判断是否可编辑*/
+		    		if(getdatavalue("reduce_kpbh")!=""&&getdatavalue("reduce_kpbh")!=null){
+			    		/*增加金额*/
+			    		$("#reduce_zjje").attr("editstate",0);
+			    		/*变动的净残值率 中间计算的值*/ 
+			    		$("#reduce_jczl").attr("editstate",0);
+			    		/*变动的净残值*/
+			    		$("#reduce_jcz").attr("editstate",0);
+		    			/*变动原因*/
+			    		$("#reduce_bdyy").attr("editstate",0);
+		    		}else{
+		    			/*增加金额*/
+			    		$("#reduce_zjje").attr("editstate",1);
+			    		/*变动的净残值率 中间计算的值*/ 
+			    		$("#reduce_jczl").attr("editstate",1);
+			    		/*变动的净残值*/
+			    		$("#reduce_jcz").attr("editstate",1);
+		    			/*变动原因*/
+			    		$("#reduce_bdyy").attr("editstate",1);
+		    		}
+				}else{
+					/*变动单编码*/
+					$("#reduce_bddbh").attr("editstate",0);
+		    		/*卡片编号*/
+		    		$("#reduce_kpbh").attr("editstate",2);
+		    		/*变动日期*/
+		    		$("#reduce_rq").attr("editstate",2);
+		    		/*固定资产编号*/
+		    		$("#reduce_gdzcbh").attr("editstate",2);
+		    		/*开始使用日期*/
+		    		$("#reduce_kssyrq").attr("editstate",2);
+		    		/*固定资产名称*/
+		    		$("#reduce_gdzcmc").attr("editstate",2);
+		    		/*规格号*/
+		    		$("#reduce_ggxh").attr("editstate",2);
+		    		/*增加金额*/
+		    		$("#reduce_zjje").attr("editstate",2);
+		    		/*币种*/
+		    		$("#reduce_bz").attr("editstate",2);
+		    		/*汇率*/
+		    		$("#reduce_hl").attr("editstate",2);
+		    		/*变动的净残值率 中间计算的值*/ 
+		    		$("#reduce_jczl").attr("editstate",2);
+		    		/*变动的净残值*/
+		    		$("#reduce_jcz").attr("editstate",2);
+		    		/*变动前原值*/
+		    		$("#reduce_bdcyz").attr("editstate",2);
+		    		/*变动后原值*/
+		    		$("#reduce_bdhyz").attr("editstate",2);
+		    		/*变动前净残值*/
+		    		$("#reduce_bdcjcz").attr("editstate",2);
+		    		/*变动后净残值*/
+		    		$("#reduce_bdhjcz").attr("editstate",2);
+		    		/*变动原因*/
+		    		$("#reduce_bdyy").attr("editstate",2);
+		    		/*经手人*/
+		    		$("#reduce_lrr").attr("editstate",2);
+				}
+				              break;
+			case 3:
+				if(eitorState){
+					/*变动单编码*/
+					$("#dept_bddbh").attr("editstate",1);
+		    		/*卡片编号*/
+		    		$("#dept_kpbh").attr("editstate",1);
+		    		/*变动日期*/
+		    		$("#dept_rq").attr("editstate",1);
+		    		/*固定资产编号*/
+		    		$("#dept_gdzcbh").attr("editstate",1);
+		    		/*开始使用日期*/
+		    		$("#dept_kssyrq").attr("editstate",1);
+		    		/*固定资产名称*/
+		    		$("#dept_gdzcmc").attr("editstate",1);
+		    		/*规格型号*/
+		    		$("#dept_ggxh").attr("editstate",1);
+		    		/*变动前部门*/
+		    		$("#dept_bdqbm").attr("editstate",1);
+		    		if(getdatavalue("dept_kpbh")!=""&&getdatavalue("dept_kpbh")!=null){
+		    			/*变动后部门*/
+			    		$("#dept_bdhbm").attr("editstate",0);
+			    		/*存放新地点*/
+			    		$("#dept_xcfdd").attr("editstate",0);
+			    		/*变动原因*/
+			    		$("#dept_bdyy").attr("editstate",0);
+		    		}else{
+		    			/*变动后部门*/
+			    		$("#dept_bdhbm").attr("editstate",1);
+			    		/*存放新地点*/
+			    		$("#dept_xcfdd").attr("editstate",1);
+			    		/*变动原因*/
+			    		$("#dept_bdyy").attr("editstate",1);
+		    		}
+		    		
+		    		/*存放地点*/
+		    		$("#dept_cfdd").attr("editstate",1);
+		    		/*录入人*/
+		    		$("#dept_lrr").attr("editstate",1);
+				}else{
+					/*变动单编码*/
+					$("#dept_bddbh").attr("editstate",0);
+		    		/*卡片编号*/
+		    		$("#dept_kpbh").attr("editstate",2);
+		    		/*变动日期*/
+		    		$("#dept_rq").attr("editstate",2);
+		    		/*固定资产编号*/
+		    		$("#dept_gdzcbh").attr("editstate",2);
+		    		/*开始使用日期*/
+		    		$("#dept_kssyrq").attr("editstate",2);
+		    		/*固定资产名称*/
+		    		$("#dept_gdzcmc").attr("editstate",2);
+		    		/*规格型号*/
+		    		$("#dept_ggxh").attr("editstate",2);
+		    		/*变动前部门*/
+		    		$("#dept_bdqbm").attr("editstate",2);
+		    		/*变动后部门*/
+		    		$("#dept_bdhbm").attr("editstate",2);
+		    		/*存放地点*/
+		    		$("#dept_cfdd").attr("editstate",2);
+		    		/*存放新地点*/
+		    		$("#dept_xcfdd").attr("editstate",2);
+		    		/*变动原因*/
+		    		$("#dept_bdyy").attr("editstate",2);
+		    		/*录入人*/
+		    		$("#dept_lrr").attr("editstate",2);
+		    		
+				}
+				              break;
+			case 4:
+				if(eitorState){
+					/*变动单编码*/
+					$("#usestate_bddbh").attr("editstate",1);
+		    		/*卡片编号*/
+		    		$("#usestate_kpbh").attr("editstate",1);
+		    		/*变动日期*/
+		    		$("#usestate_rq").attr("editstate",1);
+		    		/*固定资产编号*/
+		    		$("#usestate_gdzcbh").attr("editstate",1);
+		    		/*开始使用日期*/
+		    		$("#usestate_kssyrq").attr("editstate",1);
+		    		/*固定资产名称*/
+		    		$("#usestate_gdzcmc").attr("editstate",1);
+		    		
+		    		/*规格型号*/
+		    		$("#usestate_ggxh").attr("editstate",1);
+		    		/*变动前使用状况*/
+		    		$("#usestate_bdqsyzk").attr("editstate",1);
+		    		if(getdatavalue("usestate_kpbh")!=""&&getdatavalue("usestate_kpbh")!=null){
+		    			/*变动后使用状况*/
+			    		$("#usestate_bdhsyzk").attr("editstate",0);
+			    		/*变动原因*/
+			    		$("#usestate_bdyy").attr("editstate",0);
+		    		}else{
+		    			/*变动后使用状况*/
+			    		$("#usestate_bdhsyzk").attr("editstate",1);
+			    		/*变动原因*/
+			    		$("#usestate_bdyy").attr("editstate",1);
+		    		}
+		    		/*录入人*/
+		    		$("#usestate_lrr").attr("editstate",1);
+				}else{
+					/*变动单编码*/
+					$("#usestate_bddbh").attr("editstate",0);
+		    		/*卡片编号*/
+		    		$("#usestate_kpbh").attr("editstate",2);
+		    		/*变动日期*/
+		    		$("#usestate_rq").attr("editstate",2);
+		    		/*固定资产编号*/
+		    		$("#usestate_gdzcbh").attr("editstate",2);
+		    		/*开始使用日期*/
+		    		$("#usestate_kssyrq").attr("editstate",2);
+		    		/*固定资产名称*/
+		    		$("#usestate_gdzcmc").attr("editstate",2);
+		    		
+		    		/*规格型号*/
+		    		$("#usestate_ggxh").attr("editstate",2);
+		    		/*变动前使用状况*/
+		    		$("#usestate_bdqsyzk").attr("editstate",2);
+		    		/*变动后使用状况*/
+		    		$("#usestate_bdhsyzk").attr("editstate",2);
+		    		/*变动原因*/
+		    		$("#usestate_bdyy").attr("editstate",2);
+		    		/*录入人*/
+		    		$("#usestate_lrr").attr("editstate",2);
+				}
+			                  break;
+			}
+    	}
+    	
+    	//获取最大编号的变动单
+    	function getmaxFaVouchers(){
+			$.post("faVouchers!receiveMaxSnumFaVouchers",function(josndata){
+				setFaVouchersInfo(josndata.faVouchers);
+			},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    	}
+    	//根据变动单号获取变动单信息
+    	function getFaVouchersBySnum(snum){
+			 $.ajax({
+				    url: "faVouchers!getFaVouchersBySnum",
+					type: 'post',
+					data: {snum:snum},
+	   			    async:false,
+					dataType: "json",
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(josndata){
+						setFaVouchersInfo(josndata.faVouchers);
+					}
+			 });
+    	}
+    	function setFaVouchersInfo(faVouchers){
+			if(faVouchers==null){
+				window.parent.closeWindow("fa_card_assetschange");
+			}else{
+				var type = faVouchers.ivouchertype;
+				setVouchersForm(type);
+				/*设置变动单id为隐藏变量*/
+				$("#faVouchersId").val(faVouchers.id)
+		    	/*变动单类型*/
+		    	$("#typesel").val(faVouchers.ivouchertype);
+		   		switch(type){
+				case 0:
+					jAlert("发生错误");
+					break;
+				case 1:
+					/*变动单编号*/
+			    	$("#add_bddbh").text(faVouchers.snum);
+			    	/*变动单日期*/
+			    	$("#add_rq").text(faVouchers.dtransdate);
+			    	//卡片编号
+			    	$("#add_kpbh").html(faVouchers.scardnum);
+			    	//获取卡片对象
+			    	var facard  = getFaCard(faVouchers.scardnum);
+			    	//固定资产编号
+			    	$("#add_gdzcbh").html(facard.sassetnum);
+			    	//开始使用日期
+			    	$("#add_kssyrq").html(facard.dstartdate);
+			    	//固定资产名称
+			    	$("#add_gdzcmc").html(facard.sassetname);
+			    	//规格型号
+			    	$("#add_ggxh").html(facard.sstyle);
+			    	//增加金额
+			    	addmoney=faVouchers.saftervoucher-faVouchers.sbeforevoucher;
+			    	$("#add_zjje").html(addmoney);
+			    	//变动前净残值
+		    		$("#add_bdcjcz").text(numberround(facard.dblbv-facard.dblbvrate*addmoney,2));
+		    		//变动的净残值率
+		    		$("#add_jczl").text(rateformat(facard.dblbvrate));
+		    		//变动的净残值
+		    		$("#add_jcz").text(numberround(facard.dblbvrate*addmoney,2));
+		    		//变动净残值
+		    		$("#add_bdhjcz").text(facard.dblbv);
+		    		
+					//币种
+					$("#add_bz").html(faVouchers.scurrencyvou);
+					//汇率  目前不支持外币，默认人民币，汇率为1
+					$("#add_hl").html(faVouchers.dblexchangeratevou);
+		    		/*变动前原值*/
+		    		$("#add_bdcyz").text(faVouchers.sbeforevoucher);
+		    		/*变动后原值*/
+		    		$("#add_bdhyz").text(faVouchers.saftervoucher);
+		    		/*变动原因*/
+		    		$("#add_bdyy").text(strNullProc(faVouchers.memreason));
+		    		//录入人
+		    		$("#add_lrr").text(strNullProc(faVouchers.soperatorvou));
+					break;
+				case 2:
+					/*变动单编号*/
+			    	$("#reduce_bddbh").text(faVouchers.snum);
+			    	/*变动单日期*/
+			    	$("#reduce_rq").text(faVouchers.dtransdate);
+			    	//卡片编号
+			    	$("#reduce_kpbh").html(faVouchers.scardnum);
+			    	//获取卡片对象
+			    	var facard  = getFaCard(faVouchers.scardnum);
+			    	//固定资产编号
+			    	$("#reduce_gdzcbh").html(facard.sassetnum);
+			    	//开始使用日期
+			    	$("#reduce_kssyrq").html(facard.dstartdate);
+			    	//固定资产名称
+			    	$("#reduce_gdzcmc").html(facard.sassetname);
+			    	//规格型号
+			    	$("#reduce_ggxh").html(facard.sstyle);
+			    	//增加金额
+			    	addmoney=faVouchers.sbeforevoucher-faVouchers.saftervoucher;
+			    	$("#reduce_zjje").html(addmoney);
+			    	//变动净残值
+		    		$("#reduce_bdcjcz").text(numberround(facard.dblbv+facard.dblbvrate*addmoney,2));
+		    		//变动的净残值率
+		    		$("#reduce_jczl").text(rateformat(facard.dblbvrate));
+		    		//变动的净残值
+		    		$("#reduce_jcz").text(numberround(facard.dblbvrate*addmoney,2));
+		    		//变动净残值
+		    		$("#reduce_bdhjcz").text(facard.dblbv);
+			    	
+			    	
+		    		/*币种*/
+		    		$("#reduce_bz").text(faVouchers.scurrencyvou);
+		    		/*汇率*/
+		    		$("#reduce_hl").text(faVouchers.dblexchangeratevou);
+		    		
+					/*变动前原值*/
+		    		$("#reduce_bdcyz").text(faVouchers.sbeforevoucher);
+		    		/*变动后原值*/
+		    		$("#reduce_bdhyz").text(faVouchers.saftervoucher);
+		    		/*变动原因*/
+		    		$("#reduce_bdyy").text(strNullProc(faVouchers.memreason));
+		    		//录入人
+		    		$("#reduce_lrr").text(strNullProc(faVouchers.soperatorvou));
+					              break;
+				case 3:
+					/*变动单编号*/
+			    	$("#dept_bddbh").html(faVouchers.snum);
+			    	/*变动单日期*/
+			    	$("#dept_rq").text(faVouchers.dtransdate);
+			    	/*卡片编号*/
+			    	$("#dept_kpbh").text(faVouchers.scardnum);
+			    	//获取卡片对象
+			    	//var facard  = getFaCard(faVouchers.scardnum);
+			   	   	$.ajax({
+			   		    url: "faCards!findTwoCardByCardNum",
+			   		    data:{scardnum:faVouchers.scardnum},
+			   		    type: 'post',
+			   		    dataType: "json",
+			   		    async:false,
+			   		    error:function(){
+			   		    	jAlert("请求失败!");
+			   		    },
+			   		    success: function(data){
+			   		    	faCardlist=data.faCardlist;
+			   		    	for(var i=0;i<faCardlist.length;i++){
+			   		    		var facard = faCardlist[i];
+			   		    		if(facard.iopttype==6){
+			   				    	if(facard.sdeptnum!=""&&facard.sdeptnum!=null){
+			   							//部门编码
+			   							//var dept = facard.stransdeptenum;
+			   							var deptnum = facard.sdeptnum;
+			   							var deptname = facard.sdeptname;
+			   							//部门名称
+			   							$("#dept_bdqbm").attr("code",deptnum).html(deptname);
+			   				    	}else{
+			   				    		//部门名称
+			   							$("#dept_bdqbm").removeAttr("code").html("");
+			   				    	}
+			   		    			//存放地点
+			   		    			$("#dept_cfdd").html(facard.ssite);
+			   		    		}else{
+			   				    	//固定资产编号
+			   				    	$("#dept_gdzcbh").html(facard.sassetnum);
+			   				    	//开始使用日期
+			   				    	$("#dept_kssyrq").html(facard.dstartdate);
+			   				    	//固定资产名称
+			   				    	$("#dept_gdzcmc").html(facard.sassetname);
+			   				    	//规格型号
+			   				    	$("#dept_ggxh").html(facard.sstyle);
+
+			   				    	if(facard.sdeptnum!=""&&facard.sdeptnum!=null){
+			   							//部门编码
+			   							var deptnum = facard.sdeptnum;
+			   							var deptname = facard.sdeptname;
+			   							//部门名称
+			   							$("#dept_bdhbm").attr("code",deptnum).html(deptname);
+			   				    	}else{
+			   				    		//部门名称
+			   							$("#dept_bdhbm").removeAttr("code").html("");
+			   				    	}
+			   				    	//新存放地点
+			   				    	$("#dept_xcfdd").html(facard.ssite);
+			   		    		}
+			   		    	}
+			   		    }
+			   		  });
+			    	/*变动原因*/
+		    		$("#dept_bdyy").text(strNullProc(faVouchers.memreason));
+		    		//录入人
+		    		$("#dept_lrr").text(strNullProc(faVouchers.soperatorvou));
+					              break;
+				case 4:
+					/*变动单编号*/
+			    	$("#usestate_bddbh").html(faVouchers.snum);
+			    	/*变动单日期*/
+			    	$("#usestate_rq").text(faVouchers.dtransdate);
+			    	/*卡片编号*/
+			    	$("#usestate_kpbh").text(faVouchers.scardnum);
+			    	//获取卡片对象
+			    	var facard  = getFaCard(faVouchers.scardnum);
+				    //固定资产编号
+				    $("#usestate_gdzcbh").html(facard.sassetnum);
+				    //开始使用日期
+				    $("#usestate_kssyrq").html(facard.dstartdate);
+				    //固定资产名称
+				    $("#usestate_gdzcmc").html(facard.sassetname);
+				    //规格型号
+				    $("#usestate_ggxh").html(facard.sstyle);
+					if(faVouchers.sbeforevoucher!=""&&faVouchers.sbeforevoucher!=null){
+						/*变动前使用状况*/
+						var usestate = faVouchers.sbeforevoucher.split(",");
+						var usestatenum = usestate[0];
+						var usestatename = usestate[1];
+						/*变动前使用状况*/
+						$("#usestate_bdqsyzk").attr("code",usestatenum).html(usestatename);
+					}else{
+						/*变动前使用状况*/
+						$("#usestate_bdqsyzk").removeAttr("code").html("");
+					}
+					if(faVouchers.saftervoucher!=""&&faVouchers.saftervoucher!=null){
+						/*变动后使用状况*/
+						var usestate = faVouchers.saftervoucher.split(",");
+						var usestatenum = usestate[0];
+						var usestatename = usestate[1];
+						/*变动后使用状况*/
+						$("#usestate_bdhsyzk").attr("code",usestatenum).html(usestatename);
+					}else{
+						/*变动后使用状况*/
+						$("#usestate_bdhsyzk").removeAttr("code").html("");
+					}
+			    	/*变动原因*/
+		    		$("#usestate_bdyy").text(strNullProc(faVouchers.memreason));
+		    		//录入人
+		    		$("#usestate_lrr").text(strNullProc(faVouchers.soperatorvou));
+				                  break;
+				}
+
+	    		/*设置成非编辑状态*/
+	    		setEitorFalse();
+			}
+    	}
+    	/*设置变动单的单号和变动日期*/
+    	function getDefaultData(){
+	   		/*变动单的默认值*/
+	   		$.post("faVouchers!getMaxSnum",function(josndata){
+	   			var faVouchersSnum = josndata.snum;
+	   			if(faVouchersSnum=="null"){
+	   				faVouchersSnum="0000"+1;
+	   			}else{
+	   				faVouchersSnum=faVouchersSnum-0+1;
+	   				faVouchersSnum = ""+faVouchersSnum;
+	   				var len = faVouchersSnum.length;
+	   				var str = "";
+	   				len = 5-len;
+	   				for(var i=0;i<len;i++){
+	   					str+=""+0;
+	   				}
+	   				faVouchersSnum = str+faVouchersSnum ;
+	   			}
+	   			/*设置自动生成的变动单号*/
+	   			$("#add_bddbh").html(faVouchersSnum);
+	   			$("#reduce_bddbh").html(faVouchersSnum);
+	   			$("#dept_bddbh").html(faVouchersSnum);
+	   			$("#usestate_bddbh").html(faVouchersSnum);
+	   			/*设置自动获取的变动日期*/
+	   			$("#add_rq").html(josndata.oprateDate);
+	   			$("#reduce_rq").html(josndata.oprateDate);
+	   			$("#dept_rq").html(josndata.oprateDate);
+	   			$("#usestate_rq").html(josndata.oprateDate);
+	   			
+        		//当前操作人
+        		var	userName=getCookie("userName");//姓名
+        		//录入人
+        		$("#add_lrr").text(strNullProc(userName));
+        		$("#reduce_lrr").text(strNullProc(userName));
+        		$("#dept_lrr").text(strNullProc(userName));
+        		$("#usestate_lrr").text(strNullProc(userName));
+	   			
+	   			/*设置可编辑状态*/
+	   			setEitorState(true);
+	   		},"json").error(function(){
+				jAlert("请求失败！");
+			});
+    	}
+    	/*根据变动类型显示变动表单*/
+    	function setVouchersForm(fa_ac_action){
+	   		switch(fa_ac_action){
+			case 0:
+				jAlert("发生错误");
+				break;
+			case 1:
+							  $("#typediv").html("-  原值增加  -");
+							  $("#nametype").html("增加金额");
+							  $("#originalValAdd").show();
+							  $("#deptMove").hide();
+							  $("#useState").hide();
+							  $("#originalValRaduce").hide();
+							  $("#typesel").val(1);
+				              break;
+			case 2:
+				              $("#typediv").html("-  原值减少  -");
+							  $("#nametype").html("减少金额");
+							  $("#originalValRaduce").show();
+							  $("#originalValAdd").hide();
+							  $("#deptMove").hide();
+							  $("#useState").hide();
+							  $("#typesel").val(2);
+				              break;
+			case 3:
+				              $("#typediv").html("-  部门转移  -");
+							  $("#deptMove").show();
+							  $("#originalValAdd").hide();
+							  $("#useState").hide();
+							  $("#originalValRaduce").hide();
+							  $("#typesel").val(3);
+				              break;
+			case 4:
+				              $("#typediv").html("-  使用状况变动  -");
+							  $("#useState").show();
+							  $("#deptMove").hide();
+							  $("#originalValAdd").hide();
+							  $("#originalValRaduce").hide();
+							  $("#typesel").val(4);
+			                  break;
+			}
+	   		//设置成编辑状态
+	   		//setEitorState(true);
+	   		//设置卡片信息
+	   		setFaCardInfo();
+    	}
+    	//程序入口
+       $(document).ready(function(){
+    	   		//设置录入人
+    	   		
+    	   		/*下拉列表框改变时显示不同的资产变动类型*/
+	   	    	$("#typesel").unbind("change").bind("change",function(){
+					var val=this.value;
+					if(val==1){
+					  $("#typediv").html("-  原值增加  -");
+					  $("#nametype").html("增加金额");
+					  $("#originalValAdd").show();
+					  $("#deptMove").hide();
+					  $("#useState").hide();
+					  $("#originalValRaduce").hide();
+					}else if(val==2){
+					  $("#typediv").html("-  原值减少  -");
+					  $("#nametype").html("减少金额");
+					  $("#originalValRaduce").show();
+					  $("#originalValAdd").hide();
+					  $("#deptMove").hide();
+					  $("#useState").hide();
+					}else if(val==3){
+					  $("#typediv").html("-  部门转移  -");
+					  $("#deptMove").show();
+					  $("#originalValAdd").hide();
+					  $("#useState").hide();
+					  $("#originalValRaduce").hide();
+					}else if(val==4){
+					  $("#typediv").html("-  使用状况变动  -");
+					  $("#useState").show();
+					  $("#deptMove").hide();
+					  $("#originalValAdd").hide();
+					  $("#originalValRaduce").hide();
+					}
+			   		//设置成编辑状态
+			   		setEitorState(true);
+			   		//设置卡片信息
+			   		setFaCardInfo();
+			});
+    	   	//如果是引用变动单页面判断页面显示那个变动单
+	   	    var valueObject = window.parent.valueMap.get("fa_card_assetschange");	
+    	    var parentId  = window.parent.openerMap.get("fa_card_assetschange");
+    	    if(parentId!=null || typeof(parentId)!="undefined"){
+    	    	//设置详细信息
+        	   	getFaVouchersBySnum(valueObject.snum);
+    	    	
+		   		/*将刷新按钮设置成不可用*/
+		   		$("#refresh").attr("disabled","true");
+		   		/*将操作按钮设置成不可用*/
+		   		$("#operate").attr("disabled","true");
+		   		
+				$("#save").attr("disabled","true");
+				$("#cancel").attr("disabled","true");
+				$("#typesel").attr("disabled","true");
+				//判断是否可添加,删除
+				$("#iscanoprate").val(valueObject.iscanoprate);
+    	    }else{
+		   		/*将刷新按钮设置成不可用*/
+		   		$("#refresh").attr("disabled","true");
+		   		/*将操作按钮设置成不可用*/
+		   		$("#operate").attr("disabled","true");
+		   	    /*判断那种变动类型*/	
+		   	 	var fa_ac_action = window.parent.parent.fa_ac_action;
+		   	    setVouchersForm(fa_ac_action);
+		   	    
+				$("#save").removeAttr("disabled");
+				$("#cancel").removeAttr("disabled");
+				$("#typesel").removeAttr("disabled");
+				
+				$("#add").attr("disabled","true");
+				$("#delete").attr("disabled","true");
+				/*设置默认值*/
+				getDefaultData();
+    	    }
+	   		/*为添加按钮添加事件*/
+	   		$("#add").unbind("click").click(function(){
+				$("#save").removeAttr("disabled");
+				$("#cancel").removeAttr("disabled");
+				$("#typesel").removeAttr("disabled");
+				
+				$("#add").attr("disabled","true");
+				$("#delete").attr("disabled","true");
+				/*设置默认值*/
+				getDefaultData();
+				//设置成编辑状态
+		   		setEitorState(true);
+		   	    //设置卡片信息
+		   		setFaCardInfo();
+	   		});
+	   		/*为删除按钮绑定删除事件*/
+	   		$("#delete").unbind("click").click(function(){
+	   			deleteFaVouchers();
+	   		});
+	   		/*为保存按钮绑定保存事件*/
+	   		$("#save").unbind("click").click(function(){
+	   			saveFaVouchers();
+	   		});
+	   		/*为取消按钮添加方法*/
+	   		$("#cancel").unbind("click").click(function(){
+	   			cancelFaVouchers();
+	   		});
+	   		/*为刷新按钮添加功能*/
+	   		$("#refresh").unbind("click").click(function(){
+	   			jAlert("刷新功能!");
+	   		})
+	   })
+	   
+	   //根据卡片编码查找最大业务号的卡片对象
+	   function getFaCard(cardnum){
+			var faCards=null;
+	   	   	$.ajax({
+	   		    url: "faCards!findmaxfacardsByCardNum",
+	   		    data:{scardnum:cardnum},
+	   		    type: 'post',
+	   		    dataType: "json",
+	   		    async:false,
+	   		    error:function(){
+	   		    	jAlert("请求失败!");
+	   		    },
+	   		    success: function(data){
+	   		    	faCards=data.faCards;
+	   		    }
+	   		  });
+			return faCards;
+		}
+    	//设置变动单中的卡片信息
+    	function setFaCardInfo(){
+    		var faVouchersType = $("#typesel >option:selected").val();
+    		faVouchersType = faVouchersType-0;
+    		var cardnum = "";
+    		//var e = jQuery.Event("click");
+	   		switch(faVouchersType){
+				case 1:
+					cardnum = $("#add_kpbh").html();
+					break;
+				case 2:
+					cardnum = $("#reduce_kpbh").html();
+					break;
+				case 3:
+					cardnum = $("#dept_kpbh").html();
+					break;
+				case 4:
+					cardnum = $("#usestate_kpbh").html();
+					break;
+				}
+	   		if(cardnum !=""){
+	   			var param={};
+	   			var faCards=getFaCard(cardnum);
+	   			param.id = faCards.id;
+	   			param.cardCode =faCards.scardnum;
+	   			param.facards = faCards;
+	   			//var textbox = currentEditingElement.getElementsByTagName("input")[1];
+	   			set_value(param,null,faVouchersType);
+	   		}
+	   		//执行onclick事件
+	   		switch(faVouchersType){
+			case 1:
+				$("#add_kpbh")[0].click();
+				break;
+			case 2:
+				$("#reduce_kpbh")[0].click();
+				break;
+			case 3:
+				$("#dept_kpbh")[0].click();
+				break;
+			case 4:
+				$("#usestate_kpbh")[0].click();
+				break;
+			}
+    	}
+    </script>
+</head>
+<body>
+	<div class="container" style="float:left;width:616px;height:390px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:612px;height:387px;margin-top:1px;margin-left:2px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>	
+			<div class="buttongroup" style="border-bottom:solid 1px #999">
+				<div class="group">
+                    <div><input type="button" id="operate" value="操作" class="operateIco"/></div>
+					<div><input type="button" id="add" value="添加" class="addIco"/></div>
+					<div><input type="button" id ="delete" value="删除" class="delIco"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" id="save" value="保存"  class="saveIco"/></div>
+					<div><input type="button" id="cancel" value="取消"  class="cancelIco"/></div>
+                    <div><input type="button" id ="refresh" value="刷新"  class="refreshIco"/></div>
+				</div>
+			</div>
+			<div style="width:150px;height:20px;position:relative;margin-top:1px; margin-left:498px;" class="v_a_m">
+			    <select id='typesel' >
+			      <option value="1" selected="selected">原值增加</option>
+			      <option value="2">原值减少</option>
+			      <option value="3">部门转移</option>
+			      <option value="4">使用状况调整</option>
+			    </select>
+			</div>
+			<div style="width:98%;height:270px;background-color:#fff;margin-left:5px;">
+					<!--原值增加开始-->
+					<div class="panelcontent" id='originalValAdd' >
+						<div style="height:44px;text-align:center;font-family:楷体;font-size:24px;font-weight:bold;">
+							<div style="margin-top:14px;">固&nbsp;定&nbsp;资&nbsp;产&nbsp;变&nbsp;动&nbsp;单&nbsp;</div>
+						</div>
+                        <div id='typediv' style="text-align:center; margin-left:40px;" >- 原 值 增 加 -</div>
+						<div style="height:16px;border-bottom:2px solid #000;">
+							<div style="float:left;padding:0px;">
+								<div onclick="faCardEdit(event,document.getElementById('add_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
+								<div id="add_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+							</div>
+							<div style="float:right;">
+								<div onclick="faCardEdit(event,document.getElementById('add_rq'));" style="font-family:楷体;float:left;">变动日期</div>
+								<div id="add_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+							</div>
+						</div>
+						<div style="height:150px;">
+						<div style="margin-top:2px;">
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_kpbh'));">卡片编号</div>
+							<div class="fa_card_column_2" id="add_kpbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_gdzcbh'));">固定资产编号</div>
+							<div class="fa_card_column_2" id="add_gdzcbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_kssyrq'));">开始使用日期</div>
+							<div class="fa_card_column_2" id="add_kssyrq" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_gdzcmc'));">固定资产名称</div>
+							<div class="fa_card_column_3" id="add_gdzcmc" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_ggxh'));">规格型号</div>
+							<div class="fa_card_column_2" id="add_ggxh" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" id='nametype' onclick="faCardEdit(event,document.getElementById('add_zjje'));">增加金额</div>
+							<div class="fa_card_column_2" id="add_zjje" onclick="faCardEdit(event,this);">0.00</div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bz'));">币种</div>
+							<div class="fa_card_column_2" id="add_bz" onclick="faCardEdit(event,this);"></div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_hl'));">汇率</div>
+							<div class="fa_card_column_2" id="add_hl" onclick="faCardEdit(event,this);">0</div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_jczl'));">变动的净残值率</div>
+							<div class="fa_card_column_2" id="add_jczl" onclick="faCardEdit(event,this);">0%</div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_jcz'));">变动的净残值</div>
+							<div class="fa_card_column_3" id="add_jcz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bdcyz'));">变动前原值</div>
+							<div class="fa_card_column_2" id="add_bdcyz" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bdhyz'));">变动后原值</div>
+							<div class="fa_card_column_3" id="add_bdhyz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bdcjcz'));">变动前净残值</div>
+							<div class="fa_card_column_2" id="add_bdcjcz" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bdhjcz'));">变动后净残值</div>
+							<div class="fa_card_column_3" id="add_bdhjcz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('add_bdyy'));">变动原因</div>
+							<div class="fa_card_column_4" id="add_bdyy" onclick="faCardEdit(event,this);"></div>
+						</div>
+						</div>
+						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
+							<div style="float:right;margin-top:8px;">
+							<div onclick="faCardEdit(event,document.getElementById('add_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
+							<div id="add_lrr" style="width:94px;text-align:right;float:left;" onclick="faCardEdit(event,this);">demo</div>
+							</div>
+						</div>
+					</div>
+					<!--原值增加结束-->
+					<!--原值减少开始-->
+			       <div class="panelcontent" id='originalValRaduce' style="display:none" >
+						<div style="height:44px;text-align:center;font-family:楷体;font-size:24px;font-weight:bold;">
+							<div style="margin-top:14px;">固&nbsp;定&nbsp;资&nbsp;产&nbsp;变&nbsp;动&nbsp;单&nbsp;</div>
+						</div>
+                        <div id='typediv' style="text-align:center; margin-left:40px;" >- 原 值 减 少 -</div>
+						<div style="height:16px;border-bottom:2px solid #000;">
+							<div style="float:left;padding:0px;">
+								<div onclick="faCardEdit(event,document.getElementById('reduce_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
+								<div id="reduce_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+							</div>
+							<div style="float:right;">
+								<div onclick="faCardEdit(event,document.getElementById('reduce_rq'));" style="font-family:楷体;float:left;">变动日期</div>
+								<div id="reduce_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+							</div>
+						</div>
+						<div style="height:150px;">
+						<div style="margin-top:2px;">
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_kpbh'));">卡片编号</div>
+							<div class="fa_card_column_2" id="reduce_kpbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_gdzcbh'));">固定资产编号</div>
+							<div class="fa_card_column_2" id="reduce_gdzcbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_kssyrq'));">开始使用日期</div>
+							<div class="fa_card_column_2" id="reduce_kssyrq" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_gdzcmc'));">固定资产名称</div>
+							<div class="fa_card_column_3" id="reduce_gdzcmc" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_ggxh'));">规格型号</div>
+							<div class="fa_card_column_2" id="reduce_ggxh" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" id='nametype' onclick="faCardEdit(event,document.getElementById('reduce_zjje'));">减少金额</div>
+							<div class="fa_card_column_2" id="reduce_zjje" onclick="faCardEdit(event,this);">0.00</div>
+							
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bz'));">币种</div>
+							<div class="fa_card_column_2" id="reduce_bz" onclick="faCardEdit(event,this);"></div>
+							
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_hl'));">汇率</div>
+							<div class="fa_card_column_2" id="reduce_hl" onclick="faCardEdit(event,this);">0</div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_jczl'));">变动的净残值率</div>
+							<div class="fa_card_column_2" id="reduce_jczl" onclick="faCardEdit(event,this);">0%</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_jcz'));">变动的净残值</div>
+							<div class="fa_card_column_3" id="reduce_jcz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bdcyz'));">变动前原值</div>
+							<div class="fa_card_column_2" id="reduce_bdcyz" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bdhyz'));">变动后原值</div>
+							<div class="fa_card_column_3" id="reduce_bdhyz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bdcjcz'));">变动前净残值</div>
+							<div class="fa_card_column_2" id="reduce_bdcjcz" onclick="faCardEdit(event,this);">0.00</div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bdhjcz'));">变动后净残值</div>
+							<div class="fa_card_column_3" id="reduce_bdhjcz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('reduce_bdyy'));">变动原因</div>
+							<div class="fa_card_column_4" id="reduce_bdyy" onclick="faCardEdit(event,this);"></div>
+						</div>
+						</div>
+						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
+							<div style="float:right;margin-top:8px;">
+							<div onclick="faCardEdit(event,document.getElementById('reduce_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;" >录入人</div>
+							<div id="reduce_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+							</div>
+						</div>
+					</div>
+					<!--原值减少结束-->
+					<!--部门转移开始-->
+			        <div class="panelcontent" id='deptMove' style="display:none" >
+						<div style="height:44px;text-align:center;font-family:楷体;font-size:24px;font-weight:bold;">
+							<div style="margin-top:14px;">固&nbsp;定&nbsp;资&nbsp;产&nbsp;变&nbsp;动&nbsp;单&nbsp;</div>
+						</div>
+                        <div id='typediv' style="text-align:center; margin-left:40px;" >- 部门转移 -</div>
+						<div style="height:16px;border-bottom:2px solid #000;">
+							<div style="float:left;padding:0px;">
+								<div onclick="faCardEdit(event,document.getElementById('dept_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
+								<div id="dept_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+							</div>
+							<div style="float:right;">
+								<div onclick="faCardEdit(event,document.getElementById('dept_rq'));" style="font-family:楷体;float:left;">变动日期</div>
+								<div id="dept_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+							</div>
+						</div>
+						<div style="height:110px;">
+						<div style="margin-top:2px;">
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_kpbh'));">卡片编号</div>
+							<div class="fa_card_column_2" id="dept_kpbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_gdzcbh'));">固定资产编号</div>
+							<div class="fa_card_column_2" id="dept_gdzcbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_kssyrq'));">开始使用日期</div>
+							<div class="fa_card_column_2" id="dept_kssyrq" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_gdzcmc'));">固定资产名称</div>
+							<div class="fa_card_column_3" id="dept_gdzcmc" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_ggxh'));">规格型号</div>
+							<div class="fa_card_column_2" id="dept_ggxh" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" id='nametype' onclick="faCardEdit(event,document.getElementById('dept_bdqbm'));">变动前部门</div>
+							<div class="fa_card_column_5" id="dept_bdqbm" onclick="faCardEdit(event,this);"></div>
+							
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_bdhbm'));">变动后部门</div>
+							<div class="fa_card_column_5" id="dept_bdhbm" onclick="faCardEdit(event,this);"></div>							
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_cfdd'));">存放地点</div>
+							<div class="fa_card_column_5" id="dept_cfdd" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_xcfdd'));">新的存放地点</div>
+							<div class="fa_card_column_5" id="dept_xcfdd" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_bdyy'));">变动原因</div>
+							<div class="fa_card_column_4" id="dept_bdyy" onclick="faCardEdit(event,this);"></div>
+						</div>
+						</div>
+						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
+							<div style="float:right;margin-top:8px;">
+							<div onclick="faCardEdit(event,document.getElementById('dept_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
+								<div id="dept_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+							</div>
+						</div>
+					</div>
+					<!--部门转移结束-->
+					<!--使用状况调整开始-->
+			        <div class="panelcontent" id='useState' style="display:none" >
+						<div style="height:44px;text-align:center;font-family:楷体;font-size:24px;font-weight:bold;">
+							<div style="margin-top:14px;">固&nbsp;定&nbsp;资&nbsp;产&nbsp;变&nbsp;动&nbsp;单&nbsp;</div>
+						</div>
+                        <div id='typediv' style="text-align:center; margin-left:40px;" >- 使用状况调整 -</div>
+						<div style="height:16px;border-bottom:2px solid #000;">
+							<div style="float:left;padding:0px;">
+								<div onclick="faCardEdit(event,document.getElementById('usestate_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
+								<div id="usestate_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+							</div>
+							<div style="float:right;">
+								<div onclick="faCardEdit(event,document.getElementById('usestate_rq'));" style="font-family:楷体;float:left;">变动日期</div>
+								<div id="usestate_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+							</div>
+						</div>
+						<div style="height:100px;">
+						<div style="margin-top:2px;">
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_kpbh'));">卡片编号</div>
+							<div class="fa_card_column_2" id="usestate_kpbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_gdzcbh'));">固定资产编号</div>
+							<div class="fa_card_column_2" id="usestate_gdzcbh" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_kssyrq'));">开始使用日期</div>
+							<div class="fa_card_column_2" id="usestate_kssyrq" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_gdzcmc'));">固定资产名称</div>
+							<div class="fa_card_column_3" id="usestate_gdzcmc" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_ggxh'));">规格型号</div>
+							<div class="fa_card_column_2" id="usestate_ggxh" onclick="faCardEdit(event,this);"></div>
+						</div>
+						<div>
+						    <div class="fa_card_column_1" id='nametype' onclick="faCardEdit(event,document.getElementById('usestate_bdqsyzk'));">变动前使用状况</div>
+							<div class="fa_card_column_5" id="usestate_bdqsyzk" onclick="faCardEdit(event,this);"></div>
+						    <div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_bdhsyzk'));">变动后使用状况</div>
+							<div class="fa_card_column_5" id="usestate_bdhsyzk" onclick="faCardEdit(event,this);"></div>							
+						</div>
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('usestate_bdyy'));">变动原因</div>
+							<div class="fa_card_column_4" id="usestate_bdyy" onclick="faCardEdit(event,this);"></div>
+						</div>
+						</div>
+						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
+							<div style="float:right;margin-top:8px;">
+							<div onclick="faCardEdit(event,document.getElementById('usestate_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
+								<div id="usestate_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+							</div>
+						</div>
+					</div>
+					<!--使用状况调整结束-->
+				</div>
+		</div>
+	</div>
+	<!-- 变动单的id -->
+	<input type="hidden" id="faVouchersId">
+		<!-- 变动单的id -->
+	<input type="hidden" id="cardId">
+	<!-- 是否可编辑,可添加产出操作。变动单管理打开此页面时用到 -->
+	<input type="hidden" id="iscanoprate" value="true">
+</body>
+</html>

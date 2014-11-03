@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>固定资产卡片 [新增资产]</title>
+
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	
+	<script type="text/javascript" src="js/addAssets_gdzckp.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_fssb.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_dxljl.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_zczyjl.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_tqyjl.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_yzbd.js"></script>
+	<script type="text/javascript" src="js/addAssets_table_jsxx.js"></script>
+	<script type="text/javascript" src="js/addAssets.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	
+	<style type="text/css">
+		.tabpanel{background-color:#fff;padding:0px;width:604px;height:314px;margin-top:-3px;margin-left:-4px;border:2px inset #ccc;border-top:none;text-align:center;}
+		.panelcontent {width:570px;margin:auto;text-align:left;}
+		
+		.fa_card_column_1 {width:92px;height:14px;margin-top:4px;float:left;text-align:right;}
+		.fa_card_column_2 {width:94px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		.fa_card_column_3 {width:286px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
+		
+		.cardTable {border-collapse: collapse;cursor:default;border:1px solid #000;width:567px}
+		.cardTable tr{height:20px;}
+		.cardTable thead td{border:1px solid #000;text-align:center;}
+		.cardTable tbody td{border:1px solid #000;text-align:left;padding:0px;}
+		
+	</style>
+	<script type="text/javascript">
+		/**
+		保存原始卡片
+		*/
+		function dosave(){
+			if(currentEditingElement!=null){
+				dosaveclick();
+			}
+			var synx=$("#synx").html().replace("月","").split("年");
+			var life=synx[0]*12+(synx[1]-0);//使用年限
+			
+			var yz=$("#yz").html();
+			
+			var kssyrq=$("#kssyrq").html();
+			
+			var sdeptnum=$("#sdeptnum").val();
+			
+			var sorgaddid=$("#sorgaddid").val();
+			
+			var sstatusid=$("#sstatusid").val();
+			
+			var sdeprmethodid=$("#sdeprmethodid").val();
+			
+			var gdzcbh=$("#gdzcbh").html().replace(/(^\s*)|(\s*$)/g, "");
+			
+			var mark="";
+			if(iCardNumType=="0"){
+				if(gdzcbh==""){
+					mark=mark+"固定资产编码，";
+				}
+			}
+			if((life-0)==0){
+				mark=mark+"使用年限，";
+			}
+			if((yz-0)==0){
+				mark=mark+"原值，";
+			}
+			if(kssyrq==null||kssyrq==""){
+				mark=mark+"开始使用日期，";
+			}
+			if(sdeptnum==null||sdeptnum==""){
+				mark=mark+"部门名称，";
+			}
+			if(sorgaddid==null||sorgaddid==""){
+				mark=mark+"增加方式，";
+			}
+			if(sstatusid==null||sstatusid==""){
+				mark=mark+"使用状况，";
+			}
+			if(sdeprmethodid==null||sdeprmethodid==""){
+				mark=mark+"折旧方法，";
+			}
+			if(mark!=""){
+				mark=mark.substring(0,mark.length-1);
+				jAlert("当前卡片有以下几项未填写或填写不正确：<br>"+mark);
+				return;
+			}
+			
+			var param=doserial("tabpanel")+"&"+sheetserial()+"&faCards.llife="+life;
+			if(smark=="2"){
+				$.ajax({
+					url: "faCards!doaddsave",
+					type: 'post',
+					async:false,
+					cache:false,
+					data:param,
+					dataType:"json",
+					success: function(data){
+						var mark=data.mark.split(":");
+						var coutnoIds=new Array();
+						coutnoIds.push({index:mark[1],coutsign:"卡片"});
+						if(mark[0]=="TRUE"){
+							
+							window.parent.openWindow('fa_operate_dsign','fa_card_addAssets',{coutnoIds:coutnoIds});
+							window.parent.closeWindow('fa_card_addAssets');
+						}else{
+							jAlert("资产增加成功","提示信息",function(){
+								window.location.reload();
+								//window.parent.closeWindow('fa_card_addAssets');
+							});
+						}
+					}
+				});
+			}else if(smark=="1"){
+				var cardid=$("#cardid").val();
+				$.ajax({
+					url: "faCards!doupdate",
+					type: 'post',
+					async:false,
+					cache:false,
+					data:"faCards.id="+cardid+"&"+param,
+					dataType:"json",
+					success: function(data){
+						jAlert("卡片修改成功","提示信息",function(){
+							window.location.reload();
+							//window.parent.closeWindow('fa_card_addAssets');
+						});
+					}
+				});
+			}
+		}
+		function doclose(){
+			jConfirm("确定要取消本次操作嘛？",'确认对话框',function(confirmflag) {
+				if(confirmflag){
+					window.parent.closeWindow('fa_card_addAssets');
+				}
+			});
+		}
+	</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:616px;height:390px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:612px;height:387px;margin-top:1px;margin-left:2px;">
+			
+		<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>	
+			
+			
+			
+<div class="buttongroup">
+
+	<div class="group">
+		<div>
+			<input type="button" value="退出" onclick="window.parent.closeWindow('fa_card_addAssets');" style="background-image:url('../../../images/icon/exit.gif');"/>
+		</div>
+		<div>
+			<input type="button" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/>
+		</div>
+	</div>
+	
+	<div class="group">
+		<div>
+			<input type="button" value="保存" id="saveid" onclick="dosave()" style="background-image:url('../../../images/icon/save.gif');"/>
+		</div>
+		<div>
+			<input type="button" value="取消" onclick="doclose()" style="background-image:url('../../../images/icon/cancel.gif');"/>
+		</div>
+		<div>
+			<input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/>
+		</div>
+		<div>
+			<input type="button" id="updatebutton" onclick="doupdate()" value="操作" disabled="disabled" style="background-image:url('../../../images/icon/update.gif');"/>
+		</div>
+		<div>
+			<input type="button" value="删除" disabled="disabled" style="background-image:url('../../../images/icon/delete.gif');"/>
+		</div>
+		
+	</div>
+	
+</div>
+
+
+	<div style="width:130px;height:20px;position:absolute;float:right;top:44px;right:0px;" class="v_a_m">
+		<input type="checkbox" id="cb_1" style="margin-left:-4px;"><label for="cb_1" style="margin-left:-2px;">标签</label><input type="text" disabled="disabled" style="width:86px;height:14px;line-height:14px;" id="entryDate"/>
+	</div>
+			
+	<input type="hidden" name="faCards.id" id="cardid" >		
+			
+	<div type="tab" active="0">
+		<div>
+			<div>固定资产卡片</div>
+			<div>附属设备</div>
+			<div>大修理记录</div>
+			<div>资产转移记录</div>
+			<div>停启用记录</div>
+			<div>原值变动</div>
+			<div>减少信息</div>
+		</div>
+		<div style="width:610px;height:320px;">
+		
+		
+			<!-- tab 1 开始 -->
+			<div>
+				<div class="tabpanel" id="tabpanel" mark="1">
+					
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						<div style="height:44px;text-align:center;font-family:楷体;font-size:24px;font-weight:bold;">
+							<div style="margin-top:14px;">固&nbsp;定&nbsp;资&nbsp;产&nbsp;卡&nbsp;片</div>
+						</div>
+						
+						<div style="height:16px;border-bottom:2px solid #000;">
+							<div style="float:left;padding:0px;">
+								<div onclick="faCardEdit(event,document.getElementById('kpbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">卡片编号</div>
+								<div id="kpbh" onclick="faCardEdit(event,this);" tye="0" name="faCards.scardnum" style="width:94px;text-align:right;float:left;"></div>
+							</div>
+							<div style="float:right;">
+								<div onclick="faCardEdit(event,document.getElementById('rq'));" style="font-family:楷体;float:left;">日期</div>
+								<div id="rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;"></div>
+							</div>
+						</div>
+						
+						<input type="hidden" id="soperator" name="faCards.soperator" tye="1" value="">
+						<input type="hidden" id="dinputdate" tye="1" name="faCards.dinputdate" value="">
+						<div style="height:202px;">
+						<div style="margin-top:2px;">
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('gdzcbh'));">固定资产编号</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.sassetnum" id="gdzcbh" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('gdzcmc'));">固定资产名称</div>
+							<div class="fa_card_column_3" tye="0" name="faCards.sassetname" id="gdzcmc" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('lbbh'));">类别编号</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.stypenum" id="lbbh" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('lbmc'));">类别名称</div>
+							<div class="fa_card_column_3"  id="lbmc" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('ggxh'));">规格型号</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.sstyle" id="ggxh" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('bmmc'));">部门名称</div>
+							<input type="hidden" tye="1" id="sdeptnum" name="faCards.sdeptnum" />
+							<div class="fa_card_column_3" id="bmmc" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('zjfs'));">增加方式</div>
+							<input type="hidden" tye="1" id="sorgaddid" name="faCards.sorgaddid" />
+							<div class="fa_card_column_2" id="zjfs" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('cfdd'));">存放地点</div>
+							<div class="fa_card_column_3" tye="0" name="faCards.ssite" id="cfdd" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('syzk'));">使用状况</div>
+							<input type="hidden" tye="1" id="sstatusid" name="faCards.sstatusid" />
+							<div class="fa_card_column_2" id="syzk" bneed="0" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('synx'));">使用年限</div>
+							<div class="fa_card_column_2" id="synx" onclick="faCardEdit(event,this);">0年0月</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('zjff'));">折旧方法</div>
+							<input type="hidden" tye="1" id="sdeprmethodid" name="faCards.sdeprmethodid" />
+							<div class="fa_card_column_2" id="zjff" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('kssyrq'));">开始使用日期</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dstartdate" id="kssyrq" onclick="faCardEdit(event,this);"></div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('yjtyf'));">已计提月份</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.lusedmonths" id="yjtyf" onclick="faCardEdit(event,this);">0</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('bz'));">币种</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.scurrency" id="bz" onclick="faCardEdit(event,this);">人民币</div>
+						</div>
+							
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('yz'));">原值</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dblvalue" id="yz" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('jczl'));">净残值率(%)</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dblbvrate" id="jczl" onclick="faCardEdit(event,this);">0</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('jcz'));">净残值</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dblbv" id="jcz" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('ljzj'));">累计折旧</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dbltransindeprtcard" id="ljzj" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('yzjl'));">月折旧率</div>
+							<div class="fa_card_column_2" id="yzjl" tye="0" name="faCards.dbldeprrate" onclick="faCardEdit(event,this);">0</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('yzje'));">月折旧额</div>
+							<div class="fa_card_column_2" id="yzje" tye="0" name="faCards.dbldepr" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('jz'));">净值</div>
+							<div class="fa_card_column_2" id="jz" onclick="faCardEdit(event,this);">0.00</div>
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dyzjkm'));">对应折旧科目</div>
+							<div class="fa_card_column_2" style="overflow: hidden;" tye="0" name="faCards.sdeprsubjectnum" id="dyzjkm" onclick="faCardEdit(event,this);"></div>
+							
+							
+							
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('xm'));">项目</div>
+							<input type="hidden" tye="1" id="sprojectnum" name="faCards.sprojectnum" />
+							<div class="fa_card_column_2" tye='0'  name="faCards.sprojectname" id="xm" onclick="faCardEdit(event,this);"></div>
+						</div>
+							
+						<div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('kdkse'));">可抵扣税额</div>
+							<div class="fa_card_column_2" tye="0" name="faCards.dbloffsettax" id="kdkse" onclick="faCardEdit(event,this);">0.00</div>
+						</div>
+							
+							
+						</div>
+						<input type="hidden" tye="1" id="dbldecprevaluet" value="0.0" name="faCards.dbldecprevaluet" /><!-- 累计减值准备金额 -->
+						<input type="hidden" tye="1" id="dblretdecprevaluet" value="0.0" name="faCards.dblretdecprevaluet" /><!-- 累计转回减值准备金额 -->
+						
+						
+						
+						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
+						
+							<div style="float:left;margin-top:8px;">
+								<div onclick="faCardEdit(event,document.getElementById('lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
+								<div id="lrr" style="width:94px;text-align:right;float:left;"></div>
+							</div>
+							<div style="float:right;margin-top:8px;">
+								<div onclick="faCardEdit(event,document.getElementById('lrrq'));" style="font-family:楷体;float:left;">录入日期</div>
+								<div id="lrrq" style="font-family:宋体;float:left;width:95px;text-align:right;"></div>
+							</div>
+							
+							
+							
+							
+						
+						</div>
+						
+						
+					</div>
+					
+				</div>
+			</div>
+			<!-- tab 1 结束 -->
+			
+			
+			
+			
+			
+			<!-- tab 2 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">附　　属　　设　　备</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name2">
+										<td width="68" name="snum">设备编号</td>
+										<td width="68" name="sname">名称</td>
+										<td width="68" name="sstyle">规格型号</td>
+										<td width="68" name="lquantity">数量</td>
+										<td width="68" name="dblvalue">价值</td>
+										<td width="68" name="sunit">单位</td>
+										<td width="68" name="ddate">使用日期</td>
+										<td width="68" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_fssb" mark="2">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 2 结束 -->
+			
+			
+			
+			<!-- tab 3 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">固定资产大修理记录</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name3">
+										<td width="112" name="snum">单据号</td>
+										<td width="112" name="dstartdate">开始日期</td>
+										<td width="112" name="denddate">结束日期</td>
+										<td width="112" name="memreason">修理原因</td>
+										<td width="112" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_dxljl" ssty="0" mark="3">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 3 结束 -->
+			
+			
+			
+			<!-- tab 4 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						
+						
+						
+						
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">固定资产转移记录</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name4">
+										<td width="112" name="snum">单据号</td>
+										<td width="112" name="dtransdate">转移日期</td>
+										<td width="112" name="sdeptname">使用部门</td>
+										<td width="112" name="memreason">变动原因</td>
+										<td width="112" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_zczyjl" ssty="0" mark="4">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 4 结束 -->
+			
+			
+			
+			<!-- tab 5 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">停启用记录</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name5">
+										<td width="92" name="snum">单据号</td>
+										<td width="92" name="dstartdate">停用日期</td>
+										<td width="92" name="denddate">启用日期</td>
+										<td width="92" name="ldays">累计停用天数</td>
+										<td width="92" name="memreason">停用原因</td>
+										<td width="92" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_tqyjl" ssty="0" mark="5">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 5 结束 -->
+			
+			
+			
+			<!-- tab 6 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">原值变动记录</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name6">
+										<td width="92" name="snum">单据号</td>
+										<td width="92" name="dtransdate">变动日期</td>
+										<td width="92" name="dbltransvalue">变动金额</td>
+										<td width="92" name="dblaftervalue">变动后原值</td>
+										<td width="92" name="memreason">变动原因</td>
+										<td width="92" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_yzbd" ssty="0" mark="6">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 6 结束 -->
+			
+			
+			
+			<!-- tab 7 开始 -->
+			<div>
+				<div class="tabpanel">
+				
+					<div style="height:0px;border-top:1px solid #808080;border-bottom:1px solid #404040;"></div>
+					<div class="panelcontent">
+						
+						
+						
+						
+						
+						<div style="margin-top:32px;height:24px;font-size:24px;font-weight:bold;text-align:center;">卡片注销记录</div>
+						
+						
+						<div style="margin-top:20px;height:20px;">
+							<table class="cardTable">
+								<thead>
+									<tr id="name7">
+										<td width="78" name="dtransdate">注销日期</td>
+										<td width="78" name="">减少方式</td>
+										<td width="78" name="dblaftervalue">清理收入</td>
+										<td width="78" name="dbltransvalue">清理费用</td>
+										<td width="78" name="">注销人</td>
+										<td width="78" name="memreason">清理原因</td>
+										<td width="78" name="memremark">备注</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<div style="width:584px;height:210px;overflow-y:auto;border-bottom:1px solid #000;">
+							<table class="cardTable">
+								<tbody id="table_jsxx" ssty="1" mark="7">
+									
+								</tbody>
+							</table>
+						</div>
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<!-- tab 7 结束 -->
+			
+		</div>
+	</div>
+	
+		
+		
+	
+		
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	
+</script>
+
+</html>

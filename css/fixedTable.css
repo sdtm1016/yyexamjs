@@ -1,0 +1,11 @@
+/*固定表头以及固定前列*/
+.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;position:relative;background-color:#fff;}
+.table_header thead tr {}
+.table_header thead tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;text-align:center; background-color:#D4D0C8;}
+.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;background-color:#fff;}
+.table_bodyer tbody tr {height:20px;}
+.table_bodyer tbody tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;}
+#table_1_bodyer tr td{border-top:0px solid #000;border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;}
+
+.otherBgColor{background-color:#fff;color:#000}
+.curBgColor{background-color:#00f;color:#fff}

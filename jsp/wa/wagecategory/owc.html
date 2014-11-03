@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>打开工资类别(Open wage category)</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+			url:'wageCategories!queryWageTypes.action',
+			type:'post',
+			dataType:'json',
+			async : false,
+			success:function(data){
+				var list = data.wageList;
+				var str = "";
+				$("#datatable_1_bodyer").html("");
+				$.each(list,function(index,i){
+					str = '<tr><td width="60">' + i.cgzgradenum +'</td><td>' + i.cgzgradename +'</td></tr>';
+					$("#datatable_1_bodyer").append(str);
+				});
+			}
+		});
+		currentTable();
+	});
+	function doSubmit(){
+		if(currentSeletedRow==null){
+			jAlert("请选择要打开的工资类别");
+			return;
+		}
+		window.parent.parent.wa_wageTypeId=1; //打开 工资 类别 标志     1表示 打开 了一种 工资 类别 
+		window.parent.parent.wa_currentWaAccount={}; //里面 保存  当前打开 工资类别 的 ：工资 类别号，工资类别名称
+		window.parent.parent.wa_currentWaAccount.cgzgradenum=currentSeletedRow.cells[0].innerHTML;//工资 类别号
+		window.parent.parent.wa_currentWaAccount.cgzgradename=currentSeletedRow.cells[1].innerHTML;//工资类别名称
+		window.parent.parent.wa_openedWageTypeShowMenu();//隐藏和显示相关菜单
+		window.parent.closeWindow("wa_wagecategory_owc");
+	}
+</script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+</head>
+<body>
+	<div class="container" style="float:left;width:450px;height:240px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:430px;height:220px;margin-top:10px;margin-left:10px;">
+			请选择要打开的工资类别：
+			<br><br>
+			<div style="width:320px;height:190px;float:left;">
+				<div style="width:100%;height:100%;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#fff;">
+					<table id="datatable_1" border=1 class="table_style" style="width:100%;">
+						<thead>
+							<tr>
+								<td>编号</td>
+								<td>工资类别名称</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div style="width:100px;height:190px;float:left;text-align:center;">
+				<br><br><br><br><br><br><br>
+				<input type="button" value="确认" onclick="doSubmit();"/><br><br><input type="button" value="取消" onclick="window.parent.closeWindow('wa_wagecategory_owc');"/>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+function currentTable(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+/***** 选中行代码结束*******/
+</script>
+</html>

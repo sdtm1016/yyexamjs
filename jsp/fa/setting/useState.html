@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>使用状况</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<style type="text/css">
+	.normalInput{width:200px;}
+	.normalInput1{width:160px;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+<script type="text/javascript">
+	var nodename="";//全局变量,存放节点名称
+
+
+	/*
+	*查找选中的节点
+	*treeId 页面上树标签的id
+	*treeAttr 匹配的属性
+	*treeAttrValue 匹配的属性值
+	*/
+	function getSelectedTreeNode(treeId,treeAttr,treeAttrValue){
+		var zTree = $.fn.zTree.getZTreeObj(treeId);
+	  	var node = zTree.getNodesByParam(treeAttr,treeAttrValue,null);
+	  	return node;
+	}
+	/*刷新使用情况*/
+	function refreshFastatus(){
+		//getFastatusTable($("#fastatusId").val());
+		reloadZtree($("#fastatusId").val());
+	}
+	/*保存使用情况*/
+	function saveFastatus(){
+		var fastatusId = $("#fastatusId").val();
+		var fastatus_sparentid = $("#fastatus_sparentid").val();
+		var fastatus_sname = $("#fastatus_sname").val();
+		var fastatus_bneeddepr = $("#fastatus_bneeddepr >option:selected").val();
+		if(fastatus_sname==""){
+			jAlert("使用状况名称不能为空!","提示信息",function(){
+				$("#fastatus_sname").focus();
+			});
+			return false;
+		}else{
+			var flag = true;
+		  	var faStatusdata=null;
+			if($("#editorType").val()==0){
+				/*增加*/
+				var node = getSelectedTreeNode("treeDemo","id",fastatusId);
+			  	var level = node[0].level;
+			  	//alert(node[0].level);
+			  	var numRule = node[0].numRule;
+			  	//alert(numRule.length);
+			  	var thisnumvalue;
+			  	numRule = numRule.substring(level,level+1);
+			  	node = getSelectedTreeNode("treeDemo","parenid",$("#fastatusId").val());
+			  	
+				var numvalue = 0;
+				var snumvalue;
+				for(var i=0;i<node.length;i++){
+					snumvalue = "num"+node[0].level;
+					/*转换成整形*/
+					snumvalue = node[i][snumvalue]-0;
+					if(snumvalue>numvalue){
+						numvalue = snumvalue;
+					}
+				}
+				numvalue = numvalue+1;
+				/*转换成字符串*/
+				numvalue=""+numvalue;
+				var len = numvalue.length;
+				/*自动补零*/
+				var strHtml="";
+				if(numRule>len){
+					len = numRule-len;
+					for(var i=0;i<len;i++){
+						strHtml += ""+0;
+					}
+				}
+				numvalue = strHtml+numvalue;
+				
+				node = getSelectedTreeNode("treeDemo","id",fastatusId);
+			  	var fastatus_num1 = null;
+			  	var fastatus_num2 = null;
+		  		switch (level) {
+		  			case 0:
+		  				fastatus_num1 = numvalue;
+		  				break;
+		  			case 1:
+		  				fastatus_num1 =node[0].num1;
+		  				fastatus_num2 =numvalue;
+		  				break;
+				}
+			  	level = node[0].level+1;
+			  	faStatusdata = {parentId:fastatusId,num1:fastatus_num1,num2:fastatus_num2,sname:fastatus_sname,bneeddepr:fastatus_bneeddepr,ilevel:level};
+			  	
+				$.ajax({
+					url:"faStatus!addFaStatus",
+					type:"post",
+					dataType:"json",
+					data:faStatusdata,
+					async : false,   
+					error: function () {
+			            jAlert('请求失败'); 
+			            flag=false;
+			        }, 
+			        success:function(){
+			        	reloadZtree($("#fastatusId").val());
+						/*启用选项卡*/
+						winui.tab.setDisabled(0,false);
+						$("#editorState").val(0);
+			        }
+				});
+			}else{
+				faStatusdata ={id:fastatusId,parentId:fastatus_sparentid,sname:fastatus_sname,bneeddepr:fastatus_bneeddepr};
+				
+				$.ajax({
+					url:"faStatus!updateFaStatus",
+					type:"post",
+					dataType:"json",
+					data:faStatusdata,
+					async : false,   
+					error: function () {
+			            jAlert('请求失败'); 
+			            flag=false;
+			        }, 
+			        success:function(){
+			        	reloadZtree($("#fastatusId").val());
+						/*启用选项卡*/
+						winui.tab.setDisabled(0,false);
+						$("#editorState").val(0);
+			        }
+				});
+			}
+			return flag;
+		}
+	}
+	/*取消使用情况*/
+	function cancelFastatus(){
+		jConfirm('是否取消本次操作？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				rebackstate();
+			}
+		});
+	}
+	/*删除使用情况*/
+	function delteFastatus(){
+		if($("#editorState").val()==1){
+			jAlert("没有保存数据,请先保存数据然后进行此操作.");
+			return false;
+		}
+		var snum=nodename.split(" ")[0];
+		if(isExitsTableRef(snum,"FA_STATUS","SID")){
+			jAlert("该使用状况已经被使用不可删除");
+			return false;
+		}
+		jConfirm('确定删除当前记录吗？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				var fastatusId = $("#fastatusId").val();
+				var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodesByParam("id",fastatusId,null);
+				$.post("faStatus!deleteFaStatus",{id:fastatusId,parentId:node[0].parenid},function(jsonData){
+					reloadZtree(0);
+				},"json").error(function(){
+					jAlert("请求失败！");
+				});
+			}
+		});
+	}
+	/*操作或者保存按钮恢复以前状态*/
+	function rebackstate(){
+		getFastatusTable($("#fastatusId").val());
+		$("#editorState").val(0);
+		/*启用选项卡*/
+		winui.tab.setDisabled(0,false);
+	}
+	/*点击之前事件*/
+	function beforeClick(treeId, treeNode, clickFlag){
+		nodename=treeNode.name;
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		if($("#fastatusId").val()!=treeNode.id){
+			if($("#editorState").val()==1){
+				jConfirm('是否保存数据？', '确认对话框', function(confirmflag){
+					if(confirmflag){
+						//判断是否正常保存
+						var currentflag = saveFastatus();
+						if(!currentflag){
+							return;
+						}
+					}
+					var selNode = zTree.getNodeByParam("id", treeNode.id);
+	       			zTree.selectNode(selNode);
+	       			getFastatusTable(treeNode.id);
+				});
+			}else{
+				var selNode = zTree.getNodeByParam("id", treeNode.id);
+       			zTree.selectNode(selNode);
+       			getFastatusTable(treeNode.id);
+			}
+			nodename=treeNode.name;
+		}
+		return false;
+	}
+	  /**
+	   * 节点单击事件
+	   * @param event
+	   * @param treeId 树id
+	   * @param treeNode jied
+	   * @param clickFlag
+	 */
+	function onClick(event, treeId, treeNode, clickFlag) {
+	  getFastatusTable(treeNode.id);
+	}
+	function getFastatusTable(parentid){
+		$("#fastatusId").val(parentid);
+		$.ajax({
+			url:"faStatus!findFaStatusByparenid",
+			type:"post",
+			dataType:"json",
+			data:{parentId:parentid},
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+	        	var strHtml = "";
+				for(var i=0;i<dataJson.faStatusList.length;i++){
+					strHtml+="<tr>";
+					var bneeddepr=dataJson.faStatusList[i].bneeddepr;
+					if(dataJson.faStatusList[i].sname==null){
+						dataJson.faStatusList[i].sname="";
+					}
+					if(bneeddepr==null){
+						bneeddepr="";
+					}
+					if(bneeddepr=="0"){
+						bneeddepr="否";
+					}else if(bneeddepr=="1"){
+						bneeddepr="是";
+					}
+					strHtml+="<td class='onerow'>"+dataJson.faStatusList[i].sname+"</td>";
+					strHtml+="<td class='onerow'>"+bneeddepr+"</td>";
+					strHtml+="</tr>";
+				}
+				/*填充列表*/
+				$("#datatable_1_bodyer").empty();
+				$("#datatable_1_bodyer").html(strHtml);
+
+				/*刷新,保存,操作,添加,删除和取消的功能*/
+				if(dataJson.faStatus.ilevel>=2){
+					$("#add").attr("disabled",true);
+				}else{
+					if(dataJson.faStatus.sparentid==-1){
+						$("#add").attr("disabled",true);
+					}else{
+						$("#add").attr("disabled",false);
+					}
+				}
+				if(dataJson.faStatus.idefinetype=="0"){
+					$("#delete").attr("disabled",true);
+					$("#operate").attr("disabled",true);
+					if(dataJson.faStatus.sparentid==-1){
+						$("#fastatus_sparentname").val("").attr("disabled","true");
+						$("#fastatus_sparentid").val(dataJson.faStatus.sparentid);
+						$("#fastatus_sname").val(dataJson.faStatus.sname).attr("disabled","true");
+						$("#fastatus_bneeddepr").val(dataJson.faStatus.bneeddepr).attr("disabled","true");
+					}else{
+						$("#fastatus_sparentid").val(dataJson.faStatus.sparentid);
+						var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+					  	var node = zTree.getNodesByParam("id",dataJson.faStatus.sparentid,null);
+					  	$("#fastatus_sparentname").val(node[0].name).attr("disabled","true");
+						$("#fastatus_sname").val(dataJson.faStatus.sname).attr("disabled","true");
+						$("#fastatus_bneeddepr").val(dataJson.faStatus.bneeddepr).attr("disabled","true");
+					}
+				}else{
+					$("#operate").attr("disabled",false);
+					/*填充表单*/
+					if(dataJson.faStatus.sparentid==-1){
+						$("#fastatus_sparentname").val("").attr("disabled","true");
+						$("#fastatus_sparentid").val(dataJson.faStatus.sparentid);
+						$("#fastatus_sname").val(dataJson.faStatus.sname).attr("disabled","true");
+						$("#fastatus_bneeddepr").val(dataJson.faStatus.bneeddepr).attr("disabled","true");
+					}else{
+						$("#fastatus_sparentid").val(dataJson.faStatus.sparentid);
+						var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+					  	var node = zTree.getNodesByParam("id",dataJson.faStatus.sparentid,null);
+					  	$("#fastatus_sparentname").val(node[0].name).attr("disabled","true");
+						$("#fastatus_sname").val(dataJson.faStatus.sname).attr("disabled","true");
+						$("#fastatus_bneeddepr").val(dataJson.faStatus.bneeddepr).attr("disabled","true");
+					}
+					if(dataJson.faStatus.lchilds>0){
+						$("#delete").attr("disabled",true);
+					}else{
+						$("#delete").attr("disabled",false);
+					}
+				}
+				//设置成不可编辑状态
+				$("#editorState").val(0);
+				$("#save").attr("disabled",true);
+				$("#cancel").attr("disabled",true);
+	        }
+		});
+	}
+	/*重新加载树*/
+	function reloadZtree(treeid){
+		$.ajax({
+			url:"ztree!loadFastatusTree",
+			type:"post",
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+	        	var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+				alert(JSON.stringify(treeNodes));
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+				if(treeid==0){
+					getFastatusTable(node.id)
+					zTree.selectNode(zTree.getNodeByParam("level", 0));
+				}else{
+					getFastatusTable(treeid);
+					zTree.selectNode(zTree.getNodeByParam("id",treeid));
+				}
+	        }
+		});
+	}
+	$(function(){
+		$.ajax({
+			url:"ztree!loadFastatusTree",
+			type:"post",
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败'); 
+	        }, 
+	        success:function(dataJson){
+				var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+			  	getFastatusTable(node.id);
+				zTree.selectNode(node);
+	        }
+		});
+		/*
+		*为保存按钮添加点击事件
+		*/
+		$("#save").unbind("click").click(function(){
+			saveFastatus();
+		});
+		/*
+		*为取消按钮添加点击事件
+		*/
+		$("#cancel").unbind("click").click(function(){
+			cancelFastatus();
+		});
+		/*为刷新按钮添加点击事件*/
+		$("#refresh").unbind("click").click(function(){
+			refreshFastatus();
+		});
+		/*
+		*为添加按钮添加点击事件
+		*/
+		$("#add").unbind("click").click(function(){
+			/*编辑状态*/
+			$("#editorState").val(1);
+			/*操作类型*/
+			$("#editorType").val(0);
+			
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			
+			$("#operate").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#delete").attr("disabled","true");
+			
+			$("#fastatus_sname").removeAttr("disabled");
+			$("#fastatus_bneeddepr").removeAttr("disabled");
+			
+			$("#fastatus_sparentname").val($("#fastatus_sname").val());
+			$("#fastatus_sname").val("");
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+		});
+		/*
+		*为编辑按钮添加点击事件
+		*/
+		$("#operate").unbind("click").click(function(){
+			
+			var snum=nodename.split(" ")[0];
+			if(isExitsTableRef(snum,"FA_STATUS","SID")){
+				jAlert("该使用状况已经被使用不可修改");
+				return false;
+			}
+			
+			/*编辑状态*/
+			$("#editorState").val(1);
+			/*操作类型*/
+			$("#editorType").val(1);
+			
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			
+			$("#operate").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#delete").attr("disabled","true");
+			
+			$("#fastatus_sname").removeAttr("disabled");
+			$("#fastatus_bneeddepr").removeAttr("disabled");
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+		});
+		/*
+		*为删除按钮添加点击事件
+		*/
+		$("#delete").unbind("click").click(function(){
+			delteFastatus();
+		});
+		
+		$("#datatable_1 tbody tr td:first").css("background-color","#D4D0C8");
+	})
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			 <div class="buttongroup">
+				<div class="group">
+                    <div><input type="button" value="操作" id="operate" onclick="window.parent.openWindow('wa_tax_column');" class="operateIco"/></div>
+					<div><input type="button" value="添加" id="add" onclick="window.parent.openWindow('wa_tax_column');" class="addIco"/></div>
+					<div><input type="button" value="删除" id="delete" onclick="window.parent.openWindow('wa_tax_position');" class="delIco"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" value="保存" id="save" onclick="window.parent.openWindow('wa_tax_screening');" class="saveIco"/></div>
+					<div><input type="button" value="取消" id="cancel" onclick="window.parent.closeWindow('wa_tax_main');" class="cancelIco"/></div>
+                    <div><input type="button" value="刷新" id="refresh" onclick="window.parent.openWindow('wa_tax_screening');" class="refreshIco"/></div>
+				</div>
+			</div>
+            
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                	<div class="zTreeDemoBackground left">
+                         <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right;">
+                	<div type="tab" style="float:left;">
+		                <div>
+			               <div>列表视图</div>
+			               <div>单张视图</div>
+		                </div>
+		                <div style="width:388px;height:316px;">
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                             <table id="datatable_1" class="table_style" style="width:350px;margin:-4px;">
+						<thead>
+							<tr id="datatable_1_header" style="height:16px;">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:100px;">使用状况名称</td>
+								<td style="width:100px;">是否计提折旧</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+                           </div>
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="content_zhou">
+                                  	<td>上级名称：</td>
+                                    <td><input class="normalInput" id="fastatus_sparentname"/><input class="normalInput" type="hidden" id="fastatus_sparentid"/></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>使用状况名称：</td>
+                                    <td><input class="normalInput" id="fastatus_sname"/></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>是否计提折旧：</td>
+                                    <td>
+                                      <select class="normalInput1" id="fastatus_bneeddepr">
+                                        <option value="1" selected="selected">要计提折旧</option>
+                                        <option value="0" >不要计提折旧</option>
+                                      </select>
+                                    </td>
+                                  </tr>
+                               </table>
+                           </div>
+		                </div>
+	                </div>
+                </div>
+            </div>
+            
+            
+		</div>
+	</div>
+	<!-- 使用情况id -->
+	<input type="hidden" id="fastatusId"/>
+	<!-- 根据editorType来判断增加还是修改 0:是增加。1:是修改-->
+	<input type="hidden" id="editorType" value="0"/>
+	<!-- 根据editorState来判断编辑状态 0:不可编辑。1:可编辑-->
+	<input type="hidden" id="editorState" value="0"/>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资发放条</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+	<style type="text/css">
+		.dis{
+			display: none;
+		}
+	</style>
+<script type="text/javascript">
+	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+	var wa_isWageSets = window.parent.parent.wa_isWageSets;
+	var psnNums="";
+	var ids = "";
+		/*** 树构建代码 开始 ***/
+		var setting = {	
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				},
+				view:{
+					showIcon: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onCheck: deptOnCheck
+				}
+			};
+		var zNodes = [];
+		$.ajax({
+			async : false,   
+		    cache:false,   
+			url:"ztree!updWaDeptTree.action",
+			type:"post",
+			data:"cgzgradenum=" + cgzgradenum + "&cgzgradename=" + cgzgradename,
+			dataType:"json",
+			error: function () {//请求失败处理函数   
+	            jAlert('请求失败');   
+	        }, 
+			success:function(data,status){
+				treeNodes = data.listTree;
+	            for (var i = 0; i<treeNodes.length; i++) {
+	            	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	            	nodeObj.chkDisabled=false;
+	            	//nodeObj.checked=false;
+	            	zNodes.push(nodeObj);
+	            }
+			}
+		});
+		
+		$(document).ready(function(){
+			$.fn.zTree.init($("#dpmt_tree"), setting, zNodes);
+			
+			$.ajax({
+				url:"wageSetting!queryBachPersonnelFiles.action",
+				type:"post",
+				dataType:"json",
+				data:{"waPsn.cgzGradeNum":cgzgradenum,"isSingle":wa_isWageSets},
+				async:false,
+				success:function(data){
+					initPeron(data.psnReferList[1]);
+				}
+			});
+			cellEdition();
+		});
+		/*** 树构建代码 结束 ***/
+		/*部门点击事件*/
+		function deptOnCheck(event, treeId, treeNode){
+			var check = treeNode.checked;
+			var deptCode=treeNode.id;
+			//alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
+			var datatable_2 = document.getElementById("datatable_1_bodyer");
+			if(check){
+				//遍历右边表格设置下属人员选中和显示状态
+				for(var j=0;j<datatable_2.rows.length;j++){
+					var row = $(datatable_2.rows[j]);
+					var cdepcode=row.attr("cdepcode");
+					if(cdepcode==deptCode){
+						row.find("td:eq(0)").html("√");
+						row.removeClass("dis");				
+					}
+				}
+			}else{
+				//遍历右边表格设置下属人员选中和显示状态
+				for(var j=0;j<datatable_2.rows.length;j++){
+					var row = $(datatable_2.rows[j]);
+					var cdepcode=row.attr("cdepcode");
+					if(cdepcode==deptCode){
+						row.find("td:eq(0)").html("");
+						row.addClass("dis");
+					}
+				}
+			}
+		}
+		/**初始化人员数据*/
+		function initPeron(list){
+			var datatable_2 = document.getElementById("datatable_1_bodyer");
+			var row = "";
+			$.each(list,function(index,p){
+				//<td class='dis'>"+p.cdepcode+"</td><td class='dis'>"+p.ipsngrdId+"</td>
+				row += "<tr  cdepcode="+p.cdepcode+" psnId="+p.ipsngrdId+" ><td>√</td><td>"+p.cdepname+"</td><td>"+p.cpersoncode+"</td><td>"+p.cpersonname+"</td><td>"+p.cpsngrd+"</td></tr>";
+			});
+			$(datatable_2).html(row);
+		}
+		function getParams(){
+			var zTree = $.fn.zTree.getZTreeObj("dpmt_tree");
+			var nodes = zTree.getCheckedNodes();
+			for(var i=0;i<nodes.length;i++){
+				ids = ids + nodes[i].id + ",";
+			}
+			var datatable_2 = document.getElementById("datatable_1_bodyer");
+			for(var j=0;j<datatable_2.rows.length;j++){
+				var row = $(datatable_2.rows[j]);
+				var cdepcode=row.attr("cdepcode");
+				var isCheck= row.find("td:eq(0)").html();
+				if(isCheck=="√"){
+				 psnNums += row.find("td:eq(2)").html()+",";
+				}
+			}
+		}
+		
+		/***** 首列可编辑 *******/
+		//当前被点击选中的行全局变量
+		function cellEdition(){
+		var datatable_1 = document.getElementById("datatable_1_bodyer");
+		for(var i=0;i<datatable_1.rows.length;i++){
+
+			datatable_1.rows[i].cells[0].ondblclick=function(e){
+				
+				var evt=(window.event || e);//获得事件
+				var evtsrc = (evt.srcElement || evt.target);
+				
+				if(evtsrc.tagName=="TD"){
+					var value = evtsrc.innerHTML;
+					if(value == "√"){
+						evtsrc.innerHTML="";
+					}else{
+						evtsrc.innerHTML="√";
+					}
+				}
+			}
+		}
+		}
+
+		
+		function selectedAll(){
+			$("#datatable_1_bodyer tr").find("td:first").html("√");
+		}
+		
+		function cancelAll(){
+			$("#datatable_1_bodyer tr").find("td:first").html("");
+		}
+		
+		
+		function okNext(){
+			getParams();
+			var param = new Object();
+			param.deptIds=ids.substring(0, ids.length-1);
+			param.psnNums=psnNums.substring(0, psnNums.length-1);
+			window.parent.openWindow('wa_stists_gzfft_main','wa_stists_dptpersslt',param);
+			
+			//关闭后面两个窗体
+			var parwinId = window.parent.openerMap.get("wa_stists_dptpersslt");
+			window.parent.closeWindow(parwinId);
+			window.parent.closeWindow('wa_stists_dptpersslt');
+		}
+		/***** 首列可编辑代码结束*******/
+
+		
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:300px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:280px;margin-top:10px;margin-left:10px;">
+			
+			<div style="width:100%:height:14px;">请选择若干部门</div>
+			<div style="width:100%;height:224px;">
+				<div style="width:164px;height:100%;border:2px inset #ccc;float:left;background-color:#fff;overflow:auto;">
+					<div id="dpmt_tree" class="ztree"></div>
+				</div>
+				<div style="width:400px;height:100%;border:2px inset #ccc;float:left;margin-left:8px;background-color:#808080;overflow:auto;">
+					<table id="datatable_1" border=1 class="table_style" style="width:360px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<td style="width:px;">选择</td>
+								<td style="width:px;">部门</td>
+								<td style="width:px;">人员编码</td>
+								<td style="width:px;">人员姓名</td>
+								<td style="width:px;">人员类别</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+							<tr>
+								<td>√</td>
+								<td>综合部</td>
+								<td>101</td>
+								<td>李明</td>
+								<td>管理人员</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>财务部</td>
+								<td>201</td>
+								<td>张伟</td>
+								<td>管理人员</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>技术部</td>
+								<td>301</td>
+								<td>刘飞</td>
+								<td>技术人员</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div style="width:100%:height:22px;margin-top:12px;">
+				<div style="width:164px;height:100%;float:left;" class="v_a_m">
+					<input type="checkbox" id="cb_1" checked="checked" /><label for="cb_1">全选</label>
+					<input type="checkbox" id="cb_2" style="margin-left:26px;"/><label for="cb_2">选定下级部门</label>
+				</div>
+				<div style="width:404px;height:100%;text-align:right;float:right;">
+					<input type="button" value="确认" onclick="okNext();" style="width:70px;"/>
+					<input type="button" value="退出" onclick="window.parent.closeWindow('wa_stists_dptpersslt');" style="width:70px;"/>
+					<input type="button" value="全选" onclick="selectedAll()" style="width:70px;"/>
+					<input type="button" value="全消" onclick="cancelAll()" style="width:70px;"/>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

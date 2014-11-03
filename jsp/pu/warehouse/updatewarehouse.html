@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>库存档案卡片</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+  	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="js/updatewarehouse.js"></script>
+	<script type="text/javascript">
+		 $(document).ready(function (){
+			 var  tid= window.parent.valueMap.get("pu_warehouse_update").id;
+				//alert(tid);
+				var warehouse = "warehouse.id=" + tid;
+				//alert(warehouse);
+				$.ajax({
+					url : "warehouse!findWarehouse.action",
+					type : 'post',
+					data : warehouse,
+					dataType : "json",
+					async : false,
+					error : function() {
+						alert("请求失败!");
+					},
+					success : function(data) {
+						var  warehouse=data.warehouse;
+						//alert(warehouse.id);
+						$("#id").attr("value",warehouse.id);
+						$("#cwhcode").attr("value",warehouse.cwhcode);
+						$("#cwhname").attr("value",warehouse.cwhname);
+						$("#cwhaddress").attr("value",warehouse.cwhaddress);
+						$("#cdepcode").attr("value",warehouse.cdepcode);
+						$("#cdepid").attr("value",warehouse.cdepid);
+						$("#cwhvaluestyle").attr("value",warehouse.cwhvaluestyle);
+						$("#cwhphone").attr("value",warehouse.cwhphone);
+						$("#cwhperson").attr("value",warehouse.cwhperson);
+						$("#bwhpos").attr("value",warehouse.bwhpos);
+						$("#iwhfundquota").attr("value",warehouse.iwhfundquota);
+					    $("#cwhmemo").attr("value",warehouse.cwhmemo);
+					}
+				});
+				
+				
+				
+			});
+
+	
+	
+	
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	
+ <style type="text/css">
+ html,body{font-size:12px;}
+ table{border-collapse: collapse;}
+ table tr{height:40px;}
+ table tr td{height:16px;line-height:16px;background-color:#D4D0C8;}
+ table tr td input{height:14px;line-height:14px;}
+ 
+ 
+ .header{background-color:#ccc;}
+ 
+ .buttongroup {height:40px;background-color:#D4D0C8;cursor:default;}
+ .buttongroup .group {padding-right:10px;margin:3px auto 3px 0px;}
+ .buttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+ .buttongroup .group div input {width:31px;height:35px;padding-top:15px;padding-left:1px;font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;outline:none;}
+ 
+ </style>
+ </head>
+ 
+ <body style="z-index: 0;background-color:#D4D0C8;padding:0px;">
+ 
+     
+  <div style="width:100%;height:307px;font-size:12px;position:absolute;top:0px;left:0px;margin-left:5px;">
+  <div class="buttongroup" style="float:none;clear:both;">
+	<div class="group">
+		<div>
+			<input type="button" onclick="updateWarehouse();" value="保存" style="background-image:url('../../../images/icon/save.gif');"/>
+		</div>
+	</div>
+	
+	<div class="group">
+		<div>
+			<input type="button" value="帮助" style="background-image:url('../../../images/icon/help.gif');"/>
+		</div>
+		<div>
+			<input type="button" value="退出" onclick="window.parent.closeWindow('pu_warehouse_update');" style="background-image:url('../../../images/icon/exit.gif');"/>
+		</div>
+	</div>
+	</div>
+	<div class="border_outside" style="width:450px;height:262px;float:left;">
+		<div class="border_inside" style="width:448px;height:260px;">
+			<div id="personTable" style="overflow:auto;width:455px;height:250px;">
+			<table style="margin-left:10px;">
+				<tr>
+					<!-- <td><input id="cdepid" type="hidden" name="warehouse.cdepid"/></td> -->
+					<tr class="tr1" tid="warehouse.getId">
+					<td>仓库编码</td><td><input id="cwhcode" name="warehouse.cwhcode" style="width:130px;"/></td>
+					<td  >仓库名称</td><td><input id="cwhname" name="warehouse.cwhname" style="width:130px;"/></td>
+				</tr>
+				
+				<tr>	
+					<td  >所属部门</td><td>
+					<input type="text" id="cdepcode" name="warehouse.cdepcode" onfocus="dofocustoenter('Department',this,'','','','')"/><input type="button" class="finder" onclick="javascript:windowParamTarget=this;window.parent.openWindow('basic_grid_departmentGridRef','pu_warehouse_update');" style="margin-left:-18px;"/>
+					<input type="hidden" id="cdepid" name="warehouse.cdepid"/>
+					</td>
+					<td  >负债人&emsp;</td><td><input id="cwhperson" name="warehouse.cwhperson" style="width:130px;" /></td>
+				</tr>
+				
+				<tr>
+					<input type="hidden" id="id" name="warehouse.id"/>
+				    <td  >电话&emsp;&emsp;</td><td><input id="cwhphone" name="warehouse.cwhphone" style="width:130px;"/></td>
+				    <td  >资金定额</td><td><input id="iwhfundquota" name="warehouse.iwhfundquota" style="width:130px;"/></td>
+				</tr>
+			
+				<tr>
+				    <td  >计算方式</td>
+				    
+				    <td>
+						<select id="cwhvaluestyle" name ="warehouse.cwhvaluestyle"style="width:130px;">
+								<option value="全月平均法">全月平均法</option>
+								<option value="移动平均法">移动平均法</option>
+								<option value="先进先出法">先进先出法</option>
+								<option value="后进先出法">后进先出法</option>
+								<option value="个别计价法">个别计价法</option>
+								<option value="计划价法">计划价法</option>
+						</select>
+				    </td>
+				    
+				    <td colspan="2">
+				   <!--  <input  type="checkbox" id="bwhpos" name ="warehouse.bwhpos" onclick="queryBoxClick(this)" width="20px"/> -->
+				    <input  type="checkbox" id="bwhposCheckBox"  name = "bwhposCheckBox" value="0" width="20px"/>
+					<input  type="hidden" id="bwhpos" name="warehouse.bwhpos" value="0" width="20px"/>
+				    <label for="bwhpos">是否货位管理</label></td>
+				</tr>
+				<tr>
+					<td  >仓库地址</td><td width="30px" colspan="3"><input id="cwhaddress" name="warehouse.cwhaddress" style="width:350px;"/></td>
+				</tr>
+				<tr>
+					<td  >备注&emsp;&emsp;</td><td colspan="3"><input id="cwhmemo" name="warehouse.cwhmemo"  style="width:350px;"/></td>
+				</tr>
+			</table>
+			</div>
+		 
+  		</div>
+	</div>
+  
+		  </div>
+		  
+ </body>
+</html>
+

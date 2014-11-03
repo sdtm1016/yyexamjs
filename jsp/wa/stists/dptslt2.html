@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门选择设置</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+<script type="text/javascript">
+	
+		/*** 树构建代码 开始 ***/
+		var setting = {
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				},
+				view:{
+					showIcon: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				}
+			};
+		
+		var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+		var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+		var zNodes = [];
+		$.ajax({
+			async : false,   
+		    cache:false,   
+			url:"ztree!updWaDeptTree.action",
+			type:"post",
+			data:"cgzgradenum=" + cgzgradenum + "&cgzgradename=" + cgzgradename,
+			dataType:"json",
+			error: function () {//请求失败处理函数   
+	            jAlert('请求失败');   
+	        }, 
+			success:function(data,status){
+				treeNodes = data.listTree;
+	            for (var i = 0; i<treeNodes.length; i++) {
+	            	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	            	nodeObj.chkDisabled=false;
+	            	nodeObj.checked=false;
+	            	zNodes.push(nodeObj);
+	            }
+			}
+		});
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#dpmt_tree"), setting, zNodes);
+		});
+		var ids = "";
+		/*** 树构建代码 结束 ***/
+		function btnConfirm(){
+			var zTree = $.fn.zTree.getZTreeObj("dpmt_tree");
+			var nodes = zTree.getCheckedNodes();
+			for(var i=0;i<nodes.length;i++){
+				ids = ids + nodes[i].id + ",";
+			}
+			//打开部门工资汇总表
+			alert(ids);
+			window.parent.openWindow('wa_stists_bmgzhzb_main','wa_stists_dptslt2',ids);
+			//关闭后面两个窗体
+			var parwinId = window.parent.openerMap.get("wa_stists_dptslt2");
+			window.parent.closeWindow(parwinId);
+			window.parent.closeWindow('wa_stists_dptslt2');
+		}
+		
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:304px;height:192px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:290px;height:32px;margin-left:16px;margin-top:8px;line-height:32px;">请选择若干部门</div>
+		<div style="width:100%;;height:140px;margin-left:16px;">
+			<div style="width:166px;height:100%;;border:2px inset #ccc;overflow:auto;background-color:#fff;float:left;">
+				<div id="dpmt_tree" class="ztree"></div>
+			</div>
+			<div style="width:118px;height:100%;float:left;">
+				<div style="width:100%;height:126px;text-align:center;">
+					<br>
+					<input type="button" value="确认" onclick="btnConfirm();" style="width:80px;"/><br><br>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('wa_stists_dptslt2');" style="width:80px;"/>
+				</div>
+				
+			</div>
+				
+		</div>		
+		
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>人员参照</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+function returnSelected(){
+	var person = {};
+	var select = document.getElementById("person");
+	if(select.selectedIndex==-1){
+		window.parent.closeWindow("wa_other_personnelfile_personreference");
+		return;
+	};
+	var item = select[select.selectedIndex];
+	person.id=item.id;
+	person.cname = item.text;
+	person.cdepcode=$("#person").find("option:selected").attr("cdepcode");
+	person.cdepname=$("#person").find("option:selected").attr("cdepname");
+	window.parent.deliverValue("wa_other_personnelfile_personreference",person);
+	window.parent.closeWindow("wa_other_personnelfile_personreference");
+}
+var psn;
+$(document).ready(function(){
+	$.ajax({
+		url:"wageSetting!queryPsnList.action",
+		type:"post",
+		dataType:"json",
+		data:"waPsn.cgzGradeNum=" + cgzgradenum,
+		success:function(data){
+			var dept = data.objList[0];
+			psn = data.objList[1];
+			$("#dept").html("");//清空下拉列表
+			$("#person").html("");//清空下拉列表
+			$("#dept").append("<option value='-1'>全部</option>");
+			var deptNameStr = "";
+			$.each(dept,function(index,i){
+				deptNameStr = "<option value='"+ i.cdepcode +"'>"+ i.cdepname + "</option>";
+				$("#dept").append(deptNameStr);
+			});
+			var psnStr = "";
+			$.each(psn,function(index,i){
+				psnStr = "<option cdepname='"+i.cdepname+"' cdepcode='"+i.cdepcode+"' value='"+ i.cpersonname +"'>"+ i.cpersonname + "</option>";
+				$("#person").append(psnStr);
+			});
+		}
+	});
+});
+
+	function changeDept(){
+		deptId = $("#dept").val();
+		$("#person").html("");//清空下拉列表
+		var psnStr = "";
+		$.each(psn,function(index,i){
+			if (i.cdepcode == deptId) {
+				psnStr = "<option value='"+ i.cpersonname +"'>"+ i.cpersonname + "</option>";
+				$("#person").append(psnStr);
+			}else if(deptId == -1){
+				psnStr = "<option value='"+ i.cpersonname +"'>"+ i.cpersonname + "</option>";
+				$("#person").append(psnStr);
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:176px;height:244px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:144px;height:224px;margin-top:10px;margin-left:16px;">
+			<select style="width:142px;" id="dept" onchange="changeDept()">
+			</select>
+			<select id="person" size="10" style="width:142px;margin-top:10px;">
+			</select>
+			<div style="margin-top:4px;">
+				<input type="button" value="确认" onclick="returnSelected();"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_other_personnelfile_personreference');"/>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

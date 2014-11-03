@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>过滤</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+
+<script type="text/javascript">
+
+//按部门
+function byDpt(cb){
+	var select = document.getElementById("byDpt");
+	if(cb.checked==true)
+		select.disabled=false;
+	else
+		select.disabled=true;
+}
+
+
+//按税率
+function byRate(cb){
+	var select = document.getElementById("byRate");
+	if(cb.checked==true)
+		select.disabled=false;
+	else
+		select.disabled=true;
+}
+</script>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:390px;height:190px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:358px;height:158px;margin-top:16px;margin-left:16px;">
+			
+			<div style="width:264px;height:155px;float:left;">
+				
+				请选择过滤方式：
+				<br><br>
+				<fieldset style="width:240px;height:110px;">
+					<legend>数据过滤</legend>
+					<div class="v_a_m">
+						
+						<div style="height:20px;margin-top:20px;">
+							<input type="checkbox" id="cb_1" onclick="byDpt(this);"/>&nbsp;&nbsp;<label for="cb_1">按人员编号</label>&nbsp;&nbsp;<select id="byDpt" disabled="disabled" style="width:124px;">
+								<option>部门1</option>
+								<option>部门2</option>
+								<option>部门3</option>
+								<option>部门4</option>
+							</select>
+						</div>
+						
+						<div style="height:20px;margin-top:20px;">
+							<input type="checkbox" id="cb_2" onclick="byRate(this);"/>&nbsp;&nbsp;<label for="cb_2">按人员姓名</label>&nbsp;&nbsp;<select id="byRate" disabled="disabled" style="width:124px;">
+								<option>5%</option>
+								<option>10%</option>
+								<option>20%</option>
+								<option>50%</option>
+							</select>
+						</div>
+						
+					</div>
+				</fieldset>
+				
+			</div>
+		
+			<div style="width:90px;height:155px;float:left;text-align:center;">
+			<br>
+				<img src="../../../images/wa/2012122816300001.jpg" width="32" height="32"/>
+				<br><br><br><br>
+				<input type="button" value="确认"/><br><br><input type="button" value="取消" onclick="window.parent.closeWindow('wa_tax_screening');"/>
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

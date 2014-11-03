@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>增加</title>
+	<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<script type="text/javascript" src="../../../../js/winui/winui.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../../css/tab.css">
+	<script type="text/javascript" src="../../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../../js/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript">
+		var cgzgradenum = null;
+		var psnLen;
+		$(document).ready(function(){
+			cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+			loadFunction();
+		});
+		function loadFunction(){
+			$.ajax({
+				url:"wageSetting!queryWaPsnRefer.action",
+				type:"post",
+				dataType:"json",
+				data:"waPsn.cgzGradeNum=" + cgzgradenum,
+				success:function(data){
+					if(data==null)return;
+					var waDeptList = data.psnReferList[0];
+					var waGradeList = data.psnReferList[1];
+					var bankNameList = data.psnReferList[2];
+					psnLen = data.psnReferList[3];
+					$("#dept_num").html("");//清空下拉列表
+					$("#dept_name").html("");//清空下拉列表
+					$("#psn_grade").html("");//清空下拉列表
+					$("#iid").html("");
+					if(data.psnReferList[0].length!=0){
+						var deptNumStr = "";
+						deptNumStr += "<option></option>"
+						$.each(waDeptList,function(index,i){
+							deptNumStr += "<option value='"+ i.cdeptNum +"'>"+ i.cdeptNum + "</option>";
+						});
+						$("#dept_num").append(deptNumStr);
+					}
+					if(waDeptList.length!=0){
+						var deptNameStr = "";
+							deptNameStr += "<option></option>"
+						$.each(waDeptList,function(index,i){
+							deptNameStr += "<option value='"+ i.cdeptNum +"'>"+ i.cdepname + "</option>";
+						});
+						$("#dept_name").append(deptNameStr);
+					}
+					if(waGradeList.length!=0){
+						var gradeStr = "";
+						$.each(waGradeList,function(index,i){
+							gradeStr = "<option value='"+ i.ipsngrdId +"'>"+ i.cpsngrd + "</option>";
+							$("#psn_grade").append(gradeStr);
+						});
+					}
+					if(bankNameList.length!=0){
+						var bankNameStr = "<option value='0'></option>";
+						$("#iid").append(bankNameStr);
+						$.each(bankNameList,function(index,i){
+							bankNameStr = "<option value='"+ i.IId +"' inumlen='"+i.inumLen+"'>"+ i.cbankName + "</option>";
+							$("#iid").append(bankNameStr);
+						});
+					}
+					$("#cpsnNum").attr("maxlength",psnLen);
+				}
+			});
+		}
+		function changeDeptNum(obj){
+			$("#dept_name").val(obj.value);
+		}
+		function changeDeptName(obj){
+			$("#dept_num").val(obj.value);
+		}
+		function deliverValue(person){
+			//jAlert(JSON.stringify(person));
+			$("#cpsnName").val(person.cname);
+			
+			/*
+			带出部门名称
+			$("#dept_num").empty();
+			$("#dept_num").append("<option value='"+person.cdepcode+"'> "+person.cdepcode+" </option>");//部门编号
+			$("#dept_name").empty();
+			$("#dept_name").append("<option value='"+person.cdepcode+"' > "+person.cdepname+" </option>");//部门名称 */
+			
+		}
+		function changeBankName(obj){
+			if(obj.value != 0){
+				$("#caccount").attr("disabled",false);
+				var inumlen = $(obj.options[obj.selectedIndex]).attr("inumlen");
+				$("#yhzh").css('color','#000');
+				$("#caccount").attr("maxlength",inumlen);
+			}else{
+				$("#yhzh").css('color','#888');
+				$("#caccount").val("");
+				$("#caccount").attr("disabled",true);
+			}
+		}
+		function doSubmit(){
+			var cpsnNum = $("#cpsnNum").val();
+			var cpsnName = $("#cpsnName").val();
+			var dept_name=$("#dept_name").val();
+			var iid=$("#iid").val();
+			if ("" == cpsnNum || null == cpsnNum || cpsnNum.length != psnLen) {
+				jAlert("人员编号长度不够");
+			}else if(null == cpsnName || "" == cpsnName){
+				jAlert("请输入人员姓名！！！");
+			}else if(null == dept_name || "" == dept_name){
+				jAlert("请输入部门名称！！！");
+			}else{
+				if(iid!=null){//加上银行账号校验(2013-9-6)
+					var len=$("#iid option:selected").attr("inumlen");
+					var caccount=$("#caccount").val().length;
+					if(caccount<len){
+						jAlert("银行账号长度不够!请输入"+len+"位","提示",function(){
+							$("#caccount").select();
+							$("#caccount").focus();
+						})
+					}else if(caccount>len){
+						jAlert("银行账号长度过长!请输入"+len+"位","提示",function(){
+							$("#caccount").select();
+							$("#caccount").focus();
+						})
+					}else{
+						var param = $("#form1").serialize();
+						$.ajax({
+							url:"wageSetting!savePersonnelFiles.action",
+							type:"post",
+							dataType:"json",
+							data:param+ "&waPsn.cgzGradeNum=" + cgzgradenum,
+							success:function(data){
+								var status = data.success;
+								if(status == 1){
+									window.parent.getWindow("wa_other_personnelfile_main").mainOnload();
+									$("#cpsnNum").val("");
+									$("#cpsnName").val("");
+									$("#joinDate").val("");
+									$("#cmemo").val("");
+									$("#caccount").val("");
+									$("#cb_1_2").attr("checked",true);
+									$("#cb_1_3").attr("checked",true);
+								}else if(status == 0){
+									jAlert("人员编号不允许重复","提示",function(){
+										$("#cpsnNum").focus().select();
+									});
+								}else if(status == 2){
+									jAlert("同一银行账号不允许相同!","提示",function(){
+										$("#caccount").focus().select();	
+									});
+									
+								}
+								else if(status == -1){
+									jAlert('保存失败');
+								}
+							}
+						});
+					}
+				}
+
+			}
+			
+		}
+	</script>
+</head>
+<body>
+<form id="form1" method="post">
+	<div class="container" style="float:left;width:500px;height:360px;background-color:#D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:492px;height:348px;margin-top:6px;margin-left:4px;">
+		<div type="tab">
+			<div>
+				<div>基本信息</div>
+				<div>附加信息</div>
+			</div>
+			<div style="width:490px;height:282px;">
+				<div style="margin-top:8px;margin-left:8px;">
+					<div style="width:226px;height:244px;float:left;padding-left:20px;padding-top:10px;line-height:20px;border:1px solid #000;">
+						<div>
+							人员编号：<input type="text" id="cpsnNum" name="waPsn.cpsnNum" style="width:140px;"/>
+						</div>
+						<div>
+							人员姓名：<input type="text" id="cpsnName" name="waPsn.cpsnName" style="width:120px;"/><input type="button" class="finder" onclick="window.parent.openWindow('wa_other_personnelfile_personreference','wa_other_personnelfile_add');"/>
+						</div>
+						<div>
+							部门编码：<select id="dept_num" onchange="changeDeptNum(this)" name="waPsn.cdeptNum" style="width:140px;">
+									 </select>
+						</div>
+						<div>
+							部门名称：<select id="dept_name" onchange="changeDeptName(this)" style="width:140px;">
+									</select>
+						</div>
+						<div>
+							人员类别：<select id="psn_grade" name="waPsn.ipsngrdId" style="width:140px;">
+									</select>
+						</div>
+						<div>
+							进入日期：<input id="joinDate" name="waPsn.dintime" type="text" style="width:120px;"/><input type="button" class="picker" onclick="WdatePicker({el:'joinDate'})"/>
+						</div>
+						<div>
+							离开日期：<input id="leaveDate" name="" disabled = "disabled" type="text" style="width:120px;"/><input type="button" class="picker" onclick="WdatePicker({el:'leaveDate'})"/>
+						</div>
+						<div>
+							备注：<br/>
+							<textarea rows="" cols="" id ="cmemo" name="waPsn.cmemo" style="width:196px;height:30px;"></textarea>
+						</div>
+					</div>
+					<div style="width:216px;float:left;">
+						<fieldset class="v_a_m">
+							<legend>属性</legend>
+							<div style="margin-left:20px;">
+								<input type="checkbox" id="cb_1_1" disabled="disabled"/><label for="cb_1_1">停发工资</label><br>
+								<input type="checkbox" id="cb_1_2" name="waPsn.btaxbz" checked="checked"/><label for="cb_1_2">计税</label><br>
+								<input type="checkbox" id="cb_1_3" name="waPsn.bforeign"  checked="checked"/><label for="cb_1_3">中方人员</label><br>
+								<input type="checkbox" id="cb_1_4" disabled="disabled"/><label for="cb_1_4">调出</label><br>
+							</div>
+						</fieldset>
+						<fieldset class="v_a_m" style="margin-top:9px;">
+							<legend>银行代发</legend>
+							<div style="margin-left:0px;">
+								<div>
+									银行名称：<select id="iid" name="waPsn.IId" onchange="changeBankName(this)">
+									</select>
+								</div>
+								<div>
+									<label id="yhzh" style="color:#888;">银行账号：</label><input type="text" id="caccount" name="waPsn.caccount" style="width:120px;" disabled="disabled"/>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="v_a_m" style="margin-top:9px;">
+							<legend>数据档案</legend>
+							<div style="margin-left:20px;">
+								<input type="button" value="  数据档案  " disabled="disabled"/>
+							</div>
+						</fieldset>
+					</div>
+				</div>
+				<div style="margin-top:8px;margin-left:8px;">
+					<div style="width:194px;height:244px;float:left;line-height:20px;border:1px solid #000;">
+						<div style="margin-left:16px;">
+							<div style="margin-top:12px;">
+								人员姓名：<br><input type="text" id="" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								人员编号：<br><input type="text" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								所在部门：<br><input type="text" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								人员类别：<br><input type="text" disabled="disabled" style="width:142px;color:blue;" value="无类别"/>
+							</div>
+						</div>
+					</div>
+					<div style="width:240px;height:244px;border:2px inset #ccc;float:left;margin-left:20px;">
+						<div style="margin-left:16px;margin-top:20px;line-height:30px;">
+							<div>
+								　手机号：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								身份证号：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								出生年月：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								　职务号：<input type="text" style="width:142px;"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="margin-top:12px;">
+			<div style="float:left;">
+				<input type="button" value=" 第一人 " disabled="disabled"/>
+				<input type="button" value=" <上一人 " disabled="disabled"/>
+				<input type="button" value=" 下一人> " disabled="disabled"/>
+				<input type="button" value=" 末一人 " disabled="disabled"/>
+			</div>
+			<div style="float:right;text-align:right;">
+				<input type="button" value="  确认  " onclick="doSubmit();"/>
+				<input type="button" value="  取消  " onclick="window.parent.closeWindow('wa_other_personnelfile_add');"/>
+			</div>
+		</div>
+		</div>
+	</div>
+</form>
+</body>
+</html>

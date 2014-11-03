@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>供应商往来制单</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/tableview.js"></script>
+	<style type="text/css">
+	.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;font-size:12px;}
+	.table_header tr{height:20px;}
+	.table_header tr td{border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;pading:0px;}
+	.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;font-size:12px;}
+	.table_bodyer tr {height:20px;}
+	.table_bodyer tr td{border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;pading:0px;}
+	</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:650px;height:450px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:643px;height:443px;margin-top:1px;margin-left:3px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="全选" style="background-image:url('../../../images/icon/allyes.gif');" onclick="checkAll();" /></div>
+					<div><input type="button" value="全消" style="background-image:url('../../../images/icon/allno.gif');" onclick="cancelAll();" /></div>
+					<div><input type="button" value="合并" disabled="disabled" onclick="merge();" style="background-image:url('../../../images/icon/integration.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="查询" onclick="window.parent.openWindow('pu_gb_gbQuery','pu_gb_tableview',{type:'search'});" style="background-image:url('../../../images/icon/telescope.gif');"/></div>
+					<div><input type="button" value="制单" onclick="makeAccountingVoucher();" style="background-image:url('../../../images/icon/find.gif');"/></div>
+					<div><input type="button" value="单据" disabled="disabled" style="background-image:url('../../../images/icon/paper.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="摘要" disabled="disabled" style="background-image:url('../../../images/icon/lightning.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('pu_gb_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+			<div style="width:640px;height:370px;">
+				<div style="width:636px;height:68px;border:2px inset #ccc;background-color:#fff;">
+					<div id="title" style="height:30px;font-size:16px;color:#000080;font-weight:bold;text-align:center;text-decoration:underline;padding-top:10px;">
+						采购发票制单
+					</div>
+					<div style="height:20px;color:#000080;">
+						<div style="margin-left:10px;float:left;">
+							&nbsp;&nbsp;凭证类别&nbsp;&nbsp;
+							<select id="signList" onchange="signchange();" style="width:110px;">
+								<option>收款凭证</option>
+								<option>付款凭证</option>
+								<option>转账凭证</option>
+							</select>
+							&nbsp;&nbsp;制单日期&nbsp;&nbsp;
+							<input type="text" id="madeDate" onclick="WdatePicker();" style="width:90px;"/>
+							<input type="button" onclick="WdatePicker({el:'madeDate'});" class="picker" style="margin-bottom:-5px;"/>
+						</div>
+						<div style="margin-right:20px;float:right;margin-top:3px;">
+							共<span id="dataCount">0</span>条
+						</div>
+					</div>
+				</div>
+				<div style="width:636px;height:294px;border:2px inset #ccc;overflow:hidden;margin-top:2px;background-color:#fff;">
+					<div style="width:636px;height:21px;background-color:#fff;overflow:hidden;position:absolute;margin-top:0px;margin-left:0px;">
+						<table id="table_header" class="table_header" width="774">
+							<tr>
+								<td width="60">选择标志</td>
+								<td width="74">凭证类别</td>
+								<td width="74">单据类型</td>
+								<td width="86">单据号</td>
+								<td width="76">日期</td>
+								<td width="130">供应商名称</td>
+								<td width="94">部门</td>
+								<td width="80">业务员</td>
+								<td width="100">金额</td>
+							</tr>
+						</table>
+					</div>
+					<div style="width:636px;height:274px;overflow-y:hidden;overflow-x:auto;margin-top:21px;" onscroll="tableScroll(this);">
+						<table id="datarows" class="table_bodyer" width="774">
+						</table>
+					</div>
+				</div>
+			</div>
+			<div style="height:26px;line-height:26px;">
+				<div style="float:right;width:86px;height:16px;border:1px solid #000;margin-top:6px;margin-right:6px;">
+					<div style="margin-top:4px;margin-left:8px;border:1px solid #000;background-color:#c0ffc0;width:16px;height:8px;float:left;"></div>
+					<div style="margin-left:6px;float:left;margin-top:-4px;">已经制单</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

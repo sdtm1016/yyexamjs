@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门工资汇总表</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../../css/contextmenu.css">
+<script type="text/javascript" src="../../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<style type="text/css">
+*{font-family:宋体;}
+	.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;position:relative;background-color:#fff;}
+	.table_header thead tr {height:31px;}
+	.table_header thead tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;text-align:center;}
+	.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;background-color:#fff;}
+	.table_bodyer tbody tr {height:20px;}
+	.table_bodyer tbody tr td {border:none;border-right:1px solid #ccc;border-bottom:1px solid #ccc;width:100px;}
+</style>
+<script type="text/javascript">
+
+	//全局变量
+	//上个页面穿过来的参数
+	var	parentParam = window.parent.valueMap.get("wa_stists_bmgzxmgcfxb_table_view");
+	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	var stratMonth=parentParam.stratMonth;
+	var endMonth=parentParam.endMonth;
+	var deptNums=parentParam.deptNums;
+	var itemIds=parentParam.itemIds;
+
+
+$(document).ready(function(){
+	 $("#stratMonth").html(stratMonth);
+	 $("#endMonth").html(endMonth);
+//		alert(parentParam.stratMonth+"="+parentParam.endMonth+"=="+parentParam.deptNums+":::"+parentParam.itemIds);
+	var data="cgzgradenum=" + cgzgradenum+"&startMonth="+stratMonth+"&endMonth="+endMonth+"&deptNums="+deptNums;
+	$.ajax({
+		url:"wageMovements!queryDeptWageItemList.action",
+		type:"post",
+		data:data,
+		async : false,
+		success:function(data,status){
+			var list = data.list;
+			if(list.length==0)return;
+			var listTh=data.list[0];
+			var listTb=data.list[1];
+			$("#scrollThead").empty();
+			var thStr="<tr><td>人数</td>";
+			for(var i=0;i<listTh.length;i++){
+				var th=listTh[i];
+				thStr += '<td width=\'100\' id="'+th.igzitemId+'" columnId="'+th.igzitemId+'">'+ th.csetgzitemname +'</td>';
+			}
+			thStr += "</tr>";
+			$("#scrollThead").append(thStr);//表头
+			$("#table_2_bodyer_2").empty();
+			$("#table_1_bodyer_1").empty();
+			var tbStr="";
+			var fixedTbStr="<tr>";
+			var psnhj=0;
+			var arr=new Array();
+			for(var i=0;i<listTb.length;i++){
+				tbStr +="<tr>";
+				fixedTbStr +="<td>"+listTb[i][1]+"</td>";//部门
+				tbStr +="<td width='100' align=\"right\" >"+listTb[i][0]+"</td>";//人数
+				psnhj +=listTb[i][0];
+				for(var j=2;j<listTb[i].length;j++){
+					tbStr += "<td width='100' align=\"right\" >" + transFloat(listTb[i][j]) + "</td>";
+					if(typeof(arr[j])=="undefined"){//累加合计值
+						arr[j]=0;
+						arr[j] =parseInt(arr[j])+parseInt(listTb[i][j]);
+					}else{
+						arr[j] =parseInt(arr[j])+parseInt(listTb[i][j]);	
+					}
+					
+				}
+				tbStr += "</tr>";
+				fixedTbStr += "</tr>";
+			}
+			fixedTbStr += "<tr><td>合计</td></tr>";//合计
+			tbStr += "<tr><td align=\"right\">"+psnhj+"</td>"
+			 for(var i=2;i<arr.length;i++){
+				tbStr +="<td align=\"right\" >"+transFloat(arr[i])+"</td>";
+			} 
+			tbStr +="</tr>";
+			$("#table_1_bodyer_1").append(fixedTbStr);
+			$("#table_2_bodyer_2").append(tbStr);//表体
+			
+		},
+		dataType:"json"
+	});
+	hidecolumn(itemIds);
+});
+
+//隐藏列
+function hidecolumn(columnIds){
+	if(columnIds=="") return;
+	var cellIndexs = new Array();
+	var columnId = columnIds.split(",");
+	for(var i=0;i<columnId.length;i++){
+		var cellIndex=$("#"+columnId[i])[0].cellIndex;
+		cellIndexs.push(cellIndex);
+	}
+	for(var j=0;j<cellIndexs.length;j++){
+		$("#scrollThead").find("td").eq(cellIndexs[j]).hide();
+		$("#table_2_bodyer_2 tr").each(function(){
+			$(this).find("td").eq(cellIndexs[j]).hide();
+		});
+	}
+}
+/**
+ * 遇到数值的时候，转换成小数点后两位
+ */
+	function transFloat(value){
+		if(value!=null && value!=""){
+			if((value-0)==0){
+				value="";
+			}else{
+				value=Math.abs(parseFloat(value)).toFixed(2);
+			}
+		} else if(value==null || value==""||value==undefined){
+			value="";
+		}
+		return value;
+	}
+</script>
+
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:800px;height:570px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:793px;height:563px;margin-top:1px;margin-left:3px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="打印" style="background-image:url('../../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" style="background-image:url('../../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" style="background-image:url('../../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="查询" onclick="window.parent.openWindow('');" style="background-image:url('../../../../images/icon/telescope.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" onclick="" style="background-image:url('../../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('wa_stists_bmgzxmgcfxb_table_view');" style="background-image:url('../../../../images/icon/exit.gif');"/></div>
+				</div>
+				
+			</div>
+			
+			<div style="width:794px;height:484px;background-color:#fff;">
+				<div style="width:792px;height:70px;">
+					<div style="width:792px;height:27px;line-height:27px;padding-top:4px;text-align:center;font-size:20px;font-family:正楷;font-weight:bold;color:#000080;text-decoration:underline;">
+						部门工资项目构成分析表
+					</div>
+					<div style="text-align:center;">
+						<span id="year">2012</span>&nbsp;年&nbsp;度&nbsp;<span id="startMonth">1</span>&nbsp;月&nbsp;——&nbsp;<span id="endMonth">12</span>&nbsp;月
+					</div>
+					<div class="v_a_m" style="height:24px;">
+					
+					</div>
+				</div>
+				<div style="width:792px;height:413px;border:1px solid #000;overflow:auto;" onscroll="tableScroll(this);">
+					<div id="left_table" style="width:60px;height:0px;position:relative;z-index:20000;float:left;">
+						<table id="table_1_header" class="table_header" style="width:60px;">
+							<thead>
+								<tr>
+									<td>部门</td>
+								</tr>
+							</thead>
+						</table>
+						<table id="table_1_bodyer" class="table_bodyer" style="width:60px;">
+							<tbody id="table_1_bodyer_1">
+								<tr>
+									<td>某部门</td>
+								</tr>
+						
+							</tbody>
+						</table>
+					</div>
+					<div style="width:1300px;margin-left:60px;float:left;">
+						<table id="table_2_header" class="table_header" style="width:1600px;">
+							<thead id="scrollThead">
+								<tr>
+									<td>人数</td>
+									<td>基本工资</td>
+									<td>岗位工资</td>
+									<td>交通补助</td>
+									<td>书报费</td>
+									<td>餐补</td>
+									<td>应发合计</td>
+									<td>养老保险</td>
+									<td>请假扣款</td>
+									<td>代扣税</td>
+									<td>扣款合计</td>
+									<td>实发合计</td>
+									<td>请假天数</td>
+								</tr>
+							</thead>
+						</table>
+						<table id="table_2_bodyer" class="table_bodyer" style="width:1600px;">
+							<tbody id="table_2_bodyer_2">
+								<tr>
+									<td>200</td>
+									<td>9000</td>
+									<td>1000</td>
+									<td>2000</td>
+									<td>200</td>
+									<td>600</td>
+									<td>20000</td>
+									<td>400</td>
+									<td>300</td>
+									<td>500</td>
+									<td>600</td>
+									<td>230000</td>
+									<td>3</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var table_1_header = document.getElementById('table_1_header');
+	var table_1_bodyer = document.getElementById('table_1_bodyer');
+	var table_2_header = document.getElementById('table_2_header');
+	var table_2_bodyer = document.getElementById('table_2_bodyer');
+	var left_table = document.getElementById('left_table');
+	//控制表头横纵向滚动时固定不动
+	function tableScroll(container){
+		table_1_header.style.marginTop=container.scrollTop+"px";
+		table_1_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		table_2_header.style.marginTop=container.scrollTop+"px";
+		table_2_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		left_table.style.marginLeft=container.scrollLeft+"px";
+	}
+
+	/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+	//当前被点击选中的行全局变量
+	var currentSeletedRow=null;
+	var datatable_1 = document.getElementById("table_2_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(event){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+
+	/***** 选中行代码结束*******/
+	
+</script>
+</html>

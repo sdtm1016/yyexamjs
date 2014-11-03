@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>条件</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+
+
+//确定按钮
+function btnConfirm(){
+	var param = new Object();
+	window.parent.openWindow('fa_stists_account_dggdzcmxz','fa_stists_account_gdzczz_tj',param);
+	window.parent.closeWindow('fa_stists_account_gdzczz_tj');
+}
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:372px;height:220px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+		
+		
+		<div class="border_outside" style="width:368px;height:160px;margin-top:10px;margin-left:4px;">
+			<div class="border_inside" style="width:366px;height:158px;text-align:center;line-height:22px;">
+			
+			
+				<table style="margin-left:18px;">
+					<tr>
+						<td>资产编号从：</td>
+						<td><input type="text" style="width:228px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td>至</td>
+						<td><input type="text" style="width:228px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td>类别名称：</td>
+						<td><input type="text" style="width:228px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td>部门名称：</td>
+						<td><input type="text" style="width:228px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td>期间：</td>
+						<td>
+							<select>
+								<option>2012.12</option>
+							</select>
+							
+							———
+							<select>
+								<option>2012.12</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="checkbox" name="cb1" id="cb1_1"/><label for="cb1_1">显示使用状况和部门</label>
+							
+							<input type="checkbox" name="cb1" id="cb1_2" style="margin-left:46px;"/><label for="cb1_2">显示本年</label>
+							
+						</td>
+					</tr>
+				</table>
+			
+			
+			</div>
+		</div>
+	
+		
+		
+		<div style="width:100%;height:30px;margin-top:10px;text-align:right;">
+		
+			<input type="button" value="确定" onclick="btnConfirm();"/>
+			<input type="button" value="取消" onclick=""/>
+			
+		</div>
+		
+		
+		
+		
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资分摊明细</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
+<script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<style type="text/css">
+.table_header {border-collapse:collapse;cursor:default;font-size:12px;width:100%;}
+.table_header tr {height:35px;}
+.table_header td {border:1px solid #000;text-align:center;padding:0px;}
+
+
+#datarows {border-collapse:collapse;cursor:default;font-size:12px;}
+#datarows tr {background-color:#fff;height:20px;}
+#datarows td {border:1px solid #000;text-align:center;padding:0px;}
+
+</style>
+<script type="text/javascript">
+
+var param = window.parent.valueMap.get('wa_wageallocation_tableview');
+
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+
+var arr=[];
+
+
+$(document).ready(function(){
+	
+	//----------计提类型--begin--
+	$("#ijtid").empty();
+	var jtarr = param.jtids.split(",");
+	for(var i=0;i<jtarr.length;i++){
+		$("#ijtid").append("<option value='"+jtarr[i].split(":")[0]+"'>"+jtarr[i].split(":")[1]+"</option>");  
+	}
+	//----------计提类型--end--
+	$("#jtkjyf").html(param.period);//计提会计期间
+	param.period=$("#jtkjyf").html().split(".")[1];
+	
+	//加载数据-------
+	reloadData();
+	 /*合并科目，辅助项点击事件(2013-9-4) lyl*/
+	$("#mergerSame").unbind("click").bind("click",function(){
+		var flag=$("#mergerSame").attr("checked");
+			var ijtid=$("#ijtid");
+		if(flag=="checked"){
+			arr[ijtid.val()]=ijtid.val();
+		}else{
+			arr.splice(ijtid.val(),1);
+		}
+	});
+	 /* end */
+});
+
+
+
+function reloadData(e){
+	
+
+	document.getElementById('title').innerHTML=$("#ijtid").find("option:selected").text()+'一览表';
+	loadData();
+	/*类型名称和是否合并科目/辅助项一致(2013-9-4) lyl*/
+	var ijtid=$("#ijtid");
+	if(ijtid.val()==arr[ijtid.val()]){
+		$("#mergerSame").attr("checked","checked");
+	}else{
+		$("#mergerSame").removeAttr("checked");
+	}
+	
+	/*end */
+}
+function loadData(){
+	 $.ajaxSetup({ //使用同步
+         async: false 
+    }); 
+	$.ajax({
+		url:"wagesSharing!queryWagesSharing.action",
+		type:"post",
+		data:{
+			"waFtQueryParam.cgzgradenum":cgzgradenum,
+			"waFtQueryParam.waftid":$("#ijtid").val(),
+			"waFtQueryParam.depids":param.depids,
+			"waFtQueryParam.period":param.period,
+			"waFtQueryParam.shareWithDep":param.fpfs,
+			"waFtQueryParam.showGzItem":param.mxdgzitem
+		},
+			
+		success:function(data,status){
+				$("#datarows").html("");
+			var rstlst = data.sharelist;
+			//dataForMakePz = rstlst;
+			var str = "";
+			var viewwaft;
+			for ( var i = 0; i < rstlst.length; i++) {
+				 viewwaft = rstlst[i];
+				 str=str+"<tr id='"+viewwaft.id+"'><td width='95'>"+viewwaft.cdepName+"</td><td width='95'>"+viewwaft.cpsngrd+"</td><td  width='95'>"+viewwaft.cpsnName+"</td><td width='95'>"+viewwaft.cgzitemName+"</td><td  width='71' >"+viewwaft.ygzSum+"</td><td width='71'>"+viewwaft.irate+"</td><td width='71'>"+viewwaft.yjtMoney+"</td><td width='71'>"+viewwaft.cdCodename+"</td><td width='71'>"+viewwaft.ccCodename+"</td></tr>"
+			}
+			$("#datarows").append(str);
+			$("#dataCount").html(rstlst.length);
+			
+			
+
+			//隐藏人员姓名一列
+			if(param.fpfs==1){
+				$("#name tr:eq(0)").find("td:eq(2)").css("display","none");
+				$("#datarows tr").find("td:eq(2)").css("display","none");
+
+				var tds = $("#name tr:eq(0)").find("td");
+				for(var i=0;i<4;i++){
+					tds.eq(i).css("width","107px");
+				}
+				$("#name tr:eq(1)").find("td").css("width","106px");
+				
+				var trs = $("#datarows tr");
+				
+				trs.each(function(){
+					var tds = $(this).find("td");
+					for(var j=0;j<4;j++){
+						tds.eq(j).css("width","107px");
+						tds.eq(j).css("padding","0px");
+					}
+
+					for(var k=4;k<tds.length;k++){
+						tds.eq(k).css("width","106px");
+						tds.eq(k).css("padding","0px");
+					}
+					
+					
+				});
+				
+				
+				
+			}
+			
+		},
+	
+		dataType:"json"
+	}); 
+	
+
+	
+	
+	
+	$.ajax({
+		url:"wagesSharing!querySharingPz.action",
+		type:"post",
+		data:{
+			"waFtQueryParam.cgzgradenum":cgzgradenum,
+			"waFtQueryParam.waftid":$("#ijtid").val(),
+			"waFtQueryParam.depids":param.depids,
+			"waFtQueryParam.period":param.period,
+			"waFtQueryParam.shareWithDep":param.fpfs,
+			"waFtQueryParam.showGzItem":param.mxdgzitem
+		},
+		
+		success:function(data,status){
+			 flag = data.flag;
+				if(flag=="1"){
+					//背景色置緑
+					changeTableBgColor(document.getElementById("datarows"),"#c0ffc0");
+				}else{
+					//背景色置白
+					changeTableBgColor(document.getElementById("datarows"),"#ffffff");
+					//设置借贷科目可编辑(2013-7-19 lyl)
+					setEditable();
+				}
+		},
+		dataType:"json"
+	}); 
+	
+	
+	 $.ajaxSetup({ //使用一步
+         async: true 
+    }); 
+
+	 
+}
+
+//重选
+function reselect(){
+	window.parent.openWindow("wa_wageallocation_first","wa_wageallocation_tableview", param);
+}
+//制单
+function makePZ(){
+	//准备数据
+	//param.dataForMakePz="";
+	param.waftid=$("#ijtid").val();
+	param.cgzgradenum=cgzgradenum;
+	//param.period=$("#jtkjyf").html().split(".")[1];
+	param.shareWithDep=param.fpfs;
+	param.showGzItem=param.mxdgzitem;
+	
+	param.mergerSame = $("#mergerSame").attr("checked");
+	//jAlert(param.mergerSame);
+	$.ajax({
+		url:"wagesSharing!querySharingPz.action",
+		type:"post",
+		data:{
+			"waFtQueryParam.cgzgradenum":cgzgradenum,
+			"waFtQueryParam.waftid":$("#ijtid").val(),
+			"waFtQueryParam.depids":param.depids,
+			"waFtQueryParam.period":param.period,
+			"waFtQueryParam.shareWithDep":param.fpfs,
+			"waFtQueryParam.showGzItem":param.mxdgzitem,
+			"waFtQueryParam.mergerSame":param.mergerSame
+		},
+		success:function(data,status){
+			 	flag = data.flag;
+				if(flag=="1"){
+					jAlert("不可重复制单","提示",function(){
+					//背景色置緑
+					changeTableBgColor(document.getElementById("datarows"),"#c0ffc0");
+					});
+				}else{
+					window.parent.openWindow("wa_operate_dsign","wa_wageallocation_tableview",param);
+				}
+		},
+		dataType:"json"
+	}); 
+	
+}
+
+
+function changeTableBgColor(table,color){
+	//var datatable_1 = document.getElementById("datarows");
+	var datatable_1 = table;
+	for(var i=0;i<datatable_1.rows.length;i++){
+		//datatable_1.rows[i].style.backgroundColor="#c0ffc0";
+		datatable_1.rows[i].style.backgroundColor=color;
+		
+		//datatable_1.rows[i].style.color="#fff";
+	}
+}
+
+
+//判断是否已经制单
+function isHasPz(){
+	var flag ="";
+	//param.period=$("#jtkjyf").html().split(".")[1];
+	$.ajax({
+		url:"wagesSharing!querySharingPz.action",
+		type:"post",
+		data:{
+			"waFtQueryParam.cgzgradenum":cgzgradenum,
+			"waFtQueryParam.waftid":$("#ijtid").val(),
+			"waFtQueryParam.depids":param.depids,
+			"waFtQueryParam.period":param.period,
+			"waFtQueryParam.shareWithDep":param.fpfs,
+			"waFtQueryParam.showGzItem":param.mxdgzitem
+		},
+		
+		success:function(data,status){
+			 flag = data.flag;
+		},
+		dataType:"json"
+	}); 
+	return flag;
+}
+/*lyl 解决科目单元格单击选择2013-7-11 start*/
+var currentEditCell = null;
+
+/**
+ * 可双击编辑单元格
+ */
+function setEditable(){
+	var tb = document.getElementById("datarows");
+	for(var i=0;i<tb.rows.length;i++){
+		for(var j=0;j<tb.rows[i].cells.length;j++){
+			tb.rows[i].cells[j].ondblclick=function(event){
+				var evt=(window.event || event);//获得事件
+				var cell = (evt.srcElement || evt.target);
+				var cellIndex = cell.cellIndex;
+				//如果是第一、四、五列，生成文本框
+				if( cellIndex==7 || cellIndex==8){
+					if(cell.getElementsByTagName("input").length==0){
+						var tempValue = cell.innerHTML;
+	  					cell.innerHTML="<input type='text' onkeyup='if(window.event.keyCode==13){conversioncode(\'code\',this,false);}'  value='"+tempValue+"' style='border:none;height:14px;width:50px;'/><input type='button' class='finder' style='margin-bottom:-3px;' onclick=\"openWin('"+cellIndex+"');\"/>";
+	  					cell.getElementsByTagName("input")[0].select();
+					}
+				}
+				currentEditCell = cell;
+			};
+		}
+	}
+} 
+ 
+ 
+//弹出参照窗体
+function openWin(cellIndex){
+	var param = new Object();
+	param.treeSetting = new Object();
+	param.treeSetting.justFinalNode = true;
+	if(cellIndex==7){
+		window.parent.openWindow('dsign_subjectsreference','wa_wageallocation_tableview',param);
+	}
+	if(cellIndex==8){
+		window.parent.openWindow('dsign_subjectsreference','wa_wageallocation_tableview',param);
+	}
+}
+ 
+//单元失去焦点，执行取消编辑状态动作：
+document.onmousedown=function(event){
+	var evt=(window.event || event);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+	
+	if(currentEditCell!=null){
+		if (evtsrc.tagName != "INPUT" || (evtsrc.tagName == "INPUT" && evtsrc.type == "button" && evtsrc.className != "finder")) {
+
+			var textbox = currentEditCell.getElementsByTagName("input")[0];
+			if(textbox!=undefined || textbox!=null){
+				
+				conversioncode('code',textbox,false);
+				
+				
+				
+				currentEditCell.innerHTML=textbox.value;
+			}
+			/*解决借方科目、贷方科目手动输入(2013-7-16 lyl)*/
+			var tr=currentEditCell.parentNode;
+			var jie=$(tr).find("td:eq(7)").html();
+			var dai=$(tr).find("td:eq(8)").html();
+			var id=$(tr).attr("id");
+			$.ajax({
+				url:"wagesSharing!updateWaGzFt.action",
+				type:"post",
+				data:{
+					"wa.id":id,
+					"wa.cdCodename":jie,
+					"wa.ccCodename":dai
+				},
+				success:function(data,status){},
+				dataType:"json"
+			}); 
+			currentEditCell=null;
+		}
+	}
+};
+ 
+//接收弹窗返回值函数
+function deliverValue(object){
+	if(currentEditCell!=null){
+		var textbox = currentEditCell.getElementsByTagName("input")[0];
+		var row = currentEditCell.parentNode;
+		if(currentEditCell.cellIndex==7){
+			textbox.value=object.selKemuCode;
+		}
+		if(currentEditCell.cellIndex==8){
+			textbox.value=object.selKemuCode;
+		}
+	}
+}
+
+
+ /*   end */
+</script>
+	
+</head>
+<body>
+	<div class="container" style="float:left;width:700px;height:500px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:850px;height:493px;margin-top:1px;margin-left:3px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="重选" onclick="reselect();" style="background-image:url('../../../images/icon/reselect.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="制单" onclick="makePZ()" style="background-image:url('../../../images/icon/find.gif');"/></div>
+					<div><input disabled="disabled" type="button" value="批制" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/batch.gif');"/></div>
+				</div>
+				
+				<div class="group">
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('wa_wageallocation_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+				
+			</div>
+			
+			<div style="width:840px;height:420px;background-color:#fff;overflow-x:auto;overflow-y:hidden;">
+				
+				<div style="width:100%;height:84px;">
+					<div id="title" style="height:30px;font-size:20px;color:#000080;font-weight:bold;text-align:center;text-decoration:underline;padding-top:10px;">
+						
+					</div>
+					<div style="height:14px;color:#000080;margin-left:20px;display: block;" >
+						<input id="mergerSame" type="checkbox" style="margin-bottom:-6px;"/><label for="cb_1">合并科目相同、辅助项相同的分录</label>
+					</div>
+					<div style="height:14px;color:#000080;margin-top:5px;">
+						<div style="float:left;margin-left:20px;">
+							类型：
+							<select id="ijtid" onchange="reloadData(this)" style="width:200px;">
+								<option></option>
+								<option></option>
+								<option></option>
+								<option></option>
+							</select>
+						</div>
+						<div style="float:right;padding-top:5px;margin-right:20px;">
+							计提会计月份：<span id="jtkjyf"></span>
+						</div>
+					</div>
+				</div>
+				
+				<div style="width:860px;height:70px;background-color:#ccc;">
+					<table class="table_header" id="name" >
+						<tr>
+							<td rowspan="2" width="95">部门名称</td>
+							<td rowspan="2" width="95">人员类别</td>
+							<td rowspan="2" width="95" >人员姓名</td>
+							<td rowspan="2" width="95">工资项目</td>
+							<td colspan="5">工资分摊</td>
+						</tr>
+						<tr>
+						    <td width="71">计提基数</td>
+						    <td width="71">计提比例</td>
+						    <td width="71">计提金额</td>
+							<td width="71">借方科目</td>
+							<td width="71">贷方科目</td>
+						</tr>
+					</table>
+				</div>
+				
+				<div style="width:858px;height:266px;border:1px solid #000;overflow-x:hidden;overflow-y:auto;border-top:none;">
+				
+					<table style="width:860px;height:50px;overflow-y:hidden;" class="table_style" >
+						<tbody id="datarows"></tbody>
+					</table>
+				
+				</div>
+				
+			</div>
+			<div style="height:26px;line-height:26px;">
+				<div style="float:left;">&nbsp;&nbsp;&nbsp;&nbsp;记录数：<span id="dataCount">0</span></div>
+				<div style="float:right;width:86px;height:16px;border:1px solid #000;margin-top:6px;margin-right:6px;">
+					<div style="margin-top:4px;margin-left:8px;border:1px solid #000;background-color:#c0ffc0;width:16px;height:8px;float:left;"></div>
+					<div style="margin-left:6px;float:left;margin-top:-4px;">已经制单</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+function rowSelection(){
+	var datatable_1 = document.getElementById("datarows");
+	for(var i=0;i<datatable_1.rows.length;i++){
+	
+		datatable_1.rows[i].onclick=function(e){
+			
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+
+/***** 选中行代码结束*******/
+
+rowSelection();
+</script>
+
+</html>

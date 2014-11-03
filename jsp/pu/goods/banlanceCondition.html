@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>单据过滤条件(应付单)</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+	.font_style{color:#C00;}
+	.input{width:119px;}
+	.short{width:120px;}
+	.select{width:124px;}
+	.long_input{width:335px;}
+
+	.line_style{font-family:Arial, Helvetica, sans-serif}
+	#div_table{ margin-left:2px;}
+	#table_style tr td{ padding-left:5px;}
+	#table_style tr{ height:25px;}
+	#check_table tr td{border:1px solid  #FFF;}
+	#check_table tr{ height:25px;}
+	.border_outside{border-top:1px solid #808080;border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF;border-left:1px solid #808080;}
+	.border_inside{border-top:1px solid #FFFFFF;border-right:1px solid #808080;border-bottom:1px solid #808080;border-left:1px solid #FFFFFF;}
+	</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../../js/winui/plugin/winui.querybox.js"></script>
+<script type="text/javascript" src="js/vouchQuery.js"></script>
+
+<script type="text/javascript">
+
+
+//窗体关闭时，隐藏日历控件
+function onWindowClose(){
+	$dp.hide();
+}
+
+</script>
+</head>
+<body>
+		<div class="container" style="float:left;width:460px;height:310px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:430px;height:280px;margin-top:10px;margin-left:10px;"  >        
+               <div class="border_outside" style="height:232px;width:415px;float:left;">
+					<div class="border_inside" style="height:230px;width:413px;line-height:18px;">
+                    <div id="div_table">
+                    <table id="table_style" style="border-collapse:collapse; text-align:left" cellpadding="0" >
+                     <tr>
+                         <td>单据名称</td>
+                         <td>
+                             <select id="CVOUCHNAME" class="select">
+                                 <option value="2">应付单</option>
+                             </select>
+                         </td>
+                         <td>单据类型</td>
+                         <td>
+                             <select id="CVOUCHTYPE" class="select">
+                                 <option value="49">P0 其他应付单</option>
+                             </select>                            
+                         </td>
+                     </tr>
+                     <tr>
+                         <td id = "dwname" >供&nbsp;应&nbsp;商</td>
+                          <td ><div type="querybox" onquery="queryid='minCDWCODE';window.parent.openWindow(dwrefurl,'pu_goods_vouchQuery');"><input id= "minCDWCODE"  dbvalue= ""  style="width:119px;" type="text"/></div></td>
+                           <td class='line_style'>——</td>
+                          <td ><div type="querybox" onquery="queryid='maxCDWCODE';window.parent.openWindow(dwrefurl,'pu_goods_vouchQuery');"><input id= "maxCDWCODE"  dbvalue= ""  style="width:119px;" type="text"/></div></td>
+                         
+                     </tr> 
+                     <tr>
+                         <td>部&nbsp;&nbsp;&nbsp;&nbsp;门</td>
+                        <td><div type="querybox" onquery="queryid='CDEPTCODE';window.parent.openWindow('basic_comref_dptref','pu_goods_vouchQuery');"><input id= "CDEPTCODE"  dbvalue= "" type="text" style="width:119px;"/></div></td>
+                         <td>业&nbsp;务&nbsp;员</td>
+                         <td><div type="querybox" onquery="queryid='CPERSON';window.parent.openWindow('basic_comref_personref','pu_goods_vouchQuery');"><input id= "CPERSON"  dbvalue= ""  type="text" style="width:119px;"/></div></td>
+                      </tr>  
+                     <tr>
+                         <td>单据编号</td>
+                         <td><input id='minCVOUCHID' class="input"/></td>
+                         <td class='line_style'>——</td>
+                         <td><input id='maxCVOUCHID' class="input"/></td>
+                     </tr> 
+                     <tr>
+                         <td>单据日期</td>
+                         <td><input id='minDVOUCHDATE'  class="short"  onclick="WdatePicker()"/><img onClick="WdatePicker({el:'minDVOUCHDATE'})" src="../../../images/icon/picker.gif"/></td>
+                         <td class='line_style'>——</td>
+                         <td><input id='maxDVOUCHDATE'  class="short" onclick="WdatePicker()"/><img onClick="WdatePicker({el:'maxDVOUCHDATE'})" src="../../../images/icon/picker.gif"/></td>
+                     </tr> 
+                     <tr>
+                         <td>到&nbsp;期&nbsp;日</td>
+                         <td><input id='minCDEFINE4'  class="short"  onclick="WdatePicker()"/><img onClick="WdatePicker({el:'minCDEFINE4'})" src="../../../images/icon/picker.gif"/></td>
+                         <td class='line_style'>——</td>
+                         <td><input id='maxCDEFINE4'  class="short" onclick="WdatePicker()"/><img onClick="WdatePicker({el:'maxCDEFINE4'})" src="../../../images/icon/picker.gif"/></td>
+                     </tr>
+                     <tr>
+                         <td>币&nbsp;&nbsp;&nbsp;&nbsp;种</td>
+                           <td><div type="querybox" onquery="queryid='CEXCH_NAME';window.parent.openWindow('basic_comref_exchref','pu_goods_vouchQuery');"><input id= "CEXCH_NAME"  dbvalue= ""  style="width:119px;" type="text"/></div></td>
+                                
+                       <td>方&nbsp;&nbsp;&nbsp;&nbsp;向</td>
+                         <td>
+                             <select id='BD_C'  class="select">
+                                 <option value="">     </option>
+                                 <option value="1">正向</option>
+                                 <option value="0">反向</option>                                                                  
+                             </select>                         
+                         </td>
+                     </tr>  
+                     <tr>
+                         <td>原币余额</td>
+                         <td><input id='minIAMOUNT_F' class="input"/></td>
+                         <td class='line_style'>——</td>
+                         <td><input  id='maxIAMOUNT_F' class="input"/></td>
+                     </tr>                     
+                     <tr>
+                         <td>本币余额</td>
+                         <td><input  id='minIAMOUNT' class="input"/></td>
+                         <td class='line_style'>——</td>
+                         <td><input  id='maxIAMOUNT' class="input"/></td>
+                     </tr>                      
+                 </table>
+                    </div>                    
+                    
+                    </div>
+               </div>
+               <div>
+                    <div class="border_outside" style="height:25px;width:144px;float:left;">
+					<div class="border_inside" style="height:23px;width:142px;line-height:18px;">
+                    <input type="checkbox" checked id="wsh"/>未审核&nbsp;&nbsp;<input type="checkbox" id="ysh"/>已审核
+                    </div>
+                    </div>
+               <div class="border_outside" style="height:25px;width:126px;float:left;">
+					<div class="border_inside" style="height:23px;width:124px;line-height:18px;">
+                    </div>
+                    </div>
+               <div class="border_outside" style="height:25px;width:141px;float:left;">
+					<div class="border_inside" style="height:23px;width:139px;line-height:18px;">
+                    </div>
+                    </div>   
+               
+               
+               </div>
+                                     
+
+              <div  style="width:415px;text-align:right"><input type="button" onclick="execVouchQuery()" value="    确定    "/>&nbsp;<input type="button"  onclick="exitVouchQuery()" value="    关闭    "/></div>  
+                
+		</div>
+	</div>
+</body>
+</html>

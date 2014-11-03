@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>条件</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+
+
+//确定按钮
+function btnConfirm(){
+	var param = new Object();
+	window.parent.openWindow('fa_stists_account_gdzczz','fa_stists_account_gdzczz_tj',param);
+	window.parent.closeWindow('fa_stists_account_gdzczz_tj');
+}
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:352px;height:140px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+		
+		
+		<div class="border_outside" style="width:342px;height:78px;margin-top:10px;margin-left:4px;">
+			<div class="border_inside" style="width:340px;height:76px;text-align:center;line-height:26px;">
+			
+			
+				类别名称：<input type="text" style="width:228px;"/><input type="button" class="finder"/><br>
+				部门名称：<input type="text" style="width:228px;"/><input type="button" class="finder"/><br>
+			
+			
+			</div>
+		</div>
+	
+		
+		
+		<div style="width:96%;height:30px;margin-top:10px;text-align:right;">
+		
+			<input type="button" value="确定" onclick="btnConfirm();"/>
+			<input type="button" value="取消" onclick="window.parent.closeWindow('fa_stists_account_gdzczz_tj');"/>
+			
+		</div>
+		
+		
+		
+		
+		
+	</div>
+</body>
+</html>

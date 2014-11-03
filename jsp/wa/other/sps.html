@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资项目设置(Salary project settings)</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="js/sps_tab1.js"></script>
+	<script type="text/javascript" src="js/sps_tab2.js"></script>
+	<script type="text/javascript" src="js/sps.js"></script>
+	<script type="text/javascript" src="js/getfocus.js"></script>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:550px;height:410px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:530px;height:390px;margin-left:10px;margin-top:10px;">
+			<div type="tab">
+				<div>
+					<div>工资项目设置</div>
+					<div onclick="return openTab2()" afterShow="initTab()">公式设置</div>
+				</div>
+				<div style="width:530px;height:340px;">
+					<div>
+						<fieldset>
+							<legend>工资项目</legend>
+							<div>
+								<div style="width:340px;height:290px;float:left;margin-top:6px;margin-left:8px;">
+									<div style="width:336px;height:250px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#fff;">
+										<table id="datatable" border=1 class="table_style" style="width:312px;">
+											<thead>
+												<tr id="datatable_header">
+													<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+													<td style="width:138px;">工资项目名称</td>
+													<td style="width:46px;">类型</td>
+													<td style="width:34px;">长度</td>
+													<td style="width:34px;">小数</td>
+													<td style="width:60px;">增减项</td>
+												</tr>
+											</thead>
+											<tbody id="datatable_bodyer">
+											</tbody>
+										</table>
+									</div>
+									<div style="margin-top:8px;text-align:center;height:30px;width:100%;">
+										<input type="button" value=" 增 加 " onclick="insRow();"/>
+										<input type="button" value=" 删 除 " onclick="delRow();"/>
+										<input type="button" value=" 重命名 " onclick="itemrename();" id="renamebtn"/>
+									</div>
+								</div>
+								<div style="width:40px;height:200px;float:left;margin-top:80px;text-align:center;">
+									<input type="button" onfocus="this.blur();" onclick="upward();" class="movebtn_up"/><br><br>
+									移<br>动<br><br>
+									<input type="button" onfocus="this.blur();" onclick="downward();" class="movebtn_down"/>
+								</div>
+								<div style="width:100px;height:290px;float:left;margin-top:6px;">
+									名称参照：<br>
+									<select id="wa_item_1" onchange="itemNameChange(this);" style="width:100px;">
+									</select>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+					<div>
+						<div style="width:520px;height:170px;">
+							<div style="width:166px;height:170px;float:left;">
+								<fieldset>
+									<legend>工资项目：</legend>
+									<div>
+										<div style="width:20px;height:70px;float:left;text-align:center;margin-top:30px;">
+											<input type="button" onfocus="this.blur();" onclick="tab2TableRowMoveUp('wa_item_2');" class="movebtn_up"/><br>
+											移<br>动<br>
+											<input type="button" onfocus="this.blur();" onclick="tab2TableRowMoveDown('wa_item_2');" class="movebtn_down"/>
+										</div>
+										<div style="width:118px;height:140px;float:left;text-align:center;">
+										
+											<div style="width:118px;height:118px;border:2px inset #ccc;background-color:#fff;overflow:auto;">
+												<table id="tab2_waitem_table" border=1 class="table_style" style="width:100%;">
+							
+													<tbody id="datatable_1_bodyer">
+													</tbody>
+												</table>
+											</div>
+											<div style="margin-top:4px;">
+												<input type="button" value=" 增加 " onclick="tab2AddWaItem();"/>
+												<input type="button" value=" 删除 " onclick="tab2DelRow();"/>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div style="width:350px;height:170px;float:left;margin-left:4px;">
+								<fieldset>
+									<legend><span id='title'>基本工资</span>公式定义：</legend>
+									<div>
+										<textarea style="width:320px;height:106px;" id="area_1"></textarea>
+										<div style="margin-top:4px;">
+											<input type="button" value="函数公式向导输入..." disabled='disabled' onclick="window.parent.openWindow('wa_other_functionsteps');"/>
+											<input type="button" value="公式确认" onclick="gsqr();" style="margin-left:90px;"/>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+						<div style="width:100%;height:150px;clear:both;float:none;margin-top:10px;">
+							<fieldset>
+								<legend>公式输入参照：</legend>
+								<div>
+									<div style="width:184px;height:120px;float:left;">
+										<fieldset>
+											<legend>运算符：</legend>
+											<div style="margin-top:-4\0px;margin-left:-8\0px;">
+												<div style="width:170px;height:70px;">
+													<table border="0" id="faet_1">
+														<tbody>
+															<tr>
+																<td><input type="button" value="+" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="-" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="*" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="/" class="faebtn" onclick="faebc(this);"/></td>
+																<td rowspan="2"><input type="button" value="切&#13;&#10;换" style="width:30px;height:44px;padding:0px;text-align:center;" onclick="javascript:document.getElementById('faet_1').style.display='none';document.getElementById('faet_2').style.display='block';"/></td>
+															</tr>
+															<tr>
+																<td><input type="button" value="=" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="<>" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value=">" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="<" class="faebtn" onclick="faebc(this);"/></td>
+															</tr>
+															<tr>
+																<td><input type="button" value=">=" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="<=" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="(" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value=")" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value=" and " class="faebtn" onclick="faebc(this);"/></td>
+															</tr>
+														</tbody>
+													</table>
+													<table border="0" id="faet_2" style="display:none;">
+														<tbody>
+															<tr>
+																<td><input type="button" value="1" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="2" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="3" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="0" class="faebtn" onclick="faebc(this);"/></td>
+																<td rowspan="2"><input type="button" value="切&#13;&#10;换" style="width:30px;height:44px;padding:0px;text-align:center;" onclick="javascript:document.getElementById('faet_2').style.display='none';document.getElementById('faet_1').style.display='block';"/></td>
+															</tr>
+															<tr>
+																<td><input type="button" value="4" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="5" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="6" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="00" class="faebtn" onclick="faebc(this);"/></td>
+															</tr>
+															<tr>
+																<td><input type="button" value="7" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="8" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="9" class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value="." class="faebtn" onclick="faebc(this);"/></td>
+																<td><input type="button" value=" or " class="faebtn" onclick="faebc(this);"/></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</fieldset>
+										<div style="margin-top:4px;">
+											<input type="button" value="函数参照" onclick=""/>
+											<select onchange="bottomSelectChange(this)" style="width:100px;">
+												<option value="0">abs</option>
+												<option value="1">cos</option>
+												<option value="2">ctan</option>
+												<option value="3">day</option>
+												<option value="4">exp</option>
+												<option value="5">hour</option>
+												<option value="6">iff</option>
+												<option value="7">int</option>
+												<option value="8">len</option>
+												<option value="9">ln</option>
+												<option value="10">log</option>
+												<option value="11">lower</option>
+												<option value="12">minute</option>
+												<option value="13">month</option>
+												<option value="14">pai</option>
+												<option value="15">round</option>
+												<option value="16">season</option>
+												<option value="17">second</option>
+												<option value="18">sin</option>
+												<option value="19">sqr</option>
+												<option value="20">str</option>
+												<option value="21">substr</option>
+												<option value="22">tan</option>
+												<option value="23">trim</option>
+												<option value="24">upper</option>
+												<option value="25">val</option>
+												<option value="26">year</option>
+											</select>
+										</div>
+									</div>
+									<div style="width:304px;height:100%;float:left;">
+										<div style="float:left;width:92px;margin-left:10px;">
+											工资项目：<br>
+											<select id="wage_project" onclick="bottomSelectChange(this);" size="8" style="width:92px;height:100px;">
+											</select>
+										</div>
+										<div style="float:left;width:92px;margin-left:8px;">
+											部门：<br>
+											<select id="dept" onclick="bottomSelectChange(this);" size="8" style="width:92px;height:100px;">
+											</select>
+										</div>
+										<div style="float:left;width:92px;margin-left:8px;">
+											人员类别：<br>
+											<select id="grade" onclick="bottomSelectChange(this);" size="8" style="width:92px;height:100px;">
+											</select>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="text-align:right;padding-right:20px;margin-top:4px">
+				<input type="button" value="  确  认  " onclick="doSubmit(1);"/>
+				<input type="button" value="  取  消  " onclick="window.parent.closeWindow('wa_other_sps');"/>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>凭证查询</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript">
+		 	function DsignAccvouchKey(iyear,iperiod,csign,attribute380, dbillDate,inoId) {
+			   this.iyear = iyear;
+			   this.iperiod = iperiod;
+			   this.csign = csign;
+			   this.attribute380 = attribute380;
+			   this.dbillDate = dbillDate;
+			   this.inoId = inoId;
+			   
+			  };
+			var auditAccvouchKeyList=null;
+			//是否允许操作函数
+			function iscanoprate(){
+				var res=false;
+				$.ajax({
+				    url: "faInitializa!iscansubmit",
+				    type: 'post',
+				    dataType: "json",
+				    cache:false,
+				    async:false,
+				    success: function(data){
+				    	var mark=data.mark;
+				    	if(mark=="0"){
+				    		res=true;
+				    	}else{
+				    		res=false;
+				    	}
+				    }
+				 });
+				return res;
+			}
+			//当前被点击选中的行全局变量
+			var currentSeletedRow=null;
+			//程序入口
+			$(document).ready(function(){
+				//var valueObject = window.parent.valueMap.get("fa_operate_dsignquery");
+				//设置查询期间
+				queryUaPeriods();
+				//查询凭证
+				queryDsigns();
+				var is = iscanoprate();
+				if(!is){
+					$("#deleteDsign").attr("disabled",true);
+				}else{
+					$("#deleteDsign").attr("disabled",false);
+				}
+				//给删除按钮绑定点击事件
+				$("#deleteDsign").unbind("click").bind("click",function(){
+					if(currentSeletedRow==null){
+						jAlert("请选择删除的记录!");
+					}else{
+						//业务类型
+						var coutsign = $(currentSeletedRow).find("td").eq(1).text();
+						//业务号
+						var coutnoId = $(currentSeletedRow).find("td").eq(2).text();
+						//删除凭证
+						jConfirm("确定删除吗?删除后不可恢复!",'确认对话框',function(confirmflag){
+							if(confirmflag){
+								$.ajax({
+								    url: "faZwvouchers!deleteDsigns.action",
+								    type: 'post',
+								    data:{coutsign:coutsign,coutnoId:coutnoId},
+								    dataType: "json",
+								    async:false,
+								    error:function(){
+								    	jAlert("请求失败!");
+								    },
+								    success: function(data){
+								    	//查询
+								    	queryDsigns();
+								    }
+								});
+							}
+						});
+					}
+				});
+			});
+			//获取显示日期
+			function getShowDate(thedate){
+				if(thedate!=""&&thedate!=null){
+					return (thedate+"").split("T")[0];
+				}else{
+					return "";
+				}
+			}
+			//查询本系统中的操作的凭证
+			function queryDsigns(){
+				var beginDsignsPeriods = $("#beginDsignsPeriods").val();
+				var endDsignsPeriods = $("#endDsignsPeriods").val();
+				
+				$.ajax({
+				    url: "faZwvouchers!queryDsignsByCondition.action",
+				    type: 'post',
+				    data:{beginDsignsPeriods:beginDsignsPeriods,endDsignsPeriods:endDsignsPeriods},
+				    dataType: "json",
+				    async:false,
+				    error:function(){
+				    	jAlert("请求失败!");
+				    },
+				    success: function(data){
+				    	var strHtml = "";
+				    	var len = data.listAccvouch.length;
+				    	if(len>0){
+				    		$("#deleteDsign").attr("disabled",false);
+				    	}else{
+				    		$("#deleteDsign").attr("disabled",true);
+				    	}
+				    	auditAccvouchKeyList=new Array(len);
+				    	for(var i=0;i<len;i++){
+					    	strHtml+="<tr ondblclick='doselect()'>";
+					    	strHtml+="	<td>"+ getShowDate(data.listAccvouch[i].doutdate)+"</td>";
+					    	strHtml+="	<td>"+data.listAccvouch[i].coutsign+"</td>";
+					    	strHtml+="	<td>"+data.listAccvouch[i].coutnoId+"</td>";
+					    	strHtml+="	<td>"+data.listAccvouch[i].cbill+"</td>";
+					    	strHtml+="	<td>"+getShowDate(data.listAccvouch[i].dbillDate)+"</td>";
+					    	strHtml+="	<td>"+(data.listAccvouch[i].csign+"--"+data.listAccvouch[i].inoId)+"</td>";
+					    	strHtml+="	<td>"+data.listAccvouch[i].iflag+"</td>";
+					    	strHtml+="</tr>";
+					    	//年份
+							var year = data.listAccvouch[i].iyear;
+							//会计期间
+							var period = data.listAccvouch[i].iperiod;
+							//凭证类字
+							var csign = data.listAccvouch[i].csign;
+							//凭证类字编号
+							var attribute380 =data.listAccvouch[i].attribute380;
+							//制单日期
+							var cdbillDate = data.listAccvouch[i].dbillDate;
+							//凭证编号
+							var inoId = data.listAccvouch[i].inoId;
+							var curAccvouchKey = new DsignAccvouchKey(year,period,csign,attribute380, cdbillDate,inoId);
+							auditAccvouchKeyList[i] = curAccvouchKey;
+				    	}
+				    	$("#datarows").empty().append(strHtml);
+				    	
+						$("#datarows tr").each(function(){
+							$(this).bind("click",function(){
+								//选中当前行
+								currentSeletedRow = this;
+								//本行与兄弟节点的背景,字的颜色改变
+								$(this).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+							});
+						});
+						//如果有数据选中第一行
+						if($("#datarows tr").length>0){
+							$("#datarows tr:first")[0].click();
+						}
+				    }
+				})
+			}
+			//查询会计期间
+			function queryUaPeriods(){
+				$.ajax({
+				    url: "foreigncurrency!queryUaPeriods.action",
+				    type: 'post',
+				    dataType: "json",
+				    async:false,
+				    error:function(){
+				    	jAlert("请求失败!");
+				    },
+				    success: function(data){
+						var strHtml = "";
+						var endDsignsPeriodsHtml="";
+						var month;
+						var year;
+						for(var i=0;i<data.uaPeriods.length;i++){
+							month = data.uaPeriods[i].iid;
+							year = data.uaPeriods[i].iyear;
+							var endDate = data.uaPeriods[i].dend;
+							endDate = endDate.substring(0,endDate.indexOf("T"));
+							endDate = endDate.substring(endDate.indexOf("-")+1);
+							endDate = endDate.substring(endDate.indexOf("-")+1);
+							if(month<10){
+								month="0"+month;
+							}
+							year = year+"."+month;
+							month = month*1;
+							strHtml+="<option enddate="+endDate+" value="+month+">"+year+"</option>";
+							if(month>=data.uaPeriod.iid){
+								endDsignsPeriodsHtml +="<option enddate="+endDate+" value="+month+">"+year+"</option>";
+							}
+						}
+						$("#beginDsignsPeriods").empty().append(strHtml);
+						$("#endDsignsPeriods").empty().append(endDsignsPeriodsHtml);
+						/*设置为当前操作月*/
+						$("#beginDsignsPeriods").val(data.uaPeriod.iid);
+						$("#beginDsignsPeriods").unbind("change").bind("change",function(){
+							var start = $(this).val()*1;
+							var endvalue = $("#endDsignsPeriods").val();
+							endDsignsPeriodsHtml="";
+							$("#beginDsignsPeriods option").each(function(){
+								var currentvalue = $(this).val()*1;
+								if(currentvalue>=start){
+									endDsignsPeriodsHtml +=$(this).context.outerHTML;
+								}
+							});
+							$("#endDsignsPeriods").empty().append(endDsignsPeriodsHtml);
+							$("#endDsignsPeriods").val(endvalue);
+							//查询凭证
+							queryDsigns();
+						});
+						//绑定onchang事件
+						$("#endDsignsPeriods").unbind("change").bind("change",function(){
+							//查询凭证
+							queryDsigns();
+						});
+				    }
+				 });
+			}
+			function doselect(){
+				if(currentSeletedRow==null){
+					jAlert("请选择查看的记录!");
+				}else{
+					var time=$(currentSeletedRow).find("td").eq(4).text().split("-");
+					var typenum=$(currentSeletedRow).find("td").eq(5).text().split("-");
+					var inoid =typenum[2];
+					var csign =typenum[0];
+					var year =time[0];
+					var period =time[1];
+					var param = {auditAccvouchKeyList:auditAccvouchKeyList,inoId:inoid,csign:csign,year:year,period:period};					
+					window.parent.openWindow("dsignShow","fa_operate_dsignquery",param);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container" style="float:left;width:616px;height:350px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+			<div style="width:612px;height:350px;margin-left:2px;">
+				<div style="width:100%;height:40px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #888;border-bottom:1px solid #888;">
+					<div style="float:left;width:230px;margin-left:6px;margin-top:10px;">
+						期间：
+						<select id="beginDsignsPeriods" style="width:70px;">
+						</select>
+						---
+						<select id="endDsignsPeriods" style="width:70px;">
+						</select>
+					</div>
+					<div class="buttongroup">
+						<div class="group" style="margin-top:2px;">
+							<div><input type="button" value="查询" disabled = "disabled" style="background-image:url('../../../images/icon/telescope.gif');"/></div>
+							<div><input type="button" value="编辑" disabled = "disabled" onclick="" style="background-image:url('../../../images/icon/update.gif');"/></div>
+							<div><input type="button" value="删除" id="deleteDsign" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+							<div><input type="button" value="冲销" disabled = "disabled" onclick="" style="background-image:url('../../../images/icon/reselect.gif');"/></div>
+							<div><input type="button" value="查看" onclick="doselect()" style="background-image:url('../../../images/icon/paper.gif');"/></div>
+							<div><input type="button" value="凭证" disabled = "disabled" onclick="" style="background-image:url('../../../images/icon/find.gif');"/></div>
+							<div><input type="button" value="退出" onclick="window.parent.closeWindow('fa_operate_dsignquery');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+						</div>
+					</div>
+				</div>
+				<div style="height:274px;width:611px;margin-top:4px;border:2px inset #ccc;overflow:auto;">
+					<table border=1 class="table_style" style="font-family:宋体;">
+						<thead>
+							<tr>
+								<td width="70">业务日期</td>
+								<td width="170">业务类型</td>
+								<td width="90">业务号</td>
+								<td width="60">制单人</td>
+								<td width="70">凭证日期</td>
+								<td width="50">凭证号</td>
+								<td width="60">标志</td>
+							</tr>
+						</thead>
+						<tbody id="datarows">
+						</tbody>
+					</table>	
+				</div>
+				<div style="width:612px;height:20px;line-height:20px;margin-top:2px;border-top:1px solid #888;border-left:1px solid #888;border-bottom:1px solid #eee;border-right:1px solid #eee;">
+					凭证查询中有‘-’符号的凭证表示是红字凭证或被冲销凭证
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

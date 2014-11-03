@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>重新命名</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	var param = window.parent.valueMap.get('wa_other_itemrename');
+	var id=param.id;
+	var name=param.name;
+	$(document).ready(function(){
+		$("#oldName").val(name);
+		$("#okbtn").unbind("click").bind("click",function(){
+			var newName= $("#newName").val();
+			//window.parent.deliverValue("wa_other_itemrename",newName);
+			window.parent.getParentWindow("wa_other_itemrename").setval(newName);
+			window.parent.closeWindow("wa_other_itemrename");
+			
+			
+			/* $.ajax({
+			var param="id="+id+"&projectName="+$("#newName").val();
+				url:"wageSetting!updateWageProject.action",
+				type:"post",
+				data:param,
+				dataType:"json",
+				success:function(data){
+					window.parent.getWindow("wa_other_sps").queryWageProject();
+					window.parent.closeWindow("wa_other_itemrename");
+				}
+				
+			}); */
+		});
+		
+		$("#cancel").unbind("click").bind("click",function(){
+			window.parent.closeWindow("wa_other_itemrename");
+		});
+	});
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:288px;height:136px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:234px;height:104px;margin-top:20px;margin-left:27px;">
+			<form>
+				<div>
+					原项目名称：<input type="text" name="" id="oldName" style="width:154px;" readonly="readonly"/>
+				</div>
+				<br/>
+				<div>
+					新项目名称：<input type="text" name="" id="newName" style="width:154px;"/>
+				</div>
+			
+				<br/>
+				<div style="text-align:center">
+					<input type="button" id='okbtn' value="确认"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="button" id="cancel" value="取消"/>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

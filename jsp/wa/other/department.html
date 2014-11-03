@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门选择设置</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+<script type="text/javascript">
+	
+		/*** 树构建代码 开始 ***/
+		var setting = {	
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				},
+				view:{
+					showIcon: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				}
+			};
+		
+		var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+		var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+		var zNodes = [];
+		$.ajax({
+			async : false,   
+		    cache:false,   
+			url:"ztree!updWaDeptTree.action",
+			type:"post",
+			data:"cgzgradenum=" + cgzgradenum + "&cgzgradename=" + cgzgradename,
+			dataType:"json",
+			error: function () {//请求失败处理函数   
+	            jAlert('请求失败');   
+	        }, 
+			success:function(data,status){
+				treeNodes = data.listTree;
+				if(treeNodes[0].id==0)return false;
+	            for (var i = 0; i<treeNodes.length; i++) {
+	            	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	            	zNodes.push(nodeObj);
+	            }
+			}
+		});
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#dpmt_tree"), setting, zNodes);
+		});
+		/*** 树构建代码 结束 ***/
+		function btnConfirm(){
+			var zTree = $.fn.zTree.getZTreeObj("dpmt_tree");
+			var nodes = zTree.getCheckedNodes();
+			var ids = "";
+			for(var i=0;i<nodes.length;i++){
+				ids = ids + nodes[i].id + ",";
+			}
+			$.ajax({
+				url:"wageSetting!updateWaDept.action",
+				type:"post",
+				dataType:"json",
+				data:"deptIds=" + ids + "&waAccount.cgzgradenum=" +cgzgradenum,
+				success:function(data){
+					window.parent.closeWindow('wa_other_department');
+				}
+			});
+		}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:400px;height:280px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:250px;height:250px;margin-left:16px;margin-top:12px;float:left;">
+		
+				<div style="height:100%;width:242px;">
+					<div>
+						请选择部门：
+					</div>
+					<div style="width:100%;height:226px;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+						<div id="dpmt_tree" class="ztree"></div>
+					</div>
+				</div>
+				
+		</div>		
+		
+		<div style="width:130px;text-align:center;margin-top:4px;float:left;margin-top:130px;">
+			<input type="button" value="确认" onclick="btnConfirm();"/><br><br>
+			<input type="button" value="取消" onclick="window.parent.closeWindow('wa_other_department');"/>
+		</div>
+	</div>
+</body>
+</html>

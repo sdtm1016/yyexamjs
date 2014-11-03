@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>我的账表</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<style type="text/css">
+	.items {padding:0px;cursor:default;}
+	.items li {list-style:none;height:20px;line-height:20px;}
+	.items li div {height:20px;float:left;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript">
+	
+	//点击左边节点向右边盒子填充选项函数
+	function appendItems(sn){
+		var ihs = "";
+		for(var i=0;i<sn.children.length;i++){
+			//alert(i);
+			ihs+="<li id='item_"+sn.children[i].tId+"' onclick=\"itemSelect(this)\" ondblclick=\"dbclickAction('"+sn.children[i].name+"')\"><div><img src=\"../../../images/icon/tree_icon_2.jpg\"/></div><div>&nbsp;"+sn.children[i].name+"&nbsp;</div></li>";
+		}
+		$("#items").html(ihs);
+	}
+	
+	function dbclickAction(name){
+		var param = new	Object();
+		switch(name){
+		
+
+		case "固定资产使用状况分析表":
+			window.parent.openWindow("fa_stists_analyze_gdzcsyzkfxb_tj","fa_stists_mystists",param);
+			break;
+
+		case "固定资产统计":
+			window.parent.openWindow("fa_stists_statistics_gdzctj_tj","fa_stists_mystists",param);
+			break;
+
+		case "固定资产总账":
+			window.parent.openWindow("fa_stists_account_gdzczz_tj","fa_stists_mystists",param);
+			break;
+
+		case "(单个)固定资产明细账":
+			window.parent.openWindow("fa_stists_account_dggdzcmxz_tj","fa_stists_mystists",param);
+			break;
+
+		case "(部门)折旧计提汇总表":
+			window.parent.openWindow("fa_stists_depreciation_bmljzjjthzb_tj","fa_stists_mystists",param);
+			break;
+
+				
+		}
+	}
+	
+		/*** 树构建代码 开始 ***/
+		var setting = {	
+				check: {
+					enable: true
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback:{
+					onClick:function(){
+						var zTree = $.fn.zTree.getZTreeObj("zb_tree");
+						var sn = zTree.getSelectedNodes()[0];
+						
+						//alert(JSON.stringify(sn));
+						//以下代码不兼容IE9，须得改进
+						
+						if(sn.level==1 && sn.children.length>0){
+							appendItems(sn);
+						}else if(sn.level==2){
+							appendItems(sn.getParentNode());
+							//alert(sn.tId);
+							itemSelect(document.getElementById("item_"+sn.tId));
+							
+						}
+					},
+					onDblClick:function(){
+						var zTree = $.fn.zTree.getZTreeObj("zb_tree");
+						var sn = zTree.getSelectedNodes()[0];
+						if(sn.level==2){
+							dbclickAction(sn.name);
+						}
+					}
+				}
+			};
+
+		var zNodes =[{
+						name:"账簿",
+						icon:"../../../images/icon/tree_icon_3.jpg",
+						open:true,
+						children: [
+							{ 
+								name:"自定义账夹",
+								icon:"../../../images/icon/giftbox.gif"
+							},
+							{ 
+								name:"分析表",
+								icon:"../../../images/icon/tree_icon_4.jpg",
+								children: [{
+								        	   name:"固定资产使用状况分析表",
+											   icon:"../../../images/icon/tree_icon_2.jpg"
+								        	}]
+							},
+							{ 
+								name:"统计表",
+								icon:"../../../images/icon/tree_icon_4.jpg",
+								children: [
+								           {
+								        	   name:"固定资产统计",
+											   icon:"../../../images/icon/tree_icon_2.jpg"
+								        }]
+							},
+							{ 
+								name:"账簿",
+								icon:"../../../images/icon/tree_icon_4.jpg",
+								children: [
+								           {
+								        	   name:"固定资产总账",
+											   icon:"../../../images/icon/tree_icon_2.jpg"
+								        },
+								        {
+								        	   name:"(单个)固定资产明细账",
+											   icon:"../../../images/icon/tree_icon_2.jpg"
+								        }]
+							},
+							{ 
+								name:"折旧表",
+								icon:"../../../images/icon/tree_icon_4.jpg",
+								children: [
+								           {
+								        	   name:"(部门)折旧计提汇总表",
+											   icon:"../../../images/icon/tree_icon_2.jpg"
+								        }]
+							}
+						]
+					}];
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#zb_tree"), setting, zNodes);
+		});
+		/*** 树构建代码 结束 ***/
+		
+		
+		
+		
+		var currentSelectedItem=null;
+		
+		function itemSelect(li){
+
+			var div = null;
+			if(currentSelectedItem!=null){
+				
+				try{//这里必须trycath否则IE9下不兼容
+					div=currentSelectedItem.getElementsByTagName("div")[1];
+					div.style.backgroundColor="#fff";
+					div.style.color="#000";
+				}catch(e){}
+				
+			}
+			div=li.getElementsByTagName("div")[1];
+			div.style.backgroundColor="#0a246a";
+			div.style.color="#fff";
+			currentSelectedItem=li;
+			
+			
+		}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:500px;height:376px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:496px;height:376px;margin-left:2px;">
+			
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+		
+		
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="打开" style="background-image:url('../../../images/icon/open.gif');"/></div>
+					<div><input type="button" value="退出" onclick="javascript:window.parent.closeWindow('fa_stists_mystists');" onclick="" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+					
+					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="操作" disabled="disabled" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" disabled="disabled" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="编辑" style="background-image:url('../../../images/icon/return.gif');"/></div>
+					<div><input type="button" value="查看" style="background-image:url('../../../images/icon/find.gif');"/></div>
+				</div>
+			</div>
+		
+			<div style="width:100%;height:330px;">
+				<div style="width:130px;height:326px;float:left;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+					<div id="zb_tree" class="ztree"></div>
+				</div>
+				<div style="width:354px;height:326px;float:left;border:2px inset #ccc;overflow:auto;background-color:#fff;margin-left:2px;">
+					<ul id="items" class="items">
+					</ul>
+				</div>
+				<div class="floatclear"></div>
+			</div>
+		
+		</div>
+		
+	</div>
+</body>
+</html>

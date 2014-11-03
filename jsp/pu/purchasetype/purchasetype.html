@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>采购类型</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<!-- 公共js -->
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<script type="text/javascript" src="js/purchasetype.js"></script>
+	</head>
+	<body style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; font-size: 12px;background-color: #D4D0C8;" topmargin="" style="z-index: 0;" >
+		<div class="container" style="float:left;width:700px;height:300px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;border:1px;">
+		<div style="width: 530px; height: 30px; background-color: #D4D0C8; font-size: 12px; margin-top: 0px;margin-left:5px;">
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="增加" id="addpurchasetype" onclick="addpurchasetype()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="删除" id="deletepurchasetype" onclick="deletepurchasetype()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+					<div><input type="button" value="放弃" id="giveuppurchasetype" onclick="giveuppurchasetype()" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="查询" disabled="disabled" id="findPurchasetypeby"  style="background-image:url('../../../images/icon/telescope.gif');"/></div>
+					<div><input type="button" value="过滤" disabled="disabled" id="filterPurchasetype"  style="background-image:url('../../../images/icon/screening.gif');"/></div>
+					<div><input type="button" value="刷新" id="selectPurchasetype" onclick="refresh()" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助"  disabled="disabled" style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('pu_purchasetype_item');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+		</div>
+		<div style="overflow:hidden;width:634px;height:240px;margin-top:10px;margin-left:8px;border:2px inset #ccc;">
+			<div id="tableheader">
+				<table width="617px" id="tableheader_table" style="margin-top:0px;" class="table_style">
+					<thead>
+						<tr>
+							<td style="width:160px;">采购类型编码</td>
+							<td style="width:160px;">采购类型名称</td>
+							<td style="width:140px;">入库类别</td>
+							<td style="width:140px;">是否默认值</td>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div style="width:634px;height:210px;overflow:auto;margin-left:1px;" onscroll="tableScroll(this);">	
+				<table cellspacing="0" width="617px" style="margin-top:0px;border-collapse: separate;" class="table_style">
+					<tbody id="include" style="background-color: #FFFFFF">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

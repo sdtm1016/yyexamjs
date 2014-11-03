@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>供应商制单查询</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+		<script type="text/javascript" src="../../../js/winui/plugin/winui.querybox.js"></script>
+		<script type="text/javascript" src="js/gbQuery.js"></script>
+		<style type="text/css">
+		    .font_style{color:#C00;}
+			.input{width:88px;}
+			.short{width:73px;}
+			.select{width:93px;}
+			.long_input{width:335px;}
+			.line_style{font-family:Arial, Helvetica, sans-serif}
+			#div_table{ margin-left:2px;}
+			#table_style tr td{ padding-left:2px;}
+			#table_style tr{ height:15px;}
+			.border_outside{
+				border-top:1px solid #808080;
+				border-right:1px solid #FFFFFF;
+				border-bottom:1px solid #FFFFFF;
+				border-left:1px solid #808080;}
+			.border_inside{
+				border-top:1px solid #FFFFFF;
+				border-right:1px solid #808080;
+				border-bottom:1px solid #808080;
+				border-left:1px solid #FFFFFF;}
+			ul{
+			list-style:none;
+			-webkit-padding-start:0px;
+			padding:0px;
+			padding-top:0px;
+			
+			}
+			ul li{
+				clear:both;
+				float:none;
+				padding:0px;
+				}
+			.checkbox{
+				margin:0px 0px 0px 0px;
+				}
+			.div1{
+				padding:0px;
+				margin:0px;
+				float:left;
+				width:10px
+				}
+			.div2{
+				width:100px;
+				float:right; 
+				line-height:12px;
+				}
+			.bgColor{
+				background-color:#006;
+				border:1px dotted #FFFFFF;
+				}
+			.fontColor{
+				color:#FFF;
+				}
+		</style>
+	</head>
+<body>
+	<div class="container" style="float:left;width:450px;height:200px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:430px;height:180px;margin-top:10px;margin-left:10px;"  >
+	        <div  style="width:120px; height:146px; border:inset;float:left;background-color:#CCC">
+	           <ul style="margin-left:0px;">
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="fpzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>发票制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="yfdzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>应付单制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="hxzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>核销制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="hdsyzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>汇兑损益制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="zzzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>转账制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="bzzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>并账制单</span></div></li>
+	            <li><div class="div1"><input class="checkbox" type="checkbox" name = "touchingType" value="xjzd" onclick="checkTouchingType(this);" /></div><div class="div2"><span>现结制单</span></div></li>            
+	          </ul>        
+	        </div>
+			<div class="border_outside" style="height:150px;width:300px;float:right;">
+				<div class="border_inside" style="height:148px;width:298px;line-height:18px;">
+	                 <div id="div_table">
+						<table id="table_style" style="border-collapse:collapse; text-align:left" cellpadding="0" >
+							<tr>
+								<td id="dwname" >供&nbsp;应&nbsp;商</td>
+								<td><div type="querybox" onquery="queryid='cdwcode';window.parent.openWindow('basic_comref_supref','pu_gb_gbQuery');"><input id="cdwcode" dbvalue="" style="width:88px;" type="text"/></div></td>
+								<td>币&nbsp;&nbsp;&nbsp;&nbsp;种</td>
+								<td>
+									<select id="currencyType" style="width:92px;">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>部&nbsp;&nbsp;&nbsp;&nbsp;门</td>
+								<td><div type="querybox" onquery="queryid='cdeptcode';window.parent.openWindow('basic_comref_dptref','pu_gb_gbQuery');"><input id= "cdeptcode" dbvalue="" style="width:88px;" type="text"/></div></td>
+								<td>业&nbsp;务&nbsp;员</td>
+								<td><div type="querybox" onquery="queryid='cperson';window.parent.openWindow('basic_comref_personref','pu_gb_gbQuery');"><input id= "cperson" dbvalue="" style="width:88px;" type="text"/></div></td>
+							</tr>   
+							<tr>
+							    <td>单&nbsp;据&nbsp;号</td>
+							    <td><input  id= "minCvouchid" class="input"/></td>
+							    <td class='line_style'>——</td>
+							    <td><input  id= "maxCvouchid" class="input"/></td>
+							</tr>  
+							<tr>
+								<td>记账日期</td>
+								<td><input id='minDvouchdate' class="short" onclick="WdatePicker();"/><img onClick="WdatePicker({el:'minDregdate'});" src="../../../images/icon/picker.gif"/></td>
+								<td class='line_style'>——</td>
+								<td><input id='maxDvouchdate' class="short" onclick="WdatePicker();"/><img onClick="WdatePicker({el:'maxDregdate'});" src="../../../images/icon/picker.gif"/></td>
+							</tr>    
+							<tr>
+							    <td>金额</td>
+							    <td><input id= "minAmount" class="input"/></td>
+							    <td class='line_style'>——</td>
+							    <td><input id= "maxAmount" class="input"/></td>
+							</tr>                                                                         
+							<tr>
+							    <td>结算方式</td>
+							    <td><div type="querybox" onquery="queryid='csscode';window.parent.openWindow('basic_comref_settlestyleref','pu_gb_gbQuery');"><input id= "cprocstyle"  dbvalue= "" style="width:88px;" type="text"/></div></td>
+							    <td colspan="2"></td>
+							</tr>                     
+						</table>
+					</div>
+				</div>
+			</div>
+			<div style="float:right"><input type="button" onclick="execQuery();" value="确定 "/>&nbsp;<input type="button" onclick="exitgbQuery();" value="取消 "/></div>  
+		</div>
+	</div>
+</body>
+</html>

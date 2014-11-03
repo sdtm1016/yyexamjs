@@ -1,0 +1,773 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资管理 WA</title>
+<link rel="stylesheet" href="css/otherpage.css" type="text/css"/>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+
+<script type="text/javascript">
+
+/**
+ * 添加打开验证，在多工资类别的情况下，当工资类别打开的时候
+ 才能使用(2013-8-21)
+ */
+function openPsn(){
+	if(window.parent.wa_wageTypeId==0){
+		jAlert("请打开工资类别");
+	}else{
+	openWindow('wa_other_personnelfile_main');
+	}
+};
+</script>
+</head>
+
+<body>
+
+
+
+
+<!-- 窗体容器 开始 -->
+ <div>
+ 
+	
+	<!-- 凭证页面.科目参照 subjectsreference.html -->
+	<div id="dsign_subjectsreference"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="340" title="科目参照"
+		src="../dsign/subjectsreference.html"></div>		
+	
+	
+	<!-- 工资模块相关页面 开始 -->
+		
+		
+	<!-- 工资.工资类别向导 wcw.html-->
+	<div id="wa_wagecategory_wcw"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="320" height="300" title="工资类别向导"
+		src="../wa/wagecategory/wcw.html"></div>
+		
+		
+		
+	<!-- 工资.打开工资类别 owc.html-->
+	<div id="wa_wagecategory_owc"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="265" title="打开工资类别"
+		src="../wa/wagecategory/owc.html"></div>
+		
+		
+	<!-- 工资.删除工资类别 dwc.html-->
+	<div id="wa_wagecategory_dwc"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="265" title="删除工资类别"
+		src="../wa/wagecategory/dwc.html"></div>
+		
+	<!-- 工资.新建工资类别 cwc.html-->
+	<div id="wa_wagecategory_cwc"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="386" height="300" title="新建工资类别"
+		src="../wa/wagecategory/cwc.html"></div>
+		
+		
+	<!-- 工资.工资选项窗体 options.html-->
+	<div id="wa_other_options"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="376" height="266" title="选项"
+		src="../wa/other/options.html"></div>
+		
+	
+	<!-- 工资.人员附加信息设置 pais.html-->
+	<div id="wa_other_pais"
+		style="margin-left: 120px;margin-top: 90px; padding: auto; display: none;"
+		type="window" width="316" height="244" title="人员附加信息设置"
+		src="../wa/other/pais.html"></div>
+		
+	
+	<!-- 工资.人员类别设置 pcs.html-->
+	<div id="wa_other_pcs"
+		style="margin-left: 120px;margin-top: 90px; padding: auto; display: none;"
+		type="window" width="296" height="264" title="人员类别设置"
+		src="../wa/other/pcs.html"></div>
+		
+	<!-- 工资.部门选择设置 department.html-->
+	<div id="wa_other_department"
+		style="margin-left: 120px;margin-top: 90px; padding: auto; display: none;"
+		type="window" width="400" height="305" title="部门选择设置"
+		src="../wa/other/department.html"></div>
+		
+		
+	<!-- 工资.权限设置 -->
+	<div id="wa_other_as"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="544" height="355" title="权限设置"
+		src="../wa/other/as.html"></div>
+		
+	<!-- 工资.银行名称设置 -->
+	<div id="wa_other_bas"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="390" height="285" title="银行名称设置"
+		src="../wa/other/bas.html"></div>
+		
+		
+	<!-- 工资.工资项目设置 -->
+	<div id="wa_other_sps"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="550" height="435" title="工资项目设置"
+		src="../wa/other/sps.html"></div>
+		
+		
+	<!-- 工资.工资项目设置.重新命名 -->
+	<div id="wa_other_itemrename"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="290" height="150" title="重新命名"
+		src="../wa/other/itemrename.html"></div>
+		
+		
+		
+	<!-- 工资.参照 -->
+	<div id="wa_other_reference"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="250" height="245" title="参照"
+		src="../wa/other/reference.html"></div>
+		
+		
+	<!-- 工资.函数向导 -->
+	<div id="wa_other_functionsteps"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="400" height="285" title="函数向导"
+		src="../wa/other/functionsteps.html"></div>
+		
+		
+		
+		
+		
+		
+		
+	<!-- 工资.人员档案 -->
+	<div id="wa_other_personnelfile_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="575" title="人员档案"
+		src="../wa/other/personnelfile/main.html"></div>
+		
+		
+		<!-- 人员档案表视图 开始 -->
+		
+	<!-- 工资.人员档案.增加 -->
+	<div id="wa_other_personnelfile_add"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="385" title="增加"
+		src="../wa/other/personnelfile/add.html"></div>
+		
+		
+	<!-- 工资.人员档案.增加.人员参照 -->
+	<div id="wa_other_personnelfile_personreference"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="176" height="269" title="人员参照"
+		src="../wa/other/personnelfile/personreference.html"></div>
+		
+		
+	<!-- 工资.人员档案.人员批量增加 -->
+	<div id="wa_other_personnelfile_batch_add"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="558" height="309" title="人员批量增加"
+		src="../wa/other/personnelfile/batch_add.html"></div>
+		
+	<!-- 工资.人员档案.修改 -->
+	<div id="wa_other_personnelfile_update"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="385" title="修改"
+		src="../wa/other/personnelfile/update.html"></div>
+		
+		
+	<!-- 工资.人员档案.定位 -->
+	<div id="wa_other_personnelfile_position"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="382" height="201" title="定位"
+		src="../wa/other/personnelfile/position.html"></div>
+		
+		
+	<!-- 工资.人员档案.数据替换 -->
+	<div id="wa_other_personnelfile_replace"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="480" height="285" title="数据替换"
+		src="../wa/other/personnelfile/replace.html"></div>
+		
+		
+	<!-- 工资.人员档案.数据筛选 -->
+	<div id="wa_other_personnelfile_screening"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="420" height="279" title="数据筛选"
+		src="../wa/other/personnelfile/screening.html"></div>
+		
+		
+	
+		
+		
+		<!-- 人员档案表视图 结束 -->
+		
+	
+	
+	
+	
+		<!-- 工资变动表视图 开始 -->
+		
+	<!-- 工资.工资变动 -->
+	<div id="wa_change_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="375" title="工资变动"
+		src="../wa/change/main.html"></div>
+		
+	<!-- 工资.工资变动过滤 -sjh-->
+	<div id="wa_change_gl"
+		style="margin-left: 100px;margin-top: 80px; padding: auto; display: none;"
+		type="window" width="410" height="220" title="项目过滤"
+		src="../wa/change/wagefilter.html"></div>
+		
+		
+	<!-- 工资.工资变动.定位 -->
+	<div id="wa_change_position"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="382" height="201" title="定位"
+		src="../wa/change/position.html"></div>
+		
+		
+	<!-- 工资.工资变动.数据替换 -->
+	<div id="wa_change_replace"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="480" height="285" title="数据替换"
+		src="../wa/change/replace.html"></div>
+		
+		
+	<!-- 工资.工资变动.数据筛选 -->
+	<div id="wa_change_screening"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="420" height="279" title="数据筛选"
+		src="../wa/change/screening.html"></div>
+		
+		
+	<!-- 工资.工资变动.编辑 -->
+	<div id="wa_change_edit"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="510" height="385" title="编辑"
+		src="../wa/change/edit.html"></div>
+		
+		<!-- 工资变动表视图 结束 -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	<!-- 工资.扣缴个人所得税相关窗体 开始 -->
+		
+		<!-- 表格窗体 -->
+		<div id="wa_tax_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="385" title="个人所得税"
+		src="../wa/tax/main.html"></div>
+		
+		<!-- 栏目选择1 -->
+		<div id="wa_tax_columnchoose"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="426" height="255" title="栏目选择"
+		src="../wa/tax/columnchoose.html"></div>
+		
+		
+		<!-- 栏目选择2 -->
+		<div id="wa_tax_column"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="290" height="225" title="栏目选择"
+		src="../wa/tax/column.html"></div>
+		
+		<!-- 税率表 -->
+		<div id="wa_tax_ratetable"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="506" height="305" title="个人所得税申报表——税率表"
+		src="../wa/tax/ratetable.html"></div>
+		
+		<!-- 人员定位 -->
+		<div id="wa_tax_position"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="390" height="215" title="人员定位"
+		src="../wa/tax/position.html"></div>
+		
+		<!-- 数据过滤 -->
+		<div id="wa_tax_screening"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="390" height="215" title="数据过滤"
+		src="../wa/tax/screening.html"></div>
+		
+		
+	<!-- 工资.扣缴个人所得税相关窗体 结束 -->
+		
+		
+		
+		
+		
+	
+	
+	<!-- 工资.工资分摊 开始 -->
+	
+		<!-- 工资分摊 -->
+		<div id="wa_wageallocation_first"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="486" height="285" title="工资分摊"
+		src="../wa/wageallocation/first.html"></div>
+	
+	
+		<!-- 分摊类型设置 -->
+		<div id="wa_wageallocation_typesetting"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="360" height="225" title="分摊类型设置"
+		src="../wa/wageallocation/typesetting.html"></div>
+	
+	
+		<!-- 分摊构成设置 -->
+		<div id="wa_wageallocation_addproportion"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="530" height="265" title="分摊构成设置"
+		src="../wa/wageallocation/addproportion.html"></div>
+	
+		<!-- 修改分摊构成设置 -->
+		<div id="wa_wageallocation_updproportion"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="530" height="265" title="修改分摊构成设置"
+		src="../wa/wageallocation/updproportion.html"></div>
+	
+		<!-- 部门名称参照 -->
+		<div id="wa_wageallocation_department"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="176" height="259" title="部门名称参照"
+		src="../wa/wageallocation/department.html"></div>
+	
+		<!-- 工资分摊明细 -->
+		<div id="wa_wageallocation_tableview"
+			style="margin-left: 5px;margin-top: 6px; padding: auto; display: none;"
+			type="window" width="850" height="525" title="工资分摊明细"
+			src="../wa/wageallocation/tableview.html"></div>
+		
+	
+	<!-- 工资.工资分摊 结束 -->
+		
+	
+	
+	
+	
+	
+	
+	
+	<!-- 工资.月末结账 开始 -->
+		
+		
+		<!-- 月末处理 -->
+		<div id="wa_checkout_endproccess"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="410" height="216" title="月末处理"
+		src="../wa/checkout/endproccess.html"></div>
+		
+		
+		<!-- 选择清零项目 -->
+		<div id="wa_checkout_reset"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="350" height="195" title="选择清零项目"
+		src="../wa/checkout/reset.html"></div>
+		
+		
+		<!-- 反结账1 -->
+		<div id="wa_checkout_anti1"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="400" height="185" title="反结账"
+		src="../wa/checkout/anti1.html"></div>
+		
+		
+		<!-- 反结账2 -->
+		<div id="wa_checkout_anti2"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="310" height="155" title="反结账"
+		src="../wa/checkout/anti2.html"></div>
+		
+		
+		
+		
+	<!-- 工资.月末结账 结束 -->
+		
+		
+		
+		
+	<!-- 工资.统计分析 开始 -->
+	
+	
+		<!-- 我的账表 -->
+		<div id="wa_stists_mystists"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="430" height="445" title="我的账表"
+		src="../wa/stists/mystists.html"></div>
+		
+	
+		<!-- 工资表 -->
+		<div id="wa_stists_wagesheet"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="394" height="249" title="工资表"
+		src="../wa/stists/wagesheet.html"></div>
+		
+	
+		<!-- 个人纳税所得申报表 -->
+		<div id="wa_stists_nssdsbb_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="595" title="个人纳税所得申报表"
+		src="../wa/stists/nssdsbb/main.html"></div>
+		
+		<!-- 个人纳税所得申报表.定位 -->
+		<div id="wa_stists_nssdsbb_position"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="390" height="215" title="定位"
+		src="../wa/stists/nssdsbb/position.html"></div>
+		
+		<!-- 部门工资汇总表 -->
+		<div id="wa_stists_bmgzhzb_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="595" title="部门工资汇总表"
+		src="../wa/stists/bmgzhzb/main.html"></div>
+		
+		<!-- 工资发放签名表 -->
+		<div id="wa_stists_gzffqmb_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="595" title="工资发放签名表"
+		src="../wa/stists/gzffqmb/main.html"></div>
+		
+		<!-- 工资发放条  -->
+		<div id="wa_stists_gzfft_main"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="595" title="工资发放条"
+		src="../wa/stists/gzfft/main.html"></div>
+		
+		
+		<!-- 工资发放签名表.部门选择 -->
+		<div id="wa_stists_dptslt1"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="304" height="217" title="工资发放签名表"
+		src="../wa/stists/dptslt1.html"></div>
+		
+		<!-- 部门工资汇总表.部门选择 -->
+		<div id="wa_stists_dptslt2"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="304" height="217" title="部门工资汇总表"
+		src="../wa/stists/dptslt2.html"></div>
+		
+		<!-- 工资发放条.部门人员选择 -->
+		<div id="wa_stists_dptpersslt"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="600" height="325" title="工资发放条"
+		src="../wa/stists/dptpersslt.html"></div>
+		
+		
+		
+		
+		<!-- 部门工资项目构成分析表.分析月份选择 -->
+		<div id="wa_stists_bmgzxmgcfxb_month_select"
+		style="margin-left: 90px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="260" height="169" title="分析月份选择"
+		src="../wa/stists/bmgzxmgcfxb/month_select.html"></div>
+		
+		
+		
+		<!-- 部门工资项目构成分析表.部门选择 -->
+		<div id="wa_stists_bmgzxmgcfxb_department_select"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="304" height="217" title="部门工资项目构成分析表"
+		src="../wa/stists/bmgzxmgcfxb/department_select.html"></div>
+		
+		
+		
+		
+		<!-- 部门工资项目构成分析表.分析表选项 -->
+		<div id="wa_stists_bmgzxmgcfxb_field_select"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="338" height="195" title="分析表选项"
+		src="../wa/stists/bmgzxmgcfxb/field_select.html"></div>
+		
+		
+		<!-- 部门工资项目构成分析表 -->
+		<div id="wa_stists_bmgzxmgcfxb_table_view"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="部门工资项目构成分析表"
+		src="../wa/stists/bmgzxmgcfxb/table_view.html"></div>
+		
+		
+		
+		
+		<!-- 凭证查询 -->
+		<div id="wa_stists_dsignquery"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="620" height="375" title="凭证查询"
+			src="../wa/stists/dsignquery.html"></div>
+		
+		<!-- 凭证查询页面dsign/indexS+how.html -->	
+	<div id="dsignShow"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="凭证查询"
+		src="../dsign/indexShow.html"></div>
+	
+	<!-- 工资.统计分析 结束 -->
+		
+		
+		
+	<!-- 凭证页面dsign/index.html -->
+	<div id="wa_operate_dsign"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="填制凭证"
+		src="../dsign/wa_index.html"></div>
+		
+		
+	<!-- 凭证页面.辅助核算项 auxiliaryoptions.html -->
+	<div id="dsign_auxiliaryoptions"
+		style="margin-left: 150px;margin-top: 120px; padding: auto; display: none;"
+		type="window" width="410" height="220" title="辅助项"
+		src="../dsign/auxiliaryoptions.html" closeable="false"></div>
+	
+	
+	
+	<!--项目档案 参照 -->
+	<div id="basic_comref_fitemref"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="项目档案参照"
+		src="../basic/comref/fitemref.html"></div>
+	
+		<!-- 部门参照 -->
+	<div id="basic_comref_dptref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/dptref.html"></div>	
+	
+	<!-- 个人参照 -->
+	<div id="basic_comref_personref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/personref.html"></div>
+	
+	<!-- 客户参照 -->
+	<div id="basic_comref_cusref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/cusref.html"></div>
+	
+	<!-- 供应商参照 -->
+	<div id="basic_comref_supref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/supref.html"></div>			
+		
+		
+			<!-- 结算方式参照 -->
+	<div id="basic_comref_settlestyleGridRef"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="550" height="370" title="参照"
+		src="../basic/comref/settlestyleGridRef.html"></div>			
+		
+		
+		
+		
+		
+	
+	
+	
+	<!-- 工资模块相关页面 结束 -->
+	
+	
+	
+	<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+	<!-- alert和confirm 警告窗口  结束-->
+	
+	
+</div>
+<!-- 窗体容器 结束 -->
+
+
+
+
+
+
+
+
+
+
+ <div class="topbar">
+ 
+ 	<span></span>
+ 	
+	<div onclick="openWindow('wa_other_pcs');">
+		<span></span>
+		人员类别设置
+	</div>
+	
+	<div onclick="openWindow('wa_other_bas');">
+		<span></span>
+		银行名称
+	</div>
+		
+	<div onclick="openWindow('wa_other_pais');">
+		<span></span>
+		人员附加信息
+	</div>
+		
+	<div onclick="openWindow('wa_other_sps');">
+		<span></span>
+		工资项目
+	</div>
+		
+		
+	<div onclick="openPsn()">
+		<span></span>
+		人员档案
+	</div>
+		
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ <div class="flowchart">
+ 
+ 	
+ 	<a style="margin-top:80px;margin-left:300px;" href="javascript:;" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_GZFQQD.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_GZFQQD-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_GZFQQD.jpg'"
+ 		/><br/>
+ 		工资分钱清单
+ 	</a>
+ 	
+ 	<a style="margin-top:190px;margin-left:20px;" onclick="window.parent.wa_change_filter()" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_GZBD.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_GZBD-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_GZBD.jpg'"
+ 		/><br/>
+ 		工资变动
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:190px;margin-left:135px;" onclick="window.parent.wa_columnchoose_filter()" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_KJGRSDS.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_KJGRSDS-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_KJGRSDS.jpg'"
+ 		/><br/>
+ 		扣缴个人所得税
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:300px;margin-left:310px;" href="javascript:;" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_YHDF.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_YHDF-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_YHDF.jpg'"
+ 		/><br/>
+ 		银行代发
+ 	</a>
+ 
+ 
+ 	
+ 	<a style="margin-top:190px;margin-left:490px;" onclick="window.parent.wa_first_filter()" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_GZFT.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_GZFT-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_GZFT.jpg'"
+ 		/><br/>
+ 		工资分摊
+ 	</a>
+ 
+ 	
+ 	<a style="margin-top:190px;margin-left:610px;" onclick="window.parent.wa_endproccess_filter()"  onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/WA_YMCL.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/WA_YMCL-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/WA_YMCL.jpg'"
+ 		/><br/>
+ 		月末处理
+ 	</a>
+ 
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	<div>
+ 		<img src="../../images/portal/CWork/ImageList1/WA1024.gif"/>
+ 	</div>
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ 
+ <div class="footpanel">
+ 
+	 <div class="actionList">
+	
+	
+		<div onclick="openWindow('');">
+			<div></div>
+			我的工作台
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			人员类别汇总表
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			部门工资汇总表
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			工资卡
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			工资发放签名表
+		</div>
+		
+		<div onclick="openWindow('');">
+			
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			工资发放条
+		</div>
+			
+		
+			
+			
+	 </div>
+ 
+ </div>
+ 
+
+
+
+
+
+
+
+ 
+</body>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+</html>

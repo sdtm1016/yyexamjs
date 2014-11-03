@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>人员附加信息设置(person additional information settings)</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<style type="text/css">
+		.slcbtn{padding:0px;width:16px;height:70px;text-align:center;}
+	</style>
+	<script type="text/javascript">
+	
+
+	//上移
+	function optionMoveUp(selectId){
+		var select = document.getElementById(selectId);
+		if(select.selectedIndex>0){
+			var so = select.options[select.selectedIndex];
+			select.insertBefore(so,select.options[select.selectedIndex-1]);
+		}
+	}
+	
+	//下移
+	function optionMoveDown(selectId){
+		var select = document.getElementById(selectId);
+		if(select.selectedIndex<select.options.length-1){
+			var so = select.options[select.selectedIndex];
+			select.insertBefore(select.options[select.selectedIndex+1],so);
+		}
+	}
+	 
+	//往select里添加项
+	function addOption(){
+		var tb = document.getElementById("inftype");
+		var value = tb.value;
+		var options = document.getElementById("select_1").options;
+		if(mark==1){
+			var flag=false;
+			if(value==""){
+				flag=true;
+			}else{
+				//判断是否已经存在
+				for(var i=0;i<options.length-1;i++){
+					if(options[i].text==value){
+						flag=true;
+					}
+				}
+			}
+			if(flag){
+				jAlert("已有“"+value+"”，请指定另一附加信息名","提示",function(){
+					tb.select();
+					tb.focus();
+				});
+			}else{
+				options[options.length-1]=new Option(value,value);
+				mark=0;
+				options[options.length]=new Option("","");
+				options[options.length-1].selected=true;
+				$("#inftype").val("");
+			}
+		}else if($("#select_1").val()!=""){
+			options[options.length]=new Option("","");
+			options[options.length-1].selected=true;	
+		}
+		
+		
+		
+	}
+	var mark=0;//点击过参照
+	//参照改变处理函数
+	function referenceChange(select){
+		var tb = document.getElementById("inftype");
+		var s1 = document.getElementById("select_1");
+		var s1so = s1.options[s1.selectedIndex];
+		tb.value = select.options[select.selectedIndex].text;
+		s1so.value=select.options[select.selectedIndex].value;
+		s1so.text=select.options[select.selectedIndex].text;
+		mark=1;
+	}
+	
+	//删除选中的option
+	function deleteSelectedOption(){
+		jConfirm('你确定删除吗?', '提示', function(r) {
+			if(r){
+				var s1 = document.getElementById("select_1");
+				s1.options.remove(s1.selectedIndex);
+				$("#inftype").val("");
+			}
+			
+		});
+	}
+	
+	
+	//select选中改变处理
+	function selectChange(select){
+		var tb = document.getElementById("inftype").value=select.options[select.selectedIndex].text
+		
+	}
+	function inputBlur(){
+		var val=$("#inftype").val();
+		var s1 = document.getElementById("select_1");
+		var s1so = s1.options[s1.selectedIndex];
+		s1so.value=val;
+		s1so.text=val;
+	}
+	function back(){
+		window.parent.closeWindow('wa_other_pais')
+	}
+	</script>
+</head>
+<body>
+	<div class="container" id="container" style="float:left;width:316px;height:224px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:290px;height:204px;margin-left:20px;margin-top:10px;">
+			
+			<div>信息名称：<input type="text" onkeyup="inputBlur()"  id="inftype" style="width:140px;"/></div>
+			<div style="margin-top:10px;">
+				<div style="float:left;">
+					<div style="width:206px;height:140px;">
+						<div style="float:left;">
+							<select id="select_1" size="14" style="width:190px;height:140px;" onchange="selectChange(this);">
+								<option selected="selected">手机号</option>
+								<option>性别</option>
+								<option>出生年月</option>
+								<option>学历</option>
+								<option>职务</option>
+							</select>
+						</div>
+						<div style="float:left;">
+							<input type="button" onfocus="this.blur();" onclick="optionMoveUp('select_1');" class="movebtn_up"/><br>
+							移<br>动<br>
+							<input type="button" onfocus="this.blur();" onclick="optionMoveDown('select_1');" class="movebtn_down"/>
+							
+						</div>
+					</div>
+					<div style="margin-top:10px;">
+						参照：
+						<select style="width:165px;" onclick="referenceChange(this);">
+							<option>性别</option>
+							<option>婚否</option>
+							<option>技术职称</option>
+							<option>学历</option>
+							<option>职务</option>
+							<option>年龄</option>
+							<option>身份证号</option>
+							<option>出生年月</option>
+						</select>
+					</div>
+				</div>
+				<div style="float:left;margin-top:64px;width:80px;text-align:center;">
+					<input type="button" value="增加" onclick="addOption();"/><br/><br/>
+					<input type="button" value="删除" onclick="deleteSelectedOption();"/><br/><br/>
+					<input type="button" value="返回" onclick="back()"/>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	
+	
+</body>
+
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+	<title>仓库档案</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<!-- 公共js -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/warehouse.js"></script>
+	<script type="text/javascript">
+	
+	 $(document).ready(function (){
+			$(".tr1").click(function(){
+				//获取Tr的id
+				//$(this).attr("tid");
+				$("#tid").attr("value",$(this).attr("tid"));
+				//获取tr中第一个td的值
+				$(this).find("td:first").html();
+				
+			});
+		});
+		
+	 function updateWarehouse(){
+		 var param = {};
+		 if(currentSeletedRow==null){
+				jAlert("请选择一行再进行此操作！");
+				return;
+			}
+		 param.id=$(currentSeletedRow).attr("tid");//$("#tid").val();
+		 
+		window.parent.openWindow('pu_warehouse_update','pu_warehouse_item',param);
+	 }
+	
+	</script>
+	</head>
+	<body style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; font-size: 12px;background-color: #D4D0C8;" topmargin="" style="z-index: 0;" >
+		<div class="container" style="float:left;width:700px;height:300px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;border:1px;">
+		
+		<div style="width: 530px; height: 30px; background-color: #D4D0C8; font-size: 12px; margin-top: 0px;margin-left:5px;">
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="设置"  style="background-image:url('../../../images/icon/setting.gif');"/></div>
+					<div><input type="button" value="打印"  style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览"  style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出"  style="background-image:url('../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="增加" id="addWarehouse" onclick="window.parent.openWindow('pu_warehouse_add','pu_warehouse_item');" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="修改" id="updateWarehouse" onclick="updateWarehouse()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" id="deleteWarehouse" onclick="deleteWarehouse()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="刷新"  style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助"  style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('pu_warehouse_item');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+		
+		</div>
+
+		<div style="width:600px;height:300px;overflow:hidden;margin-top:10px;margin-left:8px;border:2px inset #ccc;">
+				<!-- 
+				<div style="width:100%;height:307px;font-size:14px;position:absolute;">
+				 -->
+				
+		<div id="tableheader">
+			<table width="1100" style="overflow:auto;margin-top:0px;" class="table_style">
+				<thead>
+				<tr>
+					<td style="width:80px;">仓库编码</td>
+					<td style="width:120px;">仓库名称</td>
+					<td style="width:120px;">所属部门</td>
+					<td style="width:200px;">仓库地址</td>
+					<td style="width:100px;">电话</td>
+					<td style="width:80px;">负责人</td>
+					<td style="width:100px;">计价方式</td>
+					<td style="width:100px;">是否货位管理</td>
+					<td style="width:80px;">资金定额</td>
+					<td style="width:120px;">备注</td>
+				</tr>
+				</thead>
+			</table>
+		</div>
+		<div style="width:594px;height:273px;overflow:auto;" onscroll="tableScroll(this);">
+			
+			<table  width="1100" style="overflow:auto;margin-top:0px;" class="table_style">
+				
+				<tbody id="include" style="background-color: #FFFFFF">
+				</tbody>
+			
+			</table>
+		</div>		
+		<!-- 
+		</div> -->
+	</div>
+	<input type = "hidden" id = "tid"  value =""/>
+	</body>
+</html>

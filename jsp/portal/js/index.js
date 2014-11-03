@@ -416,9 +416,6 @@ function incbuild(menuList,parentId){
 		
 	}
   
-	
-
-
 	  
 	//命令右侧frame里的页面弹出窗体函数，rfow = Right frame open window
 	function rfow(){

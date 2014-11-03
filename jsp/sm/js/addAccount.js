@@ -98,13 +98,13 @@ function next(){
 				window.parent.updateScore(1,2);
 			}
 		}
-		if(panelIndex<4){
+		if(panelIndex<5){
 			document.getElementById(CURRENT_SHOWED_PANEL_NAME).style.display="none";
 			document.getElementById("panel"+(panelIndex+1)).style.display="block";
 			CURRENT_SHOWED_PANEL_NAME = "panel"+(panelIndex+1);
 			document.getElementById("prevButton").disabled=false;
 			
-			if((panelIndex+1)==4){
+			if((panelIndex+1)==5){
 				//禁用下一步
 				document.getElementById("nextButton").disabled=true;
 				

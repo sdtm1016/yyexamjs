@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资发放条</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../../css/contextmenu.css">
+<script type="text/javascript" src="../../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<style type="text/css">
+*{font-family:宋体;}
+	.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;position:relative;background-color:#fff;}
+	.table_header thead tr {height:31px;}
+	.table_header thead tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;text-align:center;}
+	.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;background-color:#fff;}
+	.table_bodyer tbody tr {height:20px;}
+	.table_bodyer tbody tr td {border:none;border-right:1px solid #ccc;border-bottom:1px solid #ccc;width:100px;}
+</style>
+<script type="text/javascript">
+var param = window.parent.valueMap.get("wa_stists_gzfft_main");
+//alert(param.deptIds+"=="+param.psnNums);
+var deptIds=param.deptIds;
+var psnNums=param.psnNums;
+var allIds=param.ids;
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+var iperiod = "";
+var sfhjFlag=false;
+$(document).ready(function() {
+	var operDate = getCookie("operDate");
+	var year = operDate.split('-');
+	var y = year[0] + "年" + year[1] + "月";
+	var month = parseInt(year[1]);
+	iperiod = $("#iperiod").val();
+	$("#month").html(y);
+	$("#iperiod").val(month);
+	$("#iperiod option").each(function() {
+		var val = $(this).attr("value");
+		if (val > month) {
+			$(this).remove();
+		}
+	});
+	//实发合计为0选择框，绑定事件
+	$("#sfhj").unbind("click").bind("click",function(){
+		if($(this).attr("checked")=="checked"){
+			sfhjFlag=true;
+		}else{
+			sfhjFlag=false;
+		}
+		loadData();
+	});
+	loadDeptData();
+	//会计月份绑定改变事件
+	$("#iperiod").unbind("change").bind("change", function() {
+		var val = $(this).val();
+		iperiod = val;
+		$("#month").html(year[0] + "年" + val + "月");
+		loadData();
+	})
+	loadData();
+	//部门绑定改变事件
+	$("#dept").unbind("change").bind("change", function() {
+		var val=$(this).val();
+		if(val==0){
+			ids=allIds;
+		}else{
+			ids=val;
+		}
+		loadData();
+	});
+});
+/**
+ * 遇到数值的时候，转换成小数点后两位
+ */
+function transFloat(value) {
+	if (value != null && value != "") {
+		if ((value - 0) == 0) {
+			value = "";
+		} else {
+			value = Math.abs(parseFloat(value)).toFixed(2);
+		}
+	} else if (value == null || value == "" || value == undefined) {
+		value = "";
+	}
+	return value;
+}
+/**
+ * 加载部门工资汇总 数据
+ */
+function loadData() {
+	var data = "cgzgradenum=" + cgzgradenum + "&ids=" + deptIds + "&imonth="
+			+ iperiod+"&psnNums="+psnNums;
+			$.ajax({
+				url : "wageReports!queryWagzdata.action",
+				type : "post",
+				data : data,
+				success : function(data, status) {
+					var mapList = data.mapList;
+					$("#psnNum").html(mapList.length);
+					$("#table_1_bodyer_1").html("");//清空下拉列表
+					$("#table_2_bodyer_2").html("");//清空下拉列表
+					var str1 = "";
+					var str2 = "";
+					var yfhj = 0, kkhj = 0, sfhj = 0, bykl = 0, sykl = 0, dks = 0, personnum = 0;
+					$.each(mapList, function(index, i) {
+						str1 = '<tr><td>' + i.personnum + '</td><td>'
+								+ i.psnname + '</td></tr>';
+						str2 = '<tr><td>' + transFloat(i.yfhj)
+								+ '</td><td>' + transFloat(i.kkhj)
+								+ '</td><td>' + transFloat(i.sfhj)
+								+ '</td><td>' + transFloat(i.bykl)
+								+ '</td><td>' + transFloat(i.sykl)
+								+ '</td><td>' + transFloat(i.dks)
+								+ '</td><tr>';
+						yfhj += (i.yfhj);
+						sfhj += (i.sfhj);
+						kkhj += (i.kkhj);
+						bykl += (i.bykl);
+						sykl += (i.sykl);
+						dks += (i.dks);
+						if(sfhjFlag&&i.sfhj==0){}else{
+							$("#table_1_bodyer_1").append(str1);
+							$("#table_2_bodyer_2").append(str2);	
+						}
+						
+					});
+					var str = "";
+					str3 = '<tr><td> 合计' + '</td><td>' 
+							+ '</td></tr>';
+					str4 = '<tr><td>' + transFloat(yfhj) + '</td><td>'
+							+ transFloat(kkhj) + '</td><td>'
+							+ transFloat(sfhj) + '</td><td>'
+							+ transFloat(bykl) + '</td><td>'
+							+ transFloat(sykl) + '</td><td>'
+							+ transFloat(dks) + '</td><tr>';
+					$("#table_1_bodyer_1").append(str3);
+					$("#table_2_bodyer_2").append(str4);
+				},
+				dataType : "json"
+			});
+}
+/**
+ * 加载部门数据
+ */
+function loadDeptData(){
+	$.ajax({
+		url:"department!queryDepartment.action",
+		type:"post",
+		dataType:"json",
+		async : false,   
+		error: function () {
+            jAlert('请求失败');   
+        }, 
+		success:function(jsonData){
+			var departmentList = jsonData.departmentList;
+			var nums=deptIds;
+				nums=deptIds.split(",");
+			var arr=new Array();	
+			var str="";
+			var s=0;
+			for(var i=0;i<departmentList.length;i++){
+				var d=departmentList[i];
+				 for(var k=0;k<nums.length;k++){
+					var num=nums[k];
+					var flag=false;
+						for(var j=0;j<arr.length;j++){
+							if(arr[j]==d.cdepcode){
+								flag=true;
+								break;
+							}
+						}
+						if(num==d.cdepcode&&!flag){
+							str +="<option value="+d.cdepcode+">"+d.cdepname+"</option>"
+							arr[s]=d.cdepcode;
+							s++;
+						}
+				} 
+			}
+			$("#dept").append(str);
+		}
+        });
+}
+</script>
+
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:800px;height:570px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:793px;height:563px;margin-top:1px;margin-left:3px;">
+			
+			
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="打印" style="background-image:url('../../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" style="background-image:url('../../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" style="background-image:url('../../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="连打" onclick="window.parent.openWindow('');" style="background-image:url('../../../../images/icon/lianda1.gif');"/></div>
+					<div><input type="button" value="设置" onclick="window.parent.openWindow('');" style="background-image:url('../../../../images/icon/classes.gif');"/></div>
+					<div><input type="button" value="格式" onclick="window.parent.openWindow('');" style="background-image:url('../../../../images/icon/geshi1.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" onclick="" style="background-image:url('../../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('wa_stists_gzfft_main');" style="background-image:url('../../../../images/icon/exit.gif');"/></div>
+				</div>
+				
+			</div>
+			
+			<div style="width:794px;height:484px;background-color:#fff;">
+				<div style="width:792px;height:70px;">
+					<div style="width:792px;height:27px;line-height:27px;padding-top:4px;text-align:center;font-size:20px;font-family:正楷;font-weight:bold;color:#000080;text-decoration:underline;">
+						工资发放条
+					</div>
+					<div id='month' style="text-align:center;">
+						2010年1月
+					</div>
+					<div class="v_a_m" style="height:24px;">
+					
+						<div style="float:left;">部门：
+							<select id='dept' style="width:120px;">
+								<option value='0'>全部</option>
+							</select>
+						</div>
+						
+						<div style="float:left;margin-left:60px;">会计月份：
+							<select id='iperiod' style="width:80px;">
+								<option value='1'>一月</option>
+								<option value='2'>二月</option>
+								<option value='3'>三月</option>
+								<option value='4'>四月</option>
+								<option value='5'>五月</option>
+								<option value='6'>六月</option>
+								<option value='7'>七月</option>
+								<option value='8'>八月</option>
+								<option value='9'>九月</option>
+								<option value='10'>十月</option>
+								<option value='11'>十一月</option>
+								<option value='12'>十二月</option>
+							</select>
+						</div>
+						
+						
+						<div style="float:left;margin-left:60px;">
+							<input type="checkbox" id="sfhj"/><label for="cb_1">实发合计为0不显示</label>
+						</div>
+						
+						<div style="float:left;margin-left:60px;">
+							<label for="cb_1">人数&nbsp;:&nbsp;</label><span id='psnNum'></span>
+						</div>
+					</div>
+				</div>
+				<div style="width:792px;height:413px;border:1px solid #000;overflow:auto;" onscroll="tableScroll(this);">
+					<div id="left_table" style="width:60px;height:0px;position:relative;z-index:20000;float:left;">
+						<table id="table_1_header" class="table_header" style="width:160px;">
+							<thead>
+								<tr>
+									<td>人员编号</td>
+									<td>姓名</td>
+								</tr>
+							</thead>
+						</table>
+						<table id="table_1_bodyer" class="table_bodyer" style="width:160px;">
+							<tbody id="table_1_bodyer_1">
+							</tbody>
+						</table>
+					</div>
+					<div style="width:1300px;margin-left:160px;float:left;">
+						<table id="table_2_header" class="table_header" style="width:1600px;">
+							<thead>
+								<tr>
+									<td>应发合计</td>
+									<td>扣款合计</td>
+									<td>实发合计</td>
+									<td>本月扣零</td>
+									<td>上月扣零</td>
+									<td>代扣税</td>
+								</tr>
+							</thead>
+						</table>
+						<table id="table_2_bodyer" class="table_bodyer" style="width:800px;">
+							<tbody id="table_2_bodyer_2">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div style="margin-top:4px;">
+				<div style="float:left;">制表：<span id="madeby">demo</span></div>
+				<div style="float:left;margin-left:200px;">审核：<span id="madeby">demo</span></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var table_1_header = document.getElementById('table_1_header');
+	var table_1_bodyer = document.getElementById('table_1_bodyer');
+	var table_2_header = document.getElementById('table_2_header');
+	var table_2_bodyer = document.getElementById('table_2_bodyer');
+	var left_table = document.getElementById('left_table');
+	//控制表头横纵向滚动时固定不动
+	function tableScroll(container){
+		table_1_header.style.marginTop=container.scrollTop+"px";
+		table_1_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		table_2_header.style.marginTop=container.scrollTop+"px";
+		table_2_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		left_table.style.marginLeft=container.scrollLeft+"px";
+	}
+
+	/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+	//当前被点击选中的行全局变量
+	var currentSeletedRow=null;
+	var datatable_1 = document.getElementById("table_2_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(event){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+
+	/***** 选中行代码结束*******/
+	
+</script>
+</html>

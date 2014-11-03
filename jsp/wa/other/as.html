@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>权限设置(authority settings)</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+	<style type="text/css">
+		#datatable_2_bodyer tr {height:14px;}
+		#datatable_2_bodyer td {text-align:left;border:none;height:14px;padding:0px;margin:0px;cursor:default;}
+		#datatable_2_bodyer td input {vertical-align:middle;margin-bottom:3px;margin:0px;outline:none;}
+	</style>
+<script type="text/javascript">
+	$(document).ready(function(){
+		asOnload();
+		
+	});
+
+	var pageAction = "query";
+	/******************* 修改、查询业务控制 开始 *******************/
+	
+	function setUpdateAction(){
+		pageAction = "update";
+		//1.解禁“保存”按钮
+		$("#btnSave").attr("disabled",false);
+		
+		//2.解禁“工资类别主管”复选框
+		$("#cb_1").attr("disabled",false);
+		$("#cb_1_label").css("color","#000");
+		
+		//3.设置右边复选框列表项可勾选
+		$("#datatable_2_bodyer").find("input[type='checkbox']").attr("disabled",false);
+		//4.设置底部状态栏“当前状态”文本为“查询”
+		$("#btmsts").html("当前状态：修改...");
+	}
+	
+	function setQueryAction(){
+		pageAction = "query";
+		//1.解禁“保存”按钮
+		$("#btnSave").attr("disabled",true);
+		
+		//2.解禁“工资类别主管”复选框
+		$("#cb_1").attr("disabled",true);
+		$("#cb_1_label").css("color","#808080");
+		
+		//3.设置右边复选框列表项可勾选
+		$("#datatable_2_bodyer").find("input[type='checkbox']").attr("disabled",true);
+		
+		//4.设置底部状态栏“当前状态”文本为“查询”
+		$("#btmsts").html("当前状态：查询...");
+		
+	}
+	
+	function save(){
+		
+		
+		var cgzgradenum = $("#wageType").val();
+		var userId = tb1CurrentSeletedRow.cells[0].innerHTML;
+		
+		var delDept = "";	//删除部门权限
+		var addDept = "";	//新增部门权限
+		var delPro = "";	//删除项目权限
+		var addPro = "";	//新增项目权限
+		
+		
+		
+		var zTree = $.fn.zTree.getZTreeObj("dma_tree");
+		var checkedNodes = zTree.getCheckedNodes(true);
+		var unCheckedNodes = zTree.getCheckedNodes(false);
+		
+		
+		for ( var i = 0; i < checkedNodes.length; i++) {
+			did = checkedNodes[i].id;
+			var flag = false;
+			for ( var j = 0; j < dal.length; j++) {
+				if(dal[j].cauthCode == did){
+					flag = true;
+					break;
+				}
+			}
+			if (!flag) {
+				addDept = addDept + checkedNodes[i].id + ",";
+			}
+		}
+		
+		
+
+		for ( var i = 0; i < unCheckedNodes.length; i++) {
+			did = unCheckedNodes[i].id;
+			var flag = false;
+			for ( var j = 0; j < initUnCheckedNodes.length; j++) {
+				if(initUnCheckedNodes[j].id == did){
+					flag = true;
+					break;
+				}
+			}
+			if(!flag){
+				delDept = delDept + did + ",";
+			}
+		}
+		
+		
+		var unCheckedPro = $("#datatable_2_bodyer").find("input[type=checkbox]").not("[checked]");
+		var checkedPro = $("#datatable_2_bodyer").find("input[type=checkbox]:checked");
+		for ( var i = 0; i < checkedPro.length; i++) {
+			var pid = checkedPro[i].value;
+			var flag = false;
+			for ( var j = 0; j < pal.length; j++) {
+				if (pid == pal[j].cauthCode) {
+					flag = true;
+					break;
+				}
+			}
+			if(!flag){
+				addPro = addPro + pid + ",";
+			}
+		}
+		
+		for ( var i = 0; i < unCheckedPro.length; i++) {
+			var pid = unCheckedPro[i].value;
+			var flag = false;
+			for ( var j = 0; j < initUncheckedPro.length; j++) {
+				if (pid == initUncheckedPro[j].value) {
+					flag = true;
+					break;
+				}
+			}
+			if(!flag){
+				delPro = delPro + pid + ",";
+			}
+		}
+		/*isadmin  是否为工资帐套主管2013-7-1 */
+		var isAdmin=0;
+		if($("#cb_1").attr("checked")){
+			isAdmin=1;
+		}
+		if(delDept != "" || addDept != "" || delPro != "" || addPro != ""){
+			
+			$.ajax({
+				url:"wageSetting!updateWaAuth.action",
+				type:"post",
+				data:"cgzgradenum="+cgzgradenum+"&userId="+userId+"&delDept="+delDept+"&addDept="+addDept+"&delPro="+delPro+"&addPro="+addPro+"&isAdmin="+isAdmin,
+				async:false,
+				success:function(data,status){
+					asOnload();
+				},
+				dataType:"json"
+			});
+		}
+		setQueryAction();
+		
+	}
+	
+	/******************* 修改、查询业务控制 结束 *******************/
+		/*** 树构建代码 开始 ***/
+		var setting = {	
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback:{
+					beforeCheck:function(){
+						if(pageAction!="update"){
+							return false;
+						}
+					}
+				}
+			};
+
+		var zNodes =[];
+		/*** 树构建代码 结束 ***/
+		var dal;
+		var pal;
+		var initUnCheckedNodes = null;
+		var initUncheckedPro = null;
+	function asOnload(){
+		$.ajax({
+			url:"wageSetting!queryWaAuth.action",
+			type:"post",
+			async:false,
+			success:function(data,status){
+				var authList = data.objList[0];
+				var wageTypeList = data.objList[1];
+				var tree = data.objList[2];
+				zNodes =eval("["+tree+"]");
+				$.fn.zTree.init($("#dma_tree"), setting, zNodes);
+				var projectList = data.objList[4];
+				$("#datatable_1_bodyer").html("");//清空下拉列表
+				var str = "";
+				$.each(authList,function(index,i){
+					str = '<tr><td>' + i.cuserId + 
+						'</td><td>'+ i.cuserName + 
+						'</td><td style="display:none">'+i.id+
+						'</td></tr>';
+					$("#datatable_1_bodyer").append(str);
+				});
+				$("#wageType").html("");//清空下拉列表
+				str = "";
+				$.each(wageTypeList,function(index,i){
+					str = '<option value="'+ i.cgzgradenum +'">'+ i.cgzgradenum+'('+ i.cgzgradename +')' +'</option>';
+					$("#wageType").append(str);
+				});
+				$("#datatable_2_bodyer").html("");//清空下拉列表
+				str = "";
+				$.each(projectList,function(index,i){
+					str = '<tr><td><input type="checkbox" id="'+ i.igzitemId +'" value="'+ i.igzitemId +'" disabled="disabled"/>&nbsp;'+ i.csetgzitemname +'</td></tr>';
+					$("#datatable_2_bodyer").append(str);
+				});
+				
+				
+				tb1RowSelection();
+				tb2RowSelection();
+				
+				
+
+				pal = data.objList[3];//project auth list
+				$("#datatable_2_bodyer").find("input[type=checkbox]").attr("checked",false);
+				for(var i=0;i<pal.length;i++){
+					
+					$("#"+pal[i].cauthCode).attr("checked",true);
+				}
+			
+				dal = data.objList[5];//department auth list
+				var dma_tree = $.fn.zTree.getZTreeObj("dma_tree");
+				var node = null;
+				dma_tree.checkAllNodes(false);
+				for(var i=0;i<dal.length;i++){
+					node = dma_tree.getNodeByParam("id", dal[i].cauthCode);
+					dma_tree.checkNode(node,true,true,null);
+				}
+
+				$("#datatable_1_bodyer").find("tr").eq(0).css("background-color","blue");
+				$("#datatable_1_bodyer").find("tr").eq(0).css("color","#fff");
+				tb1CurrentSeletedRow = $("#datatable_1_bodyer")[0].rows[0];
+
+				$("#datatable_2_bodyer").find("tr").eq(0).css("background-color","blue");
+				$("#datatable_2_bodyer").find("tr").eq(0).css("color","#fff");
+				tb2CurrentSeletedRow = $("#datatable_2_bodyer")[0].rows[0];
+				
+				initUnCheckedNodes = dma_tree.getCheckedNodes(false);
+				initUncheckedPro = $("#datatable_2_bodyer").find("input[type=checkbox]").not("[checked]");
+			},
+			dataType:'json'
+		});
+	}
+	//根据工资类别号和人员id查询权限
+	//当人员变动时
+	function queryWaAuthByUser(){
+		var cgzgradenum = $("#wageType").val();
+		var userId = tb1CurrentSeletedRow.cells[0].innerHTML;
+		$.ajax({
+			url:"wageSetting!queryWaAuthByUser.action",
+			type:"post",
+			async:false,
+			data:"cgzgradenum="+cgzgradenum+"&userId="+userId,
+			success:function(data,status){
+				
+				pal = data.objList[0];//project auth list
+				$("#datatable_2_bodyer").find("input[type=checkbox]").attr("checked",false);
+				for(var i=0;i<pal.length;i++){
+					
+					$("#"+pal[i].cauthCode).attr("checked",true);
+				}
+			
+				dal = data.objList[1];//department auth list
+				var dma_tree = $.fn.zTree.getZTreeObj("dma_tree");
+				var node = null;
+				dma_tree.checkAllNodes(false);
+				for(var i=0;i<dal.length;i++){
+					//alert(dal[i].cauthCode);
+					node = dma_tree.getNodeByParam("id", dal[i].cauthCode);
+					dma_tree.checkNode(node,true,true,null);
+				}
+				
+				initUnCheckedNodes = dma_tree.getCheckedNodes(false);
+				//alert(JSON.stringify(initUnCheckedNodes));
+				initUncheckedPro = $("#datatable_2_bodyer").find("input[type=checkbox]").not("[checked]");
+				
+				/*是否工资帐套主管 2013-6-29 lyl*/
+				var auth=data.objList[2];// wa_auth object
+				if(auth!=null){
+					var bgrdadmin=auth.bgrdadmin;//是否工资帐套主管(1:是;0:否)
+					if(bgrdadmin==1){
+						$("#cb_1").attr("checked",true);
+					}else{
+						$("#cb_1").attr("checked",false);
+					}
+				}else{
+					$("#cb_1").attr("checked",false);
+				}
+			},
+			dataType:"json"
+		});
+	}
+	//根据工资类别号和人员id查询权限
+	//工资类别变动时
+	function queryWaAuthByCnum(){
+		var cgzgradenum = $("#wageType").val();
+		var userId = tb1CurrentSeletedRow.cells[0].innerHTML;
+		$.ajax({
+			url:"wageSetting!queryWaAuthByCnum.action",
+			type:"post",
+			async:false,
+			data:"cgzgradenum="+cgzgradenum+"&userId="+userId,
+			success:function(data,status){
+				
+				
+				var tree = data.objList[2];
+				zNodes =eval("["+tree+"]");
+				
+				$("#datatable_2_bodyer").html("");//清空下拉列表
+				str = "";
+				$.each(data.objList[3],function(index,i){
+					str = '<tr><td><input type="checkbox" id="'+ i.igzitemId +'" value="'+ i.igzitemId +'" disabled="disabled"/>&nbsp;'+ i.csetgzitemname +'</td></tr>';
+					$("#datatable_2_bodyer").append(str);
+				});
+				
+				pal = data.objList[0];//project auth list
+				$("#datatable_2_bodyer").find("input[type=checkbox]").attr("checked",false);
+				for(var i=0;i<pal.length;i++){
+					
+					$("#"+pal[i].cauthCode).attr("checked",true);
+				}
+			
+				dal = data.objList[1];//department auth list
+				var dma_tree = $.fn.zTree.getZTreeObj("dma_tree");
+				var node = null;
+				dma_tree.checkAllNodes(false);
+				for(var i=0;i<pal.length;i++){
+					node = dma_tree.getNodeByParam("id", dal[i].cauthCode);
+					dma_tree.checkNode(node,true,true,null);
+				}
+				
+
+				tb1RowSelection();
+				tb2RowSelection();
+				
+				initUnCheckedNodes = dma_tree.getCheckedNodes(false);
+				initUncheckedPro = $("#datatable_2_bodyer").find("input[type=checkbox]").not("[checked]");
+			},
+			dataType:"json"
+		});
+	}
+	
+	
+	
+	function cb_1Click(cb){
+		if(cb.checked){
+			$("#datatable_2_bodyer").find("input[type=checkbox]").attr("checked",true);
+			$.fn.zTree.getZTreeObj("dma_tree").checkAllNodes(true);
+			$("#dma_tree").attr("disabled",true);
+			$("#datatable_2_bodyer").find("input[type=checkbox]").attr("disabled",true);
+		}else{
+			$("#datatable_2_bodyer").find("input[type=checkbox]").attr("checked",false);
+			$.fn.zTree.getZTreeObj("dma_tree").checkAllNodes(false);
+			//$.fn.zTree.getZTreeObj("dma_tree").setting.check.chkDisabled=true; 
+			$("#datatable_2_bodyer").find("input[type=checkbox]").attr("disabled",false);
+		}
+	}
+</script>
+
+
+
+
+
+<style type="text/css">
+	.fds1{float:left;width:144px;height:240px;}
+	.fds1div{width:150px;height:230px;margin-left:-5px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;}
+	
+	.fds2{float:left;width:184px;height:240px;margin-left:-4px;*+margin-left:-2px;}
+	.fds2div{width:190px;height:230px;margin-left:-5px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#fff;}
+	
+	.fds3{float:left;width:144px;height:240px;margin-left:-4px;*+margin-left:-2px;}
+	.fds3div{width:150px;height:230px;margin-left:-5px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#fff;}
+</style>
+
+
+
+<!-- 请勿删除下面代码！！ -->
+
+<!--[if IE 8]>  
+<style type="text/css">
+	.fds1{float:left;width:164px;height:250px;}
+	.fds1div{width:150px;height:230px;margin-left:3px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;}
+	
+	.fds2{float:left;width:204px;height:250px;margin-left:-4px;*+margin-left:-2px;}
+	.fds2div{width:190px;height:230px;margin-left:3px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#fff;}
+	
+	.fds3{float:left;width:164px;height:250px;margin-left:-4px;*+margin-left:-2px;}
+	.fds3div{width:150px;height:230px;margin-left:3px;margin-top:-2px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#fff;}
+</style>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:540px;height:330px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:100%;*+height:0px;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+		<div style="width:100%;height:46px;">
+			<div class="buttongroup" style="width:150px;float:left;">
+				<div class="group">
+					<div>
+						<input type="button" value="保存" onclick="save();" id="btnSave" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/>
+					</div>
+					<div>
+						<input type="button" value="修改" onclick="setUpdateAction();" style="background-image:url('../../../images/icon/update.gif');"/>
+					</div>
+				</div>
+				<div class="group">
+					<div>
+						<input type="button" value="退出" onclick="window.parent.closeWindow('wa_other_as');" style="background-image:url('../../../images/icon/exit.gif');"/>
+					</div>
+				</div>
+			</div>
+			<div class="v_a_m" style="width:280px;height:20px;margin-top:10px;float:right;">
+				<input type="checkbox" id="cb_1" disabled="disabled" onclick="cb_1Click(this)"/><label id="cb_1_label" for="cb_1" style="color:#808080;">工资类别主管</label>
+				<select style="width:178px;" id="wageType" name="" onchange="queryWaAuthByCnum()">
+				</select>
+			</div>
+		</div>
+		<div style="width:560px;height:260px;padding:0px;">
+		
+			<fieldset class="fds1">
+				<legend>工资项目：</legend>
+				<div>
+					<div class="fds1div">
+						<table id="datatable_1" border=1 class="table_style" style="width:144px;">
+							<thead>
+								<tr id="datatable_1_header">
+									<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+									<td style="width:72px;">操作员ID号</td>
+									<td style="width:72px;">操作员姓名</td>
+								</tr>
+							</thead>
+							<tbody id="datatable_1_bodyer">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="fds2">
+				<legend>部门管理权限：</legend>
+				<div class="fds2div">
+					<div id="dma_tree" class="ztree"></div>
+				</div>
+			</fieldset>
+			<fieldset class="fds3">
+				<legend>项目管理权限：</legend>
+				<div class="fds3div">
+					<table id="datatable_2" style="width:150px;">
+						<tbody id="datatable_2_bodyer">
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+		</div>
+		<div id="btmsts" style="width:534px;height:14px;line-height:14px;background-color:#D4D0C8;margin-left:2px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;">
+			当前状态：查询...
+		</div>
+		
+	</div>
+</body>
+<script type="text/javascript">
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+//当前被点击选中的行全局变量
+var tb1CurrentSeletedRow=null;
+function tb1RowSelection(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(tb1CurrentSeletedRow!=null && evtsrc.tagName=="TD"){
+				if(tb1CurrentSeletedRow!=evtsrc.parentNode && pageAction=="update"){
+					var isyes = confirm("保存操作员的部门和项目权限吗？");
+					//alert(isyes==true?"是":"否");
+					if(isyes==true){
+						save();
+					}
+				}
+				tb1CurrentSeletedRow.style.backgroundColor="#fff";
+				tb1CurrentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				tb1CurrentSeletedRow=evtsrc.parentNode;
+				//当选中行变化时调用查询用户方法
+				queryWaAuthByUser();
+			}
+		}
+	}
+}
+
+//当前被点击选中的行全局变量
+var tb2CurrentSeletedRow=null;
+function tb2RowSelection(){
+	var datatable_1 = document.getElementById("datatable_2_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(tb2CurrentSeletedRow!=null && evtsrc.tagName=="TD"){
+				tb2CurrentSeletedRow.style.backgroundColor="#fff";
+				tb2CurrentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				tb2CurrentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+
+/***** 选中行代码结束*******/
+</script>
+</html>

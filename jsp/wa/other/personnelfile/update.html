@@ -1,0 +1,423 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>修改</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/winui/winui.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../css/tab.css">
+<script type="text/javascript" src="../../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../../js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	var cgzgradenum = null;
+	var psnLen;
+	var id = window.parent.valueMap.get("wa_other_personnelfile_update").id;
+	var did = window.parent.valueMap.get("wa_other_personnelfile_update").did;
+	/* 上一人、下一人、第一人、末一人 加载数据(2013-7-2 lyl) start*/
+	var psnData=window.parent.valueMap.get("wa_other_personnelfile_update").psnData;
+	//alert("psnData:"+JSON.stringify(psnData));
+	var psnArray=[];
+	var currentPsnNum="";//当前修改的人员编码
+	if(psnData.length>0){
+		for(var i=0;i<psnData.length;i++){
+			var psn=psnData[i];
+			psnArray[psn.cpsnNum]=i;
+		}
+	}
+	function page(flag){
+		var index=psnArray[currentPsnNum];
+		var psn="";
+
+		if(flag=="next"){/*下一人*/
+			if(psnData.length-1==index){//如果选择的是最后一条数据
+				$("#last").attr("disabled",true);
+				$("#next").attr("disabled",true);
+				return;
+				}
+			psn=psnData[index+1];
+			currentPsnNum=psn.cpsnNum;
+			 if(index+1==psnData.length-1){
+					 $("#last").attr("disabled",true);
+					 $("#next").attr("disabled",true);
+					 $("#prev").attr("disabled",false);
+					 $("#first").attr("disabled",false);
+			 }else{
+					 $("#prev").attr("disabled",false);
+					 $("#first").attr("disabled",false);
+					 $("#last").attr("disabled",false);
+					 $("#next").attr("disabled",false);
+			 }
+		}else if(flag=="prev"){/*上一人*/
+			if(index==0){//如果选择的是最后一条数据
+				$("#first").attr("disabled",true);
+				$("#prev").attr("disabled",true);
+				return;
+				}
+			psn=psnData[index-1];
+			currentPsnNum=psn.cpsnNum;
+			if(index-1==0){
+				    $("#last").attr("disabled",false);
+					$("#next").attr("disabled",false);
+					$("#prev").attr("disabled",true);
+					$("#first").attr("disabled",true);
+			}else{
+					$("#prev").attr("disabled",false);
+					$("#first").attr("disabled",false);
+					$("#last").attr("disabled",false);
+					$("#next").attr("disabled",false);
+			}
+		}else if(flag=="first"){/*第一人*/
+			 		psn=psnData[0];
+			 		currentPsnNum=psn.cpsnNum;
+				    $("#last").attr("disabled",false);
+					$("#next").attr("disabled",false);
+					$("#prev").attr("disabled",true);
+					$("#first").attr("disabled",true);
+		}else if(flag="last"){/*末一人*/
+					psn=psnData[psnData.length-1];
+					currentPsnNum=psn.cpsnNum;
+					$("#last").attr("disabled",true);
+					$("#next").attr("disabled",true);
+					$("#prev").attr("disabled",false);
+					$("#first").attr("disabled",false);
+		}	
+		loadPsn(psn);
+	}
+	/*end */
+	$(document).ready(function(){
+		cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+		loadFunction();
+		if(psnData.length==1){//如果只有一条数据
+			$("#prev").attr("disabled",true);
+			$("#first").attr("disabled",true);
+			$("#last").attr("disabled",true);
+			$("#next").attr("disabled",true);
+		}
+		$("#cb_1_4").unbind("click").bind("click",function(){
+			var checked = $(this).attr("checked");
+			var flag=false;
+			if(checked=="checked"){
+				flag=true;
+			}
+			$("#cpsnName").attr("disabled",flag);
+			$("#dept_num").attr("disabled",flag);
+			$("#dept_name").attr("disabled",flag);
+			$("#psn_grade").attr("disabled",flag);
+			$("#joinDate").attr("disabled",flag);
+			$("#leaveDate").attr("disabled",!flag);
+			$("#cb_1_1").attr("disabled",flag);
+			$("#cb_1_2").attr("disabled",flag);
+			$("#cb_1_3").attr("disabled",flag);
+			$("#iid").attr("disabled",flag);
+			$("#caccount").attr("disabled",flag);
+		});
+		
+	});
+	function loadFunction(){
+		$.ajax({
+			url:"wageSetting!queryWaPsnReferForUpdate.action",
+			type:"post",
+			dataType:"json",
+			data:"waPsn.cgzGradeNum=" + cgzgradenum +"&id=" + id,
+			success:function(data){
+				var waDeptList = data.psnReferList[0];
+				var waGradeList = data.psnReferList[1];
+				var bankNameList = data.psnReferList[2];
+				psnLen = data.psnReferList[3];
+				var psn = data.psnReferList[4];
+				var waGzdata=data.psnReferList[5];//工资类别里的人员数据
+				
+				$("#dept_num").html("");//清空下拉列表
+				$("#dept_name").html("");//清空下拉列表
+				$("#psn_grade").html("");//清空下拉列表
+				$("#iid").html("");
+				var deptNumStr = "";
+				$.each(waDeptList,function(index,i){
+					deptNumStr = "<option value='"+ i.cdeptNum +"'>"+ i.cdeptNum + "</option>";
+					$("#dept_num").append(deptNumStr);
+				});
+				var deptNameStr = "";
+				$.each(waDeptList,function(index,i){
+					deptNameStr = "<option value='"+ i.cdeptNum +"'>"+ i.cdepname + "</option>";
+					$("#dept_name").append(deptNameStr);
+				});
+				var gradeStr = "";
+				$.each(waGradeList,function(index,i){
+					gradeStr = "<option value='"+ i.ipsngrdId +"'>"+ i.cpsngrd + "</option>";
+					$("#psn_grade").append(gradeStr);
+				});
+				var bankNameStr = "<option value='0'></option>";
+				$("#iid").append(bankNameStr);
+				$.each(bankNameList,function(index,i){
+					bankNameStr = "<option value='"+ i.IId +"' inumlen='"+i.inumLen+"'>"+ i.cbankName + "</option>";
+					$("#iid").append(bankNameStr);
+				});
+				$("#cpsnNum").attr("maxlength",psnLen);
+				currentPsnNum=psn.cpsnNum;
+				loadPsn(psn,waGzdata);
+			}
+		});
+	}
+	/*加载人员的详细信息 psn 一条人的数据*/
+	function loadPsn(psn,waGzdata){
+		//alert("psnData:"+JSON.stringify(psn));
+		//赋值
+		id=psn.id;
+		$("#cpsnNum").val(psn.cpsnNum);
+		$("#cpsnName").val(psn.cpsnName);
+		$("#dept_num").val(psn.cdeptNum);
+		$("#dept_name").val(psn.cdeptNum);
+		$("#psn_grade").val(psn.ipsngrdId);
+		var date="";
+		if(psn.dintime!=null){
+			date=psn.dintime.substring(0,psn.dintime.indexOf("T"));
+		}
+		$("#joinDate").val(date);
+		var btfbz=0;//s是否停发
+		var bdcbz=0;//是否调用
+		 if(waGzdata!=null&&waGzdata!="undefined"){
+			btfbz=waGzdata.btfbz;//s是否停发
+		    bdcbz=waGzdata.bdcbz;//是否调用
+		    did=waGzdata.id;
+		} else{
+			did=psn.did;
+			if(psn.btfbz=="是"){
+				btfbz=1;
+			}
+			if(psn.bdcbz=="调出"){
+				bdcbz=1;
+				
+			}
+		}
+		//是否停发工资
+		if (btfbz==1) {
+			$("#leaveDate").val(psn.dgztftime);
+			$("#cb_1_1").attr("checked",true);
+		}else{
+			$("#leaveDate").val("");
+			$("#cb_1_1").attr("checked",false);
+		}
+		$("#cmemo").val(psn.cmemo);
+		if (psn.btaxbz == '1'||psn.btaxbz == '是') {
+			$("#cb_1_2").attr("checked",true);
+		}else{
+			$("#cb_1_2").attr("checked",false);
+		}
+		if (psn.bforeign == '1'||psn.bforeign == '是') {
+			$("#cb_1_3").attr("checked",true);
+		}else{
+			$("#cb_1_3").attr("checked",false);
+		}
+		if(bdcbz==1){
+			$("#cb_1_4").attr("checked",true);
+		}else{
+			$("#cb_1_4").attr("checked",false);
+		}
+		if (psn.IId > '0') {
+			$("#iid").val(psn.IId);
+			$("#caccount").val(psn.caccount);
+			$("#caccount").attr("disabled",false);
+			$("#yhzh").css('color','#000');
+		}else{
+			$("#iid").val("");
+			$("#caccount").val("");
+		}
+	}
+	function changeDeptNum(obj){
+		$("#dept_name").val(obj.value);
+	}
+	function changeDeptName(obj){
+		$("#dept_num").val(obj.value);
+	}
+	function deliverValue(person){
+		$("#cpsnName").val(person.name);
+	}
+	function changeBankName(obj){
+		if(obj.value != 0){
+			$("#caccount").attr("disabled",false);
+			var inumlen = $(obj.options[obj.selectedIndex]).attr("inumlen");
+			$("#yhzh").css('color','#000');
+			$("#caccount").attr("maxlength",inumlen);
+		}else{
+			$("#yhzh").css('color','#888');
+			$("#caccount").val("");
+			$("#caccount").attr("disabled",true);
+		}
+	}
+	function doSubmit(){
+		var cpsnNum = $("#cpsnNum").val();
+		var cpsnName = $("#cpsnName").val();
+		var iid=$("#iid").val();
+		if ("" == cpsnNum || null == cpsnNum || cpsnNum.length != psnLen) {
+			jAlert("人员编号长度不够");
+		}else if(null == cpsnName || "" == cpsnName){
+			jAlert("请输入人员姓名！！！");
+		}else{
+			if(iid!=null){//加上银行账号校验(2013-9-6)
+				var len=$("#iid option:selected").attr("inumlen");
+				var caccount=$("#caccount").val().length;
+				if(caccount<len){
+					jAlert("银行账号长度不够!请输入"+len+"位","提示",function(){
+						$("#caccount").select();
+						$("#caccount").focus();
+					})
+				}else if(caccount>len){
+					jAlert("银行账号长度过长!请输入"+len+"位","提示",function(){
+						$("#caccount").select();
+						$("#caccount").focus();
+					})
+				}else{
+					var param = $("#form1").serialize();
+					
+					$.ajax({
+						url:"wageSetting!updatePersonnelFiles.action",
+						type:"post",
+						dataType:"json",
+						data:param+ "&waPsn.cgzGradeNum=" + cgzgradenum+"&gzData.id="+parseInt(did)+"&waPsn.id="+parseInt(id),
+						success:function(data){
+							var status = data.success;
+							if(status == 1){
+								window.parent.getWindow("wa_other_personnelfile_main").mainOnload();
+							}else if(status == -1){
+								jAlert('修改失败');
+							}
+						}
+					});
+			
+				}
+			}
+	
+		} 
+		
+	}
+</script>
+</head>
+<body>
+<form id="form1" method="post">
+	<div class="container" style="float:left;width:500px;height:360px;background-color:#D4D0C8;position:absolute;top:0px;left:0px;">
+	<div style="width:492px;height:348px;margin-top:6px;margin-left:4px;">
+	<div type="tab">
+		<div>
+			<div>　　基本信息　　</div>
+			<div>　　附加信息　　</div>
+		</div>
+		<div style="width:490px;height:282px;">
+			<div style="margin-top:8px;margin-left:8px;">
+				<div style="width:226px;height:244px;float:left;padding-left:20px;padding-top:10px;line-height:20px;border:1px solid #000;">
+					<div>
+						人员编号：<input type="text" id="cpsnNum" name="waPsn.cpsnNum" disabled="disabled" style="width:140px;"/>
+					</div>
+					<div>
+						人员姓名：<input type="text" id="cpsnName" name="waPsn.cpsnName" style="width:120px;"/><input type="button" class="finder" onclick="window.parent.openWindow('wa_other_personnelfile_personreference','wa_other_personnelfile_add');"/>
+					</div>
+					<div>
+						部门编码：<select id="dept_num" onchange="changeDeptNum(this)" name="waPsn.cdeptNum" style="width:140px;">
+								 </select>
+					</div>
+					<div>
+						部门名称：<select id="dept_name" onchange="changeDeptName(this)" style="width:140px;">
+								</select>
+					</div>
+					<div>
+						人员类别：<select id="psn_grade" name="waPsn.ipsngrdId" style="width:140px;">
+								</select>
+					</div>
+					<div>
+						进入日期：<input id="joinDate" name="waPsn.dintime" type="text" style="width:120px;"/><input type="button" class="picker" onclick="WdatePicker({el:'joinDate'})"/>
+					</div>
+					<div>
+						离开日期：<input id="leaveDate" name="waPsn.dgztftime" disabled = "disabled" type="text" style="width:120px;"/><input type="button" class="picker" onclick="WdatePicker({el:'leaveDate'})"/>
+					</div>
+					<div>
+						备注：<br/>
+						<textarea rows="" cols="" id ="cmemo" name="waPsn.cmemo" style="width:196px;height:30px;"></textarea>
+					</div>
+				</div>
+				<div style="width:216px;float:left;">
+					<fieldset class="v_a_m">
+						<legend>属性</legend>
+						<div style="margin-left:20px;">
+							<div style="margin-left:20px;">
+								<input type="checkbox" id="cb_1_1" name="gzData.btfbz"/><label for="cb_1_1">停发工资</label><br>
+								<input type="checkbox" id="cb_1_2" name="waPsn.btaxbz"/><label for="cb_1_2">计税</label><br>
+								<input type="checkbox" id="cb_1_3" name="waPsn.bforeign"/><label for="cb_1_3">中方人员</label><br>
+								<input type="checkbox" id="cb_1_4" name="gzData.bdcbz"/><label for="cb_1_4">调出</label><br>
+							</div>
+						</div>
+					</fieldset>
+					<fieldset class="v_a_m" style="margin-top:9px;">
+							<legend>银行代发</legend>
+							<div style="margin-left:0px;">
+								<div>
+									银行名称：<select id="iid" name="waPsn.IId" onchange="changeBankName(this)">
+									</select>
+								</div>
+								<div>
+									<label id="yhzh" style="color:#888;">银行账号：</label><input type="text" id="caccount" name="waPsn.caccount" style="width:120px;" disabled="disabled"/>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="v_a_m" style="margin-top:9px;">
+							<legend>数据档案</legend>
+							<div style="margin-left:20px;">
+								<input type="button" value="  数据档案  " disabled="disabled"/>
+							</div>
+						</fieldset>
+				</div>
+			</div>
+			<div style="margin-top:8px;margin-left:8px;">
+					<div style="width:194px;height:244px;float:left;line-height:20px;border:1px solid #000;">
+						<div style="margin-left:16px;">
+						
+							<div style="margin-top:12px;">
+								人员姓名：<br><input type="text" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								人员编号：<br><input type="text" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								所在部门：<br><input type="text" disabled="disabled" style="width:142px;"/>
+							</div>
+							<div style="margin-top:12px;">
+								人员类别：<br><input type="text" disabled="disabled" style="width:142px;color:blue;" value="无类别"/>
+							</div>
+						</div>
+					</div>
+					<div style="width:240px;height:244px;border:2px inset #ccc;float:left;margin-left:20px;">
+						<div style="margin-left:16px;margin-top:20px;line-height:30px;">
+							<div>
+								　手机号：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								身份证号：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								出生年月：<input type="text" style="width:142px;"/>
+							</div>
+							<div>
+								　职务号：<input type="text" style="width:142px;"/>
+							</div>
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+	<div style="margin-top:12px;">
+		<div style="float:left;">
+			<input type="button" value=" 第一人 " id="first" onclick="page('first')"/>
+			<input type="button" value=" <上一人 " id="prev" onclick="page('prev')" />
+			<input type="button" value=" 下一人> " id="next" onclick="page('next')" />
+			<input type="button" value=" 末一人 " id="last" onclick="page('last')"/>
+		</div>
+		<div style="float:right;text-align:right;">
+			<input type="button" value="  确认  " onclick="doSubmit()"/>
+			<input type="button" value="  取消  " onclick="window.parent.closeWindow('wa_other_personnelfile_update');"/>
+		</div>
+	</div>
+		</div>
+	</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>期初记账</title>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script>
+	//程序入口
+	$(document).ready(function(){
+		//设置预置数据并且产看是否已经记账
+		$.ajax({
+			url:"glmend!findOrSetdata",
+			type:"post",
+			async:false,
+			datatype:"json",
+			error:function(){
+				jAlert("请求失败!");
+			},
+			success:function(jsonData){
+				if(jsonData.accountingFlag){
+					$("#accounting").attr("disabled",true);
+					$("#cancelAccounting").attr("disabled",false);
+				}else{
+					$("#accounting").attr("disabled",false);
+					$("#cancelAccounting").attr("disabled",true);
+				}
+			}
+		});
+	});
+	//记账函数
+	function accounting(){
+		//记账
+		$.ajax({
+			url:"glmend!accounting",
+			type:"post",
+			async:false,
+			datatype:"json",
+			error:function(){
+				jAlert("请求失败!");
+			},
+			success:function(jsonData){
+				quitAccounting();
+			}
+		});
+	}
+	//取消记账函数
+	function cancelAccounting(){
+		//记账
+		$.ajax({
+			url:"glmend!cancelAccounting",
+			type:"post",
+			async:false,
+			datatype:"json",
+			error:function(){
+				jAlert("请求失败!");
+			},
+			success:function(jsonData){
+				quitAccounting();
+			}
+		});
+	}
+	//退出函数
+	function quitAccounting(){
+		 window.parent.closeWindow('pu_ba_beginningAccounting');
+	}
+</script>
+</head>
+<body style="font-size:12px;">
+	<div style="text-align:center;">关于期初记账</div>
+	<br>
+	<div style="margin-left:10px;">将期初暂估入库和期初在途等数据记入采购账中。期初记账后期初数据将不能输入，必须取消记账重新输入。</div>
+	<br><br>
+	<div style="margin-left:50px;">
+		<input type="button" id="accounting" onclick="accounting()" value="记账"/>
+		<input type="button" id="cancelAccounting" onclick="cancelAccounting()" value="取消记账"/>
+		<input type="button" id="quit" value="退出" onclick="quitAccounting()"/>
+	</div>
+</body>
+</html>

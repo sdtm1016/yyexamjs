@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>折旧方法参照</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<link rel="stylesheet" href="../../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<style type="text/css">
+/**** 递计算框样式 ****/
+.gra .textbox {width:20px;height:18px;line-height:12px;padding:0px;}
+.gra .incbtn1{width:14px;height:10px;padding:0px;margin:0px;text-align:center;background-repeat:no-repeat;background-position:2px center;}
+.gra .incbtn2{width:14px;height:10px;padding:0px;margin:0px;text-align:center;background-repeat:no-repeat;background-position:2px center;}
+
+</style>
+
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+
+<script type="text/javascript">
+
+
+/*** 树构建代码 开始 ***/
+var setting = {
+	
+	data: {
+		simpleData: {
+			enable: true
+		}
+	},
+	callback:{
+		beforeClick:nodeClick,
+		onDblClick:btnConfirm
+	}
+	
+};
+
+var zNodes =[];
+$(document).ready(function(){
+	$.ajax({
+	    url: "faDeprecia!findFaDeprecia",
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	depreciations=data.depreciations;
+	    	if(depreciations.length!=0){
+	    		for(i=0;i<depreciations.length;i++){
+		    		var dep=depreciations[i];
+		    		zNodes[i]={code:dep.id,num:i+1,name:(i+1)+" "+dep.sname,simname:dep.sname};
+		    	}
+	    	}
+	    	$.fn.zTree.init($("#treeview"), setting, zNodes);
+	    	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	    	var nodes = zTree.getNodes()[0].children;
+	    	if(nodes!=undefined&&nodes!="undefined"&&nodes!=""&&nodes!=null&&nodes!="null"){
+	    		zTree.selectNode(nodes[0]);
+		    	document.getElementById("code").value = nodes[0].num;
+		    	document.getElementById("name").value = nodes[0].simname;
+	    	}else{
+	    		document.getElementById("code").value = zTree.getNodes()[0].num;
+		    	document.getElementById("name").value = zTree.getNodes()[0].simname;
+	    	}
+	    	$.fn.zTree.getZTreeObj("treeview").expandAll(true);
+	    }
+	  });
+});
+/*** 树构建代码 结束 ***/
+
+
+
+//“确认”按钮处理函数
+function btnConfirm(){
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+
+		
+	if (selectedNodes.length > 0) {
+		
+		var param = {};
+		
+		//取得编码
+		param.code = selectedNodes[0].code;
+		//取得名称
+		param.name = selectedNodes[0].simname;
+		//调用父窗体接收返回值函数
+		window.parent.deliverValue('fa_basic_ref_dmr',param);
+		
+		//关闭本窗体
+		window.parent.closeWindow('fa_basic_ref_dmr');
+		
+	}
+	
+}
+
+
+//按编码查询
+function queryByCode(){
+
+	var byCodeDiv = document.getElementById("byCodeDiv");
+	var byNameDiv = document.getElementById("byNameDiv");
+	var codeBox = document.getElementById("code");
+	byCodeDiv.style.display = "block";
+	byNameDiv.style.display = "none";
+	codeBox.disabled = false;
+	codeBox.style.backgroundColor = "#fff";
+}
+
+//按名称查询
+function queryByName(){
+
+	var byCodeDiv = document.getElementById("byCodeDiv");
+	var byNameDiv = document.getElementById("byNameDiv");
+	var codeBox = document.getElementById("code");
+	byCodeDiv.style.display = "none";
+	byNameDiv.style.display = "block";
+	codeBox.disabled = true;
+	codeBox.style.backgroundColor = "#D4D0C8";
+}
+
+
+
+
+
+
+function increasing(){
+	
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+	
+	if (selectedNodes.length > 0) {
+
+		var tId = parseInt(selectedNodes[0].tId.substr(9))-1;
+		if(tId==1){
+			return false;
+		}
+		var node = zTree.getNodeByTId("treeview_"+tId);
+		zTree.selectNode(node);
+		if(node != null){
+			document.getElementById("code").value = node.num;
+			document.getElementById("name").value = node.simname;
+		}
+		
+	}
+	
+}
+
+
+
+function decline(){
+
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+	
+	if (selectedNodes.length > 0) {
+
+		var tId = parseInt(selectedNodes[0].tId.substr(9))+1;
+		var node = zTree.getNodeByTId("treeview_"+tId);
+		zTree.selectNode(node);
+		if(node != null){
+			document.getElementById("code").value = node.num;
+			document.getElementById("name").value = node.simname;
+		}
+	}
+	
+	
+	
+	
+}
+
+
+
+
+function nodeClick(treeId, node, clickFlag){
+	if(node.isParent) return false;//当是父节点 返回false 不让选取
+	document.getElementById("code").value = node.num;
+	document.getElementById("name").value = node.simname;
+}
+
+
+
+
+
+</script>
+</head>
+<body>
+	
+	<div class="container" style="float:left;width:272px;height:350px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:252px;height:330px;margin-top:10px;margin-left:10px;">
+			
+			<div style="width:100%;height:222px;border:2px inset #ccc;background-color:#fff;overflow:auto;">
+				<div id="treeview" class="ztree"></div>
+			</div>
+			
+			<div style="width:100%;height:75px;">
+			<br>
+				<fieldset style="padding:0px;">
+					<legend>查询方式</legend>
+					<div style="height:50px;text-align:center;">
+						<div class="v_a_m">
+							<input type="radio" value="" name="rd_1" id="rd_1_1" onclick="queryByCode();"/><label for="rd_1_1">按编码查询</label>
+							<input type="radio" value="" name="rd_1" id="rd_1_2" onclick="queryByName();" style="margin-left:40px;"/><label for="rd_1_2">按名称查询</label>
+						</div>
+						<div>
+						
+							<div id="byCodeDiv">
+								<input id="code" readonly="readonly" type="text" style="width:206px;height:16px;background-color:#D4D0C8;" disabled="disabled"/>
+							</div>
+							
+							<div id="byNameDiv" class="gra" style="margin-left:16px;display:none;">
+								<div style="float:left;"><input id="name" readonly="readonly" class="textbox" type="text" style="width:196px;"/></div>
+								<div style="float:left;">
+									<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increasing();" style="background-image:url('../../../../images/icon/up1.gif');"/></div>
+									<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="decline();" style="background-image:url('../../../../images/icon/down1.gif');"/></div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			
+			<div style="text-align:right;margin-top:6px;">
+				<input type="button" value="确认" onclick="btnConfirm();"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('fa_basic_ref_dmr');"/>
+			</div>
+					
+			
+		</div>
+	</div>
+	
+</body>
+</html>

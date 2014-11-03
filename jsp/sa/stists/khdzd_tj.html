@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>对账单条件</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+//确定按钮
+function btnConfirm(){
+	var param = new Object();
+	window.parent.closeWindow("sa_stists_khdzd_tj");
+	window.parent.openWindow("sa_stists_khdzd","sa_stists_khdzd_tj",param);
+}
+
+
+$(document).ready(function(){
+	$("#cb1querybox").attr("disabled",true);
+	$("#cb1querybox").css("background-color","#D4D0C8");
+	$("#cb1queryboxfinder").attr("disabled",true);
+	
+
+	$("#cb2querybox").attr("disabled",true);
+	$("#cb2querybox").css("background-color","#D4D0C8");
+	$("#cb2queryboxfinder").attr("disabled",true);
+	
+});
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:344px;height:240px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+		
+		
+		<div class="border_outside" style="width:330px;height:52px;margin-left:4px;margin-top:6px;">
+			<div class="border_inside" style="width:328px;height:50px;">
+			
+			
+				<table>
+					<tr>
+						<td>查询对象</td>
+						<td>
+							<select style="width:98px;">
+								<option>供应商</option>
+								<option>供应商分类</option>
+								<option>供应商总公司</option>
+								<option>地区分类</option>
+								<option>部门</option>
+								<option>主管部门</option>
+								<option>业务员</option>
+								<option>主管业务员</option>
+							</select>
+						</td>
+						<td align="center" width="24">〓</td>
+						<td><input type="text" style="width:108px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="v_a_m"><input type="checkbox" id="cb1" onclick=""/><label for="cb1">范围</label></td>
+						<td align="center">—</td>
+						<td><input id="cb1querybox" type="text" style="width:108px;"/><input type="button" class="finder" id="cb1queryboxfinder"/></td>
+					</tr>
+				</table>
+			
+			
+			</div>
+		</div>
+
+		
+		
+		
+		<div class="border_outside" style="width:330px;height:58px;margin-left:4px;margin-top:1px;">
+			<div class="border_inside" style="width:328px;height:56px;">
+			
+			
+				
+				<table>
+					<tr>
+						<td>币　　种</td>
+						<td>
+							<select style="width:98px;">
+								<option>所有币种</option>
+								<option>人民币</option>
+							</select>
+						</td>
+						<td></td>
+						<td class="v_a_m"><label for="cb2">含已结清单据</label><input type="checkbox" id="cb2"/></td>
+					</tr>
+					<tr>
+						<td>月　　份</td>
+						<td>
+							<select style="width:98px;">
+								<option>2012.12</option>
+							</select>
+						</td>
+						<td align="center">&nbsp;&nbsp;▬▬▬&nbsp;&nbsp;</td>
+						<td>
+							<select style="width:98px;">
+								<option>2012.12</option>
+							</select>
+						</td>
+					</tr>
+					
+					
+					
+					
+				</table>
+			
+			
+			</div>
+		</div>
+
+		
+		<div class="border_outside" style="width:330px;height:84px;margin-left:4px;margin-top:1px;">
+			<div class="border_inside" style="width:328px;height:82px;">
+				<div style="margin-left:4px;">
+					函证信息
+					<textarea rows="" cols="" style="width:314px;height:56px;"></textarea>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div style="width:300px;height:26px;margin-top:6px;margin-left:10px;text-align:right;" class="v_a_m">
+			
+			<input type="button" value="确定" onclick="btnConfirm();" style="margin-left:80px;"/>
+			<input type="button" value="取消" onclick="window.parent.closeWindow('sa_stists_khdzd_tj');"/>
+		
+		</div>
+	</div>
+</body>
+</html>

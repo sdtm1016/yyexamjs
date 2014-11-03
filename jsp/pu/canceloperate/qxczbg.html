@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>取消操作表格</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<style type="text/css">
+		table {border-collapse: collapse;cursor:default;width:830px;}
+		thead td{border:1px solid #000;text-align:center;}
+		tbody td{border:1px solid #000;text-align:center;}
+	</style>
+	<script type="text/javascript" src="qxczbg.js"></script>
+</head>
+<body>
+	<div class="container" style="float:left;width:598px;height:375px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:594px;height:374px;margin-top:1px;margin-left:2px;">
+			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #fff;"></div>
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="全选" style="background-image:url('../../../images/icon/allyes.gif');" onclick="checkAll();" /></div>
+					<div><input type="button" value="全消" style="background-image:url('../../../images/icon/allno.gif');" onclick="cancelAll();" /></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="查询" style="background-image:url('../../../images/icon/telescope.gif');" onclick="window.parent.openWindow('pu_canceloperate_qxcztj','pu_canceloperate_qxczbg',{type:'search'});"/></div>
+					<div><input type="button" value="确定" id="sureCancel" style="background-image:url('../../../images/icon/yes.gif');" onclick="sureCancel();" /></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('pu_canceloperate_qxczbg');"/></div>
+				</div>
+			</div>
+			<div style="width:590px;height:76px;border:2px inset #ccc;background-color:#fff;margin-top:1px;">
+				<div style="width:100%;height:40px;line-height:40px;text-align:center;font-size:16px;color:#000088;font-weight:bold;">
+					取消操作
+				</div>
+				<div style="width:100%;height:36px;line-height:36px;padding-left:18px;">
+					操作类型：<span id="operateType">应付单记账</span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					供应商：<span id="vendor">全部</span>
+				</div>
+			</div>
+			<div style="width:590px;height:250px;border:2px inset #ccc;background-color:#fff;overflow:auto;">
+				<table>
+					<thead>
+						<tr>
+							<td>选择标志</td>
+							<td>单据类型</td>
+							<td>单据号</td>
+							<td>日期</td>
+							<td>供应商</td>
+							<td>金额</td>
+							<td>部门</td>
+							<td>业务员</td>
+						</tr>
+					</thead>
+					<tbody id="cancleApDetailData">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

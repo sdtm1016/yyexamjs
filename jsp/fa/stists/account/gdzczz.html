@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>固定资产总账</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../../css/contextmenu.css">
+<script type="text/javascript" src="../../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<style type="text/css">
+*{font-family:宋体;}
+	.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;position:relative;background-color:#fff;}
+	.table_header thead tr {height:20px;}
+	.table_header thead tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;text-align:center;}
+	.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;background-color:#fff;}
+	.table_bodyer tbody tr {height:20px;}
+	.table_bodyer tbody tr td {border:none;border-right:1px solid #ccc;border-bottom:1px solid #ccc;width:100px;}
+</style>
+<script type="text/javascript">
+
+
+
+//全局变量
+//上个页面穿过来的参数
+var parentParam=null;
+//程序入口
+$(document).ready(function(){
+	parentParam = window.parent.valueMap.get("wa_stists_bmgzxmgcfxb_table_view");
+});
+
+
+
+
+</script>
+
+<style type="text/css">
+
+</style>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:800px;height:530px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:793px;height:563px;margin-top:1px;margin-left:3px;">
+			
+			
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			
+			<div class="buttongroup" style="float:none;clear:both;height:41px;">
+				<div class="group">
+					<div><input type="button" value="打开" disabled="disabled" style="background-image:url('../../../../images/icon/open.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../../images/icon/exit.gif');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../../images/icon/cancel.gif');"/></div>
+					
+					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="操作" disabled="disabled" style="background-image:url('../../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" disabled="disabled" style="background-image:url('../../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="编辑" style="background-image:url('../../../../images/icon/return.gif');"/></div>
+					<div><input type="button" value="查看" style="background-image:url('../../../../images/icon/find.gif');"/></div>
+				</div>
+			</div>
+			
+			<div style="width:794px;height:20px;text-align:left;padding-left:4px;">
+				<div style="width:432px;height:20px;float:left;">
+					<input type="button" value="恢复缺省格式" style="width:132px;background-image:url('../../../../images/icon/camera.gif');" class="long_button"/>
+					<input type="button" value="保存格式" style="width:94px;background-image:url('../../../../images/icon/save.gif');" class="long_button"/>
+					<input type="button" value="    锁定格式" style="width:94px;background-image:url('../../../../images/icon/pin.gif');" class="long_button"/>
+					<input type="button" value="    图形分析" style="width:94px;background-image:url('../../../../images/icon/report2.gif');" class="long_button"/>
+				</div>
+				<div style="float:left;color:#666;height:20px;line-height:20px;">格式锁定状态：<span>未锁定</span></div>
+			</div>
+			<div style="width:794px;height:462px;background-color:#fff;">
+				<div style="width:792px;height:54px;border:1px solid #000;">
+					<div style="width:100%;height:27px;line-height:27px;">
+						<div style="float:left;">使用单位：<span>某某公司</span></div>
+						
+					</div>
+					<div style="width:100%;height:27px;line-height:27px;">
+						<div style="float:left;">资产类别：<span></span></div>
+						<div style="float:right;width:300px;">
+							使用部门：<span></span>
+						</div>
+					</div>
+				</div>
+				<div style="width:792px;height:406px;border:1px solid #000;overflow:auto;" onscroll="tableScroll(this);">
+					<div id="left_table" style="width:60px;height:0px;position:relative;z-index:20000;float:left;">
+						<table id="table_1_header" class="table_header" style="width:60px;">
+							<thead>
+								<tr style="height:40px;">
+									<td>期间</td>
+								</tr>
+							</thead>
+						</table>
+						<table id="table_1_bodyer" class="table_bodyer" style="width:60px;">
+							<tbody id="table_1_bodyer_1">
+								<tr>
+									<td>10</td>
+								</tr>
+								<tr>
+									<td>11</td>
+								</tr>
+								<tr>
+									<td>12</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div style="width:1300px;margin-left:60px;float:left;">
+						<table id="table_2_header" class="table_header" style="width:600px;">
+							<thead>
+								<tr>
+									<td colspan="3">原值</td>
+									<td colspan="3">累计折旧</td>
+									<td rowspan="2">净值</td>
+								</tr>
+								<tr>
+									<td>借方</td>
+									<td>贷方</td>
+									<td>余额</td>
+									
+									<td>借方</td>
+									<td>贷方</td>
+									<td>余额</td>
+									
+								</tr>
+							</thead>
+						</table>
+						<table id="table_2_bodyer" class="table_bodyer" style="width:600px;">
+							<tbody id="table_2_bodyer_2">
+								<tr>
+									<td>200</td>
+									<td>9000</td>
+									<td>1000</td>
+									<td>2000</td>
+									<td>200</td>
+									<td>600</td>
+									<td>200</td>
+								</tr>
+								<tr>
+									<td>200</td>
+									<td>9000</td>
+									<td>1000</td>
+									<td>2000</td>
+									<td>200</td>
+									<td>600</td>
+									<td>200</td>
+								</tr>
+								<tr>
+									<td>200</td>
+									<td>9000</td>
+									<td>1000</td>
+									<td>2000</td>
+									<td>200</td>
+									<td>600</td>
+									<td>200</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var table_1_header = document.getElementById('table_1_header');
+	var table_1_bodyer = document.getElementById('table_1_bodyer');
+	var table_2_header = document.getElementById('table_2_header');
+	var table_2_bodyer = document.getElementById('table_2_bodyer');
+	var left_table = document.getElementById('left_table');
+	//控制表头横纵向滚动时固定不动
+	function tableScroll(container){
+		table_1_header.style.marginTop=container.scrollTop+"px";
+		table_1_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		table_2_header.style.marginTop=container.scrollTop+"px";
+		table_2_bodyer.style.marginTop="-"+container.scrollTop+"px";
+		left_table.style.marginLeft=container.scrollLeft+"px";
+	}
+
+	/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+	//当前被点击选中的行全局变量
+	var currentSeletedRow=null;
+	var datatable_1 = document.getElementById("table_2_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(event){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+
+	/***** 选中行代码结束*******/
+	
+</script>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>变动单管理</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript">
+	//判断是否允许操作
+	function iscanoprate(){
+		var res=false;
+		$.ajax({
+		    url: "faInitializa!iscansubmit",
+		    type: 'post',
+		    dataType: "json",
+		    cache:false,
+		    async:false,
+		    success: function(data){
+		    	var mark=data.mark;
+		    	if(mark=="0"){
+		    		res=true;
+		    	}else{
+		    		res=false;
+		    	}
+		    }
+		 });
+		return res;
+	}
+	/**
+	获取树节点插入位置
+	*/
+	function getparent(znode,level){
+		var pare=znode.children;
+		for(var j=1;j<level;j++){
+			pare=pare[pare.length-1].children;
+		}
+		return pare;
+	}
+	//程序入口
+	$(document).ready(function(){
+		//显示选中的面板
+		showPanel();
+		//绑定查询类型  onchange事件
+		$("#queryType").unbind("change").bind("change",function(){
+			showPanel();
+		});
+		//绑定变动单类型  onchange事件
+		$("#changeBillsType").unbind("change").bind("change",function(){
+			queryChangeBills();
+		});
+		//刷新按钮点击事件
+		$("#refresh").unbind("click").bind("click",function(){
+			queryChangeBills();
+		});
+		//按卡片查询确定按钮点击事件
+		$("#queryButton").unbind("click").bind("click",function(){
+			queryChangeBills();
+		});
+		//绑定打开选中行的变动单的事件
+		$("#openFaVouchers").unbind("click").bind("click",function(){
+	    	$("#datatable_1_bodyer >tr").each(function(){
+	    		if($(this).attr("check")=="true"){
+		    		openchangebillsDetail($(this).attr("snum"));
+	    		}
+	    	});
+		});
+		//判断删除按钮,详细信息中添加按钮是否可用
+		var is=iscanoprate();
+		if(!is){
+			$("#delete").attr("disabled",true);
+			$("#delete").attr("iscanoprate",is);
+		}else{
+			$("#delete").attr("iscanoprate",is);
+		}
+		//绑定删除选中行的变动单的事件
+		$("#delete").unbind("click").bind("click",function(){
+			var snum=null;
+			var faVouchersid= null;
+	    	$("#datatable_1_bodyer >tr").each(function(){
+	    		if($(this).attr("check")=="true"){
+	    			snum = $(this).attr("snum");
+	    			faVouchersid = $(this).attr("faVouchersid");
+	    		}
+	    	});
+			if(deletecheck(snum)){
+				jConfirm("确定删除当前记录吗？",'确认对话框',function(confirmflag) {
+					if(confirmflag){
+			    		$.post("faVouchers!deleteFaVouchers",{faVouchersid:faVouchersid,snum:snum},function(jsondata){
+			    			if(jsondata.successFlag==1){
+			    				jAlert("删除成功!","提示信息",function(){
+				    				queryChangeBills();
+			    				});
+			    			}else{
+			    				jAlert("操作失败!");
+			    			}
+			    		},"json").error(function(){
+							jAlert("请求失败！");
+						});
+					}
+				});
+			}
+		});
+	});
+	//删除时检查是否允许删除
+	function deletecheck(snum){
+		//1.不在本期间的不能删除
+		//2.不是最大单号的不能删除
+		var deleteflag = true;
+		 $.ajax({
+			    url: "faZwvouchers!checkdeletechangebills",
+				type: 'post',
+				data: {coutnoId:snum,coutsign:"变动单"},
+   			    async:false,
+				dataType: "json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					//如果已经生成凭证则不让删除(先删除凭证在删除变动单)
+					if(data.flag){
+						jAlert("已经生成凭证,请先删除凭证然后再删除变动单.","提示信息",function(){
+							deleteflag=false;
+	    				});
+					}
+				}
+		 });
+		return deleteflag;
+	}
+	//根据查询类型显示不同的查询条件面板(左侧框的条件)
+	function showPanel(){
+		var index = $("#queryType >option:selected").val();
+		$("#lp"+index).show().siblings().hide();
+		//显示面板内容
+		showPanelContent(index);
+	}
+	//根据显示的面板加载不同的面板内容
+	function showPanelContent(index){
+		//转换成数字类型
+		index = index*1;
+		switch (index){
+		case 1:
+			loadDepartment();
+			break;
+		case 2:
+			loadAssettypes();
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		}
+	}
+	//加载部门树
+	function loadDepartment(){
+		$.ajax({
+		    url: "fadepartMents!findDepartMent",
+		    type: 'post',
+		    dataType: "json",
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+				var dptTreeSetting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback:{
+						onClick:departmentClick
+					}
+				};
+		    	var dptTreeNodes =null;
+		    	dptTreeNodes=[{code:"",name:"固定资产部门编码目录",ssubject:"",open:true,children:[]}];
+		    	var znode=dptTreeNodes[0];
+		    	departments=data.departments; 
+		    	for(var i=0;i<departments.length;i++){
+		    		var department=departments[i];
+		    		var ssubject="";
+		    		if(department.ssubjectnum!=null&&department.ssubjectnum!=""&&department.ssubjectname!=null&&department.ssubjectname!=""){
+		    			ssubject=department.ssubjectnum+","+department.ssubjectname;
+		    		}
+		    		var depart={code:department.snum,name:department.sname,ssubject:ssubject,open:false,children:[]};
+		    		var ilevel=department.ilevel-0;
+		    		var par=getparent(znode,ilevel);
+		    		par[par.length]=depart;
+		    	}
+		    	$.fn.zTree.init($("#dpttree"), dptTreeSetting, dptTreeNodes);
+		    	
+		    	var zTree = $.fn.zTree.getZTreeObj("dpttree");
+		    	var node = zTree.getNodes()[0];
+		    	zTree.selectNode(node);
+		    	//查询数据
+		    	queryChangeBills();
+		    }
+		  });
+	};
+	//加载资产类别
+	function loadAssettypes(){
+		$.ajax({
+		    url: "ztree!loadFaAssettypesTree",
+		    type: 'post',
+		    dataType: "json",
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+				var astpTreeSetting = {
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback:{
+							onClick:assettypesClick
+						}
+					};
+		    	var zNodes =[];
+				var treeNodes = data.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	nodeObj.open=true;
+		        	zNodes.push(nodeObj);
+		        }
+		        $.fn.zTree.init($("#astptree"), astpTreeSetting, zNodes);
+		    	var zTree = $.fn.zTree.getZTreeObj("astptree");
+		    	var node = zTree.getNodes()[0];
+		    	zTree.selectNode(node);
+		    	//查询数据
+		    	queryChangeBills();
+		    }
+		  });
+	};
+	/*
+	*树节点的点击事件
+	*/
+	function assettypesClick(event, treeId, treeNode, clickFlag) {
+		queryChangeBills();
+	}
+	/*
+	*树节点的点击事件
+	*/
+	function departmentClick(event, treeId, treeNode, clickFlag) {
+		queryChangeBills();
+	}
+	//查询变动单
+	function queryChangeBills(){
+		//查询类型
+		var queryType =$("#queryType >option:selected").val();
+		//变动单类型
+		var changeBillsType = $("#changeBillsType >option:selected").text();
+		//参数
+		var params = {};
+		params.queryType = queryType;
+		params.changeBillsType = changeBillsType;
+		
+		var condtion = "";
+		if(queryType==1){
+			var zTree = $.fn.zTree.getZTreeObj("dpttree");
+			var node = zTree.getSelectedNodes()[0];
+			if(node.code!=""){
+				condtion+="snum="+node.code;
+			}
+			params.condtion = condtion;
+		}else if(queryType==2){
+			var zTree = $.fn.zTree.getZTreeObj("astptree");
+			var node = zTree.getSelectedNodes()[0];
+			if(node.id!=""){
+				condtion+="id="+node.id;
+			}
+			params.condtion = condtion;
+		}else if(queryType==3){
+			//卡片编号
+			var scardnum = $("#scardnum").val();
+			//资产编号
+			var sassetnum = $("#sassetnum").val();
+			if(scardnum!=""&&sassetnum!=""){
+				condtion+="scardnum="+scardnum+" and sassetnum="+sassetnum;
+				params.condtion = condtion;
+			}else{
+				jAlert("编号不能为空!");
+				return false;
+			}
+		}else if(queryType==4){
+			
+		}else{
+			jAlert("参数错误!");
+			return false;
+		}
+		$.ajax({
+		    url: "faVouchers!findListFaVouchersBy",
+		    type: 'post',
+		    dataType: "json",
+		    data:params,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+		    	var strHtml ="";
+		    	var len = data.listFaVouchers.length;
+		    	var is = $("#delete").attr("iscanoprate");
+		    	//删除按钮是否可用
+		    	if(len>0){
+		    		if(is=="true"){
+		    			$("#delete").removeAttr("disabled");
+		    		}else{
+		    			$("#delete").attr("disabled",true);
+		    		}
+		    		$("#openFaVouchers").removeAttr("disabled");
+		    	}else{
+		    		$("#delete").attr("disabled",true);
+		    		$("#openFaVouchers").attr("disabled",true);
+		    	}
+		    	for(var i=0;i<len;i++){
+			    	strHtml+="<tr snum="+data.listFaVouchers[i].snum+" scardnum="+data.listFaVouchers[i].scardnum+" faVouchersid ="+data.listFaVouchers[i].id+" >";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].snum)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].scardnum)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].scardnum)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].sbeforevoucher)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].saftervoucher)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].svouchername)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].dtransdate)+"</td>";
+			    	strHtml+="	<td>"+strNullProc(data.listFaVouchers[i].memreason)+"</td>";
+			    	strHtml+="</tr>";
+		    	}
+		    	//展示数据
+		    	$("#datatable_1_bodyer").empty().append(strHtml);
+		    	$("#datatable_1_bodyer >tr:first").attr("check",true).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000").attr("check",false);
+		    	$("#datatable_1_bodyer >tr").unbind("click").bind("click",function(){
+		    		$(this).attr("check",true).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000").attr("check",false);
+		    	});
+		    	$("#datatable_1_bodyer >tr").unbind("dblclick").bind("dblclick",function(){
+		    		
+		    		openchangebillsDetail($(this).attr("snum"));
+		    	});
+		    }
+		});
+	}
+	//接收弹窗返回值函数(卡片参照)
+	function deliverValue(param){
+		$("#scardnum").val(param.facards.scardnum);
+		$("#sassetnum").val(param.facards.sassetnum);
+	}
+	//打开变动单详细信息页面
+	function openchangebillsDetail(snum){
+		window.parent.openWindow('fa_card_assetschange','fa_card_changebills',{snum:snum,iscanoprate:$("#delete").attr("iscanoprate")});
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:650px;height:460px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" id="openFaVouchers" value="打开" style="background-image:url('../../../images/icon/open.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('fa_card_changebills');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" id="refresh" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="操作" disabled="disabled" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" id="delete" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="编辑" disabled="disabled" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+					<div><input type="button" value="查看" disabled="disabled" style="background-image:url('../../../images/icon/find.gif');"/></div>
+				</div>
+			</div>
+			<div class="floatclear"></div>
+			<div style="width:100%;height:416px;">
+				<div style="width:144px;height:410px;float:left;margin-left:4px;">
+					<select id ="queryType" style="width:100%;height:18px;">
+						<option value="1">按部门查询</option>
+						<option value="2">按类别查询</option>
+						<option value="3">按卡片号查询</option>
+						<option value="4">自定义查询</option>
+					</select>
+					<div style="width:144px;height:390px;background-color:#fff;">
+						<div id="lp1" style="width:140px;height:100%;border:2px inset #ccc;overflow:auto;">
+							<div id="dpttree" class="ztree" style="margin-left:-24px;"></div>
+						</div>
+						<div id="lp2" style="width:140px;height:100%;display:none;border:2px inset #ccc;overflow:auto;">
+							<div id="astptree" class="ztree" style="margin-left:-24px;"></div>
+						</div>
+						<div id="lp3" style="width:100%;height:100%;display:none;text-align:center;background-color:#D4D0C8;">
+							卡片编号
+							<div><input type="text" id="scardnum" style="width:120px;"/><input type="button" class="finder" onclick="window.parent.openWindow('fa_basic_ref_cr','fa_card_changebills');"/></div>
+							资产编号
+							<div><input type="text" id="sassetnum" style="width:120px;"/><input type="button" class="finder" onclick="window.parent.openWindow('fa_basic_ref_cr','fa_card_changebills');"/></div>
+							<div style="margin-top:296px;"><input type="button" id="queryButton" value="确  定" style="width:140px;"/></div>
+						</div>
+						<div id="lp4" style="width:100%;height:100%;display:none;text-align:center;background-color:#D4D0C8;">
+							<div style="width:140px;height:290px;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+							</div>
+							<div style="margin-top:4px;">
+								<input type="button" value="查  找" style="width:140px;"/>
+								<input type="button" value="添加查询" style="width:140px;"/>
+								<input type="button" value="编辑查询" style="width:140px;"/>
+								<input type="button" value="删除查询" style="width:140px;"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="width:494px;height:410px;float:left;margin-left:4px;">
+					<select id="changeBillsType" style="width:100%;height:18px;">
+						<option value="1">全部变动单</option>
+						<option value="2">原值增加</option>
+						<option value="3">原值减少</option>
+						<option value="4">部门转移</option>
+						<option value="5">使用状况调整</option>
+						<option value="6">累计折旧调整</option>
+						<option value="7">使用年限调整</option>
+						<option value="8">折旧方法调整</option>
+						<option value="9">工作量调整</option>
+						<option value="10">净残值（率）调整</option>
+						<option value="11">类别调整</option>
+						<option value="12">计提减值调整</option>
+						<option value="13">计提减值调整</option>
+						<option value="14">转回减值准备</option>
+					</select>
+					<div style="width:100%;height:390px;background-color:#fff;margin-top:2px;overflow:auto;">
+						<table id="datatable_1" border=1 class="table_style" style="width:760px;">
+							<thead>
+								<tr id="datatable_1_header">
+									<td style="width:px;">变动单编号</td>
+									<td style="width:px;">卡片编号</td>
+									<td style="width:px;">固定资产名称</td>
+									<td style="width:px;">变动前内容</td>
+									<td style="width:px;">变动后内容</td>
+									<td style="width:px;">变动单类别</td>
+									<td style="width:px;">变动日期</td>
+									<td style="width:px;">变动原因</td>
+								</tr>
+							</thead>
+							<tbody id="datatable_1_bodyer">
+								<tr>
+									<td>0001</td>
+									<td>0101</td>
+									<td>坦克</td>
+									<td>aaa</td>
+									<td>bbb</td>
+									<td>类别A</td>
+									<td>2012-05-03</td>
+									<td>无原因</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+	</div>
+</body>
+</html>

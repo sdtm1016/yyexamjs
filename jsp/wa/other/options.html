@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>选项</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<style type="text/css">
+		.diabeldtd{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+	</style>
+	<script type="text/javascript">
+		var id;
+			var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+			var wa_isWageSets=window.parent.parent.wa_isWageSets;
+		$(document).ready(function(){
+			if(wa_isWageSets==2){
+				$("#rd_2_1").attr("disabled",true);
+				$("#rd_2_2").attr("disabled",true);
+			}
+			
+			$.ajax({
+				url:"wageSetting!queryWagesOptions.action",
+				type:"post",
+				data:"waAccount.cgzgradenum=" + cgzgradenum,
+				success:function(data,status){
+					var waAccount = data.waAccount;
+					id = waAccount.id;
+					if (waAccount.bminusTax == 1) {
+						$("#cb_2").attr("checked",true);
+					}if(waAccount.binteger == 1){
+						$("#cb_1").attr("checked",true);
+						$("#rd_1_1").attr("disabled",false);
+						$("#rd_1_2").attr("disabled",false);
+						$("#rd_1_3").attr("disabled",false);
+						$("#cb_1_children")[0].style.color="#000";
+						if(waAccount.iintegerDw == 1){
+							$("#rd_1_1").attr("checked",true);
+						}else if(waAccount.iintegerDw == 2){
+							$("#rd_1_2").attr("checked",true);
+						}else{
+							$("#rd_1_3").attr("checked",true);
+						}
+					}
+					if(waAccount.bonlygzgrade == 1){
+						$("#rd_2_1").attr("checked",true);
+					}else{
+						$("#rd_2_2").attr("checked",true);
+					}
+					$("#ipsnLen").val(waAccount.ipsnLen);
+					/*当工资人员档案没有数据，人员编码不得修改; lyl*/
+					if(data.flag=="1"){
+						$("#ipsnLen").attr("disabled",true);
+						$("up").removeAttr("disabled",true);
+						$("down").attr("disabled",true);
+					}else{
+						$("#ipsnLen").attr("disabled",false);
+						$("up").removeAttr("disabled");
+						$("down").attr("disabled");
+						
+					}
+					
+					
+				},
+				dataType:"json"
+			});
+		});
+	
+	//fieldset 控件禁用、启用控制函数
+	function setDisabled(evtelmt,areaId){
+		var area = document.getElementById(areaId);
+		var inputs = area.getElementsByTagName("input");
+		if(evtelmt.checked==true){
+			area.style.color="#000";
+			for(var i=0;i<inputs.length;i++){
+				inputs[i].disabled=false;
+			}
+		}else{
+			area.style.color="#888";
+			for(var i=0;i<inputs.length;i++){
+				inputs[i].disabled=true;
+			}
+		}
+		
+	}
+	
+	function doSubmit(){
+		
+		
+		var waAccount = $("#form1").serialize();
+		
+
+		alert(JSON.stringify(waAccount));
+		
+		$.ajax({
+		 	url:"wageSetting!updateWagesOptions.action",
+		 	type:"post",
+		 	data:waAccount+"&waAccount.id="+id+"&waAccount.cgzgradenum=" + cgzgradenum,
+		 	success:function(data,status){
+		 		//隐藏显示相关菜单
+		 		window.parent.parent.wa_hasWageType();
+		 		jAlert("工资项目已经改变,请确认各工资类别的公式是否正确,否则计算结果可能不正确","提示",function(){
+		 		window.parent.closeWindow("wa_other_options");
+		 		});
+		 		
+		 		
+		 		//判断是否是从单个变为多个，是则修改全局工资类别变量值为2（多个工资类别）
+		 		if($("#rd_2_2").attr("checked") == "checked"){
+		 			window.parent.parent.wa_isWageSets=2;
+		 			window.parent.parent.wa_enableWageType();
+		 		}
+		 		
+		 		
+		 		
+		 	},
+		 	dataType:"json"
+		 });
+	}
+
+	//递计算框递增函数
+	function increasing(btn){
+		var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+		input.value = parseInt(input.value)+1;
+	}
+	
+	//递计算框递减函数
+	function decline(btn){
+		var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+		input.value = parseInt(input.value)-1;
+	}
+	
+	
+	
+	</script>
+</head>
+<body>
+	<form id="form1" name="form1">
+		<div class="container" id="container" style="float:left;width:376px;height:246px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+			<div style="width:356px;height:234px;margin-left:10px;margin-top:6px;">
+				<div type="tab" active="0">
+					<div>
+						<div>扣零设置</div>
+						<div>扣税设置</div>
+						<div>参数设置</div>
+						<div>调整汇率</div>
+					</div>
+					<div style="width:352px;height:180px;">
+						<div>
+							<div style="margin-top:10px;margin-left:10px;">
+								说明：<br><br>
+								扣零处理将零头扣下，积累取整，并于下次发工资时补上。<br><br>
+								<fieldset class="v_a_m" style="width:280px;">
+									<legend><input onclick="setDisabled(this,'cb_1_children');" type="checkbox" name="waAccount.binteger" id="cb_1"><label for="cb_1">扣零</label></legend>
+									<div id="cb_1_children" style="margin-left:20px;color:#888;" >
+										<input type="radio" name="waAccount.iintegerDw" id="rd_1_1" disabled="disabled" value="1"/><label for="rd_1_1">扣零至元</label><br>
+										<input type="radio" name="waAccount.iintegerDw" id="rd_1_2" disabled="disabled" checked="checked" value="2"/><label for="rd_1_2">扣零至角</label><br>
+										<input type="radio" name="waAccount.iintegerDw" id="rd_1_3" disabled="disabled" value="3"/><label for="rd_1_3">扣零至分</label><br>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+						<div>
+							<div class="v_a_m" style="margin-left:40px;margin-top:30px;">
+								说明：<br><br>
+									*代扣个人所得税：是否从工资中扣除个人所得税<br><br><br>
+								<input type="checkbox" id="cb_2" name="waAccount.bminusTax"/><label for="cb_2">从工资中代扣个人所得税</label>
+							</div>
+						</div>
+						<div>
+							<div style="margin-left:20px;">
+								<br>
+								请选择本账套所需处理的工资类别个数：<br><br>
+								<input type="radio" name="waAccount.bonlygzgrade" id="rd_2_1" style="margin-left:80px;" value="1"/><label for="rd_2_1">单个</label>
+								<input type="radio" name="waAccount.bonlygzgrade" id="rd_2_2" style="margin-left:50px;" value="0"/><label for="rd_2_2">多个</label><br>
+							</div>
+							<hr>
+							<div style="margin-left:20px;">
+								说明：<br><br>
+								人员编码可自由定义位长，但总长不能超过10位。<br><br>
+								<table style="margin-left: 30px;" align="left" cellpadding="0" cellspacing="0">
+								
+								
+								
+									<tr>
+										<td rowspan="2">人员编码长度：</td>
+										<td rowspan="2"><input type="text" id="ipsnLen" name="waAccount.ipsnLen" style="width:40px;" value="10"/></td>
+										<td valign="bottom"><button id='up' class="incbtn" onclick="increasing(this);return false;">-</button></td>
+									</tr>
+									<tr>
+										<td valign="top"><button id='up' class="incbtn" onclick="decline(this);return false;">-</button></td>
+									</tr>
+								
+								
+								
+								</table>								
+							</div>
+						</div>
+						<div>
+							<div style="margin-left:10px;margin-top:10px;">
+								币名：
+								<select disabled="disabled">
+									<option>人民币 RMB</option>
+									<option>美元 $</option>
+									<option>欧元 C#</option>
+								</select>
+							</div>
+							<div style="width:200px;height:124px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:8px;margin-top:6px;background-color:#808080;">
+							<table id="datatable" border=1 class="table_style" style="width:180px;">
+								<thead>
+									<tr id="datatable_header">
+										<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+										<td style="width:70px;">月份</td>
+										<td style="width:110px;">汇率</td>
+									</tr>
+								</thead>
+								<tbody id="datatable_bodyer">
+									<tr>
+										<td class="diabeldtd">2012.01</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.02</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.03</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.04</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.05</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.06</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.07</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.08</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.09</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.10</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.11</td>
+										<td>1</td>
+									</tr>
+									<tr>
+										<td class="diabeldtd">2012.12</td>
+										<td>1</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div>
+							&nbsp;&nbsp;说明：
+							<div style="width:96px;height:82px;border:1px solid #000;padding:10px;float:left;margin-left:10px;">
+								外币应折合本币位进行核算，故在此可对外币折合成本币位的汇率进行调整。
+							</div>
+						</div>
+						</div>
+					</div>
+				</div>
+				<div style="margin-top:4px;text-align:right;">
+					<input type="button" value="  确定  " onclick="doSubmit();" id="btnConfirm"/>
+					<input type="button" value="  取消  " onclick="window.parent.closeWindow('wa_other_options');"/>
+				</div>
+			</div>
+		</div>
+	</form>
+</body>
+</html>

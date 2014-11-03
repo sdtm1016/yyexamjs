@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>定位</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+
+
+<script type="text/javascript">
+
+//按人员编号
+function byNumber(){
+	document.getElementById("byNumber").disabled=false;
+	document.getElementById("byName").disabled=true;
+}
+
+
+//按人员姓名
+function byName(){
+	document.getElementById("byNumber").disabled=true;
+	document.getElementById("byName").disabled=false;
+}
+</script>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:390px;height:190px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:358px;height:158px;margin-top:16px;margin-left:16px;">
+			
+			<div style="width:264px;height:155px;float:left;">
+				
+				请选择定位方式：
+				<br><br>
+				<fieldset style="width:240px;height:110px;">
+					<legend>定位方式</legend>
+					<div class="v_a_m">
+						
+						<div style="height:20px;margin-top:20px;">
+							<input type="radio" name="rd_1" id="rd_1_1" onclick="byNumber();" checked="checked"/>&nbsp;&nbsp;<label for="rd_1_1">按人员编号</label>&nbsp;&nbsp;<input type="text" id="byNumber" style="width:124px;"/>
+						</div>
+						
+						<div style="height:20px;margin-top:20px;">
+							<input type="radio" name="rd_1" id="rd_1_2" onclick="byName();"/>&nbsp;&nbsp;<label for="rd_1_2">按人员姓名</label>&nbsp;&nbsp;<input type="text" id="byName" style="width:124px;" disabled="disabled"/>
+						</div>
+						
+					</div>
+				</fieldset>
+				
+			</div>
+		
+			<div style="width:90px;height:155px;float:left;text-align:center;">
+			<br>
+				<img src="../../../../images/wa/2012122816300001.jpg" width="32" height="32"/>
+				<br><br><br><br>
+				<input type="button" value="确认"/><br><br><input type="button" value="取消" onclick="window.parent.closeWindow('wa_stists_nssdsbb_position');"/>
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

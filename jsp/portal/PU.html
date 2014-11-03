@@ -1,0 +1,622 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>采购管理 PU</title>
+<link rel="stylesheet" href="css/otherpage.css" type="text/css"/>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="js/module_public.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript">
+/* 
+$(document).ready(function() {
+	//current module image
+	var openedPages = window.parent.openedPages;
+	var exists = false;
+	//alert(openedPages.length);
+	for(var i=0;i<openedPages.length;i++){
+		if(openedPages[i].module=="PU" && openedPages[i].opened==true){
+			exists = true;
+			document.getElementById("h1").innerHTML = "欢迎使用！";
+			break;
+		}
+		if((i+1)==openedPages.length){
+			
+		}
+	}
+	
+	if(!exists){
+		var page = {};
+		page.module = "PU";
+		page.opened = true;
+		window.parent.openedPages[window.parent.openedPages.length]=page;
+	}
+	
+	//alert(window.parent.openedPages.length);
+});
+ */
+</script>
+</head>
+
+
+
+
+
+<body>
+
+
+
+
+<!-- 窗体容器 开始 -->
+ <div>
+ 
+	
+	<!-- 期初记账 -->
+			<div id="pu_ba_beginningAccounting"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="340" height="150" title="期初记账" closeable="false"
+			src="../pu/ba/beginningAccounting.html"></div>
+	<!-- 发票 相关页面 开始 -->
+		
+		
+		<!-- 发票 invoice.html -->
+		<div id="pu_invoice_invoice"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="612" height="473" title="采购发票"
+			src="../pu/invoice/invoice.html"></div>
+			
+			
+	   <!-- 采购发票期初 invoiceSet.html -->
+		<div id="pu_set_invoice_set"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="612" height="473" title="采购发票期初"
+			src="../pu/set/invoiceSet.html"></div>		
+					
+	   <!-- 销售发票期初 invoiceSet_sa.html -->
+		<div id="sa_set_invoice_set"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="612" height="473" title="销售发票期初"
+			src="../pu/set/invoiceSet_sa.html"></div>		
+			
+	<!-- 发票 相关页面 结束 -->
+		
+	
+	
+	
+	<!-- 付款结算 相关页面 开始 -->
+		
+		
+		<!-- 付款结算 pas.html -->
+		<div id="pu_pas_pas"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="642" height="473" title="单据结算"
+			src="../pu/pas/pas.html"></div>
+			
+		
+	<!-- 付款结算 相关页面 结束 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 供应商往来相关页面 开始 -->
+	
+		<!-- 供应商往来期初余额查询 -->
+		<div id="pu_goods_qcyeQuery"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="460" height="330" title="供应商往来期初余额查询"
+			src="../pu/goods/balanceSearch.html"></div>
+		
+		<!-- 供应商往来应付单查询 -->
+		<div id="pu_goods_vouchQuery"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="460" height="330" title="供应商往来应付单查询"
+			src="../pu/goods/banlanceCondition.html"></div>
+		
+	
+	
+	
+		<!-- 供应商往来期初 -->
+		<div id="pu_contacts_beginningbalance"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="800" height="475" title="期初余额"
+			src="../pu/contacts/beginningbalance.html"></div>
+		
+		<!-- 单据类别 -->
+		<div id="ap_billtype"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="238" height="218" title="单据类别"
+			src="../pu/goods/billType.html"></div>
+			
+		<!-- 其他应付单单据类别 -->
+		<div id="apVouch_billtype"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="238" height="218" title="单据类别"
+			src="../pu/goods/apVouch_billType.html"></div>
+	
+		
+		<!-- 单据处理 -->
+		<div id="pu_dealform_dealform"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="475" title="单据处理"
+			src="../pu/dealform/dealform.html"></div>
+		
+		
+		<!-- 其他应付单 -->
+		<div id="ap_qtyfd_apvouch"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="475" title="其他应付单"
+			src="../ap/apvouch.html"></div>
+			
+	<!-- 其他应付单期初apvouchSet.html -->
+		<div id="pu_set_apvouchSet"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="612" height="473" title="其他应付单期初"
+			src="../pu/set/apvouchSet.html"></div>	
+		
+		<!-- 预付款期初 -->
+		<div id="pu_set_yfk_vouchSet"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="475" title="预付款期初"
+			src="../pu/set/yfk_vouchSet.html"></div>
+		
+	    
+	    <!-- 其他应付单 -->
+	    <!-- 
+		<div id="ap_qtyfd_vouch"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="475" title="其他应付单"
+			src="../ap/qtyfd_vouch.html"></div>
+		 -->
+	
+	
+		
+	
+	<!-- 供应商往来 相关页面 结束 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 供应商往来制单 相关页面 开始 -->
+	
+		<!-- 供应商往来制单查询 -->
+		<div id="pu_gb_gbQuery"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="460" height="220" title="供应商制单查询"
+			src="../pu/gb/goodsBalanceSearch.html"></div>
+		
+		<!-- 供应商往来制单 -->
+		<div id="pu_gb_tableview"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="475" title="供应商往来制单"
+			src="../pu/gb/tableview.html"></div>
+		
+	<!-- 供应商往来制单 相关页面 结束 -->
+			
+	
+	
+	
+	
+	
+	
+	<!-- 月末结账 相关页面 开始 -->
+	
+	<div id="pu_monthend_monthend"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="460" height="380" title="月末结账"
+			src="../pu/monthend/monthend.html"></div>
+	
+	
+	<div id="pu_monthend_monthcheck"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="460" height="380" title="月结检测"
+			src="../pu/monthend/monthcheck.html"></div>
+	
+	<!-- 月末结账 相关页面 结束 -->
+	
+		
+		
+		
+		
+		
+	
+	<!-- 系列参照 开始 -->
+	
+		<!-- 外币设置 -->
+		<!-- 
+		<div id="basic_comref_exch"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="500" height="370" title="参照"
+			src="../basic/finance/foreignCurrency.html"></div>	
+		 -->
+		
+		<!-- 部门参照 -->
+		<div id="basic_comref_dptref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/dptref.html"></div>	
+		
+		<!-- 个人参照 -->
+		<div id="basic_comref_personref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/personref.html"></div>
+		
+		<!-- 客户参照 -->
+		<div id="basic_comref_cusref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/cusref.html"></div>
+		
+		<!-- 供应商参照 -->
+		<div id="basic_comref_supref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/supref.html"></div>			
+			
+			
+		<!-- 采购类型参照 -->
+		<div id="pu_comrefence_putype"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window"  width="540" height="355" title="参照"
+			src="../pu/comrefence/putype.html"></div>			
+		
+			
+			
+		<!-- 付款条件参照 -->
+		<div id="basic_comref_payCondref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window"  width="500" height="355" title="参照"
+			src="../basic/comref/payConditionGridRef.html"></div>			
+		
+
+			
+			
+				
+		<!-- 结算方式参照 -->
+    	<div id="basic_comref_settlestyleGridRef"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="550" height="370" title="参照"
+		src="../basic/comref/settlestyleGridRef.html"></div>			
+			
+			
+		<!-- 币种参照 -->
+		<div id="basic_comref_exchref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/exchGridRef.html"></div>			
+			
+		
+			<!-- 凭证页面.摘要参照 reference.html -->
+		<div id="dsign_reference"
+			style="margin-left: 110px;margin-top: 60px; padding: auto; display: none;"
+			type="window" width="500" height="355" title="参照"
+			src="../dsign/reference.html"></div>	
+		
+		<!-- 凭证页面.科目参照 subjectsreference.html -->
+		<div id="dsign_subjectsreference"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="450" height="340" title="科目参照"
+			src="../dsign/subjectsreference.html"></div>		
+			
+		<!-- 存货参照 -->
+	<div id="basic_comref_inventoryref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/inventoryref.html"></div>			
+		
+	<!-- 系列参照 结束 -->
+		
+	
+	<!-- 存货档案inventory.html -->
+	<div id="inventory"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="810" height="410" title="存货档案"
+		src="../basic/inventory/inventory.html"></div>		
+	
+	
+	<!-- 供应商档案vendor.html -->
+	<div id="vendor"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="810" height="410" title="供应商档案"
+		src="../basic/comeGo/vendor.html"></div>		
+	
+	
+	<!-- 部门档案-列表显示 -->
+	<div id="basic_grid_departmentGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="部门档案"
+		src="../basic/comref/departmentGridRef.html"></div>
+	
+
+		
+	
+	<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+	<!-- alert和confirm 警告窗口  结束-->
+	
+	
+	
+	
+	
+	
+	<!-- 仓库档案 窗体 -->
+	<div id="pu_warehouse_item"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="620" height="380" title="仓库档案"
+		src="../pu/warehouse/warehouse.html"></div>
+		
+	<!-- 仓库档案 添加 窗体 -->
+	<div id="pu_warehouse_add"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="465" height="332" title="仓库档案卡片"
+		src="../pu/warehouse/addwarehouse.html"></div>
+	
+	<!-- 仓库档案 修改 窗体 -->
+	<div id="pu_warehouse_update"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="465" height="332" title="仓库档案卡片"
+		src="../pu/warehouse/updatewarehouse.html"></div>
+	
+	<!-- 采购类型 窗体 -->
+	<div id="pu_purchasetype_item"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="650" height="320" title="采购类型"
+		src="../pu/purchasetype/purchasetype.html"></div>
+	
+	
+	<!-- 收发类别参照 窗体 -->
+	<div id="pu_purchasetype_lb"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="404" height="240" title="收发参照"
+		src="../pu/comrefence/rdStyleRef.html"></div>
+	
+	
+	<!-- 采购管理制单页面dsign/pu_index.html -->
+	<div id="pu_operate_dsign"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="填制凭证"
+		src="../dsign/pu_index.html"></div>
+			<!-- 凭证页面.未保存凭证提示窗 -->
+	<div id="pu_dsign_saveremind"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="464" height="279" title="未保存凭证提"
+		src="../dsign/pu_dsign_saveremind.html"></div>
+	
+	
+	
+	<!-- 取消操作条件窗体 pu/canceloperate/qxcztj.html -->
+	<div id="pu_canceloperate_qxcztj"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="362" height="175" title="取消操作条件"
+		src="../pu/canceloperate/qxcztj.html"></div>
+	
+	
+	<!-- 取消操作表格窗pu/canceloperate/qxczbg.html -->
+	<div id="pu_canceloperate_qxczbg"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="600" height="400" title="取消操作"
+		src="../pu/canceloperate/qxczbg.html"></div>
+	
+	
+	
+	
+	
+	<!-- 供应商业务余额表 条件 -->
+	<div id="pu_stists_gyswlyeb_tj"
+	style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+	type="window" width="410" height="229" title="供应商业务余额表  条件"
+	src="../pu/stists/gyswlyeb_tj.html"></div>
+	
+	<!-- 供应商业务余额表 -->
+	<div id="pu_stists_gyswlyeb"
+	style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+	type="window" width="800" height="553" title="供应商业务余额表 "
+	src="../pu/stists/gyswlyeb.html"></div>
+	
+	
+		
+	
+	<!-- 供应商对账单 条件 -->
+	<div id="pu_stists_gysdzd_tj"
+	style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+	type="window" width="340" height="265" title="供应商对账单  条件"
+	src="../pu/stists/gysdzd_tj.html"></div>
+	
+	<!-- 供应商对账单表 -->
+	<div id="pu_stists_gysdzd"
+	style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+	type="window" width="800" height="553" title="供应商对账单表 "
+	src="../pu/stists/gysdzd.html"></div>
+	
+	
+	
+	
+	
+	
+	
+</div>
+<!-- 窗体容器 结束 -->
+
+
+
+
+
+
+
+
+
+
+ <div class="topbar">
+ 
+ 	<span></span>
+ 	
+	<div onclick="javascript:openWindow('pu_warehouse_item','PU');">
+		<span></span>
+		仓库档案
+	</div>
+	
+	
+	<div onclick="javascript:openWindow('inventory','PU');">
+		<span></span>
+		存货档案
+	</div>
+		
+	<div onclick="javascript:openWindow('vendor','PU');">
+		<span></span>
+		供应商档案
+	</div>
+		
+	<div onclick="openWindow('pu_purchasetype_item','PU');">
+		<span></span>
+		采购类型
+	</div>
+		
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ <div class="flowchart">
+ 
+ 	
+ 	<a style="margin-top:60px;margin-left:215px;" href="javascript:openWindow('pu_pas_pas','',{type:'pu'});" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_FKJS.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_FKJS-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_FKJS.jpg'"
+ 		/><br/>
+ 		付款结算
+ 	</a>
+ 	
+ 	<a style="margin-top:212px;margin-left:60px;" href="javascript:openWindow('pu_invoice_invoice');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_CGFP.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_CGFP-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_CGFP.jpg'"
+ 		/><br/>
+ 		采购发票
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:212px;margin-left:215px;" href="javascript:showFloatMenu('floatmenu',{left:'240px',top:'240px',width:'120px'});" oncontextmenu="showFloatMenu('floatmenu',{left:'240px',top:'240px',width:'120px'});return false;" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_GYSWL.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_GYSWL-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_GYSWL.jpg'"
+ 		/><br/>
+ 		供应商往来
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:212px;margin-left:385px;" href="javascript:openWindow('pu_gb_gbQuery','',{type:'pu'});" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_GYSWLZD.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_GYSWLZD-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_GYSWLZD.jpg'"
+ 		/><br/>
+ 		供应商往来制单
+ 	</a>
+ 
+ 
+ 	
+ 	<a style="margin-top:212px;margin-left:550px;" href="javascript:openWindow('pu_monthend_monthend');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg'"
+ 		/><br/>
+ 		月末结账
+ 	</a>
+ 
+ 	
+ 	
+ 	
+ 	<div>
+ 		<img src="../../images/portal/CWork/ImageList1/PU1024.gif"/>
+ 	</div>
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ 
+ <div class="footpanel">
+ 
+	 <div class="actionList">
+	
+	
+		<div onclick="openWindow('');">
+			<div></div>
+			我的工作台
+		</div>
+		
+		<div onclick="openWindow('pu_stists_gysdzd_tj');">
+			<div></div>
+			供应商往来对账单
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			供应商往来总账
+		</div>
+			
+		<div onclick="openWindow('');">
+			
+		</div>
+			
+		<div onclick="openWindow('pu_stists_gyswlyeb_tj');">
+			<div></div>
+			供应商往来余额表
+		</div>
+		
+		<div onclick="openWindow('');">
+			
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			供应商往来明细账
+		</div>
+			
+			
+	 </div>
+ 
+ </div>
+ 
+
+
+
+
+
+
+
+<ul id="floatmenu" class="floatmenu" style="display:none;">
+	<li onclick="openWindow('pu_goods_qcyeQuery','',{type:'pu'});">供应商往来期初</li>
+	<li onclick="openWindow('pu_goods_vouchQuery' ,'',{type:'pu'});">应付单</li>
+	
+	<li onclick="openWindow('pu_pas_pas','',{type:'payment'});">付款结算</li>
+	<li onclick="openWindow('pu_canceloperate_qxcztj','',{type:'cancelOperate'});">取消操作</li>
+</ul>
+
+
+
+ 
+</body>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+</html>

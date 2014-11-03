@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>付款条件参照</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<!-- 临时注释，若不影响功能完整，可删除
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	-->
+	<script type="text/javascript" src="js/payConditionGridRef.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+		html,body{padding:0px;margin:0px;background-color:#D4D0C8;font-size:12px;font-family:宋体;}
+		#footer{width:490px;margin-left:4px;}
+		#footer div{float:left;width:119px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+		#tableview{width:1000px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+		#tableview td{height:16px;line-height:16px;border:1px solid #000;}
+	</style>
+	<script type="text/javascript">
+	</script>
+</head>
+<body>
+	<div style="width:500px;height:330px;">
+		<div style="width:486px;margin-left:4px;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+		<div style="width:486px;height:36px;margin-left:4px;">
+			<div style="width:200px;float:left;margin-left:0px;">
+				<div class="buttongroup" style="height:38px;">
+					<div class="group" style="margin:1px;">
+						<div><input type="button" value="栏目" disabled="disabled" style="background-image:url('../../../images/icon/classes.gif');" onclick="javascript:window.parent.openWindow('dsign_referencesetting');"/></div>
+						<div><input type="button" value="编辑" disabled="disabled" style="background-image:url('../../../images/icon/edit.gif');" onclick="javascript:window.parent.openWindow('gl_bdigest_bdigestEdit');"/></div>
+						<div><input type="button" value="全载" disabled="disabled" style="background-image:url('../../../images/icon/allload.gif');" onclick="allLoad()"/></div>
+						<div><input type="button" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');" onclick="refresh();"/></div>
+						<div><input type="button" value="返回" disabled="disabled" style="background-image:url('../../../images/icon/return.gif');" onclick="javascript:window.parent.closeWindow('basic_comref_payCondref');"/></div>
+						<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="javascript:window.parent.closeWindow('basic_comref_payCondref');"/></div>
+					</div>
+				</div>
+			</div>
+			<div style="width:254px;float:right;margin-right:0px;margin-top:4px;">
+				<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+					<legend>模糊匹配定位：</legend>
+					<div style="height:20px;">
+						<input type="radio" value = "1" name="radio" id="radio1" disabled="disabled" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+						<input type="radio" value = "2" name="radio" id="radio2" disabled="disabled" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+						<input type="radio" value = "3" name="radio" id="radio3" disabled="disabled" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+						<input type="radio" value = "4" name="radio" id="radio4" disabled="disabled" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+					</div>
+				</fieldset>
+				<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;" >
+			</div>
+		</div>
+		<div style="width:486px;margin-left:4px;margin-top:2px;height:260px;border:2px inset #eee;overflow:auto;">
+			<table id="tableview">
+				<thead>
+					<tr class="theader" style="background-color:#ffffff;">
+						<td >付款条件编码</td>
+						<td >付款条件表示</td>
+						<td >信用天数</td>
+						<td >优惠天数1</td>
+						<td >优惠率1</td>
+						<td >优惠天数2</td>
+						<td >优惠率2</td>
+						<td >优惠天数3</td>
+						<td >优惠率3</td>
+						<td >优惠天数4</td>
+						<td >优惠率4</td>
+					</tr>
+				</thead>
+				<tbody id="include">
+				</tbody>
+			</table>
+		</div>
+		<!-- 底部状态栏容器 S -->
+		<div id="footer">
+			<div  style="margin-left:0px;">定位列名：</div>
+			<div id="selColumn" >常用摘要正文</div>
+			<div id="loadRecord" > 已加载n条记录</div>
+			<div id = "selRecord" >已选中n条记录</div>
+		</div>
+		<!-- 底部状态栏容器 E -->
+	</div>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>人员批量增加</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+	<style type="text/css">
+		.dis{
+			display: none;
+		}
+	</style>
+	<script type="text/javascript">
+		var cgzgradenum = ""; //工资类别号
+		var wa_isWageSets=""; //判断是否单工资类别
+		$(document).ready(function(){
+			cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+			wa_isWageSets = window.parent.parent.wa_isWageSets;
+			//jAlert(wa_isWageSets);
+			$.ajax({
+				url:"wageSetting!queryBachPersonnelFiles.action",
+				type:"post",
+				dataType:"json",
+				data:{"waPsn.cgzGradeNum":cgzgradenum,"isSingle":wa_isWageSets},
+				async:false,
+				success:function(data){
+					initDpt(data.psnReferList[0]);
+					initPeron(data.psnReferList[1]);
+					table_1_RowSelection();
+					table_2_RowSelection();
+				}
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:558px;height:284px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:544px;height:268px;margin-top:8px;margin-left:8px;">
+			<div style="width:150px;height:234px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#808080;">
+					<table id="datatable_1" border=1 class="table_style" style="width:150px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:56px;">选择</td>
+								<td style="width:78px;">部门</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+							
+						</tbody>
+					</table>
+				</div>
+			<div style="width:382px;height:234px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:4px;background-color:#808080;">
+				<table id="datatable_2" border=1 class="table_style" style="width:382px;">
+					<thead>
+						<tr id="datatable_2_header">
+							<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+							<td style="width:66px;">选择</td>
+							<td style="width:72px;">薪资部门</td>
+							<td style="width:72px;">编码</td>
+							<td style="width:72px;">姓名</td>
+							<td style="width:72px;">人员类别</td>
+						</tr>
+					</thead>
+					<tbody id="datatable_2_bodyer">
+					</tbody>
+				</table>
+			</div>
+			<div style="width:100%;height:30px;text-align:right;float:none;clear:both;padding-top:6px;">
+				<input type="button" value="  确定  " onclick="btnConfirm();"/>
+				<input type="button" value="  取消  " onclick="window.parent.closeWindow('wa_other_personnelfile_batch_add');"/>
+				<input type="button" value="  全选  " id="checkAll" onclick="checkAll()" />
+				<input type="button" value="  全消  " id="checkCancel" onclick="checkCancel()"/>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+/*全选 lyl*/
+function checkAll(){
+	$("#datatable_2_bodyer tr").not(".dis").each(function(){
+		var input=$(this).find("td:eq(2)").find("input");
+		var check=$(input).attr("checked");
+		if(typeof(check)=="undefined"){
+			$(input).attr("checked",true);
+		}
+	});
+}
+/*全消*/
+function checkCancel(){
+	$("#datatable_2_bodyer tr").not(".dis").each(function(){
+		var input=$(this).find("td:eq(2)").find("input");
+		var check=$(input).attr("checked");
+		if(check=="checked"){
+			$(input).attr("checked",false);
+		}
+	});
+}
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被点击选中的行全局变量
+var datatable_1_currentSeletedRow=null;
+function table_1_RowSelection(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		datatable_1.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(datatable_1_currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				datatable_1_currentSeletedRow.style.backgroundColor="#fff";
+				datatable_1_currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				var cb = evtsrc.parentNode.cells[1].getElementsByTagName("input")[0];
+				cb.click();
+				datatable_1_currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+//部门复选框点击处理函数
+function dptChekeboxClick(cb){
+	var dptNum = cb.parentNode.parentNode.cells[0].innerHTML;
+	var datatable_2 = document.getElementById("datatable_2_bodyer");
+	if(cb.checked){
+		//遍历右边表格设置下属人员选中和显示状态
+		for(var j=0;j<datatable_2.rows.length;j++){
+			var cell1 = datatable_2.rows[j].cells[0];
+			if(cell1.innerHTML==dptNum){
+				var personCheckbox = datatable_2.rows[j].cells[2].getElementsByTagName("input")[0];
+				personCheckbox.checked = true;
+				$(datatable_2.rows[j]).removeClass("dis");				
+			}
+		}
+	}else{
+		//遍历右边表格设置下属人员选中和显示状态
+		for(var j=0;j<datatable_2.rows.length;j++){
+			var cell1 = datatable_2.rows[j].cells[0];
+			if(cell1.innerHTML==dptNum){
+				var personCheckbox = datatable_2.rows[j].cells[2].getElementsByTagName("input")[0];
+				personCheckbox.checked = false;
+				//datatable_2.rows[j].style.display = "none";
+				$(datatable_2.rows[j]).addClass("dis");
+			}
+		}
+	}
+}
+//当前被点击选中的行全局变量
+var datatable_2_currentSeletedRow=null;
+function table_2_RowSelection(){
+	var datatable_2 = document.getElementById("datatable_2_bodyer");
+	for(var i=0;i<datatable_2.rows.length;i++){
+		datatable_2.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(datatable_2_currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				datatable_2_currentSeletedRow.style.backgroundColor="#fff";
+				datatable_2_currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				evtsrc.parentNode.cells[2].getElementsByTagName("input")[0].click();
+				datatable_2_currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+
+//初始化部门数据
+function initDpt(list){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	var row = "";
+	$.each(list,function(index,dpt){
+		row += "<tr><td style='display:none;'>"+dpt.cdeptNum+"</td><td><input type='checkbox' onclick='dptChekeboxClick(this);'/></td><td>"+dpt.cdepname+"</td></tr>";
+		//jAlert(dptMap.get(dpt).cdeptName);
+	});
+	//datatable_1.innerHTML=row;
+	$(datatable_1).html(row);
+}
+//初始化人员数据
+function initPeron(list){
+	var datatable_2 = document.getElementById("datatable_2_bodyer");
+	var row = "";
+	$.each(list,function(index,p){
+		row += "<tr class='dis'><td class='dis'>"+p.cdepcode+"</td><td class='dis'>"+p.ipsngrdId+"</td><td><input type='checkbox'/></td><td>"+p.cdepname+"</td><td>"+p.cpersoncode+"</td><td>"+p.cpersonname+"</td><td>"+p.cpsngrd+"</td></tr>";
+		//jAlert(dptMap.get(dpt).cdeptName);
+	});
+	//datatable_2.innerHTML=row;
+	$(datatable_2).html(row);
+}
+//确认按钮
+function btnConfirm(){
+	var datatable_2 = document.getElementById("datatable_2_bodyer");
+	var psnList = [];
+	var cpsnNums = "";
+	for(var i=0;i<datatable_2.rows.length;i++){
+		var row = datatable_2.rows[i];
+		var cb = row.cells[2].getElementsByTagName("input")[0];
+		if(cb.checked){
+			var person = {};
+			person.cdeptNum = row.cells[0].innerHTML;
+			person.ipsngrdId = row.cells[1].innerHTML;
+			person.cpsnNum = row.cells[4].innerHTML;
+			person.cpsnName = row.cells[5].innerHTML;
+			person.cgzGradeNum = cgzgradenum;
+			psnList[psnList.length]=person;
+			cpsnNums = cpsnNums +"'"+ row.cells[4].innerHTML + "',";
+		}
+	}
+	if(psnList.length == 0){
+		window.parent.closeWindow('wa_other_personnelfile_batch_add');
+	}else{
+		$.ajax({
+			url:"wageSetting!saveBachPersonnelFiles.action",
+			type:"post",
+			dataType:"json",
+			data:parseParam(psnList,"psnList") + "&cpsnNums=" + cpsnNums,
+			async:false,
+			success:function(data){
+				var success = data.success;
+				if (success == "0") {
+					jAlert("待加入的人员编码与已存在的相同工资类别的人员编码重复");
+				}else{
+					window.parent.getWindow("wa_other_personnelfile_main").mainOnload();
+					window.parent.closeWindow('wa_other_personnelfile_batch_add');
+				}
+			}
+		});
+	}
+}
+var parseParam=function(param, key){
+	var paramStr="";
+	if(param instanceof String||param instanceof Number||param instanceof Boolean){
+		paramStr+="&"+key+"="+encodeURIComponent(param);
+	}else{
+		$.each(param,function(i){
+			var k=key==null?i:key+(param instanceof Array?"["+i+"]":"."+i);
+			paramStr+='&'+parseParam(this, k);
+		});
+	}
+	return paramStr.substr(1);
+};
+/***** 选中行代码结束*******/
+
+</script>
+</html>

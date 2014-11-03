@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>折旧方法</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<link rel="stylesheet" href="../../../css/zTreeStyle/zTreeStyle.css" type="text/css">
+<style type="text/css">
+	.normalInput{width:204px;}
+	.normalInput1{width:180px;}
+	h4{color:blue; }
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+<script type="text/javascript">
+	  /**
+	   * 节点单击事件
+	   * @param event
+	   * @param treeId 树id
+	   * @param treeNode jied
+	   * @param clickFlag
+	 */
+	 $.ajaxSetup({cache:false});
+	function onClick(event, treeId, treeNode, clickFlag) {
+	     var str = "<tr><td style='white-space:nowrap; '>"+treeNode.name+"</td><td style='white-space:nowrap; '>"+treeNode.name+"，月折旧率公式</td><td style='white-space:nowrap; '>"+treeNode.name+"，月折旧额公式</td></tr>";
+	     $("#datatable_1 tbody").html(str);
+		 $("#method").html(treeNode.name);
+		 $("#lv").val(treeNode.name+"，月折旧率公式");
+		 $("#lve").val(treeNode.name+"，月折旧额公式");
+	}	
+	//全局变量：存储所有折旧信息，
+	var depreciations=null;
+	var hasSelect=null;
+	function doload(){
+		$("#tb_left").html("");
+    	$("#datatable_1_bodyer").html("");
+		$.ajax({
+		    url: "faDeprecia!findFaDeprecia",
+		    type: 'post',
+		    dataType: "json",
+		    success: function(data){
+		    	$("#butup").attr("disabled",true);
+				$("#butdel").attr("disabled",true);
+		    	depreciations=data.depreciations;
+		    	if(depreciations.length!=0){
+		    		for(i=0;i<depreciations.length;i++){
+			    		var dep=depreciations[i];
+			    		var sdeprformula=dep.sdeprformula;
+			    		var sdeprrateformula=dep.sdeprrateformula;
+			    		if(sdeprformula==null||sdeprformula=="null"){
+			    			sdeprformula="";
+			    			sdeprrateformula="";
+			    		}
+		    			var spans="<li name='sna' onclick='doselect(this)' idefinetype='"+dep.idefinetype+"' id='"+dep.id+"' mark='"+i+"'><label>"+(i+1)+" "+dep.sname+"</label></li>";
+		    			$("#tb_left").append(spans);
+		    			var trs="<tr id='"+dep.id+"'><td >"+dep.sname+"</td>"
+		    				  +"<td>"+sdeprrateformula+"</td>"
+                              +"<td>"+sdeprformula+"</td>"
+					       	  +"</tr>";
+					    $("#datatable_1_bodyer").append(trs);
+			    	}
+		    		hasSelect=0;
+			    	$("li[mark='0']").children().css("background-color","#0a246a");
+			    	$("li[mark='0']").children().css("color","#ffffff");
+			    	selectDetail();
+		    	}
+		    }
+		  });
+	}
+	//选择行
+	function doselect(tem){
+		hasSelect=$(tem).attr("mark");
+		var al=$("li[name='sna']").children();
+		al.css("background-color","#ffffff");
+		al.css("color","#000000");
+		var sel=$("li[mark='"+hasSelect+"']").children();
+		sel.css("background-color","#0a246a");
+		sel.css("color","#ffffff");
+		if($(tem).attr("idefinetype")=="0"){
+			$("#butup").attr("disabled",true);
+			$("#butdel").attr("disabled",true);
+		}else{
+			$("#butup").attr("disabled",false);
+			$("#butdel").attr("disabled",false);
+		}
+    	selectDetail();
+	}
+	//查看详细
+	function selectDetail(){
+		var dep=depreciations[hasSelect];
+		var sdeprformula=dep.sdeprformula;
+		var sdeprrateformula=dep.sdeprrateformula;
+		if(sdeprformula==null||sdeprformula=="null"){
+			dep.sdeprformula="";
+			sdeprrateformula="";
+		}
+		$("#method").val(dep.sname);
+		$("#lv").val(sdeprrateformula);
+		$("#lve").val(sdeprformula);
+	}
+	///删除
+	function dodelete(){
+		var id=$("li[mark='"+hasSelect+"']")[0].id;
+		if(isExitsTableRef(id,"FA_DEPRECIATIONS","ID")){
+			jAlert("该折旧方法已经被使用不可删除");
+			return false;
+		}
+		$.ajax({
+		    url: "faDeprecia!deleteFadeprecia",
+		    type: 'post',
+		    data:"id="+id,
+		    dataType: "json",
+		    success: function(data){
+		    	$("#butup").attr("disabled",true);
+				$("#butdel").attr("disabled",true);
+		    	depreciations=null;
+		    	depreciations=data.depreciations;
+		    	$("#tb_left").html("");
+		    	$("#datatable_1_bodyer").html("");
+		    	if(depreciations.length!=0){
+		    		for(i=0;i<depreciations.length;i++){
+			    		var dep=depreciations[i];
+			    		var sdeprformula=dep.sdeprformula;
+			    		var sdeprrateformula=dep.sdeprrateformula;
+			    		if(sdeprformula==null||sdeprformula=="null"){
+			    			sdeprformula="";
+			    			sdeprrateformula="";
+			    		}
+		    			var spans="<li name='sna' onclick='doselect(this)' idefinetype='"+dep.idefinetype+"' id='"+dep.id+"'  mark='"+i+"'><label>"+dep.sname+"</label></li>";
+		    			$("#tb_left").append(spans);
+		    			var trs="<tr id='"+dep.id+"'><td >"+dep.sname+"</td>"
+		    				  +"<td>"+sdeprformula+"</td>"
+                              +"<td>"+sdeprrateformula+"</td>"
+					       	  +"</tr>";
+					    $("#datatable_1_bodyer").append(trs);
+			    	}
+		    		hasSelect=0;
+			    	var sel=$("li[mark='0']").children();
+			    	sel.css("background-color","#0a246a");
+			    	sel.css("color","#ffffff");
+			    	selectDetail();
+		    	}
+		    }
+		  });
+	}
+	
+	
+	
+	function updateWindow(){
+		var id=$("li[mark='"+hasSelect+"']")[0].id;
+		if(isExitsTableRef(id,"FA_DEPRECIATIONS","ID")){
+			jAlert("该折旧方法已经被使用不可修改");
+			return false;
+		}
+		var dep=depreciations[hasSelect];
+		window.parent.openWindow('fa_setting_zhejiuMethodDefinition','fa_setting_zhejiuMethod',dep);
+	}
+</script>
+<style type="text/css">
+	#datatable_1_bodyer tr td{
+		text-align: left;
+		white-space:nowrap;
+	}
+</style>
+</head>
+<body onload="doload()">
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			 <div class="buttongroup">
+				<div class="group">
+					<div><input type="button" id="butadd" value="增加" onclick="window.parent.openWindow('fa_setting_zhejiuMethodDefinition','fa_setting_zhejiuMethod');" class="addIco"/></div>
+					<div><input type="button" id="butup" disabled="disabled" value="操作" onclick="updateWindow();" class="operateIco"/></div>
+					<div><input type="button" id="butdel" disabled="disabled" value="删除" onclick="dodelete()" class="delIco"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" value="保存" disabled="disabled" class="saveIco"/></div>
+					<div><input type="button" value="取消" disabled="disabled" class="cancelIco"/></div>
+                    <div><input type="button" value="刷新" disabled="disabled" class="refreshIco"/></div>
+				</div>
+			</div>
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                	<div class="zTreeDemoBackground left">
+                        <ul id="tb_left" class="ztree" style="margin: -5px"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right;">
+                	<div type="tab" style="float:left;">
+		                <div>
+			               <div>列表视图</div>
+			               <div>单张视图</div>
+		                </div>
+		                <div style="width:388px;height:316px;">
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="datatable_1" class="table_style" style="margin:-4px;">
+						        <thead>
+							       <tr id="datatable_1_header" style="height:16px;">
+								      <!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								        <td style="width:150px;">名称</td>
+								        <td style="width:250px;">月折旧率公式</td>
+                                        <td style="width:250px;">月折旧额公式</td>
+							       </tr>
+						        </thead>
+						        <tbody id="datatable_1_bodyer">
+
+						        </tbody>
+					          </table>
+                           </div>
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="content_zhou">
+                                  <tr>
+                                  	<td>折旧方法 ： </td>
+                                    <td><input id="method" class="normalInput" value="" disabled /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td style="vertical-align:top">月折旧率 = </td>
+                                    <td>
+                                        <textarea id="lv" style="resize:none;" readonly cols="26" rows="5">
+                                        
+                                        </textarea>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                  	<td style="vertical-align:top">月折旧额 = </td>
+                                    <td><textarea id="lve" style="resize:none;" readonly class="noresize" cols="26" rows="5">
+                                    
+                                    	</textarea><br/>
+                                    <h4>注意：使用年限在此指（使用年限*12）</h4></td>
+                                    
+                                  </tr>
+                               </table>
+                           </div>
+		                </div>
+	                </div>
+                </div>
+            </div>
+            
+            
+		</div>
+	</div>
+</body>
+</html>

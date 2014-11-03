@@ -1,0 +1,678 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>固定资产 FA</title>
+<link rel="stylesheet" href="css/otherpage.css" type="text/css"/>
+<script type="text/javascript" src="js/module_public.js"></script>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../fa/setting/js/depreciations.js"></script>
+<script type="text/javascript">
+/* 
+$(document).ready(function() {
+	//current module image
+	var openedPages = window.parent.openedPages;
+	var exists = false;
+	//alert(openedPages.length);
+	for(var i=0;i<openedPages.length;i++){
+		if(openedPages[i].module=="FA" && openedPages[i].opened==true){
+			exists = true;
+			document.getElementById("h1").innerHTML = "欢迎使用！";
+			break;
+		}
+		if((i+1)==openedPages.length){
+			
+		}
+	}
+	
+	if(!exists){
+		var page = {};
+		page.module = "FA";
+		page.opened = true;
+		window.parent.openedPages[window.parent.openedPages.length]=page;
+	}
+	
+	//alert(window.parent.openedPages.length);
+});
+ */
+ 
+ 
+</script>
+</head>
+
+<body>
+
+
+
+
+<!-- 窗体容器 开始 -->
+ <div>
+ 
+	
+	
+	<!-- 设置 开始-->
+	
+		<!-- 选项设置 -->
+		<div id="fa_basic_options"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="456" height="385" title="选项"
+			src="../fa/basic/options.html"></div>
+		
+		<!-- 选项设置.可纳税调整的增加方式 -->
+		<div id="fa_basic_addmethod"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="262" height="243" title="可纳税调整的增加方式"
+			src="../fa/basic/addmethod.html"></div>
+		
+		
+		
+		<!-- 部门对应折旧科目 -->
+		<div id="fa_setting_zhejiu"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="435" title="部门对应折旧科目"
+			src="../fa/setting/zhejiu.html"></div>
+		
+		<!-- 资产类别 -->
+		<div id="fa_setting_assetsClass"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="435" title="资产类别"
+			src="../fa/setting/assetsClass.html"></div>
+		
+		<!-- 增减方式 -->
+		<div id="fa_setting_plusSubWay"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="435" title="增减方式"
+			src="../fa/setting/plusSubWay.html"></div>
+		
+		<!-- 使用状况 -->
+		<div id="fa_setting_useState"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="435" title="使用状况"
+			src="../fa/setting/useState.html"></div>
+		
+		<!-- 折旧方法 -->
+		<div id="fa_setting_zhejiuMethod"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="435" title="折旧方法"
+			src="../fa/setting/zhejiuMethod.html"></div>
+		
+		<!-- 折旧方法定义 -->
+		<div id="fa_setting_zhejiuMethodDefinition"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="490" height="395" title="折旧方法定义"
+			src="../fa/setting/zhejiuMethodDefinition.html"></div>
+		
+		<!-- 资产变动单 -->
+		<div id="fa_card_assetschange"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="616" height="415" title="资产变动单"
+			src="../fa/card/assetschange.html"></div>
+		
+		
+		<!-- 变动单管理 -->
+		<div id="fa_card_changebills"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="482" title="变动单管理"
+			src="../fa/card/changebills.html"></div>
+		
+		
+		
+			
+		<!-- 科目参照 subjectsreference.html -->
+		<div id="dsign_subjectsreference"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="450" height="340" title="科目参照"
+			src="../dsign/subjectsreference.html"></div>		
+		
+		
+		
+		
+		
+		
+	<!-- 设置 结束-->
+		
+	
+	<!-- 各种参照 开始 -->
+		
+		
+		
+		
+		<!-- 资产类别参照 -->
+		<div id="fa_basic_ref_acr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="资产类别参照"
+			src="../fa/basic/ref/acr.html"></div>
+		
+		<!-- 增减方式参照 -->
+		<div id="fa_basic_ref_amr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="增减方式参照"
+			src="../fa/basic/ref/amr.html"></div>
+		
+		<!-- 折旧方法参照 -->
+		<div id="fa_basic_ref_dmr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="折旧方法参照"
+			src="../fa/basic/ref/dmr.html"></div>
+		
+		<!-- 部门参照 -->
+		<div id="fa_basic_ref_dr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="部门参照"
+			src="../fa/basic/ref/dr.html"></div>
+		
+		<!-- 使用状态参照 -->
+		<div id="fa_basic_ref_usr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="使用状态参照"
+			src="../fa/basic/ref/usr.html"></div>
+		
+	
+		<!-- 卡片参照 -->
+		<div id="fa_basic_ref_cr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="卡片参照"
+			src="../fa/basic/ref/cr.html"></div>
+		
+	
+	
+		<!-- 变动单参照 -->
+		<div id="fa_basic_ref_cfr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="变动单参照"
+			src="../fa/basic/ref/cfr.html"></div>
+		
+	
+		
+	
+	
+	<!-- 各种参照 结束 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 卡片相关窗体 开始 -->
+		<!-- 原是卡片资产类别 -->
+		<div id="fa_basic_ref_t_acr"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="272" height="375" title="资产类别参照"
+			src="../fa/basic/ref/t_acr.html"></div>
+	
+		<!-- 录入原始卡片 -->
+		<div id="fa_card_entry"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="616" height="415" title="录入原始卡片"
+			src="../fa/card/entry.html"></div>
+		
+		
+		<!-- 资产增加 -->
+		<div id="fa_card_addAssets"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="616" height="415" title="资产增加"
+			src="../fa/card/addAssets.html"></div>
+		
+		
+		<!-- 资产减少 -->
+		<div id="fa_reduce_assetsReduce"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="700" height="335" title="资产减少"
+			src="../fa/reduce/assetsReduce.html"></div>
+		
+		
+		
+		
+		<!-- 卡片管理 -->
+		<div id="fa_card_cardmanager"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="650" height="482" title="卡片管理"
+			src="../fa/card/cardmanager.html"></div>
+		
+		<div id="dsignShow"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="凭证查询"
+		src="../dsign/indexShow.html"></div>
+	
+	<!-- 卡片相关窗体 结束 -->
+	
+	
+	
+	
+	
+	
+	<!-- 处理相关窗体 开始 -->
+	
+	
+		<!-- 计提本月折旧、折旧清单 -->
+		<div id="fa_operate_operateCurMonZheJiu"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="425" title="折旧清单"
+			src="../fa/operate/operateCurMonZheJiu.html"></div>
+		
+		<!-- 折旧分配表 -->
+		<div id="fa_operate_allotdepre"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="604" height="395" title="折旧分配表"
+			src="../fa/operate/allotdepre.html"></div>
+		
+		<!-- 凭证查询 -->
+		<div id="fa_operate_dsignquery"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="620" height="375" title="凭证查询"
+			src="../fa/operate/dsignquery.html"></div>
+		
+	
+		<!-- 批量制单 -->
+		<div id="fa_operate_batchCreateBills"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="600" height="425" title="批量制单"
+			src="../fa/operate/batchCreateBills.html"></div>
+		
+		<!-- 凭证页面 -->
+		<div id="fa_operate_dsign"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="742" height="490" title="填制凭证"
+			src="../dsign/fa_index.html"></div>
+			
+		<!-- 凭证页面.未保存凭证提示窗 -->
+		<div id="fa_dsign_saveremind"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="464" height="279" title="未保存凭证提"
+			src="../dsign/fa_dsign_saveremind.html"></div>
+			
+	
+		<!-- 凭证页面.辅助核算项 auxiliaryoptions.html -->
+		<div id="dsign_auxiliaryoptions"
+			style="margin-left: 150px;margin-top: 120px; padding: auto; display: none;"
+			type="window" width="410" height="220" title="辅助项"
+			src="../dsign/auxiliaryoptions.html" closeable="false"></div>
+			
+	
+	<!--项目档案 参照 -->
+	<div id="basic_comref_fitemref"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="项目档案参照"
+		src="../basic/comref/fitemref.html"></div>
+	
+		<!-- 部门参照 -->
+	<div id="basic_comref_dptref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/dptref.html"></div>	
+	<!-- 部门档案-列表显示 -->
+	<div id="basic_grid_departmentGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="部门档案"
+		src="../basic/comref/departmentGridRef.html"></div>
+	
+	<!-- 个人参照 -->
+	<div id="basic_comref_personref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/personref.html"></div>
+	
+	<!-- 客户参照 -->
+	<div id="basic_comref_cusref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/cusref.html"></div>
+	
+	<!-- 供应商参照 -->
+	<div id="basic_comref_supref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/supref.html"></div>			
+		
+		
+			<!-- 结算方式参照 -->
+	<div id="basic_comref_settlestyleGridRef"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="550" height="370" title="参照"
+		src="../basic/comref/settlestyleGridRef.html"></div>			
+		
+	
+	
+		<!-- 月末结账 -->
+		<div id="fa_operate_endMonthAccount"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="450" height="265" title="月末结账"
+			src="../fa/operate/endMonthAccount.html"></div>
+		
+	
+	
+	<!-- 处理相关窗体 结束 -->
+	
+		<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+	<!-- alert和confirm 警告窗口  结束-->
+	
+	
+	
+	
+	
+	
+		<!-- 我的账表 -->
+		<div id="fa_stists_mystists"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="398" title="我的账表"
+		src="../fa/stists/mystists.html"></div>
+		
+	
+	
+	
+		<!-- 固定资产使用状况分析表 期间选择 -->
+		<div id="fa_stists_analyze_gdzcsyzkfxb_tj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="332" height="129" title="期间选择"
+		src="../fa/stists/analyze/gdzcsyzkfxb_tj.html"></div>
+		
+		<!-- 固定资产使用状况分析表 -->
+		<div id="fa_stists_analyze_gdzcsyzkfxb"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="固定资产使用状况分析表"
+		src="../fa/stists/analyze/gdzcsyzkfxb.html"></div>
+		
+	
+	
+	
+		<!-- 固定资产统计 条件 -->
+		<div id="fa_stists_statistics_gdzctj_tj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="286" height="259" title="固定资产统计 条件"
+		src="../fa/stists/statistics/gdzctj_tj.html"></div>
+		
+		<!--  固定资产统计表 -->
+		<div id="fa_stists_statistics_gdzctj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="固定资产统计"
+		src="../fa/stists/statistics/gdzctj.html"></div>
+		
+	
+	
+	
+	
+		<!-- 固定资产总账 条件 -->
+		<div id="fa_stists_account_gdzczz_tj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="356" height="165" title="固定资产总账 条件"
+		src="../fa/stists/account/gdzczz_tj.html"></div>
+		
+		<!--  固定资产总账表 -->
+		<div id="fa_stists_account_gdzczz"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="固定资产总账"
+		src="../fa/stists/account/gdzczz.html"></div>
+		
+		
+		
+		
+		<!-- (单个)固定资产明细账 条件 -->
+		<div id="fa_stists_account_dggdzcmxz_tj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="380" height="245" title="(单个)固定资产明细账 条件"
+		src="../fa/stists/account/dggdzcmxz_tj.html"></div>
+		
+		<!--  (单个)固定资产明细账表 -->
+		<div id="fa_stists_account_dggdzcmxz"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="(单个)固定资产明细账"
+		src="../fa/stists/account/dggdzcmxz.html"></div>
+		
+		
+		
+		
+		
+		
+		<!-- (部门)折旧计提汇总表 条件 -->
+		<div id="fa_stists_depreciation_bmljzjjthzb_tj"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="278" height="170" title="(部门)折旧计提汇总表  条件"
+		src="../fa/stists/depreciation/bmljzjjthzb_tj.html"></div>
+		
+		<!-- (部门)折旧计提汇总表 -->
+		<div id="fa_stists_depreciation_bmljzjjthzb"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="800" height="553" title="(部门)折旧计提汇总表 "
+		src="../fa/stists/depreciation/bmljzjjthzb.html"></div>
+		
+		
+		
+	
+</div>
+<!-- 窗体容器 结束 -->
+
+
+
+
+
+
+
+
+
+
+ <div class="topbar">
+ 
+ 	<span></span>
+ 	
+	<div onclick="">
+		<span></span>
+		卡片项目
+	</div>
+	
+	<div onclick="openWindow('fa_setting_assetsClass');">
+		<span></span>
+		资产类别
+	</div>
+		
+	<div onclick="openWindow('fa_setting_plusSubWay');">
+		<span></span>
+		增减方式
+	</div>
+		
+	<div onclick="openWindow('fa_setting_zhejiuMethod');">
+		<span></span>
+		折旧方法定义
+	</div>
+		
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ <div class="flowchart">
+ 
+ 	
+ 	
+ 	<a style="margin-top:175px;margin-left:20px;" href="javascript:to_card(0);" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_YSKPLR.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_YSKPLR-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_YSKPLR.jpg'"
+ 		/><br/>
+ 		原始卡片录入
+ 	</a>
+ 	
+ 	<a style="margin-top:40px;margin-left:165px;" href="javascript:to_card(1);" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_ZCZJ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_ZCZJ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_ZCZJ.jpg'"
+ 		/><br/>
+ 		资产增加
+ 	</a>
+ 	
+ 
+ 	<a style="margin-top:135px;margin-left:165px;" onclick="isCardReduce()" href="#" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_ZJCS.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_ZJCS-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_ZJCS.jpg'"
+ 		/><br/>
+ 		资产减少
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:240px;margin-left:165px;" href="javascript:fa_assetschange_filter();" onContextmenu="showFloatMenu('floatmenu',{left:'180px',top:'280px',width:'120px'});return false;" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_ZCBD.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_ZCBD-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_ZCBD.jpg'"
+ 		/><br/>
+ 		资产变动
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:345px;margin-left:165px;" href="#" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_ZCPG.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_ZCPG-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_ZCPG.jpg'"
+ 		/><br/>
+ 		资产评估
+ 	</a>
+ 
+ 
+ 
+ 	<a style="margin-top:50px;margin-left:308px;" href="#" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_GZLLR.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_GZLLR-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_GZLLR.jpg'"
+ 		/><br/>
+ 		工作量录入
+ 	</a>
+ 	
+ 
+ 
+ 
+ 	
+ 	<a style="margin-top:175px;margin-left:300px;" onclick="doload()" href="#" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_JTBYZJ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_JTBYZJ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_JTBYZJ.jpg'"
+ 		/><br/>
+ 		计提本月折旧
+ 	</a>
+ 
+ 	
+ 	
+ 	<a style="margin-top:175px;margin-left:420px;" href="javascript:window.parent.fa_batchCreateBills_filter()" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_PLZD.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_PLZD-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_PLZD.jpg'"
+ 		/><br/>
+ 		批量制单
+ 	</a>
+ 
+ 	
+ 	
+ 	<a style="margin-top:175px;margin-left:530px;" href="javascript:window.parent.fa_jtbyzj_filter();" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg'"
+ 		/><br/>
+ 		月末结账
+ 	</a>
+ 
+ 	
+ 	
+ 	
+ 	<a style="margin-top:175px;margin-left:630px;" href="javascript:openWindow('fa_card_cardmanager');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/FA_KPGL.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/FA_KPGL-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/FA_KPGL.jpg'"
+ 		/><br/>
+ 		卡片管理
+ 	</a>
+ 
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	<div>
+ 		<img src="../../images/portal/CWork/ImageList1/FA1024.gif"/>
+ 	</div>
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ 
+ <div class="footpanel">
+ 
+	 <div class="actionList">
+	
+	
+		<div onclick="openWindow('');">
+			<div></div>
+			我的工作台
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			固定资产折旧明细表
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			固定资产明细账
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			固定资产原值一览表
+		</div>
+			
+		<div onclick="jAlert('');">
+			<div></div>
+			固定资产总账
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			固定资产统计表
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			部门折旧计提汇总表
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			役龄资产统计表
+		</div>
+			
+			
+	 </div>
+ 
+ </div>
+ 
+
+
+
+
+<ul id="floatmenu" class="floatmenu" style="display:none;">
+	<li onclick="openWindow('fa_card_assetschange');window.parent.fa_ac_action=1;">原值增加</li>
+	<li onclick="openWindow('fa_card_assetschange');window.parent.fa_ac_action=2;">原值减少</li>
+	<li onclick="openWindow('fa_card_assetschange');window.parent.fa_ac_action=3;">部门转移</li>
+	<li onclick="openWindow('fa_card_assetschange');window.parent.fa_ac_action=4;">使用状况变动</li>
+	<li onclick="openWindow('fa_card_changebills');">变动单管理</li>
+	
+</ul>
+
+
+
+ 
+</body>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+</html>

@@ -1,0 +1,1153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>批量制单</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<style type="text/css">
+		.normalInput{width:200px;}
+		.normalInput1{width:180px;}
+		#topSelect {width:110px;}
+		.table_style tbody tr {background-color:#cccccc;}
+		.table_style thead tr td{background-color:#cccccc;}
+    	.table_style tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;}
+    	
+		.table_header {border-collapse:collapse;cursor:default;font-size:12px;}
+		.table_header tr {background-color:#cccccc;height:26px;}
+		.table_header td {padding:0px;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+		
+		.table_bodyer {border-collapse:collapse;cursor:default;font-size:12px;}
+		.table_bodyer tr {background-color:#cccccc;height:50px;}
+		.table_bodyer td {padding:0px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;}
+		#scroll_righter td {background-color:#FFF;}
+		
+	</style>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript">
+		//表格滚动条处理
+		function tableScroll(container){
+			var scroll_header = document.getElementById("scroll_header");
+			var scroll_lefter = document.getElementById("scroll_lefter");
+			scroll_header.style.marginLeft = "-"+parseInt(container.scrollLeft)+"px";
+			scroll_lefter.style.marginTop = "-"+parseInt(container.scrollTop)+"px";
+		}
+		/*选中记录*/
+	   function dbClick(el){
+		   if($(el).html()!="Y"){
+		       $(el).html("Y");
+		   }else{
+			   $(el).html("");
+		   }
+	   }
+		/**
+		* 节点单击事件
+		* @param event
+		* @param treeId 树id
+		* @param treeNode jied
+		* @param clickFlag
+		*/
+		function onClick(event, treeId, treeNode, clickFlag) {
+			$("#way").val("减少方式等等");
+			$("#name").val(treeNode.name);
+		     var str = "<tr><td>"+treeNode.name+"</td><td>"+treeNode.name+"，折旧费</td></tr>";
+		  $("#datatable_1 tbody").html(str);
+		}	
+		/*初始化数据*/
+		function findFaZwvouchers(obj){
+			$.post("faZwvouchers!findFaZwvouchersList",function(jsonData){
+				var strHtml = "";
+				for(var i=0;i<jsonData.listFaZwvouchers.length;i++){
+					strHtml+="<tr coutnoId = '"+jsonData.listFaZwvouchers[i].coutnoId+"' coutbillsign='"+jsonData.listFaZwvouchers[i].coutbillsign+"' coutsign='"+jsonData.listFaZwvouchers[i].coutsign+"'>";
+					strHtml+="	<td style='height:50px;width:15px;'>"+(i+1)+"</td>";
+					strHtml+="	<td style='height:50px'>"+jsonData.listFaZwvouchers[i].doutdate+"</td>";
+					strHtml+="	<td style='height:50px'>"+jsonData.listFaZwvouchers[i].coutsign+"</td>";
+					strHtml+="	<td style='height:50px'>"+jsonData.listFaZwvouchers[i].coutbillsign+"</td>";
+					strHtml+="	<td style='height:50px'>"+jsonData.listFaZwvouchers[i].coutnoId+"</td>";
+					strHtml+="	<td style='height:50px; text-align:right'>"+jsonData.listFaZwvouchers[i].md+"</td>";
+					strHtml+="	<td style='height:50px; background-color:#FFF'></td>";
+					strHtml+="	<td onDblClick='dbClick(this)' style='height:50px; background-color:#FFF; text-align:center; vertical-align:middle; color:#F00;'></td>";
+					strHtml+="</tr>";
+				}
+				if(jsonData.listFaZwvouchers.length==0){
+					/*设置按钮是否可用*/
+					$("#checkAll").attr("disabled",true);
+					$("#cancelAll").attr("disabled",true);
+					$("#delete").attr("disabled",true);
+				}
+				$("#datatable_1_bodyer").empty();
+				$("#datatable_1_bodyer").append(strHtml);
+				/*下拉列表中清空并设置不可用*/
+				$("#topSelect").empty().attr("disabled","true");
+				/*制单设置设置成不可用*/
+				//winui.tab.setDisabled(1,true);
+				
+				if(obj!=null){
+					$("#datatable_1_bodyer >tr").each(function(){
+						var coutnoId = $(this).attr("coutnoId");
+						var coutsign = $(this).attr("coutsign");
+						var flag = false;
+						for(var i=0;i<obj.length;i++){
+							if(coutnoId==obj[i].coutnoId&&coutsign==obj[i].coutsign){
+								flag=true;
+							}
+						}
+						if(flag){
+							$(this).find("td").eq(7).text("Y");
+						}
+					});
+				}
+			},"json").error(function(){
+				jAlert("请求失败！");
+			});
+		}
+		/*根据业务号和业务类型查找数据*/
+		function findFaZwvouchersBy(coutnoId,coutsign){
+			$.ajax({
+				url:"faZwvouchers!findFaZwvouchersListBy",
+				data:{coutnoId:coutnoId,coutsign:coutsign},
+				type:"post",
+				datatype:"json",
+				async:false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success:function(jsonData){
+					var strHtml = "";
+					var strHtmlRighter = "";
+					for(var i=0;i<jsonData.listFaZwvouchers.length;i++){
+						strHtml+="<tr coutnoId = '"+jsonData.listFaZwvouchers[i].coutnoId+"' >";
+						strHtml+="	<td style='height:50px;width:32px;text-align:center'>"+(i+1)+"</td>";
+						strHtml+="	<td style='height:50px;width:68px;'>"+jsonData.listFaZwvouchers[i].doutdate+"</td>";
+						strHtml+="	<td style='height:50px;width:68px;'>"+jsonData.listFaZwvouchers[i].coutsign+"</td>";
+						strHtml+="	<td style='height:50px;width:68px;'>"+jsonData.listFaZwvouchers[i].coutbillsign+"</td>";
+						strHtml+="	<td style='height:50px;width:68px;'>"+jsonData.listFaZwvouchers[i].coutnoId+"</td>";
+						if(jsonData.listFaZwvouchers[i].md>0){
+							strHtml+="	<td style='height:50px;width:68px;text-align:center'>借</td>";
+							strHtml+="	<td style='height:50px; text-align:right;width:68px;'>"+jsonData.listFaZwvouchers[i].md+"</td>";
+						}else{
+							strHtml+="	<td style='height:50px;width:68px;text-align:center'>贷</td>";
+							strHtml+="	<td style='height:50px; text-align:right;width:68px;'>"+jsonData.listFaZwvouchers[i].mc+"</td>";
+						}
+						var ccode = jsonData.listFaZwvouchers[i].ccode;
+						//部门id
+						var cdeptId=jsonData.listFaZwvouchers[i].cdeptId;
+						//部门编码
+						var cdeptcode="";
+						//项目id
+						var citemId=jsonData.listFaZwvouchers[i].citemId;
+						//项目编码
+						var citemcode="";
+						//项目大类id
+						var classitemid = jsonData.listFaZwvouchers[i].citemClass;
+						//项目大类编码
+						var cassItem = "";
+						//客户id
+						var ccusId=jsonData.listFaZwvouchers[i].ccusId;
+						//客户编码
+						var ccuscode="";
+						//供应商id
+						var csupId=jsonData.listFaZwvouchers[i].csupId;
+						//供应商编码
+						var csupcode="";
+						//职员id
+						var cpersonId=jsonData.listFaZwvouchers[i].cpersonId;
+						//职员编码
+						var cpersoncode="";
+						//部门核算标志
+						var departmentAccountingFlag = 0;
+						//项目核算标志
+						var itemAccountingFlag = 0;
+						//客户核算标志
+						var customerAccountingFlag = 0;
+						//供应商核算标志
+						var vendorAccountingFlag = 0;
+						//个人往来核算标志
+						var personAccountingFlag = 0;
+						if(ccode!=null&&ccode!=""){
+							var code = getCodeNameBy(ccode);
+							ccode = ccode+" "+code.ccodeName;
+							//部门编码
+							if(code.bdept==1&&cdeptId!=""&&cdeptId!=null){
+								var department = getDepartmentNameBy(cdeptId);
+								if(department!=null){
+									cdeptcode = department.cdepcode+" "+department.cdepname;	
+								}else{
+									cdeptId="";
+									cdeptcode="";
+								}
+							}else{
+								cdeptId="";
+								cdeptcode="";
+							}
+							departmentAccountingFlag=code.bdept;
+							//项目编码
+							if(code.bitem==1&&citemId!=""&&citemId!=null){
+								var itemclass = getItemNameBy(citemId);
+								//怎样查出项目名称
+								citemcode=itemclass.column1+" "+itemclass.column2;
+								//项目大类id加项目小类id
+								citemId=classitemid+","+citemId;
+							}else{
+								citemId="";
+								citemcode="";
+							}
+							itemAccountingFlag = code.bitem;
+							//项目大类编码
+							if(code.cassItem!=null){
+								cassItem = code.cassItem;	
+							}
+							//客户编码
+							if(code.bcus==1&&ccusId!=""&&ccusId!=null){
+								var customer = getCusNameBy(ccusId);
+								if(customer!=null){
+									ccuscode=customer.ccuscode+" "+customer.ccusname;
+								}else{
+									ccusId="";
+									ccuscode="";
+								}
+							}else{
+								ccusId="";
+								ccuscode="";
+							}
+							customerAccountingFlag = code.bcus
+							//供应商编码
+							if(code.bsup==1&&csupId!=""&&csupId!=null){
+								var vendor = getSupNameBy(csupId);
+								if(vendor!=null){
+									csupcode=vendor.cvencode+" "+vendor.cvenname;
+								}else{
+									csupId="";
+									csupcode="";
+								}
+								
+							}else{
+								csupId="";
+								csupcode="";
+							}
+							vendorAccountingFlag = code.bsup;
+							//职员编码
+							if(code.bperson==1&&cpersonId!=""&&cpersonId!=null){
+								var person = getPersonNameBy(cpersonId);
+								if(person!=null){
+									cpersoncode=person.cpersoncode+" "+person.cpersonname;
+								}else{
+									cpersonId="";
+									cpersoncode="";
+								}
+							}else{
+								cpersonId="";
+								cpersoncode="";
+							}
+							personAccountingFlag = code.bperson;
+						}else{
+							ccode="";
+							//部门编码
+							cdeptcode="";
+							//项目编码
+							citemId="";
+							//客户编码
+							ccusId="";
+							//供应商编码
+							csupId="";
+							//职员编码
+							cpersonId="";
+						}
+						strHtml+="</tr>";
+						strHtmlRighter+=" <tr>";
+						strHtmlRighter+="	<td faZwvouchersId="+jsonData.listFaZwvouchers[i].id+" currentId='' style='height:50px; background-color:#FFF;width:100px' ondblclick='dbclick(0,this)'>"+ccode+"</td>";
+						strHtmlRighter+="	<td style='height:50px; background-color:#FFF;width:100px' currentId='"+cdeptId+"' ifflag = "+departmentAccountingFlag+" ondblclick='dbclick(1,this)'>"+cdeptcode+"</td>";
+						strHtmlRighter+="	<td style='height:50px; background-color:#FFF;width:100px' currentId='"+citemId+"' ifflag = "+itemAccountingFlag+" cassItem ='"+cassItem+"' ondblclick='dbclick(2,this)'>"+citemcode+"</td>";
+						strHtmlRighter+="	<td style='height:50px; background-color:#FFF;width:100px' currentId='"+ccusId+"' ifflag = "+customerAccountingFlag+" ondblclick='dbclick(3,this)'>"+ccuscode+"</td>";
+						strHtmlRighter+="	<td style='height:50px; background-color:#FFF;width:100px' currentId='"+csupId+"' ifflag = "+vendorAccountingFlag+" ondblclick='dbclick(4,this)'>"+csupcode+"</td>";
+						strHtmlRighter+="	<td style='height:50px; background-color:#FFF;width:100px' currentId='"+cpersonId+"' ifflag = "+personAccountingFlag+" ondblclick='dbclick(5,this)'>"+cpersoncode+"</td>";
+						strHtmlRighter+=" </tr>";
+					}
+					//左侧不能动
+					$("#scroll_lefter").empty().append(strHtml);
+					//右侧可以动
+					$("#scroll_righter").empty().append(strHtmlRighter);
+					
+					$("#topSelect").val(coutnoId+""+coutsign);
+					setUsedState();
+				}
+			});
+		}
+		//根据会计科目的编码找到科目
+		function getCodeNameBy(code){
+			var codeClass=null;
+			$.ajax({
+			    url: "code!queryAbsNameCode?ccode="+code,
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	codeClass = data.code1;
+			    }
+			  });
+			return codeClass;
+		}
+		//根据部门id获取部门名称
+		function getDepartmentNameBy(departmentid){
+			var department=null;
+			$.ajax({
+			    url: "department!findDepartmentById",
+			    data:"department.id="+departmentid,
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	department = data.department;
+			    }
+			  });
+			return department;
+		}
+		//根据项目id获取项目名称
+		function getItemNameBy(itemid){
+			var itemClass=null;
+			$.ajax({
+			    url: "fitem!findFitemssesById",
+			    data:{fitemssId:itemid},
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	itemClass = data.fitemss2;
+			    }
+			  });
+			return itemClass;
+		}
+		//根据客户id获取客户名称
+		function getCusNameBy(cusid){
+			var customer=null;
+			$.ajax({
+			    url: "customer!queryOneCustomerById",
+			    data:"customer.id="+cusid,
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	customer = data.customer;
+			    }
+			  });
+			return customer;
+		}
+		//根据供应商id获取供应商名称
+		function getSupNameBy(supid){
+			var vendor=null;
+			$.ajax({
+			    url: "vendor!queryVendorById",
+			    data:"vendor.id="+supid,
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	vendor = data.vendor;
+			    }
+			  });
+			return vendor;
+		}
+		//根据职员id获取职员名称
+		function getPersonNameBy(personid){
+			var person=null;
+			$.ajax({
+			    url: "person!findPersonById",
+			    data:"person.id="+personid,
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	person = data.person;
+			    }
+			  });
+			return person;
+		}
+		//根据科目查找项目参照
+		function findItem(code){
+			var codeClass = getCodeNameBy(code);
+			var cassItem=codeClass.cassItem;
+			if(cassItem==null){
+				jAlert("此项目核算科目没有指定项目大类!");
+			}else{
+				var itemParam = {};
+				itemParam.cassItem = cassItem;
+				window.parent.openWindow("basic_comref_fitemref","fa_operate_batchCreateBills",itemParam);
+			}
+		}
+		//参照返回值防止位置
+		var xaction = 0;
+		//制单设置吧表格中的科目双击事件  设置成可编辑状态  引用科目表
+		function dbclick(index,even){
+			if($(even).find("input").length>0){
+				return;
+			}
+			xaction = index;
+			//var codeClass = null;
+			if(index!=0){
+				//如果不是科目这一列则获取科目对象
+				var currentCode = $(even).parent().find("td:first").text();
+				/*
+				if(currentCode!=""){
+					currentCode=currentCode.substring(0,currentCode.indexOf(" "));
+					codeClass = getCodeNameBy(currentCode);
+				}else{
+					return;
+				}
+				*/
+				if(currentCode==""){
+					return;
+				}
+			}
+			var flag = $(even).attr("ifflag");
+			//是否部门核算等 1:是  0:否
+			var showname = $(even).text();
+			if(showname!=""){
+				showname=showname.substring(0,showname.indexOf(" "));
+			}
+			switch(index){
+				case 0:
+					//科目
+					if($(even).find("input").length==0){
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" onfocus='dofocustoenter(\"code\",this,\"\",\"\",\"\",\"\")' showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_ssubjectnumButton' class='finder' style='margin-top:28px;' type='button' onclick=\"openSubjectsreference()\"/></div>");
+						$("#faOriginsInput").focus();
+					}
+					break;
+				case 1:
+					//部门核算
+					if(flag==1){
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" onfocus=\"dofocustoenter('Department',this,'','','','')\" showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_departmentButton' class='finder' style='margin-top:28px;' type='button' onclick='window.parent.openWindow(\"basic_grid_departmentGridRef\",\"fa_operate_batchCreateBills\");'/></div>");
+						$("#faOriginsInput").focus();
+					}
+					break;
+				case 2:
+					//项目核算
+					//项目大类编码
+					var cassItem = $(even).attr("cassItem");
+					if(flag==1&&cassItem!=""){
+						//如果不是科目这一列则获取科目对象
+						var currentCode = $(even).parent().find("td:first").text();
+						currentCode=currentCode.substring(0,currentCode.indexOf(" "));
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" readonly='readonly' showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_departmentButton' class='finder' style='margin-top:28px;' type='button' onclick='findItem("+currentCode+")'/></div>");
+						//$("#faOriginsInput").focus();
+					}
+					break;
+				case 3:
+					//客户往来
+					if(flag==1){
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" onfocus=\"dofocustoenter('Customer',this,'','','','')\" showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_customerButton' class='finder' style='margin-top:28px;' type='button' onclick='window.parent.openWindow(\"basic_comref_cusref\",\"fa_operate_batchCreateBills\");'/></div>");
+						$("#faOriginsInput").focus();
+					}
+					break;
+				case 4:
+					//供应商往来
+					if(flag==1){
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" onfocus=\"dofocustoenter('Vendor',this,'','','','')\" showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_vendorButton' class='finder' style='margin-top:28px;' type='button' onclick='window.parent.openWindow(\"basic_comref_supref\",\"fa_operate_batchCreateBills\");'/></div>");
+						$("#faOriginsInput").focus();
+					}
+					break;
+				case 5:
+					//个人往来
+					if(flag==1){
+						$(even).html("<input id='faOriginsInput' currentId='' currentIndex ="+index+" onfocus=\"dofocustoenter('Person',this,'','','','')\" showname='"+$(even).text()+"'  type='text' style='width:60px;height:48px;border:none;font-size:12px;margin:0px;' value='"+showname+"' /><div style='width:20px;height:50px;border:none;float:right;'><input id='faOrigins_personButton' class='finder' style='margin-top:28px;' type='button' onclick='window.parent.openWindow(\"basic_comref_personref\",\"fa_operate_batchCreateBills\");'/></div>");
+						$("#faOriginsInput").focus();
+					}
+					break;
+			}
+			//单击其他的td关闭打编辑状态的表格
+			$("#scroll_righter").find("td").unbind("click").bind("click",function(){
+				if($(this).find("input").length==0){
+					updateInput($("#faOriginsInput")[0]);
+				}
+			});
+			$("#scroll_lefter").find("td").unbind("click").bind("click",function(){
+				if($(this).find("input").length==0){
+					updateInput($("#faOriginsInput")[0]);
+				}
+			});
+
+		}
+		//打开科目参照窗体
+		function openSubjectsreference(){
+			var param = new Object();
+			param.treeSetting=new Object();
+			param.treeSetting.justFinalNode=true;//限定弹出的科目参照窗体只允许选择末级节点
+			window.parent.openWindow('dsign_subjectsreference','fa_operate_batchCreateBills',param);
+		}
+		
+		//更新数据
+		function updateInput(even){
+			$("#scroll_righter").find("td").unbind("click");
+			$("#scroll_lefter").find("td").unbind("click")
+			
+			var currentCode = $(even).val();
+			var index = $(even).attr("currentIndex");
+			//选择科目后设置是否辅助核算
+			if(index==0&&currentCode!=""){
+				var currenttds = $(even).parent().parent().find("td");
+				var codeClass = getCodeNameBy(currentCode);
+				currenttds.eq(1).attr("ifflag",codeClass.bdept);
+				currenttds.eq(2).attr("ifflag",codeClass.bitem);
+				currenttds.eq(3).attr("ifflag",codeClass.bcus);
+				currenttds.eq(4).attr("ifflag",codeClass.bsup);
+				currenttds.eq(5).attr("ifflag",codeClass.bperson);
+				if(codeClass.cassItem==null){
+					currenttds.eq(2).attr("cassItem","");
+				}else{
+					currenttds.eq(2).attr("cassItem",codeClass.cassItem);
+				}
+				
+				//清空内容
+				if(codeClass.bdept==0){
+					currenttds.eq(1).attr("currentId","").text("");
+				}
+				if(codeClass.bitem==0){
+					currenttds.eq(2).attr("currentId","").text("");
+				}
+				if(codeClass.bcus==0){
+					currenttds.eq(3).attr("currentId","").text("");
+				}
+				if(codeClass.bsup==0){
+					currenttds.eq(4).attr("currentId","").text("");
+				}
+				if(codeClass.bperson==0){
+					currenttds.eq(5).attr("currentId","").text("");
+				}
+			}
+			var showname = $(even).attr("showname");
+			$(even).parent().html(showname).attr("currentId",$(even).attr("currentId"));
+		}
+		//接收科目编码弹窗返回值
+		function deliverValue(param){
+			var id = "";
+			var showname = "";
+			var inputname = "";
+			switch(xaction){
+				case 0:
+					showname = param.selKemuCode+" "+param.selKemuName;
+					inputname = param.selKemuCode;
+					break;
+				case 1:
+					id = param.id;
+					showname = param.ccode+" "+param.cname;
+					inputname = param.ccode;
+					break;
+				case 2:
+					//项目大类id+项目id
+					id=param.citemClass+","+param.citemId;
+					showname = param.gradecode+" "+param.gradename;
+					inputname = param.gradecode;
+					break;
+				case 3:
+					id = param.id;
+					showname = param.ccode+" "+param.cname;
+					inputname = param.ccode;
+					break;
+				case 4:
+					id = param.id;
+					showname = param.ccode+" "+param.cname;
+					inputname = param.ccode;
+					break;
+				case 5:
+					id = param.id;
+					showname = param.ccode+" "+param.cname;
+					inputname = param.ccode;
+					break;
+			}
+			$("#faOriginsInput").val(inputname).attr("showname",showname).attr("currentId",id);
+			$("#faOriginsInput").focus();
+		}
+		//删除单据
+		function deleteFaZwvouchers(){
+			var coutnoIds = "";
+			var checkFlag = "";
+			//业务类型
+			var coutsign="";
+			var len = 0;
+			$("#datatable_1_bodyer >tr").each(function(){
+				checkFlag = $(this).find("td:last").html();
+				if(checkFlag=="Y"){
+					len++;
+					coutnoIds=$(this).attr("coutnoId");
+					coutsign = $(this).attr("coutsign");
+				}
+			});
+			/*
+			$("#datatable_1_bodyer >tr").each(function(index){
+				checkFlag = $(this).find("td:last").html();
+				if(checkFlag=="Y"){
+					if(len==(index+1)){
+						coutnoIds+=$(this).attr("coutnoId");
+					}else{
+						coutnoIds+=$(this).attr("coutnoId")+",";
+					}
+				}
+			});
+			*/
+			if(len>1){
+				jAlert("只能选择一条记录删除!");
+				return;
+			}else if(coutsign=="资产减少"){
+				jAlert("不能对资产减少进行删除操作！如有必要请在卡片管理中进行撤销减少操作。");
+				return;
+			}
+			if(coutnoIds==""){
+				jAlert("请选择要删除的单据。");
+			}else{
+				var html="主意:此处删除是指从待制单业务中清除。<br>是否要删除"+coutsign+"["+coutnoIds+"]";
+				jConfirm(html, '确认对话框', function(confirmflag){
+					if(confirmflag){
+						//删除按钮不可用
+						$("#delete").attr("disabled",true);
+						$.ajax({
+							url:"faZwvouchers!deleteFaZwvouchers",
+							data:{coutnoIds:coutnoIds,coutsign:coutsign},
+							datatype:"json",
+							type:"post",
+							async:false,
+							error:function(){
+								jAlert("请求失败！");
+								//删除按钮可用
+								$("#delete").attr("disabled",false);
+							},
+							success:function(){
+								//删除按钮可用
+								$("#delete").attr("disabled",false);
+								/*重新查询一遍*/
+								findFaZwvouchers();
+							}
+						});
+					}
+				});
+			}
+		}
+		/*设置上页下页按钮的可用状态*/
+		function setUsedState(){
+			if(typeof($("#topSelect >option:selected").next().val())=="undefined"){
+				$("#next").attr("disabled","true");
+				$("#end").attr("disabled","true");
+			}else{
+				$("#next").removeAttr("disabled");
+				$("#end").removeAttr("disabled");
+			}
+			if(typeof($("#topSelect >option:selected").prev().val())=="undefined"){
+				$("#first").attr("disabled","true");
+				$("#previous").attr("disabled","true");
+			}else{
+				$("#first").removeAttr("disabled");
+				$("#previous").removeAttr("disabled");
+			}
+		}
+		/*设置单据*/
+		function setfaZwvouchers(){
+			var checkFlag = "";
+			var len = $("#datatable_1_bodyer >tr").length;
+			var selectHtml = "";
+			if(len>0){
+				len=0;
+				$("#datatable_1_bodyer >tr").each(function(){
+					checkFlag = $(this).find("td:last").html();
+					if(checkFlag=="Y"){
+						selectHtml+="<option value="+$(this).attr("coutnoId")+$(this).attr("coutsign")+" currentValue ="+$(this).attr("coutnoId")+"  coutsign="+$(this).attr("coutsign")+">"+$(this).attr("coutnoId")+" "+$(this).attr("coutsign")+"</option>";
+						len++;
+					}
+				});
+			}
+			if(len>0){
+				/*下拉列表中增加选项*/
+				$("#topSelect").empty().append(selectHtml).removeAttr("disabled");
+				/*制单设置设置成可用*/
+				//winui.tab.setDisabled(1,false);
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:first").attr("coutsign"));
+				
+				/*设置按钮是否可用*/
+				$("#checkAll").attr("disabled","true");
+				$("#cancelAll").attr("disabled","true");
+				$("#delete").attr("disabled","true");
+				$("#makeBill").removeAttr("disabled");
+				$("#save").removeAttr("disabled");
+				return true;
+			}else{
+				return false;
+			}
+		}
+		/*制单选则*/
+		function choseFaZwvouchers(){
+			var selectHtml = "";
+			selectHtml+="<option></option>";
+			$("#topSelect").empty().append(selectHtml).attr("disabled","true");
+			
+			/*设置按钮是否可用*/
+			$("#checkAll").removeAttr("disabled");
+			$("#cancelAll").removeAttr("disabled");
+			$("#delete").removeAttr("disabled");
+			$("#makeBill").attr("disabled","true");
+			$("#save").attr("disabled","true");
+			
+			$("#first").attr("disabled","true");
+			$("#previous").attr("disabled","true");
+			$("#next").attr("disabled","true");
+			$("#end").attr("disabled","true");
+		}
+		//程序入口
+		$(document).ready(function(){
+			Initialization(null);
+		});
+		//是否检查完的标志
+		var checklengthflag = 0;
+		//初始化数据
+		function Initialization(data){
+			findFaZwvouchers(data);
+			//初始化tab页
+			winui_tab_init();
+			//显示第一个
+			winui.tab.showIndex(0);
+			/*启用选项卡*/
+			winui.tab.setDisabled(0,false);
+			//设置制单选择
+			choseFaZwvouchers();
+			
+			//alert("制单设置要改上下结构");
+			$("#checkAll").bind("click",function(){
+				var len = $("#datatable_1_bodyer >tr").length;
+				$("#datatable_1_bodyer >tr").each(function(){
+					$(this).find("td:last").html("Y");
+				});
+			});
+			$("#cancelAll").bind("click",function(){
+				$("#datatable_1_bodyer >tr").each(function(){
+					$(this).find("td:last").html("");
+				});
+			});
+			$("#makeBill").attr("disabled","false");
+			$("#save").attr("disabled","false");
+			$("#pagination :input").attr("disabled","false");
+			/*为删除按钮添加事件*/
+			$("#delete").bind("click",function(){
+				deleteFaZwvouchers();
+			});
+			/*下拉列表框改变事件*/
+			$("#topSelect").bind("change",function(){
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+				
+			});
+			/*退出按钮事件  关闭窗体*/
+			$("#exit").bind("click",function(){
+				window.parent.closeWindow('fa_operate_batchCreateBills');
+			});
+			$("#first").bind("click",function(){
+				$("#topSelect").val($("#topSelect >option:first").val());
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+				
+			});
+			$("#previous").bind("click",function(){
+				$("#topSelect").val($("#topSelect >option:selected").prev().val());
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+				
+			});
+			$("#next").bind("click",function(){
+				$("#topSelect").val($("#topSelect >option:selected").next().val());
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+				
+			});
+			$("#end").bind("click",function(){
+				$("#topSelect").val($("#topSelect >option:last").val());
+				findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+				
+			});
+			//保存按钮点击事件
+			$("#save").bind("click",function(){
+				updateInput($("#faOriginsInput")[0]);
+				var flag = checksave();
+				if(!flag){
+					return;
+				}
+				var strPram = "";
+				$("#scroll_righter >tr").each(function(index){
+					var id = $(this).find("td").eq(0).attr("faZwvouchersId");
+					//科目
+					var ccode=$(this).find("td").eq(0).text();
+					//部门编码
+					var cdeptId=$(this).find("td").eq(1).attr("currentId");
+					
+					var itemIds = $(this).find("td").eq(2).attr("currentId");
+					//项目编码
+					var citemId="";
+					//项目大类id
+					var citemClass ="";	
+					if(itemIds!=""){
+						//项目编码
+						itemIds = itemIds.split(",");
+						citemClass =itemIds[0];
+						citemId=itemIds[1];
+					}
+					//客户编码
+					var ccusId=$(this).find("td").eq(3).attr("currentId");
+					//供应商编码
+					var csupId=$(this).find("td").eq(4).attr("currentId");
+					//职员编码
+					var cpersonId=$(this).find("td").eq(5).attr("currentId");
+					
+					ccode = ccode.substring(0,ccode.indexOf(" "));
+					
+					strPram +="&listFaZwvouchers["+index+"].id="+id;
+					strPram +="&listFaZwvouchers["+index+"].ccode="+ccode;
+					strPram +="&listFaZwvouchers["+index+"].cdeptId="+cdeptId;
+					strPram +="&listFaZwvouchers["+index+"].citemId="+citemId;
+					strPram +="&listFaZwvouchers["+index+"].citemClass="+citemClass;
+					strPram +="&listFaZwvouchers["+index+"].ccusId="+ccusId;
+					strPram +="&listFaZwvouchers["+index+"].csupId="+csupId;
+					strPram +="&listFaZwvouchers["+index+"].cpersonId="+cpersonId;
+				});
+				strPram = strPram.substr(1);
+				if(flag){
+					$.ajax({
+						url:"faZwvouchers!updateListFaZwvouchers.action",
+						type:"post",
+						datatype:"json",
+						data:strPram,
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success:function(data,status){
+							findFaZwvouchersBy($("#topSelect >option:selected").attr("currentValue"),$("#topSelect >option:selected").attr("coutsign"));
+						}
+						});
+				}
+			});
+			//制单绑定事件
+			$("#makeBill").unbind("click").bind("click",function(){
+				checklengthflag = 0;
+				updateInput($("#faOriginsInput")[0]);
+				//添加是否循环的标志
+				$("#makeBill").attr("flag","true");
+				checkBills();
+				
+				$("#topSelect >option").not("#topSelect >option:selected").each(function(index){
+					//循环查看有没有无科目的单据
+					var iflag = $("#makeBill").attr("flag");
+					if(iflag=="true"){
+						findFaZwvouchersBy($(this).attr("currentValue"),$(this).attr("coutsign"));
+						checkBills();
+					}else{
+						return false;
+					}
+				});
+				
+			});
+		}
+		//批量制单时检查是否可以保存
+		function checksave(){
+			updateInput($("#faOriginsInput")[0]);
+			var flag = true;
+			//
+			$("#scroll_righter >tr").each(function(index){
+				var currenttds = $(this).find("td");
+				if(currenttds.eq(0).text()==""){
+					flag=false;
+					dbclick(0,currenttds.eq(0)[0]);
+					$("#divscroll_righter").scrollLeft(0);
+					jAlert("科目不能为空!","提示信息",function(){
+						$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+				if(currenttds.eq(1).attr("ifflag")==1&&currenttds.eq(1).text()==""){
+					flag=false;
+					dbclick(1,currenttds.eq(1)[0]);
+					$("#divscroll_righter").scrollLeft(100*1);
+					jAlert("部门不能为空!","提示信息",function(){
+						$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+				if(currenttds.eq(2).attr("ifflag")==1&&currenttds.eq(2).attr("cassItem")!=""&&currenttds.eq(2).text()==""){
+					flag=false;
+					dbclick(2,currenttds.eq(2)[0]);
+					$("#divscroll_righter").scrollLeft(100*2);
+					jAlert("项目不能为空!","提示信息",function(){
+						//$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+				if(currenttds.eq(3).attr("ifflag")==1&&currenttds.eq(3).text()==""){
+					flag=false;
+					dbclick(3,currenttds.eq(3)[0]);
+					$("#divscroll_righter").scrollLeft(100*3);
+					jAlert("客户不能为空!","提示信息",function(){
+						$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+				if(currenttds.eq(4).attr("ifflag")==1&&currenttds.eq(4).text()==""){
+					flag=false;
+					dbclick(4,currenttds.eq(4)[0]);
+					$("#divscroll_righter").scrollLeft(100*4);
+					jAlert("供应商不能为空!","提示信息",function(){
+						$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+				if(currenttds.eq(5).attr("ifflag")==1&&currenttds.eq(5).text()==""){
+					flag=false;
+					dbclick(5,currenttds.eq(5)[0]);
+					$("#divscroll_righter").scrollLeft(100*5);
+					jAlert("姓名不能为空!","提示信息",function(){
+						$("#faOriginsInput").focus();
+					});
+					return false;
+				}
+			});
+			return flag;
+		}
+		function checkBills(){
+			checklengthflag++;
+			var flag = checksave();
+			var strPram = "";
+			$("#scroll_righter >tr").each(function(index){
+				var id = $(this).find("td").eq(0).attr("faZwvouchersId");
+				//科目
+				var ccode=$(this).find("td").eq(0).text();
+				//部门编码
+				var cdeptId=$(this).find("td").eq(1).attr("currentId");
+				//项目编码
+				var itemIds = $(this).find("td").eq(2).attr("currentId");
+				//项目编码
+				var citemId="";
+				//项目大类id
+				var citemClass ="";	
+				if(itemIds!=""){
+					//项目编码
+					itemIds = itemIds.split(",");
+					citemClass =itemIds[0];
+					citemId=itemIds[1];
+				}
+				//客户编码
+				var ccusId=$(this).find("td").eq(3).attr("currentId");
+				//供应商编码
+				var csupId=$(this).find("td").eq(4).attr("currentId");
+				//职员编码
+				var cpersonId=$(this).find("td").eq(5).attr("currentId");
+				
+				ccode = ccode.substring(0,ccode.indexOf(" "));
+				
+				strPram +="&listFaZwvouchers["+index+"].id="+id;
+				strPram +="&listFaZwvouchers["+index+"].ccode="+ccode;
+				strPram +="&listFaZwvouchers["+index+"].cdeptId="+cdeptId;
+				strPram +="&listFaZwvouchers["+index+"].citemId="+citemId;
+				strPram +="&listFaZwvouchers["+index+"].citemClass="+citemClass;
+				strPram +="&listFaZwvouchers["+index+"].ccusId="+ccusId;
+				strPram +="&listFaZwvouchers["+index+"].csupId="+csupId;
+				strPram +="&listFaZwvouchers["+index+"].cpersonId="+cpersonId;
+			});
+			strPram = strPram.substr(1);
+			if(flag){
+				$.ajax({
+					url:"faZwvouchers!updateListFaZwvouchers.action",
+					type:"post",
+					datatype:"json",
+					data:strPram,
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success:function(data,status){
+						var length = $("#topSelect >option").length;
+						if(checklengthflag==length){
+							var coutnoIds=new Array();
+							//批量制单时判断合并选项
+							var checkflag = $("#check_zhou")[0].checked;
+							$("#topSelect >option").each(function(index){
+								//传递业务号和业务类型
+								coutnoIds.push({index:$(this).attr("currentValue"),coutsign:$(this).attr("coutsign"),checkflag:checkflag});
+							});
+							window.parent.openWindow('fa_operate_dsign','fa_operate_batchCreateBills',{coutnoIds:coutnoIds});
+						}
+					}
+				});
+			}else{
+				$("#makeBill").attr("flag","false");
+			}
+		}
+	</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			<div class="buttongroup" style="border:1px outset #eee;">
+                <div class="group">
+                   	合并号：
+                   <select id="topSelect">
+                   </select>
+                </div>
+				<div class="group">
+                    <div><input type="button" value="全选"  id="checkAll" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+					<div><input type="button" value="全消"  id="cancelAll" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="删除"  id="delete" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+					<div><input type="button" value="制单"  id="makeBill"  style="background-image:url('../../../images/icon/edit.gif');"/></div>
+                    <div><input type="button" value="退出"  id="exit" style="background-image:url('../../../images/icon/return.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="保存"  id="save" style="background-image:url('../../../images/icon/save.gif');"/></div>
+				</div>
+				<div class="group" id="pagination">
+                    <div><input type="button" value="首张"  id="first" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+                    <div><input type="button" value="上张"  id="previous" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+                    <div><input type="button" value="下张"  id="next" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+                    <div><input type="button" value="末张"  id="end" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+			</div>
+            
+            <div style="margin-top:5px;width:100%;">
+                <div style="background-color: #D4D0C8;height:335px;width:100%;float:right;">
+                	<div type="tab" style="float:left;">
+		               <div>
+			              <div onclick="choseFaZwvouchers();">制单选择</div>
+			              <div onclick="return setfaZwvouchers();">制单设置</div>
+		               </div>
+		               <div style="width:578px;height:310px;">
+			              <div>
+                             <!-- 制单选择-->
+                             <div style="width:80px; height:100%; float:left;">
+                                	已用合并号<br/>
+                                <select size="16" style="width:100%"></select>
+                             </div>
+                             <div style="width:483px; height:300px; float:right; border:1px inset #000;overflow:auto;">
+                                <table id="datatable_1" class="table_style" style="width:100%; cursor:crosshair;">
+						        <thead>
+							       <tr id="datatable_1_header" style="height:16px;">
+								      <!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								        <td style="width:80px;"></td>
+								        <td style="width:150px;">业务日期</td>
+                                        <td style="width:150px;">业务类型</td>
+                                        <td style="width:150px;">业务描述</td>
+                                        <td style="width:150px;">业务号</td>
+                                        <td style="width:150px;">发生额</td>
+                                        <td style="width:150px;">合并号</td>
+                                        <td style="width:150px;">制单</td>
+							       </tr>
+						        </thead>
+						        <tbody id="datatable_1_bodyer">
+						        </tbody>
+					          </table>
+                             </div>
+                          </div>
+			              <div style="width:100%;height:100%;">
+                             <!--制单设置 -->
+                             <div style="width:563px; height:303px;">
+                             <div style="display:block; " >
+                             <input id="check_zhou" type="checkbox" /><label for="check_zhou" >合并（科目及辅助项相同的分录）</label><br />
+                             </div>
+                                 
+                             
+                             <div style="width:563px; height:273px;margin-top:6px; background-color:#ccc;">
+					           <!-- 表头代码 S -->
+								<div style="position:absolute;margin-top:1px;margin-left:1px;z-index:603;">
+									<!-- 表头左侧 -->
+									<div style="float:left;width:440px;">
+										<table id="fixed_header" class="table_header" width="440">
+											<tr>
+												<td style="width:32px;">&nbsp;</td>
+												<td style="width:68px;">业务日期</td>
+												<td style="width:68px;">业务类型</td>
+												<td style="width:68px;">业务描述</td>
+												<td style="width:68px;">业务号</td>
+												<td style="width:68px;">方向</td>
+												<td style="width:68px;">发生额</td>
+											</tr>
+										</table>
+									</div>
+									<!-- 表头右侧  -->
+									<div style="float:left;width:103px;overflow:hidden;">
+										<table id="scroll_header" class="table_header" width="600">
+											<tr>
+												<td style="width:100px;">科目</td>
+												<td style="width:100px;">部门核算</td>
+												<td style="width:100px;">项目核算</td>
+												<td style="width:100px;">客户往来</td>
+												<td style="width:100px;">供应商往来</td>
+												<td style="width:100px;">个人往来</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<!-- 表头代码 E -->
+								<!-- 左侧表体代码 S -->
+								<div style="width:440px;height:230px;overflow:hidden;float:none;clear:both;position:absolute;margin-top:27px;margin-left:1px;z-index:602;">
+									<table id="scroll_lefter" class="table_bodyer" width="440">
+											<tr>
+												<td>1</td>
+												<td>2013-8-26</td>
+												<td>供应商</td>
+												<td>科目</td>
+												<td>币种</td>
+												<td>摘要</td>
+												<td>方向</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>2013-8-26</td>
+												<td>供应商</td>
+												<td>科目</td>
+												<td>币种</td>
+												<td>摘要</td>
+												<td>方向</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td>2013-8-26</td>
+												<td>供应商</td>
+												<td>科目</td>
+												<td>币种</td>
+												<td>摘要</td>
+												<td>方向</td>
+											</tr>
+									</table>
+								</div>
+								<!-- 左侧表体代码 E -->
+								<!-- 右侧表体代码 S -->
+								<div id="divscroll_righter" style="width:560px;height:272px;border:1px solid #000;overflow:auto;overflow-y:scroll;z-index:601;" onscroll="tableScroll(this);">
+									<table class="table_bodyer" id="scroll_righter" style="margin-left:440px;margin-top:26px;width:600px;">
+										<tr>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据</td>
+											<td>数据</td>
+											<td>数据</td>
+										</tr>
+										<tr>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据</td>
+											<td>数据</td>
+											<td>数据</td>
+										</tr>
+										<tr>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据数</td>
+											<td>数据</td>
+											<td>数据</td>
+											<td>数据</td>
+										</tr>
+									</table>
+								</div>
+								<!-- 右侧表体代码 E -->
+					          </div>
+					          </div>
+                          </div>
+		               </div>
+	               </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</body>
+</html>

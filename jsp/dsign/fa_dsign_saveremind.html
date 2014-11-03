@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>标题</title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	
+	//初始化未保存的凭证 提示页面
+	$(document).ready(function(){
+		var param = window.parent.valueMap.get("fa_dsign_saveremind");
+		$("#count").text(param.faZwvouchers.length);
+		var strHtml ="";
+		var date = new Date();
+		var currentDate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+		for(var i=0;i<param.faZwvouchers.length;i++){
+			strHtml += "<tr>";
+			strHtml += "	<td>"+currentDate+"</td>";
+			strHtml += "	<td>"+param.faZwvouchers[i].coutsign+"</td>";
+			strHtml += "	<td>"+param.faZwvouchers[i].coutnoId+"</td>";
+			strHtml += "</tr>";
+		}
+		$("#datatable_1_bodyer").empty().append(strHtml);
+		
+		$("#sureBtn").unbind("click").bind("click",function(){
+			window.parent.closeWindow('fa_dsign_saveremind');
+		});
+		
+	});
+   //点击叉时关闭窗体
+   function afterWindowClose(){
+		window.parent.getWindow("fa_operate_dsign").confirmQuitOut();
+		return true;
+   }
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:464px;height:254px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:436px;height:240px;margin-top:10px;margin-left:12px;">
+			
+			<div style="width:100%;height:34px;">
+				<div style="float:left;">
+					还有&nbsp;<span id="count"></span>&nbsp;张凭证没保存
+				</div>
+				<div style="float:right;">
+					<input type="button" value="确定" id="sureBtn"/>
+				</div>
+			</div>
+			
+			<div style="width:100%;height:206px;overflow-y:auto;float:left;">
+				
+					<table id="datatable_1" border=1 class="table_style" style="width:436px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<td style="width:56px;">制单日期</td>
+								<td style="width:132px;">业务类型</td>
+								<td style="width:198px;">业务号</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+					
+					
+				</div>
+			
+		</div>
+	</div>
+</body>
+</html>

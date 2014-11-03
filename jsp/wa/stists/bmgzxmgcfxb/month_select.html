@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>分析月份选择</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+
+
+
+
+
+function btnConfirm(){
+	var startMonth=$("#startMonth").val();
+	var endMonth=$("#endMonth").val();
+	if(startMonth==""||startMonth>12){
+		jAlert("起始分析月份无效","输入错误");
+		return ;
+	}
+	if(endMonth==""||endMonth>12){
+		jAlert("起始分析月份无效","输入错误");
+		return ;
+	}
+	var param = new Object();
+	param.stratMonth=startMonth;
+	param.endMonth=endMonth;
+	window.parent.openWindow('wa_stists_bmgzxmgcfxb_department_select','wa_stists_bmgzxmgcfxb_month_select',param);
+}
+
+
+
+
+//全局变量
+//上个页面穿过来的参数
+var parentParam=null;
+//程序入口
+$(document).ready(function(){
+	var operDate=getCookie("operDate");
+	var year=operDate.split('-');
+	$("#startMonth").val(parseInt(year[1]));
+	$("#endMonth").val(parseInt(year[1]));
+	parentParam = window.parent.valueMap.get("wa_stists_bmgzxmgcfxb_month_select");
+});
+
+
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:260px;height:144px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div class="border_outside" style="width:234px;height:78px;margin-top:16px;margin-left:10px;">
+			<div class="border_inside" style="width:232px;height:76px;">
+				<table style="width:100%;height:100%;">
+					<tr>
+						<td width="140">请选择分析月份区间</td>
+						<td>从&nbsp;<input type="text" id='startMonth' style="width:30px;" value="1"/>&nbsp;月</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>到&nbsp;<input type="text" id="endMonth" style="width:30px;" value="12"/>&nbsp;月</td>
+					</tr>
+				</table>
+			
+			
+			</div>
+		</div>
+		
+		
+		<div style="width:234px;height:36px;margin-top:10px;margin-left:10px;text-align:right;">
+			<input type="button" value="确定" onclick="btnConfirm();"/>
+			<input type="button" value="取消" onclick="window.parent.closeWindow('wa_stists_bmgzxmgcfxb_month_select');"/>
+		</div>
+	</div>
+</body>
+</html>

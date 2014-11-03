@@ -1,0 +1,522 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>分摊构成设置修改页面</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+	.shadow1{position:absolute;margin-left:0px;margin-top:0px;color:#fff;}
+	.shadow2{position:absolute;margin-left:1px;margin-top:1px;color:#000080;}
+	#datatable_1 tr {height:20px;}
+	tr {white-space:nowrap;}
+	th {overflow:hidden;}
+	td {overflow:hidden;}
+</style>
+<script type="text/javascript">
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+var gradeList = null;
+var xmList = null;
+var param = window.parent.valueMap.get("wa_wageallocation_updproportion");
+var ijtId=param.ijtId;//计提id
+
+$(document).ready(function(){
+	$("#jtlxmc").val(param.cjtName);
+	$("#ftjtbl").val(param.ijtProp + "%");
+	addRow();//添加一个空行到表格里
+	//
+	$.ajax({
+		url:'wagesSharing!querySharingRefer.action',
+		type:'post',
+		data:'cgzgradenum='+cgzgradenum,
+		dataType:'json',
+		async : false,
+		success:function(data){
+			gradeList = data.list[0];
+			xmList = data.list[1];
+		}
+	});
+});
+</script>
+</head>
+<body>
+
+<div id="step_1" class="container" style="float:left;width:530px;height:240px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;text-align:center;">
+		
+		<div style="width:510px;height:188px;text-align:left;margin:auto;">
+			<br>
+			<div>计提类型名称：<input type="text" id="jtlxmc" readonly="readonly" style="width:150px;"/></div>
+			<br>
+			<div>
+				<div style="float:left;">分摊计提比例：</div>
+				<div class="gradually">
+					<div style="float:left;"><input class="textbox" id="ftjtbl" type="text" value="100%" style="width:50px;"/></div>
+					<div style="float:left;">
+						<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+						<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<div style="width:100%;border-top:1px solid #404040;border-bottom:1px solid #fff;float:none;clear:both;margin:auto;"></div>
+		
+		<div style="width:98%;height:26px;margin-top:10px;text-align:right;">
+			<input type="button" value="下一步" onclick="next()"/>&nbsp;&nbsp;
+			<input type="button" value="取消" onclick="window.parent.closeWindow('wa_wageallocation_updproportion');"/>
+		</div>
+		
+	</div>
+
+	<div  id="step_2" class="container" style="display:none;float:left;width:530px;height:240px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;text-align:center;">
+		<div style="width:510px;height:220px;margin-left:10px;margin-top:10px;">
+			<div style="width:100%;height:22px;font-size:16px;font-weight:bold;">
+				<div style="margin:auto;width:130px;height:22px;">
+					<span class="shadow1">分摊构成设设置</span>
+					<span class="shadow2">分摊构成设设置</span>
+				</div>
+			</div>
+			<div class="border_outside" style="height:156px;width:506px;">
+				<div class="border_inside" style="height:154px;width:504px;line-height:18px;">
+					<div style="width:500px;height:150px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#fff;">
+					<table id="datatable_1" border=1 class="table_style" style="width:490px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:100px;">部门名称</td>
+								<td style="width:100px;">人员类别</td>
+								<td style="width:90px;">项目</td>
+								<td style="width:100px;">借方科目</td>
+								<td style="width:100px;">贷方科目</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+				</div>
+				</div>
+			</div>
+			<div style="width:100%;height:26px;margin-top:10px;text-align:right;">
+				<input type="button" value="上一步" onclick="prev();"/>
+				<input type="button" value="完成" onclick="doSubmit();"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_wageallocation_updproportion');"/>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+<script type="text/javascript">
+//弹出部门参照窗体
+function openWin(cellIndex){
+	var param=new Object();
+	param.treeSetting = new Object();
+	param.treeSetting.justFinalNode=true;
+	if(cellIndex==0){
+		window.parent.openWindow('wa_wageallocation_department','wa_wageallocation_updproportion');
+	}
+	if(cellIndex==3){
+		window.parent.openWindow('dsign_subjectsreference','wa_wageallocation_updproportion',param);
+	}
+	if(cellIndex==4){
+		window.parent.openWindow('dsign_subjectsreference','wa_wageallocation_updproportion',param);
+	}
+}
+
+var tb = document.getElementById("datatable_1_bodyer");
+var currentEditCell = null;
+
+/**
+ * 增行
+ */
+function addRow(){
+	var row = tb.insertRow(tb.rows.length);	
+	row.style.height="18px";
+	for(var i=0;i<8;i++){
+		row.insertCell(i);
+	}
+	row.cells[5].style.display="none";
+	row.cells[6].style.display="none";
+	row.cells[7].style.display="none";
+	setEditable();
+}
+
+
+
+
+
+function selectit(e) {
+	e.parentNode.parentNode.cells[6].innerHTML = e.value;
+	e.parentNode.innerHTML = e.options[e.selectedIndex].text;
+}
+
+
+
+function cellValueCheck(tr){
+	//判断第二列、第三列是否有值，没值则设置初始值
+	var v = tr.cells[1].innerHTML;
+	if(v==""){
+		
+		//设置第一列的值，包括数据库相关的值
+		v = gradeList[0].cpsngrd;
+		id = gradeList[0].ipsngrdId;
+		tr.cells[1].innerHTML=v;
+		tr.cells[6].innerHTML=id;
+		
+		
+	}
+	
+
+	v = tr.cells[2].innerHTML;
+	if(v==""){
+		var xmItem=xmList[0];
+		for(var i=0;i<xmList.length;i++){
+			if(xmList[i].csetgzitemname=="应发合计"){
+				xmItem=xmList[i];
+			}
+		}
+		
+		 //设置第二列的值，包括数据库相关的值
+		v = xmItem.csetgzitemname;
+		id = xmItem.igzitemId;
+		tr.cells[2].innerHTML=v;
+		tr.cells[7].innerHTML=id;
+	}
+	
+}
+
+/**
+ * 可双击编辑单元格
+ */
+function setEditable(){
+	for(var i=0;i<tb.rows.length;i++){
+		for(var j=0;j<tb.rows[i].cells.length;j++){
+			tb.rows[i].cells[j].ondblclick=function(event){
+				var evt=(window.event || event);//获得事件
+				var cell = (evt.srcElement || evt.target);
+				if(i==tb.rows.length-1){
+					jAlert("你点了最后一行");
+				}
+				var cellIndex = cell.cellIndex;
+				//:: 判断上一行是否填写完整，如果不完整，则不能编辑当前行。
+				var prevRow = tb.rows[cell.parentNode.rowIndex-2];//-2是因为cell.parentNode.rowIndex是以整个table包含thead在内来参考的
+				if(prevRow!=undefined && prevRow!=null){
+					var valueCount = 0;
+					var cellContent = null;
+					for(var i=0;i<5;i++){
+						cellContent = prevRow.cells[i].innerHTML;
+						if(cellContent != null && cellContent != "" && cellContent.length > 0){
+							valueCount++;
+						}
+					}
+					//
+					if(valueCount<5){
+						jAlert("你还有信息为填写完整");
+						return false;
+					}
+				}
+				
+				
+				
+				//如果是第一列，生成文本框
+				if (cellIndex == 0) {
+					cellValueCheck(cell.parentNode);
+					if (cell.getElementsByTagName("input").length == 0) {
+						var tempValue = cell.innerHTML;
+						cell.innerHTML = "<input type='text' readonly='readonly' value='"+tempValue+"' style='border:none;height:14px;width:65px;'/><input type='button' class='finder' style='margin-bottom:-3px;' onclick=\"openWin('"
+								+ cellIndex + "');\"/>";
+						cell.getElementsByTagName("input")[0].select();
+					}
+				}
+
+				//如果是第四、五列，生成文本框
+				if(cellIndex==3 || cellIndex==4){
+					cellValueCheck(cell.parentNode);
+					if (cell.getElementsByTagName("input").length == 0) {
+						var tempValue = cell.innerHTML;
+						cell.innerHTML = "<input type='text' onkeyup=\"if(window.event.keyCode==13){conversioncode('code',this,false);}\" value='"+tempValue+"' style='border:none;height:14px;width:65px;'/><input type='button' class='finder' style='margin-bottom:-3px;' onclick=\"openWin('"
+								+ cellIndex + "');\"/>";
+						cell.getElementsByTagName("input")[0].select();
+					}
+					
+					/* if(cell.getElementsByTagName("input").length==0){
+						var tempValue = cell.innerHTML;
+	  					cell.innerHTML="<input type='text' value='"+tempValue+"' style='border:none;height:14px;width:65px;'/><input type='button' class='finder' style='margin-bottom:-3px;' onclick=\"openWin('"+cellIndex+"');\"/>";
+	  					cell.getElementsByTagName("input")[0].select();
+					} */
+				}
+				//如果是第二列，生成下拉列表
+				if(cellIndex==1){
+					if(cell.getElementsByTagName("select").length==0){
+	  					var tempValue = cell.parentNode.cells[6].innerHTML;
+	  					selectHTML  = "<select value='"+tempValue
+						+ "' onblur='selectit(this)'/>";
+	  					for(var i=0;i<gradeList.length;i++){
+	  						selectHTML += "<option value='"+gradeList[i].ipsngrdId+"'>"+gradeList[i].cpsngrd+"</option>";
+	  					}
+	  					
+	  					
+	  					selectHTML += "</select>";
+	  					cell.innerHTML=selectHTML;
+	  					var select = cell.getElementsByTagName("select")[0];
+	  					select.value=tempValue;
+	  					if (tempValue == "") {
+							select.options[0].selected = true;
+						}
+					 	select.focus();
+					}
+					
+				}
+
+				//如果是第三列，生成下拉列表
+				if(cellIndex==2){
+					if(cell.getElementsByTagName("select").length==0){
+	  					var tempValue = cell.parentNode.cells[7].innerHTML;
+	  					selectHTML  = "<select value='"+tempValue+"' onblur='this.parentNode.parentNode.cells[7].innerHTML=this.value;this.parentNode.innerHTML=this.options[this.selectedIndex].text;'/>";
+	  					
+	  					for(var i=0;i<xmList.length;i++){
+	  						selectHTML += "<option value='"+xmList[i].igzitemId+"'>"+xmList[i].csetgzitemname+"</option>";
+	  					}
+	  					
+	  					selectHTML += "</select>";
+	  					cell.innerHTML=selectHTML;
+
+	  					var select = cell.getElementsByTagName("select")[0];
+	  					select.value=tempValue;
+	  					if (tempValue == "") {
+							select.options[0].selected = true;
+						}
+					 	select.focus();
+					}
+					
+				}
+				
+				currentEditCell = cell;
+			};
+		}
+	}
+}
+
+//单元失去焦点，执行取消编辑状态动作：
+document.onmousedown=function(event){
+	var evt=(window.event || event);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+	if(currentEditCell!=null){
+		if (evtsrc.tagName != "INPUT" || (evtsrc.tagName == "INPUT" && evtsrc.type == "button" && evtsrc.className != "finder")) {
+			var textbox = currentEditCell.getElementsByTagName("input")[0];
+			if(textbox!=undefined || textbox!=null){
+				/*解决会计科目不能添加不存在的科目(2013-7-17) lyl start */
+				if(currentEditCell.cellIndex==3 || currentEditCell.cellIndex==4){
+					conversioncode('code',textbox.val,false);//支持输入科目名称，带出科目编码(lyl)
+				}
+				var val=textbox.value;
+				currentEditCell.innerHTML = val;
+				/*  end  */
+			}
+			currentEditCell=null;
+		}
+	}
+	//判断表格中最后一行是否有值，如果有，则增加一行
+	var row = tb.rows[tb.rows.length-1];
+	
+	var valueCount = 0;
+	var cellContent = null;
+	for(var i=0;i<row.cells.length;i++){
+		cellContent = row.cells[i].innerHTML;
+		if(cellContent != null && cellContent != "" && cellContent.length > 0){
+			valueCount++;
+		}
+	}
+	//如果至少有一个单元格有值，则新增一行
+	if(valueCount>0){
+		addRow();
+	}
+};
+setEditable();
+//接收弹窗返回值函数
+function deliverValue(object){
+	if(currentEditCell!=null){
+		var textbox = currentEditCell.getElementsByTagName("input")[0];
+		var row = currentEditCell.parentNode;
+		if(currentEditCell.cellIndex==0){
+			textbox.value=object.names;
+			row.cells[5].innerHTML=object.ids;
+		}
+		if(currentEditCell.cellIndex==3){
+			textbox.value=object.selKemuCode;
+		}
+		if(currentEditCell.cellIndex==4){
+			textbox.value=object.selKemuCode;
+		}
+	}
+}
+function saveRow(dataList){
+	var jtlxmc = document.getElementById("jtlxmc").value;
+	var ftjtbl = document.getElementById("ftjtbl").value;
+	//add by lval 解决不带%的情况
+	if(ftjtbl.indexOf("%")==-1){
+		ftjtbl = ftjtbl+"%";
+	}
+	ftjtbl=parseFloat(ftjtbl.substring(0,ftjtbl.length-1));
+	$.ajax({
+		url:'wagesSharing!updateWageSharingType.action',
+		type:'post',
+		data:parseParam(dataList,"comcfgList") + "&waFtname.cgzgradenum=" + cgzgradenum +"&waFtname.ijtId="+ijtId+"&waFtname.ijtProp="+ftjtbl+"&waFtname.id="+param.id,//添加计提比例(lyl)
+		dataType:'json',
+		success:function(data,status){
+			window.parent.closeWindow('wa_wageallocation_updproportion');
+			window.parent.getWindow('wa_wageallocation_typesetting').loadData();
+		}
+	});
+}
+function buildData(){
+	var dataRows = document.getElementById("datatable_1_bodyer");
+	var dataList = [];
+	for ( var i = 0; i < dataRows.rows.length - 1; i++) {
+		var rowData = {};
+		rowData.cgzgradenum = cgzgradenum;
+		rowData.cdepcode = dataRows.rows[i].cells[5].innerHTML;
+		rowData.ipsngrdId = dataRows.rows[i].cells[6].innerHTML;
+		rowData.igzitemId = dataRows.rows[i].cells[7].innerHTML;
+		rowData.cdebit = dataRows.rows[i].cells[3].innerHTML;
+		rowData.ccreditside = dataRows.rows[i].cells[4].innerHTML;
+		if(rowData.cdepcode != "" && rowData.ipsngrdId != "" && rowData.igzitemId != "" && rowData.cdebit != "" && rowData.ccreditside != "")
+		{
+			dataList[dataList.length] = rowData;
+		}
+	}
+	saveRow(dataList);
+}
+function doSubmit(){
+	var dataRows = document.getElementById("datatable_1_bodyer");
+	var dataList = [];
+	for(var i=0;i<dataRows.rows.length-1;i++){
+		var rowData = {};
+		rowData.cgzgradenum=cgzgradenum;
+		rowData.cdepcode = dataRows.rows[i].cells[5].innerHTML;
+		rowData.ipsngrdId = dataRows.rows[i].cells[6].innerHTML;
+		rowData.igzitemId = dataRows.rows[i].cells[7].innerHTML;
+		rowData.cdebit = dataRows.rows[i].cells[3].innerHTML;
+		rowData.ccreditside = dataRows.rows[i].cells[4].innerHTML;
+		if(rowData.cdepcode == "" || rowData.ipsngrdId == "" || rowData.igzitemId == "" ||rowData.cdebit == "" ||rowData.ccreditside == "")
+		{
+			jConfirm("是否继续未完成的设置?", "工资管理", function(r){
+				if(r){
+					return false;
+				}else{
+					buildData();
+				}
+			});
+		}else{
+			dataList[dataList.length] = rowData;
+			if(i==dataRows.rows.length - 2){
+				saveRow(dataList);
+			}
+		}
+	}
+	
+	
+}
+var parseParam=function(param, key){
+	var paramStr="";
+	if(param instanceof String||param instanceof Number||param instanceof Boolean){
+		paramStr+="&"+key+"="+encodeURIComponent(param);
+	}else{
+		$.each(param,function(i){
+			var k=key==null?i:key+(param instanceof Array?"["+i+"]":"."+i);
+			paramStr+='&'+parseParam(this, k);
+		});
+	}
+	return paramStr.substr(1);
+};
+
+
+
+//递计算框递增函数
+function increasing(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	input.value = (parseInt(input.value)+1)+"%";
+}
+
+//递计算框递减函数
+function decline(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	input.value = (parseInt(input.value)-1)+"%";
+}
+
+
+//上一步
+function  prev(){
+	 var step_1 = document.getElementById("step_1");
+	 var step_2 = document.getElementById("step_2");
+	 step_1.style.display="block";
+	 step_2.style.display="none";
+}
+
+
+//下一步
+function  next(){
+	
+	 var step_1 = document.getElementById("step_1");
+	 var step_2 = document.getElementById("step_2");
+	 step_1.style.display="none";
+	 step_2.style.display="block";
+	 var p="waFtname.cgzgradenum=" + cgzgradenum + "&waFtname.ijtId="+ijtId;
+	 $.ajax({
+		 url:"wagesSharing!queryUdpWageSharingType.action",
+		 type:"post",
+		 data:p,
+		 dataType:"json",
+		 success:function(data){
+			 var list=data.list[0];
+			 $("#datatable_1_bodyer").empty();
+			 /*为解决相同项目，不同部门，合并为一行记录(2013-7-1 lyl)*/
+			 for(var i=0;i<list.length;i++){
+
+				 
+				 var tr="";
+				 $("#datatable_1_bodyer tr").each(function(){
+					 $(this).find("td");
+					 var cdepcode=$(this).find("td:eq(5)").html();
+					 var cdepname=$(this).find("td:eq(0)").html();
+					 var ipsngrdId=$(this).find("td:eq(6)").html();
+					 var jieCode=$(this).find("td:eq(3)").html();
+					 var daiCode=$(this).find("td:eq(4)").html();
+					 var igzitemId=$(this).find("td:eq(7)").html();
+					 if(ipsngrdId==list[i].ipsngrdId&&jieCode==list[i].cdebit&&daiCode==list[i].ccreditside&&igzitemId==list[i].igzitemId&&cdepcode!=list[i].cdepcode){
+						 tr=$(this);
+						 return false;
+					 }
+				 });
+				 if(tr!=null&&tr!=""){
+					 var cdepname=$(tr).find("td:eq(0)").html();
+					 var cdepcode=$(tr).find("td:eq(5)").html();
+					 $(tr).find("td:eq(0)").html(cdepname+","+list[i].cdepname);
+					 $(tr).find("td:eq(5)").html(cdepcode+","+list[i].cdepcode);
+				 }else{
+				 	 var str="";
+					 str+="<tr>";
+					 str+="<td>"+list[i].cdepname+"</td>";
+					 str+="<td>"+list[i].cpsngrd+"</td>";
+					 str+="<td>"+list[i].csetgzitemname+"</td>";
+					 str+="<td>"+list[i].cdebit +"</td>";
+					 str+="<td>"+list[i].ccreditside+"</td>";
+					 str+="<td style='display:none'>"+list[i].cdepcode+"</td>";
+					 str+="<td style='display:none'>"+list[i].ipsngrdId+"</td>";
+					 str+="<td style='display:none'>"+list[i].igzitemId+"</td>";
+					 str+="</tr>";
+				     $("#datatable_1_bodyer").append(str);
+				 }
+			 }
+			 
+			 setEditable();
+		 }
+		 
+	 });
+	 
+}
+
+
+</script>
+</html>

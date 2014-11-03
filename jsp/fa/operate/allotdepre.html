@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>折旧分配表</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	var p = window.parent.valueMap.get("fa_operate_allotdepre");
+
+	var paramd = null;
+	//初始化进来的时候的分配类型
+	var initsaveType=null;
+	//是否允许修改分配类型的标志
+	var changeflag = true;
+	//程序入口
+	$(document).ready(function(){
+		
+		if(p!=undefined && p!=null){
+			paramd = p.paramd;
+		}
+		//初始化
+		var m=Initialization();
+		//查询
+		if(m=="0"){
+			queryFaDeprTransactions();
+		}
+		//为单选按钮添加click事件
+		$("input:radio").unbind("click").bind("click",function(){
+			queryFaDeprTransactions();
+		});
+		//制单按钮点击事件
+		$("#createVouchers").unbind("click").bind("click",function(){
+			saveFaZwvouchers();
+			var coutnoIds=new Array();
+			//传递业务号和业务类型
+			coutnoIds.push({index:$("#currentperiod").val(),coutsign:"折旧计提"});
+			window.parent.openWindow('fa_operate_dsign','fa_operate_allotdepre',{coutnoIds:coutnoIds});
+		});
+	});
+	//全局标识(判断是否已经计提折旧)
+	var t_mark=null;
+	//初始化方法
+	function Initialization(){
+		var m="0";
+		$.ajax({
+				url:"faZwvouchers!queryFaZwvouchers",
+			    type: 'post',
+			    dataType: "json",
+			    async:false,
+			    error:function(){
+			    	jAlert("请求失败!");
+			    },
+			    success: function(data){
+			    	initsaveType=data.saveType;
+			    	//if(paramd!="2"&&!data.depreciationsFlag){
+			    	if(paramd!="2"&&data.saveType=="-1"){
+			    		queryFaDeprTransactions();
+			    		if($("#datatable_1_bodyer").children().length==1){
+			    			jAlert("本月未进行计提折旧,请计提折旧!","提示信息",function(){
+				    			t_mark = "1";
+					    		window.parent.closeWindow('fa_operate_allotdepre');	
+				    		});
+			    		}
+			    		m="1";
+			    	}
+			    	if(data.saveType=="1"){
+			    		$("#rd_1_1").attr("checked",true);
+			    	}else if(data.saveType=="2"){
+			    		$("#rd_1_2").attr("checked",true);
+			    	}
+			    	var strHtml ="";
+			    	strHtml +="<option value='"+data.operMoth+"' >"+data.operMoth+"("+data.year+"."+data.operMoth+"--&gt;"+data.year+"."+data.operMoth+")</option>"
+			    	$("#currentperiod").empty().append(strHtml);
+			    	//检查是否允许修改
+			    	changecheck(data.operMoth);
+			    	if(!changeflag){
+			    		$("#rd_1_1").attr("disabled",true);
+			    		$("#rd_1_2").attr("disabled",true);
+			    	}else{
+			    		$("#rd_1_1").attr("disabled",false);
+			    		$("#rd_1_2").attr("disabled",false);
+			    	}
+				}
+		    });
+		return m;
+	}
+	//是否允许修改案不同类型分配
+	function changecheck(snum){
+		 changeflag = true;
+		 $.ajax({
+			    url: "faZwvouchers!checkdeletechangebills",
+				type: 'post',
+				data: {coutnoId:snum,coutsign:"折旧计提"},
+   			    async:false,
+				dataType: "json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					//如果已经生成凭证则不让删除(先删除凭证在删除变动单)
+					if(data.flag){
+						//jAlert("已经生成凭证,请先删除凭证然后再删除变动单.");
+						changeflag=false;
+					}
+				}
+		 });
+		return changeflag;
+	}
+	//查询折旧分配表(按类型或者按部门分配)
+	function queryFaDeprTransactions(){
+		//查询类型
+		var queryType = $("input:radio:checked").attr("cuurentvalue");
+		//assettypes   department
+		$.ajax({
+			url:"faCardDepreciation!queryFaDeprTransactions",
+		    type: 'post',
+		    dataType: "json",
+		    data:{queryType:queryType},
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+		    	var strbody = "";
+		    	var strhead = "";
+		    	var strtotal = "";
+		    	var totalvalue=0;
+		    	for(var i=0;i<data.listFaDeprTransactions.length;i++){
+		    		if(data.listFaDeprTransactions[i][6]!=null &&data.listFaDeprTransactions[i][6]!=0){
+		    			if(queryType=="department"){
+		    				strbody+="<tr departid="+strNullProc(data.listFaDeprTransactions[i][7])+">";
+		    			}else{
+		    				strbody+="<tr departid=''>";
+		    			}
+				    	strbody+="	<td style='background-color:#D4D0C8;'>"+strNullProc(data.listFaDeprTransactions[i][0])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][1])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][2])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][3])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][4])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][5])+"</td>";
+				    	strbody+="	<td>"+strNullProc(data.listFaDeprTransactions[i][6])+"</td>";
+				    	strbody+="</tr>";
+				    	totalvalue=(totalvalue-0)+(data.listFaDeprTransactions[i][6]-0);
+		    		}
+		    	}
+		    	//合计值
+		    	strtotal+="<tr departid=''>";
+		    	strtotal+="	<td style='background-color:#D4D0C8;'>合计</td>";
+		    	strtotal+="	<td></td>";
+		    	strtotal+="	<td></td>";
+		    	strtotal+="	<td></td>";
+		    	strtotal+="	<td></td>";
+		    	strtotal+="	<td></td>";
+		    	strtotal+="	<td>"+numberround(totalvalue,2)+"</td>";
+		    	strtotal+="</tr>";
+		    	strbody+=strtotal;
+		    	//添加表格内容
+				$("#datatable_1_bodyer").empty().append(strbody);
+		    	if(queryType=="department"){
+					strhead += "<td style='width:68px;'>部门编号</td>";
+					strhead += "<td style='width:68px;'>部门名称</td>";
+		    	}else if(queryType=="assettypes"){
+		    		strhead += "<td style='width:68px;'>类别编号</td>";
+					strhead += "<td style='width:68px;'>类别名称</td>";
+		    	}
+				strhead += "<td style='width:68px;'>项目编号</td>";
+				strhead += "<td style='width:68px;'>项目名称</td>";
+				strhead += "<td style='width:68px;'>科目编号</td>";
+				strhead += "<td style='width:68px;'>科目名称</td>";
+				strhead += "<td style='width:68px;'>折旧额</td>";
+				//添加表头
+				$("#datatable_1_header").empty().append(strhead);
+		    }
+		});
+		
+	}
+	//保存临时凭证表
+	function saveFaZwvouchers(){
+		//保存类别(按部门或者按类别保存)
+		var saveType = $("input:radio:checked").attr("cuurentvalue");
+    	if(saveType=="department"){
+    		saveType=2;
+    	}else if(saveType=="assettypes"){
+    		saveType=1;
+    	}
+    	if((paramd!="2"&&initsaveType==saveType)||!changeflag){
+			return true;
+    	}
+		var strPram = "";
+		var len = $("#datatable_1_bodyer >tr").length;
+		$("#datatable_1_bodyer >tr").each(function(index){
+			if(len==(index+1)){
+				//贷方金额
+				strPram +="&listFaZwvouchers["+index+"].ccode="+$(this).find("td").eq(4).text()
+				+"&listFaZwvouchers["+index+"].mc="+$(this).find("td").eq(6).text()
+				+"&listFaZwvouchers["+index+"].md=0"
+				+"&listFaZwvouchers["+index+"].cdeptId="+$(this).attr("departid");
+			}else{
+				//借方金额
+				strPram +="&listFaZwvouchers["+index+"].ccode="+$(this).find("td").eq(4).text()
+				+"&listFaZwvouchers["+index+"].md="+$(this).find("td").eq(6).text()
+				+"&listFaZwvouchers["+index+"].mc=0"
+				+"&listFaZwvouchers["+index+"].cdeptId="+$(this).attr("departid");
+			}
+		});
+    	strPram+="&saveType="+saveType;
+		strPram = strPram.substr(1);
+		$.ajax({
+			url:"faZwvouchers!saveFaZwvouchers",
+		    type: 'post',
+		    dataType: "json",
+		    data:strPram,
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    	return false;
+		    },
+		    success: function(data){
+		    	return true;
+		    }
+		})
+	}
+	//关闭窗体弹出菜单
+	function afterWindowClose(){
+		if(paramd=="2"){
+			window.parent.showDoneMessage();
+		}
+	}
+	//点击叉时关闭窗体
+	function onWindowClose(){
+		
+		if(t_mark == "1"){
+			return true;
+		}
+	   return saveFaZwvouchers();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function btnExit(){
+		window.parent.closeWindow('fa_operate_allotdepre');
+		//修改固定资产计提折旧后首次弹出折旧分配表后修改系统是否已弹出过此窗体状态值
+		if(p.bpreCardData=="TRUE"){
+			
+			$.ajax({
+			    url: "glAccInformation!updateCvalueOfBpreCardData",
+			    type: 'post',
+			    dataType: "json",
+			    cache:false,
+			    data:"accid="+window.parent.parent.login_accid+"&cvalue=FALSE",
+			    success: function(data){
+			    	bpreCardData=data.cvalue;
+			    	
+			    }
+			  });
+		}
+		
+	}
+	
+	
+	
+</script>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:604px;height:370px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:594px;height:368px;margin-top:2px;margin-left:4px;">
+			<div style="width:100%;height:40px;">
+				<div class="buttongroup" style="width:200px;float:left;">
+					<div class="group">
+						<div>
+							<input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/>
+						</div>
+						<div>
+							<input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/>
+						</div>
+						<div>
+							<input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/>
+						</div>
+						
+						<div>
+							<input type="button" value="凭证" id="createVouchers" style="background-image:url('../../../images/icon/find.gif');"/>
+						</div>
+					</div>
+					<div class="group">
+						<div>
+							<input type="button" value="退出" onclick="btnExit()" style="background-image:url('../../../images/icon/exit.gif');"/>
+						</div>
+					</div>
+				</div>
+				<div style="float:right;width:380px;height:100%;">
+					<div style="width:220px;float:left;padding-top:10px;">
+						<input type="radio" name="rd_1" id="rd_1_1" cuurentvalue="assettypes"/><label for="rd_1_1">按类别分配</label>
+						<input type="radio" name="rd_1" id="rd_1_2" cuurentvalue="department" checked="checked"/><label for="rd_1_2">按部门分配</label>
+					</div>
+					<div style="width:160px;float:left;">
+						<input type="button" value="部门分配条件..." style="width:160px;height:38px;"/>
+					</div>
+				</div>
+			</div>
+			<div style="height:24px;">
+				<select id="currentperiod" style="width:186px" disabled="disabled">
+				</select>
+			</div>
+			<div style="width:590px;height:296px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#808080;">
+					<table id="datatable_1" border=1 class="table_style" style="width:476px;">
+						<thead>
+							<tr id="datatable_1_header">
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+						</tbody>
+					</table>
+				</div>
+		</div>
+	</div>
+</body>
+</html>

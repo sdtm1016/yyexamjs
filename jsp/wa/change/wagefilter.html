@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>项目过滤</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="js/wagefilter.js"></script>
+
+<style type="text/css">
+.ctrbtn input{width:20px;height:20px;padding:0px;text-align:center;margin-top:4px;font-family:宋体;}
+</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:410px;height:190px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:390px;height:174px;margin-top:8px;margin-left:12px;">
+			
+			
+			
+
+			<fieldset style="width:256px;height:160px;float:left;">
+				<legend>选择框</legend>
+				<div style="width:250px;height:140px;margin-top:5px;">
+						<div style="float:left;">
+							<span>工资项目：</span><br>
+							<select style="height:124px;width:105px;float:left;" size="20" id="select_1">
+	                        <!-- 	 <option value="基本工资">基本工资</option>
+	                        	<option value="岗位工资">岗位工资</option>
+	                        	<option value="交通补助">交通补助</option>
+	                        	<option value="书报费">书报费</option>
+	                        	<option value="餐补">餐补</option>
+	                        	<option value="应发合计">应发合计</option>--> 
+	                        </select>
+						</div>
+						<div style="width:36px;height:105px;text-align:center;float:left;" class="ctrbtn">
+							<br><br>
+                        	<input type="button" value=">>"  onclick="allMoveDown();"/>
+							<input type="button" value=">" onclick="moveDown();"/>
+                        	<input type="button" value="<"  onclick="moveUp();"/>
+                        	<input type="button" value="<<"  onclick="allMoveUp();"/>
+						
+						</div>
+					
+						<div style="float:left;">
+							
+							<span>已选项目：</span><br>
+							<select style="height:124px;width:105px;float:left;" size="20" id="select_2">
+	                        </select>
+						</div>
+				</div>
+			</fieldset>
+
+
+				
+				<div style="width:100px;height:170px;float:left;text-align:center;">
+					<br>
+					<input type="button" value="确认" onclick="btnConfirm()"/><br><br>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('wa_change_gl')"/>
+					<br><br><br>
+					<input type="button" value="保存" onclick="btnSave()"/><br><br>
+					<input type="button" value="删除" onclick="btnDelete()"/>
+				</div>
+				
+				
+			
+		</div>
+	</div>
+</body>
+</html>

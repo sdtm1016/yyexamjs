@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>反结账</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+var param=window.parent.valueMap.get("wa_checkout_anti2");
+var period = window.parent.parent.login_iperiod ;
+
+$(document).ready(function(){
+	
+	$("#watype").html(param.cgzgradenum);
+	$("#iperiod").html(period);
+	
+});
+
+function buttonOk(){
+	
+	$.ajax({
+		url:"wageBusiness!monthEndOpeningCheckList.action",
+		data:param,
+		type:"post",
+		dataType:"json",
+		async:false,
+		success:function(data){
+			if(data.flag=="1"){
+				jAlert("反结账成功","提示",function(){
+					var val=window.parent.parent.wa_isWageSets
+					if(val==2){
+					window.parent.closeWindow("wa_checkout_anti1");
+					}
+					window.parent.closeWindow("wa_checkout_anti2");	
+				});
+				
+				
+			}
+			
+		}
+	});
+}
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:310px;height:130px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:290px;height:110px;margin-top:10px;margin-left:10px;">
+			
+			
+	
+			<div class="border_outside" style="width:290px;height:70px;">
+				<div class="border_inside" style="width:288px;height:68px;">
+					<div style="margin:5px;">
+						
+						工资类别：<span id="watype"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 进行反结账的会计月份：<span id="iperiod"></span>月<br><br>
+						执行本功能，系统将自动清空该月已完成的工资变动数据！
+						
+					</div>
+				</div>
+			</div>
+	
+			<div style="text-align:right;margin-top:8px;">
+				<input type="button" value="确定" onclick="buttonOk()"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_checkout_anti2');"/>
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

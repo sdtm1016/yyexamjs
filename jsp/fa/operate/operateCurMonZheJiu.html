@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>折旧清单</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<style type="text/css">
+	.normalInput{width:200px;}
+	.normalInput1{width:180px;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript">
+		var paramd = window.parent.valueMap.get("fa_operate_operateCurMonZheJiu");
+		var bpreCardData = "";
+	  /**
+	   * 节点单击事件
+	   * @param event
+	   * @param treeId 树id
+	   * @param treeNode jied
+	   * @param clickFlag
+	 */
+	var depreciations=null;
+	function onClick(event, treeId, treeNode, clickFlag) {
+		var param="";
+		var num=treeNode.name.split(" ")[0];
+		if(num!="00"){
+			var typ=$("#queryClass").val();
+			if(typ=="1"){
+				param="#";
+			}else if(typ=="2"){
+				param="$";
+			}
+			param=param+num;
+		}
+		selectDepreciation(param);
+	}	
+	$(function(){
+		
+		
+		
+		
+		//查询固定资产计提折旧后首次弹出折旧分配表后修改系统是否已弹出过此窗体状态值
+		//alert(window.parent.parent.login_accid);
+		$.ajax({
+		    url: "glAccInformation!findCvalueOfBpreCardData",
+		    type: 'post',
+		    dataType: "json",
+		    cache:false,
+		    data:'accid='+window.parent.parent.login_accid,
+		    success: function(data){
+		    	bpreCardData=data.cvalue;
+		    	
+		    }
+		  });
+		
+		
+		
+		
+		
+		var setting = {	
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onClick: onClick
+			}
+		};
+		var zNodes=null;
+		var zNodes_Class=null;
+		
+		$.ajax({//部门树封装
+		    url: "fadepartMents!findDepartMent",
+		    type: 'post',
+		    dataType: "json",
+		    cache:false,
+		    async:false,
+		    success: function(data){
+		    	zNodes=[{id:"0",name:"00 固定资产部门编码目录",open:true,children:[]}];
+		    	var znode=zNodes[0];
+		    	departments=data.departments; 
+		    	for(var i=0;i<departments.length;i++){
+		    		var department=departments[i];
+	    			var paren=department.sparentnum;
+	    			if(paren=="null"||paren==null){
+	    				paren="";
+	    			}
+		    		var depart={id:department.id,name:department.snum+" "+department.sname,parents:paren,open:false,children:[]};
+		    		var ilevel=department.ilevel-0;
+		    		var par=getparent(znode,ilevel);
+		    		par[par.length]=depart;
+		    	}
+		    }
+		  });
+		
+		$.post("ztree!loadFaAssettypesTree",function(dataJson){//固定资产类别树封装
+			zNodes_Class =[];
+			var treeNodes = dataJson.listTree;
+	        for (var i = 0; i<treeNodes.length; i++) {
+	        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+	        	zNodes_Class.push(nodeObj);
+	        }
+		},"json").error(function(){
+			jAlert("请求失败！");
+		});
+		
+		$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		//查询类别选择
+		$("#queryClass").unbind("change").bind("change",function(){
+		     if($(this).val()==1){
+		         $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			 }else if($(this).val()==2){
+			     $.fn.zTree.init($("#treeDemo"), setting, zNodes_Class);
+			 }
+		     selectDepreciation("");
+		});
+		
+		/**
+		时间列表初始化
+		*/
+		var operDate=getCookie("operDate");//登录时间
+		var opers=operDate.split("-");
+		var year=opers[0];
+		var nowmouth=opers[1]-0;
+		var mouth=1;
+		var options="";
+		while(mouth<=12){
+			var time="";
+			if(nowmouth==mouth){
+				if(mouth<10){
+					time=year+".0"+mouth+"(登录)(最新)";
+				}else{
+					time=year+"."+mouth+"(登录)(最新)";
+				}
+				options=options+"<option selected='selected' value='"+time+"' >"+time+"</option>";
+			}else{
+				if(mouth<10){
+					time=year+".0"+mouth;
+				}else{
+					time=year+"."+mouth;
+				}
+				options=options+"<option value='"+time+"'>"+time+"</option>";
+			}
+			mouth++;
+		}
+		$("#queryTime").html(options);
+		selectDepreciation("");
+	});
+	/**
+	获取树节点插入位置
+	*/
+	function getparent(znode,level){
+		var pare=znode.children;
+		for(var j=1;j<level;j++){
+			pare=pare[pare.length-1].children;
+		}
+		return pare;
+	}
+	function afterWindowClose(){
+		
+	
+		 
+		 
+		 
+		 
+		var p = {bpreCardData:bpreCardData,paramd:paramd};
+		
+		if(bpreCardData=="TRUE"){
+			p.paramd=2;
+			window.parent.openWindow('fa_operate_allotdepre','fa_operate_operateCurMonZheJiu',p);
+		}else{
+			if(paramd=="1"){
+				window.parent.showDoneMessage();
+			}else if(paramd=="2"){
+				window.parent.openWindow('fa_operate_allotdepre','fa_operate_operateCurMonZheJiu',p);
+			}
+		}
+		
+		
+	}
+	//时间条件查询
+	function dotimechange(){
+		
+	}
+	/**
+	查询数据库
+	*/
+	function selectDepreciation(param){
+		
+		
+		
+		$.ajax({//部门树封装
+		    url: "faCardDepreciation!selectDepre",
+		    type: 'post',
+		    dataType: "json",
+		    data:"selectParam="+param,
+		    cache:false,
+		    async:false,
+		    success: function(data){
+		    	depreciations=data.depreciations;
+		    	var nowtime=$("#queryTime").val().replace("(登录)(最新)","").split(".")[1];
+		    	var trs="";
+		    	var yz=0.0;
+		    	var jtyz=0.0;
+		    	var byzj=0.0;
+		    	var ljzj=0.0;
+		    	var jcz=0.0;
+		    	
+		    	
+		    	for(var i=0;i<depreciations.length;i++){
+		    		var fadepre=depreciations[i];
+		    		if(nowtime=="01"){
+		    			var dbldepr=fadepre.dbldepr1;
+		    			var dbldeprt=fadepre.dbldeprt1;
+		    			var dbldeprrate=fadepre.dbldeprrate1;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="02"){
+		    			var dbldepr=fadepre.dbldepr2;
+		    			var dbldeprt=fadepre.dbldeprt2;
+		    			var dbldeprrate=fadepre.dbldeprrate2;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="03"){
+		    			var dbldepr=fadepre.dbldepr3;
+		    			var dbldeprt=fadepre.dbldeprt3;
+		    			var dbldeprrate=fadepre.dbldeprrate3;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="04"){
+		    			var dbldepr=fadepre.dbldepr4;
+		    			var dbldeprt=fadepre.dbldeprt4;
+		    			var dbldeprrate=fadepre.dbldeprrate4;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="05"){
+		    			var dbldepr=fadepre.dbldepr5;
+		    			var dbldeprt=fadepre.dbldeprt5;
+		    			var dbldeprrate=fadepre.dbldeprrate5;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="06"){
+		    			var dbldepr=fadepre.dbldepr6;
+		    			var dbldeprt=fadepre.dbldeprt6;
+		    			var dbldeprrate=fadepre.dbldeprrate6;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="07"){
+		    			var dbldepr=fadepre.dbldepr7;
+		    			var dbldeprt=fadepre.dbldeprt7;
+		    			var dbldeprrate=fadepre.dbldeprrate7;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="08"){
+		    			var dbldepr=fadepre.dbldepr8;
+		    			var dbldeprt=fadepre.dbldeprt8;
+		    			var dbldeprrate=fadepre.dbldeprrate8;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="09"){
+		    			var dbldepr=fadepre.dbldepr9;
+		    			var dbldeprt=fadepre.dbldeprt9;
+		    			var dbldeprrate=fadepre.dbldeprrate9;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="10"){
+		    			var dbldepr=fadepre.dbldepr10;
+		    			var dbldeprt=fadepre.dbldeprt10;
+		    			var dbldeprrate=fadepre.dbldeprrate10;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="11"){
+		    			var dbldepr=fadepre.dbldepr11;
+		    			var dbldeprt=fadepre.dbldeprt11;
+		    			var dbldeprrate=fadepre.dbldeprrate11;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}else if(nowtime=="12"){
+		    			var dbldepr=fadepre.dbldepr12;
+		    			var dbldeprt=fadepre.dbldeprt12;
+		    			var dbldeprrate=fadepre.dbldeprrate12;
+		    			if(dbldepr!=null&&dbldeprt!=null){
+		    				yz=jtyz=yz+fadepre.dblinputvalue;
+		    				byzj=byzj+dbldepr;
+		    				ljzj=ljzj+dbldeprt;
+		    				jcz=jcz+fadepre.dblmonthbv;
+		    				trs=trs+"<tr><td >"+fadepre.scardnum+"</td><td >"+fadepre.sdeprassetnum+"</td><td >"+fadepre.sassetname+"</td><td >"+donumswitch(fadepre.dblinputvalue.toFixed(2))+"</td><td  >"+donumswitch(fadepre.dblinputvalue.toFixed(2))
+		    				+"</td><td  >"+donumswitch(dbldepr.toFixed(2))+"</td><td  >"+donumswitch(dbldeprt.toFixed(2))
+		    				+"</td><td  >"+donumswitch(fadepre.dblmonthbv.toFixed(2))+"</td><td  >"+dbldeprrate
+		    				+"</td><td></td><td></td><td></td></tr>";
+		    			}
+		    		}
+		    	}
+		    	if(trs!=""){
+		    		trs=trs+"<tr><td>合计</td><td></td><td></td><td>"+donumswitch(yz.toFixed(2))+"</td><td>"+donumswitch(jtyz.toFixed(2))+"</td><td>"+donumswitch(byzj.toFixed(2))+"</td><td>"+donumswitch(ljzj.toFixed(2))+"</td><td>"+donumswitch(jcz.toFixed(2))+"</td><td></td><td></td><td>0.000</td><td>0.000</td>";
+		    	}
+		    	
+		    	
+		    	
+		    	$("#datatable_1_bodyer").html(trs);
+		    }
+		  });
+	}
+	//关闭窗体时执行的方法
+	//function onWindowClose(){
+		//alert(0);
+	   //return false;
+	//}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			<div class="buttongroup">
+				<div class="group">
+                    <div><input id="printBut" type="button" value="打印"  style="background-image:url('../../../images/icon/allload.gif');"/></div>
+					<div><input type="button" value="预览"  style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="输出"  disabled="disabled" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" value="退出" onclick="window.parent.closeWindow('fa_operate_operateCurMonZheJiu');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+                <div style="float:right; margin:10px 40px auto auto">
+                   <select id="queryTime" disabled="disabled" style="width:100%" onchange="dotimechange()">
+                        
+                   </select>
+                </div>
+			</div>
+            
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                    
+                    <div class="zTreeDemoBackground left" style="background-color: #D4D0C8;">
+                         <select id="queryClass" style=" width:100%">
+                             <option value="1">按部门查询</option>
+                             <option value="2">按类别查询</option>
+                         </select>
+                    </div>
+                	<div class="zTreeDemoBackground left">
+                         <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right; overflow-x:scroll; border:2px inset #eee;">
+                	<table id="datatable_1" class="table_style" style="width:420px;margin:-4px; margin-top:1px; margin-left:1px;">
+						        <thead>
+							       <tr id="datatable_1_header" style="height:16px;">
+								      <!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								        <td style="white-space:nowrap;" >卡片编号</td>
+								        <td style="white-space:nowrap;" >资产编号</td>
+                                        <td style="white-space:nowrap;" >资产名称</td>
+                                        <td style="white-space:nowrap;" >原值</td>
+                                        <td style="white-space:nowrap;" >计提原值</td>
+                                        <td style="white-space:nowrap;" >本月折旧</td>
+                                        <td style="white-space:nowrap;" >累计折旧</td>
+                                        <td style="white-space:nowrap;" >净残值</td>
+                                        <td style="white-space:nowrap;">折旧率</td>
+                                        <td style="white-space:nowrap;">单位折旧</td>
+                                        <td style="white-space:nowrap;">本月工作量</td>
+                                        <td style="white-space:nowrap;">累计工作量</td>
+							       </tr>
+						        </thead>
+						        <tbody id="datatable_1_bodyer">
+							       
+						        </tbody>
+					          </table>
+                </div>
+            </div>
+            
+            
+		</div>
+	</div>
+</body>
+</html>

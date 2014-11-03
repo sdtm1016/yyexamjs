@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>函数向导</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+
+
+
+
+
+<script type="text/javascript">
+
+//弹出参照窗体返回值放到哪个目标文本框里，标记。
+var elementId = null;
+
+//弹出参照窗体返回值处理函数：
+function deliverValue(valueObject){
+	if(elementId!=null)
+	document.getElementById(elementId).value=valueObject.value;
+}
+
+
+
+
+
+
+
+
+//当前步骤面板
+var currentPanelIndex=1;
+
+
+//上一步
+function prevPanel(){
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex--;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+//下一步
+function nextPanel(){
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex++;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+//完成
+function finish(){
+	
+	
+}
+
+
+//根据当前面板显示或隐藏底部按钮
+function setFace(panelIndex){
+
+	var btn_prev_div = document.getElementById("btn_prev");
+	var btn_next_div = document.getElementById("btn_next");
+	var btn_finish_div = document.getElementById("btn_finish");
+	var btn_cancel_div = document.getElementById("btn_cancel");
+
+	//如果是第一个面板
+	if(panelIndex==1){
+		btn_next_div.style.display="block";
+		btn_finish_div.style.display="none";
+		btn_prev_div.style.display="none";
+	}
+	//如果是第二个面板
+	if(panelIndex==2){
+		btn_next_div.style.display="none";
+		btn_finish_div.style.display="block";
+		btn_prev_div.style.display="block";
+	}
+}
+
+
+
+function selectChange(){
+
+	var select = document.getElementById("funSelect");
+
+	var discription_1 = document.getElementById("discription_1");
+	var discription_2 = document.getElementById("discription_2");
+	var discription_3 = document.getElementById("discription_3");
+	
+	var exp_1 = document.getElementById("exp_1");
+	var exp_2 = document.getElementById("exp_2");
+	var exp_3 = document.getElementById("exp_3");
+	
+	var text = select.options[select.selectedIndex].innerHTML;
+	discription_1.innerHTML=text;
+	discription_2.innerHTML=text;
+	discription_3.innerHTML=text;
+	
+	discription_4.innerHTML=text;
+	discription_5.innerHTML=text;
+	var expression = "logic";
+	
+	//表达式文本框显示控制
+	switch(expression){
+		
+		//如果是逻辑运算符
+		case "logic": 
+			exp_1.style.display="block";
+			exp_2.style.display="block";
+			exp_3.style.display="block";
+		break;
+		//如果是算术运算符
+		case "arithmetic": 
+			exp_1.style.display="none";
+			exp_2.style.display="block";
+			exp_3.style.display="none";
+		break;
+		//其他
+		case "other": 
+			exp_1.style.display="none";
+			exp_2.style.display="none";
+			exp_3.style.display="none";
+		break;
+		
+	}
+	
+	
+	
+	
+}
+
+
+</script>
+
+
+
+
+</head>
+<body onload="selectChange();">
+	<div class="container" style="float:left;width:400px;height:260px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:380px;height:240px;margin-top:10px;margin-left:10px;">
+			
+			<div style="width:100%;height:206px;">
+				
+				
+				<div id="steps_panel_1" style="width:100%;height:100%;">
+					请选择需要的函数，然后点击“下一步”按钮以输入参数。<br><br>
+					函数名：
+					<div>
+					
+						<div style="width:120px;height:150px;float:left;">
+							<select id="funSelect" style="width:100%;height:100%;" size="10" onchange="selectChange();">
+								<option selected>fun1</option>
+								<option>fun2</option>
+								<option>fun3</option>
+								<option>fun4</option>
+								<option>fun5</option>
+								<option>fun6</option>
+								<option>fun7</option>
+								<option>fun8</option>
+								<option>fun9</option>
+								<option>fun10</option>
+								<option>fun11</option>
+								<option>fun12</option>
+								<option>fun13</option>
+								<option>fun14</option>
+								<option>fun15</option>
+								<option>fun16</option>
+								<option>fun17</option>
+								<option>fun18</option>
+							</select>
+						</div>
+						<div style="width:230px;height:130px;float:left;margin-left:4px;">
+							
+							
+						<fieldset style="width:100%;height:100%;">
+							<legend>函数说明</legend>
+							<div>
+								
+								<div id="discription_1" style="width:100%;height:40px;">啊哈哈</div>
+								<div id="discription_2" style="width:100%;height:20px;">速度冯绍峰</div>
+								例如：
+								<div id="discription_3" style="width:100%;height:50px;">改行随碟附送</div>
+								
+							</div>
+						</fieldset>
+							
+							
+							
+						</div>
+					</div>
+				</div>
+				
+				<div id="steps_panel_2" style="width:100%;height:100%;display:none;">
+					
+					
+					<div id="discription_4" style="width:100%;height:50px;"></div>
+					
+					<div id="discription_5" style="width:100%;height:50px;"></div>
+					
+					
+					<div id="discription_6" style="width:100%;height:50px;padding-left:20px;">
+					
+						<div id="exp_1"><label>逻辑表达式。</label><input id="exp_input_1" type="text" style="width:220px;"/><input type="button" class="finder" onclick="window.parent.openWindow('wa_other_functionsteps','wa_other_reference');elementId='exp_input_1';"/></div>
+						<div id="exp_2"><label>算术表达式1 </label><input id="exp_input_2" type="text" style="width:220px;"/><input type="button" class="finder" onclick="window.parent.openWindow('wa_other_functionsteps','wa_other_reference');elementId='exp_input_2';"/></div>
+						<div id="exp_3"><label>算术表达式2 </label><input id="exp_input_3" type="text" style="width:220px;"/><input type="button" class="finder" onclick="window.parent.openWindow('wa_other_functionsteps','wa_other_reference');elementId='exp_input_3';"/></div>
+
+					</div>
+					
+					
+					
+				</div>
+				
+				
+				
+			</div>
+			
+			<div style="width:100%;height:26px;text-align:right;">
+			
+				<div id="btn_cancel" style="float:left;margin-left:170px;"><input type="button" value="取消" onclick="cancel();"/></div>
+				<div id="btn_next" style="float:left;margin-left:10px;"><input type="button" value="下一步" onclick="nextPanel();"/></div>
+				<div id="btn_prev" style="float:left;margin-left:10px;display:none;"><input type="button" value="上一步" onclick="prevPanel();"/></div>
+				<div id="btn_finish" style="float:left;margin-left:10px;display:none;"><input type="button" value="完　成" onclick="finish();"/></div>
+				
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

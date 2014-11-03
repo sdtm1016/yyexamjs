@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资分摊</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+
+<style type="text/css">
+#datatable_1_bodyer tr {
+	height: 14px;
+}
+
+#datatable_1_bodyer td {
+	text-align: left;
+	border: none;
+	height: 14px;
+	padding: 0px;
+	margin: 0px;
+	cursor: default;
+}
+
+#datatable_1_bodyer td input {
+	vertical-align: middle;
+	margin-bottom: 3px;
+	margin: 0px;
+	outline: none;
+}
+</style>
+
+<script type="text/javascript">
+	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+	$(document)
+			.ready(
+					function() {
+						initData();
+						queryTree(cgzgradename);
+						initIperiod();
+					});
+	
+	function initData(){
+		$.ajax({
+			url : 'wagesSharing!queryWagesSharingIndex.action',
+			type : 'post',
+			data : 'cgzgradenum=' + cgzgradenum,
+			dataType : 'json',
+			async : false,
+			success : function(data) {
+				ftNameList = (data.list)[0];
+				if(ftNameList.length==0)return;
+				var str = "";
+				$("#datatable_1_bodyer").html("");
+				var ftName;
+				for ( var i = 0; i < ftNameList.length; i++) {
+					ftName = ftNameList[i];
+					str += '<tr><td>'
+							+ '<input name="jtlx" type="checkbox"  value="' + ftName.ijtId+":"+ftName.cjtName + '" />'
+							+ '<label for="type_cb_2">'
+							+ ftName.cjtName
+							+ '</label>'
+				}
+				$("#datatable_1_bodyer").append(str);
+			}
+		});
+	}
+	
+	//初始化会计时间
+	function initIperiod(){
+		var operDate=getCookie("operDate");
+		var date=operDate.replace("-",".");
+		var year=date.substring(0,date.indexOf("."));
+		date=date.substring(0,date.indexOf("-"));
+		$("#iperiod").empty();
+		for(var i=1;i<=12;i++){
+			var val="";
+			if(i<10){
+				val=year+".0"+i;
+			}else{
+				val=year+"."+i;
+			}
+			$("#iperiod").append("<option value='"+val+"' >"+val+"</option>");
+		}
+		$("#iperiod").val(date);
+	}
+	
+	//获取计提费用类型id串
+	function getJTLXids(){
+		var jtlxids="";
+		$("[name='jtlx']").each(function(){
+			   if($(this).attr("checked"))
+			   {
+				   jtlxids = jtlxids + $(this).val()+",";
+			   }
+		 })
+        return jtlxids.substring(0, jtlxids.length-1);
+	}
+   
+	//获取部门id串
+	function getDEPids(){
+		var depid="";
+		var zTree = $.fn.zTree.getZTreeObj("dpt_tree");
+		var checkedNodes = zTree.getCheckedNodes();
+		if (checkedNodes.length > 0) {
+			//取得编码
+			//param.code = selectedNodes[0].code;
+			//取得名称
+			//param.name = selectedNodes[0].name;
+			for(var i=0;i<checkedNodes.length;i++){
+				depid= depid+checkedNodes[i].id+",";
+			}
+		}
+		return depid.substring(0, depid.length-1);
+	}
+	//确定按钮
+	function btnConfirm() {
+		
+		var jtids = getJTLXids();
+		var depids = getDEPids();
+		var period = $("#iperiod").val();
+		var fpfs = $(":radio:checked").val();
+		var mxdgzitem="";
+		if($("#cb_1").attr("checked")){
+			mxdgzitem=1;
+		}else{
+			mxdgzitem=0;
+		}
+		
+		var param = {"jtids":jtids,"depids":depids,"period":period,"fpfs":fpfs,"mxdgzitem":mxdgzitem};
+		//jAlert(jtids);
+		if(jtids==""){
+			jAlert("选择计提费用类型！");
+			return;
+		}
+		if (depids==""){
+			jAlert("选择核算部门！");
+			return;
+		}
+		
+		window.parent.openWindow("wa_wageallocation_tableview","wa_wageallocation_first", param);
+		window.parent.closeWindow("wa_wageallocation_first");
+	}
+	var zNodes = [];
+	function queryTree(cgzgradename) {
+		$.ajax({
+			url : 'ztree!loadWaDeptTree.action',
+			type : 'post',
+			data : 'cgzgradename=' + cgzgradename,
+			dataType : 'json',
+			async : false,
+			success : function(data) {
+				$("#dpt_tree").html("");
+				treeNodes = data.listTree;
+				for ( var i = 0; i < treeNodes.length; i++) {
+					
+					var nodeObj = eval('(' + treeNodes[i] + ')');
+					zNodes.push(nodeObj);
+				}
+				$.fn.zTree.init($("#dpt_tree"), setting, zNodes);
+			}
+		});
+		/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+		//当前被点击选中的行全局变量
+		var currentSeletedRow = null;
+		var datatable_1 = document.getElementById("datatable_1_bodyer");
+		for ( var i = 0; i < datatable_1.rows.length; i++) {
+			datatable_1.rows[i].onclick = function(e) {
+				var evt = (window.event || e);//获得事件
+				var evtsrc = (evt.srcElement || evt.target);
+				if (currentSeletedRow != null && evtsrc.tagName == "TD") {
+					currentSeletedRow.style.backgroundColor = "#fff";
+					currentSeletedRow.style.color = "#000";
+				}
+				if (evtsrc.tagName == "TD") {
+					evtsrc.parentNode.style.backgroundColor = "#00f";
+					evtsrc.parentNode.style.color = "#fff";
+					currentSeletedRow = evtsrc.parentNode;
+				}
+			}
+		}
+		/***** 选中行代码结束*******/
+	}
+	/*** 树构建代码 开始 ***/
+	var setting = {
+		check : {
+			enable : true,
+			chkStyle : "checkbox"
+		},
+		data : {
+			simpleData : {
+				enable : true
+			}
+		}
+	};
+
+	/*** 树构建代码 结束 ***/
+
+	//弹出工资分摊设置窗体
+	function allocationSet() {
+		window.parent.openWindow("wa_wageallocation_typesetting");
+	}
+
+	
+</script>
+
+</head>
+<body>
+	<div class="container"
+		style="float: left; width: 486px; height: 260px; background-color: #D4D0C8; position: absolute; top: 0px; left: 0px;">
+		<div
+			style="width: 466px; height: 190px; margin-top: 10px; margin-left: 10px;">
+
+
+			<div style="width: 164px; height: 190px; float: left;">
+				<div style="height: 20px;">计提费用类型</div>
+				<div
+					style="width: 156px; height: 160px; border: 2px inset #ccc; overflow-x: auto; overflow-y: auto; background-color: #fff;">
+					<table style="width: 156px;">
+						<tbody id="datatable_1_bodyer">
+					
+
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+
+			<div style="width: 180px; height: 190px; float: left;">
+				<div style="height: 20px;">选择核算部门</div>
+				<div
+					style="width: 170px; height: 170px; border: 2px inset #ccc; overflow-x: auto; overflow-y: auto; background-color: #fff;">
+					<div id="dpt_tree" class="ztree"></div>
+				</div>
+			</div>
+
+			<div style="width: 120px; height: 190px; float: left;" class="v_a_m">
+				<div style="height: 20px;">计提会计月份</div>
+				<select id="iperiod" style="width: 100px;">
+					<option value="2012.01">2012.01</option>
+					<option value="2012.02">2012.02</option>
+					<option value="2012.03">2012.03</option>
+					<option value="2012.04">2012.04</option>
+					<option value="2012.05">2012.05</option>
+					<option value="2012.06">2012.06</option>
+					<option value="2012.07">2012.07</option>
+					<option value="2012.08">2012.08</option>
+					<option value="2012.09">2012.09</option>
+					<option value="2012.10">2012.10</option>
+					<option value="2012.11">2012.11</option>
+					<option value="2012.12">2012.12</option>
+				</select>
+
+				<fieldset style="width: 100px; height: 50px;">
+					<legend>计提分配方式</legend>
+					<div>
+
+						<div style="height: 20px; margin-top: 0px;">
+							<input type="radio" name="rd_1" id="rd_1_1" checked="checked" value="1"/>
+							<label for="rd_1_1">分配到部门</label>
+						</div>
+
+						<div style="height: 20px;">
+							<input type="radio" name="rd_1" id="rd_1_2" value="0"/>
+							<label for="rd_1_2">分配到个人</label>
+						</div>
+
+					</div>
+				</fieldset>
+
+				<div style="margin-top: 10px;">
+					<input type="checkbox" id="cb_1" />
+					<label for="cb_1">明细到工资项目</label>
+				</div>
+
+			</div>
+
+
+		</div>
+
+
+		<div
+			style="margin-top: 6px; width: 100%; border-top: 1px solid #404040; border-bottom: 1px solid #fff;"></div>
+
+		<div
+			style="width: 100%; height: 36px; margin-left: -20px; margin-top: 10px; text-align: right;">
+			<input type="button" value="工资分摊设置..." onclick="allocationSet()" /> <input
+				type="button" value="确定" onclick="btnConfirm();" /> <input
+				type="button" value="取消"
+				onclick="window.parent.closeWindow('wa_wageallocation_first');" />
+		</div>
+
+
+
+	</div>
+</body>
+
+
+</html>

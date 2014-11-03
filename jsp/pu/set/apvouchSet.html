@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>其他应付单期初</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
+<link rel="stylesheet" type="text/css" href="css/invoiceSet.css">
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<!-- 引入日期组件 -->
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+
+<script type="text/javascript" src="js/yfd/apvouch_component_set.js"></script>
+<script type="text/javascript" src="js/yfd/apvouch_pu_set.js"></script>
+
+
+</head>
+<body>
+	<div class="container" style="float:left;width:644px;height:450px;background-color: #fff;position:absolute;top:0px;left:0px;">
+		
+		
+<div class="buttongroup" style="position:relative;z-index:1;">
+	<div class="group">
+	
+		<div>
+			<input type="button" id = "addvouch"  value="增加" onclick="addApvouch_pu_set();" style="background-image:url('../../../images/icon/add.gif');" />
+		</div>
+		
+		<div>
+			<input type="button" id = "upsvouch"  value="修改" onclick="upsApvouch_pu_set();" style="background-image:url('../../../images/icon/update.gif');" />
+		</div>
+		
+		<div>
+			<input type="button" id = "delvouch"  value="删除" onclick="delVouch_pu_set();" style="background-image:url('../../../images/icon/delete.gif');" />
+		</div>
+		
+	</div>
+	
+	
+	<div class="group">
+		
+		<div>
+			<input type="button" id = "savevouch"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveVouch_pu_set()" />
+		</div>
+		
+		<div>
+			<input type="button" id = "abortvouch"  value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" disabled="disabled" onclick="abortVouch_pu_set()"/>
+		</div>
+	   
+	</div>
+	
+	<div class="group">
+	
+		
+		<div>
+			<input type="button" id = "firstvouch"  value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"  onclick = "firstApDetail();"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "upvouch"  value="上张" style="background-image:url('../../../images/icon/prevcard.gif');" onclick = "upApDetail()"; />
+		</div>
+		
+		<div>
+			<input type="button" id = "downvouch"  value="下张" style="background-image:url('../../../images/icon/nextcard.gif');" onclick = "downApDetail();"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "lastvouch"  value="末张" style="background-image:url('../../../images/icon/lastcard.gif');" onclick = "lastApDetail();"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "copyvouch"  value="复制" style="background-image:url('../../../images/icon/change.gif');"/>
+		</div>
+		
+		<div>
+			<input type="button" id = "refreshvouch"  value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/>
+		</div>
+		
+	</div>
+	<div class="group">
+	
+		<div>
+			<input type="button" id = "exitvouch"  value="退出" onclick="exitApvouch_pu_set()" style="background-image:url('../../../images/icon/exit.gif');"/>
+		</div>
+	
+	</div>
+	
+		
+</div>
+		<div style="position:relative;z-index:0;">
+		
+			<div style="width:628px;height:396px;position:absolute;margin-top:10px;margin-left:7px;border:1px solid #000;background-color:#fff;"></div>
+			
+			<div style="width:628px;height:396px;position:absolute;margin-top:8px;margin-left:5px;border:1px solid #000;background-color:#fff;"></div>
+			
+			<div style="width:628px;height:396px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;">
+				
+				<div style="margin-top:6px;margin-left:6px;">
+					
+					<div>
+						<div style="height:24px;">
+							<div id="titlename" style="width:640px;margin-top:-2px;text-align:center;font-size:24px;font-family:楷体;font-weight:bold;color:black;float:left;text-decoration:underline;">
+								其他应付单
+							</div>
+							
+							
+						</div>
+						<hr>
+						<div id="topTextBoxContainer">
+							<table class="inputtable" border="0">
+							
+								<tr>
+								
+									<td align="right"><label >单据编号</label></td>
+									<td>
+										<div>
+											<input type="text" id="CVOUCHID" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									
+									
+									<td align="right"><label class="colblu">单据日期</label></td>
+									<td>
+										<div>
+											<input type="text" id="DVOUCHDATE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+								</tr>
+								
+							
+							
+								<tr>
+								
+									
+									
+									<td align="right"><label >科目编号</label></td>
+									<td>
+										<div>
+											<input type="text" id="CCODE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label class="colblu">币种</label></td>
+									<td>
+										<div>
+											<input type="text" id="CEXCH_NAME" class="querybox"   onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+								</tr>
+								
+							   <tr>
+							   
+							   </tr>
+									<td align="right"><label id = "dwname" class="colblu">供应商</label></td>
+									<td>
+										<div>
+											<input type="text" id="CDWCODE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>部门</label></td>
+									<td>
+										<div>
+											<input type="text" id="CDEPTCODE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								<tr>
+								
+									<tr>
+								
+									<td align="right"><label>项目</label></td>
+									<td>
+										<div>
+											<input type="text" id="CITEMCODE" /><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									
+									
+									<td align="right"><label>业务员</label></td>
+									<td>
+										<div>
+											<input type="text" id="CPERSON" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+								</tr>
+								
+								
+								<tr>
+								
+									
+									<td align="right"><label>付款条件</label></td>
+									<td>
+										<div>
+											<input type="text" id="CPAYCODE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label class="colblu">金额</label></td>
+									<td>
+										<div>
+											<input type="text" id="IDAMOUNT_F"  onBlur="moneyBlur()"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									
+									
+								
+								
+							
+							
+								<tr>
+								
+									<td align="right"><label>本币金额</label></td>
+									<td>
+										<div>
+											<input type="text" id="IDAMOUNT" /><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label>摘要</label></td>
+									<td>
+										<div>
+											<input type="text" id="CDIGEST"  /><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									
+									
+								</tr>
+								
+									<tr>
+								
+									
+									
+									<td align="right"><label>数量</label></td>
+									<td>
+										<div>
+											<input type="text" id="IDAMOUNT_S" /><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label>账期管理</label></td>
+									<td>
+										<div>
+											<input type="text" id="ZQCODE" /><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+								</tr>
+								
+								
+									<tr>
+								
+									
+									
+									<td align="right"><label class="colblu">到期日</label></td>
+									<td>
+										<div>
+											<input type="text" id="DQDATE" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+						
+						
+						
+			</div>
+				
+			</div>
+			
+		</div>
+		
+		
+	</div>
+	
+	
+
+	
+	
+	
+</body>
+
+
+
+
+
+</html>

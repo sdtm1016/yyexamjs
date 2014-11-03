@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>人员类别设置(person class settings)</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript">
+	var mark=0;//标识是否修改(1是；0否);
+		$(document).ready(function(){
+			query();
+		});
+		//查询
+		function query(){
+			$.ajax({
+				url:"wageSetting!queryCategoriesOfPersonsSet.action",
+				type:"post",
+				success:function(data,status){
+					var list = data.gradeList;
+					$("#select_1").html("");//清空下拉列表
+					var str = "";
+					$.each(list,function(index,i){
+						//alert(JSON.stringify(i));
+						str = '<option  ipsngrdId="'+i.ipsngrdId+'" value="' + i.id +  '">' + i.cpsngrd +'</option>';
+						$("#select_1").append(str);
+					});
+					if(list.length>0){
+						$("#select_1 option:eq(0)").attr("selected",true);
+						$("#inftype").val($("#select_1 option:eq(0)").text());
+						$("#inftype").focus();
+						mark=1;
+					};
+				},
+				dataType:"json"
+			});
+		}
+		//根据下标选中行
+		function selectRowByIndex(i){
+			if(currentSeletedRow!=null){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			var len=document.getElementById("datatable_bodyer").rows.length;
+			if(len>0){
+				currentSeletedRow = document.getElementById("datatable_bodyer").rows[i];
+				currentSeletedRow.style.backgroundColor="#00f";
+				currentSeletedRow.style.color="#fff";	
+			}
+			
+			
+		}
+		//往select里添加项
+		function addOption(){
+			var tb = document.getElementById("inftype");
+			var value = tb.value;
+			if(value == "" || value== null){
+				return;
+			}
+			var options = document.getElementById("select_1").options;
+			//判断是否已经存在
+			for(var i=0;i<options.length;i++){
+				if(options[i].text==value){
+					jAlert("已有“"+value+"”，请指定另一附加信息名！");
+					tb.select();
+					tb.focus();
+					return false;
+				}
+			}
+			$.ajax({
+				url:"wageSetting!saveCategoriesOfPersonsSet.action",
+				type:"post",
+				data:"waGrade.cpsngrd="+ value,
+				success:function(data,status){
+					var id = data.id;
+					options.add(new Option(value,id));
+					$("#inftype").val("");
+					$("#inftype").focus();
+				},
+				dataType:"json"
+			});
+			
+		}
+		//删除选中的option
+		function deleteSelectedOption(){
+			var flag=false;
+			jConfirm('你确定删除吗?', '提示', function(r) {
+				   if (r){
+					var s1 = document.getElementById("select_1");
+					var  sourceValue = $("#select_1 option:selected").attr("ipsngrdId");
+					var	sourceTable = "WA_GRADE";
+					var	sourceField = "IPSNGRD_ID";
+						var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+						if (isExits == true) {
+							jAlert("该人员类别已经被使用，不能删除!");
+							return;
+						}
+						$.ajax({
+							url:"wageSetting!delCategoriesOfPersonsSet.action",
+							type:"post",
+							data:"id="+ s1.value,
+							success:function(data,status){
+								//增加对 系统预置 “无类别” 的删除判断  add  by lval 2013626
+								if(data.flag=="1"){
+									s1.options.remove(s1.selectedIndex);
+									$("#inftype").val("");
+								}else{
+									jAlert("系统预置类别不能删除！");
+								}
+								
+							},
+							dataType:"json"
+						});
+					}
+				});
+		}
+		//修改(2103-9-9 lyl )
+		function update(){
+			if(mark==1){
+				var s1 = document.getElementById("select_1");
+				var tb = document.getElementById("inftype");
+				var value = tb.value;
+				if(value == "" || value== null){
+					return;
+				}
+				var options = document.getElementById("select_1").options;
+				//判断是否已经存在
+				if(options.length>1){
+					for(var i=0;i<options.length;i++){
+						var index=s1.selectedIndex;
+						if(options[i].text==value){
+								if(index!=i){
+									jAlert("已有“"+value+"”，请指定另一附加信息名！");
+									tb.select();
+									tb.focus();
+									return false;
+								}
+						}
+					}
+				}
+				var id=$("#select_1").val();
+				var cpsngrd=$("#inftype").val();
+				if(cpsngrd==""||cpsngrd==null){
+					return;
+				}
+				$.ajax({
+					url:"wageSetting!updateWaGrade.action",
+					type:"post",
+					data:"waGrade.id="+parseInt(id)+"&waGrade.cpsngrd="+cpsngrd,
+					async:false,
+					success:function(data,status){
+						query();
+					},
+					dataType:"json"
+				});
+			}
+		}
+		//select选中改变处理
+		function selectChange(select){
+			if($("#select_1").length!=0){
+			var tb = document.getElementById("inftype").value=select.options[select.selectedIndex].text
+			mark=1;
+			}
+			
+		}
+	</script>
+</head>
+<body>
+	<div class="container" id="container" style="float:left;width:296px;height:244px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:270px;height:224px;margin-left:20px;margin-top:10px;">
+			
+			<div>类别：<input type="text" id="inftype"   style="width:140px;"/></div>
+			<div style="margin-top:10px;">
+				<div style="float:left;">
+					<div style="width:190px;height:180px;">
+						<div style="float:left;">
+							<select id="select_1" size="14" style="width:190px;height:180px;" onchange="selectChange(this);">
+							</select>
+						</div>
+					</div>
+					
+				</div>
+				<div style="float:left;margin-top:54px;width:80px;text-align:center;">
+					<input type="button" value="增加" onclick="addOption();"/><br/>
+					<input type="button" value="修改" onclick="update();"/><br/>
+					<input type="button" value="删除" onclick="deleteSelectedOption();"/><br/>
+					<input type="button" value="返回" onclick="window.parent.closeWindow('wa_other_pcs')"/>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	
+	
+</body>
+
+
+</html>

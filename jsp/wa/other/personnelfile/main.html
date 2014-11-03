@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>人员档案（Personnel files）</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../../../css/contextmenu.css">
+<script type="text/javascript" src="../../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+<style type="text/css">
+	.table_header {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;position:relative;background-color:#fff;}
+	.table_header thead tr {height:31px;}
+	.table_header thead tr td {border:none;border-right:1px solid #000;border-bottom:1px solid #000;width:100px;text-align:center;}
+	.table_bodyer {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;background-color:#fff;}
+	.table_bodyer tbody tr {height:20px;}
+	.table_bodyer tbody tr td {border:none;border-right:1px solid #ccc;border-bottom:1px solid #ccc;width:100px;}
+</style>
+<script type="text/javascript">
+	//当前被点击选中的行全局变量
+	var currentSeletedRow=null;
+	$(document).ready(function(){
+		mainOnload();
+	});
+	var psnData="";
+	function mainOnload(){
+		var cgzGradeNum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+		$.ajax({
+			url:"wageSetting!queryPersonnelFiles.action",
+			type:"post",
+			async:false,
+			data:"waPsn.cgzGradeNum=" + cgzGradeNum,
+			success:function(data,status){
+				var list = data.waPsnList;
+				psnData=list;
+			//	alert("main1:"+JSON.stringify(psnData));
+				$("#psn_num").html(list.length);//清空下拉列表
+				$("#wa_psn").html("");//清空下拉列表
+				var str = "";
+				$.each(list,function(index,i){
+					str = '<tr><td width="142">' + i.cdepname +
+						 '</td><td width="142">' + i.cpsnNum +
+						 '</td><td width="142">' + i.cpsnName +
+						 '</td><td width="142">' + i.cpsngrd +
+						 '</td><td width="142">' + (i.caccount==null?"":i.caccount) +
+						 '</td><td width="142">' + i.bforeign +
+						 '</td><td width="142">' + i.btaxbz +
+						 '</td><td width="142">' + (i.bdcbz=='否'?(i.btfbz==null?"":i.btfbz):i.bdcbz)+
+						 '</td><td width="142">' + (i.dintime==null?"":i.dintime)+
+						 '</td><td style="display:none">'+ i.id +
+						 '</td><td style="display:none">'+ i.did +
+						 '</td></tr>'
+					$("#wa_psn").append(str);
+				});
+			},
+			dataType:"json"
+		});
+		/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+		
+		var datatable_1 = document.getElementById("table_1_bodyer");
+		for(var i=0;i<datatable_1.rows.length;i++){
+			datatable_1.rows[i].onclick=function(event){
+				var evt=(window.event || event);//获得事件
+				var evtsrc = (evt.srcElement || evt.target);
+				if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+					currentSeletedRow.style.backgroundColor="#fff";
+					currentSeletedRow.style.color="#000";
+				}
+				if(evtsrc.tagName=="TD"){
+					evtsrc.parentNode.style.backgroundColor="#00f";
+					evtsrc.parentNode.style.color="#fff";
+					currentSeletedRow=evtsrc.parentNode;
+				}
+			}
+		}
+		/***** 选中行代码结束*******/
+	}
+	function delPsn(){
+		if(currentSeletedRow==null){
+			jAlert("请选择一条数据!");
+			return;
+		}
+		var id = currentSeletedRow.cells[9].innerHTML;
+		var did = currentSeletedRow.cells[10].innerHTML;
+		var cpsnNum = currentSeletedRow.cells[1].innerHTML;
+		var sourceValue=cpsnNum;
+		var sourceTable="WA_PSN";
+		var sourceField="CPSN_NUM";
+		var refTable="WA_GZDATA";
+		var isExits = false;
+		  var param = "tableRef.sourceValue="+sourceValue 
+		              + "&tableRef.sourceTable=" + sourceTable
+		              + "&tableRef.refTable="+refTable
+	                  + "&tableRef.sourceField=" + sourceField;
+
+		  $.ajax({
+			    url: "tableRef!wapsnIsUsed",
+			    type: 'post',
+			    data:param,
+			    dataType: "json",
+			    async:false,
+			    success: function(data){
+			    	isExits = data.isExitsTableRef;
+			    }
+			  });
+		if (isExits==true) {
+			jAlert("已有工资数据,不能删除当前人员!");
+		    return ;			
+		}else{
+			$.ajax({
+				url:"wageSetting!delPersonnelFiles.action",
+				type:"post",
+				async:false,
+				data:"id=" + id + "&waPsn.cpsnNum=" + cpsnNum + "&gzData.id=" + did,
+				success:function(data,status){
+					mainOnload();
+				}
+			});
+		}
+	}
+	function updatePsn(){
+		if (currentSeletedRow == null) {
+			jAlert("请选择要修改数据");
+		}else{
+			var param = {};
+			param.id=currentSeletedRow.cells[9].innerHTML;
+			param.did = currentSeletedRow.cells[10].innerHTML;
+			param.psnData=psnData;
+			window.parent.openWindow('wa_other_personnelfile_update','wa_other_personnelfile_main',param);	
+		}
+
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:800px;height:550px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:793px;height:543px;margin-top:1px;margin-left:3px;">
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="增加" onclick="window.parent.openWindow('wa_other_personnelfile_add');" style="background-image:url('../../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="批增" onclick="window.parent.openWindow('wa_other_personnelfile_batch_add');" style="background-image:url('../../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="修改" onclick="updatePsn();" style="background-image:url('../../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" onclick="delPsn();" style="background-image:url('../../../../images/icon/delete.gif');"/></div>
+					<div><input type="button" value="替换" onclick="window.parent.openWindow('wa_other_personnelfile_replace');" style="background-image:url('../../../../images/icon/replace.gif');"/></div>
+					<div><input type="button" value="筛选" onclick="window.parent.openWindow('wa_other_personnelfile_screening');" style="background-image:url('../../../../images/icon/screening.gif');"/></div>
+					<div><input type="button" value="定位" onclick="window.parent.openWindow('wa_other_personnelfile_position');" style="background-image:url('../../../../images/icon/return.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('wa_other_personnelfile_main');" style="background-image:url('../../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+			<div contextmenu="table_contextmenu" style="width:794px;height:503px;background-color:#fff;">
+				<div style="width:792px;height:68px;">
+					<div style="width:792px;height:40px;line-height:40px;padding-top:10px;text-align:center;font-size:20px;font-family:正楷;font-weight:bold;color:#000080;text-decoration:underline;">
+						人　  员　  档　  案
+					</div>
+					<div style="color:#000080;padding-left:500px;">
+						总人数：<label id="psn_num"></label>
+					</div>
+				</div>
+				<div style="width:792px;height:433px;border:1px solid #000;overflow:auto;" onscroll="tableScroll(this);">
+					<table id="table_1_header" class="table_header" style="width:1300px;">
+						<thead>
+							<tr>
+								<td width="142">部门名称</td>
+								<td width="142">人员编号</td>
+								<td width="142">人员姓名</td>
+								<td width="142">人员类别</td>
+								<td width="142">账号</td>
+								<td width="142">中方人员</td>
+								<td width="142">是否计税</td>
+								<td width="142">工资停发</td>
+								<td width="142">进入日期</td>
+							</tr>
+						</thead>
+					</table>
+					<table contextmenu="table_contextmenu" id="table_1_bodyer" class="table_bodyer" style="width:1300px;">
+						<tbody id="wa_psn">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<!----- 表格右键菜单 ---->
+<div id="table_contextmenu" class="winui_contextmenu">
+<a onclick="window.parent.openWindow('wa_other_personnelfile_add');">增加</a>
+<a onclick="delPsn();">删除</a>
+<ul></ul>
+<a onclick="updatePsn();">修改</a>
+<ul></ul>
+<a onclick="mainOnload();">数据刷新</a>
+</div>
+</body>
+<script type="text/javascript">
+	var header = document.getElementById('table_1_header');
+	var bodyer = document.getElementById('table_1_bodyer');
+	//控制表头横纵向滚动时固定不动
+	function tableScroll(container){
+		header.style.marginTop=container.scrollTop+"px";
+		bodyer.style.marginTop="-"+container.scrollTop+"px";
+	}
+</script>
+</html>

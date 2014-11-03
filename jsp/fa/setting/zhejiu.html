@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门对应的折旧科目</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<style type="text/css">
+	.normalInput{width:200px;}
+	.normalInput1{width:180px;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript">
+	//全局变量(当前选中的节点)
+	var currentNode = null; 
+	  /**
+	   * 节点单击事件
+	   * @param event
+	   * @param treeId 树id
+	   * @param treeNode jied
+	   * @param clickFlag
+	 */
+	function doClick(event, treeId, treeNode, clickFlag) {
+		currentNode = treeNode.id;
+	  if(treeNode.id=="0"){
+		  $("#code").val("");
+		  $("#sparentnum").val("");
+		  $("#depName").val("");
+		  $("#ssubject").val("");
+		  $("#departid").val("");
+		  doload(null);
+	  }else{
+		  var snum=treeNode.name.split(" ");
+		  var ssubject=treeNode.ssubject;
+		  var paren=treeNode.parents;
+		  $("#code").val(snum[0]);
+		  $("#sparentnum").val(paren);
+		  $("#depName").val(snum[1]);
+		  $("#ssubject").val(ssubject);
+		  $("#departid").val(treeNode.id);
+		  var str = "<tr><td style='background-color:#D4D0C8;'>"+snum[0]+"</td><td>"+snum[1]+"</td><td>"+ssubject+"</td></tr>";
+		  $("#datatable_1 tbody").html(str);
+		  $("#updatebutton").attr("disabled",false);
+	  }
+	}
+	/**
+	初始化数据
+	**/
+	var departments=null;
+	var setting = {	
+			callback: {
+				onClick: doClick
+			}
+	};
+	function doload(departmentNodeId){
+		$("#code").val("");
+		$("#sparentnum").val("");
+		$("#depName").val("");
+		$("#ssubject").val("");
+		$("#departid").val("");
+		$.ajax({
+		    url: "fadepartMents!findDepartMent",
+		    type: 'post',
+		    dataType: "json",
+		    success: function(data){
+		    	var zNodes=[{id:"0",name:"固定资产部门编码目录",open:true,children:[]}];
+		    	var znode=zNodes[0];
+		    	departments=data.departments; 
+		    	var trs="";
+		    	for(var i=0;i<departments.length;i++){
+		    		var department=departments[i];
+		    		var ssubjectnum=department.ssubjectnum;
+	    			var ssubjectname=department.ssubjectname;
+	    			var ssubjecte="";
+	    			if(ssubjectnum!=null&&ssubjectnum!="null"&&ssubjectnum!=""){
+	    				ssubjecte=ssubjectnum+","+ssubjectname;
+	    			}
+	    			var paren=department.sparentnum;
+	    			if(paren=="null"||paren==null){
+	    				paren="";
+	    			}
+		    		var depart={id:department.id,name:department.snum+" "+department.sname,parents:paren,ssubject:ssubjecte,open:false,children:[]};
+		    		var ilevel=department.ilevel-0;
+		    		var par=getparent(znode,ilevel);
+		    		par[par.length]=depart;
+		    		if(ilevel==1){
+		    			var str = "<tr><td style='background-color:#D4D0C8;'>"+department.snum+"</td><td>"+department.sname+"</td><td>"+ssubjecte+"</td></tr>";
+		    			trs=trs+str;
+		    		}
+		    	}
+		    	$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		    	$("#datatable_1 tbody").html(trs);
+		    	zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		    	if(departmentNodeId==null){
+			    	var nodes = zTree.getNodes()[0].children;
+					if(nodes!=undefined&&nodes!="undefined"&&nodes!=""&&nodes!=null&&nodes!="null"){
+						zTree.selectNode(nodes[0]);
+						doClick("","", nodes[0],"");
+						
+					}		    		
+		    	}else{
+					var selNode = zTree.getNodeByParam("id", departmentNodeId);
+        			zTree.selectNode(selNode);
+        			doClick("","",selNode,"");
+		    	}
+
+		    }
+		  });
+	}
+	/**
+	获取树节点插入位置
+	*/
+	function getparent(znode,level){
+		var pare=znode.children;
+		for(var j=1;j<level;j++){
+			pare=pare[pare.length-1].children;
+		}
+		return pare;
+	}
+	/*预修改操作*/
+	function updateFadept(){
+		winui.tab.showIndex(1);
+		$("#updatebutton").attr("disabled",true);
+		$("#savebutton").attr("disabled",false);
+		$("#backbutton").attr("disabled",false);
+		$("#ssubject").attr("disabled",false);
+		$("#codebutton").attr("disabled",false);
+	}
+	/*取消修改动作*/
+	function backinit(){
+		winui.tab.showIndex(0);
+		$("#updatebutton").attr("disabled",false);
+		$("#savebutton").attr("disabled",true);
+		$("#backbutton").attr("disabled",true);
+		$("#ssubject").attr("disabled",true);
+		$("#codebutton").attr("disabled",true);
+		doload(currentNode);
+	}
+	function saveDept(){
+		var ssubject=$("#ssubject").val();
+		var id=$("#departid").val();
+		var param="id="+id+"&ssubject="+ssubject;
+		$.ajax({
+		    url: "fadepartMents!updateFaDepartMent",
+		    type: 'post',
+		    dataType: "json",
+		    data:param,
+		    success: function(data){
+		    	winui.tab.showIndex(0);
+				$("#updatebutton").attr("disabled",false);
+				$("#savebutton").attr("disabled",true);
+				$("#backbutton").attr("disabled",true);
+				$("#ssubject").attr("disabled",true);
+				$("#codebutton").attr("disabled",true);
+				doload(id);
+		    }
+		  });
+	}
+	function deliverValue(param){
+		document.getElementById("ssubject").value=param.selKemuCode+","+param.selKemuName;
+	}
+	//打开科目参照窗体
+	function openSubjectsreference(){
+		var param = new Object();
+		param.treeSetting=new Object();
+		param.treeSetting.justFinalNode=true;//限定弹出的科目参照窗体只允许选择末级节点
+		window.parent.openWindow('dsign_subjectsreference','fa_setting_zhejiu',param);
+		
+	}
+	//程序入口
+	$(document).ready(function(){
+		doload(null);
+	});
+</script>
+</head>
+<body>
+	<input type="hidden" value="" id="departid" />
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			 <div class="buttongroup">
+				<div class="group">
+                    <div><input id="updatebutton" type="button" value="操作" disabled="disabled" onclick="updateFadept()" class="operateIco"/></div>
+					<div><input type="button" value="添加" disabled="disabled" onclick="window.parent.openWindow('wa_tax_column');" class="addIco"/></div>
+					<div><input type="button" value="编辑" disabled="disabled" onclick="window.parent.openWindow('wa_tax_ratetable');" class="updateIco"/></div>
+					<div><input type="button" value="删除" disabled="disabled" onclick="window.parent.openWindow('wa_tax_position');" class="delIco"/></div>
+				</div>
+				<div class="group">
+                    <div><input id="savebutton" type="button" value="保存" disabled="disabled" onclick="saveDept()" class="saveIco"/></div>
+					<div><input id="backbutton" type="button" value="取消" disabled="disabled" onclick="backinit()" class="cancelIco"/></div>
+                    <div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('fa_setting_zhejiu');"/></div>
+                    <div><input type="button" value="刷新" disabled="disabled" onclick="window.parent.openWindow('wa_tax_screening');" class="refreshIco"/></div>
+				</div>
+			</div>
+            
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                	<div class="zTreeDemoBackground left">
+                         <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right;">
+                	<div type="tab" style="float:left;">
+		                <div>
+			               <div>列表视图</div>
+			               <div>单张视图</div>
+		                </div>
+		                <div style="width:388px;height:316px;">
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                             <table id="datatable_1" class="table_style" style="width:420px;margin:-4px;">
+						        <thead>
+							       <tr id="datatable_1_header" style="height:16px;">
+								      <!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								        <td style="width:150px;">部门编码</td>
+								        <td style="width:150px;">部门名称</td>
+								        <td style="width:150px;">折旧科目</td>
+							       </tr>
+						        </thead>
+						        <tbody id="datatable_1_bodyer">
+							       
+						        </tbody>
+					          </table>
+                           </div>
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="content_zhou">
+                               	  <tr>
+                                  	<td>部门编码：</td>
+                                    <td><input id="code" style="width:20px;" disabled="disabled" value="" /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>上级名称：</td>
+                                    <td><input id="sparentnum" class="normalInput" disabled="disabled" /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>部门名称：</td>
+                                    <td><input id="depName" class="normalInput" disabled="disabled" value="" /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>折旧科目：</td>
+                                    <td><input id="ssubject" class="normalInput" disabled="disabled"  onfocus="dofocustoenter('code',this,'','','','')" /><input disabled="disabled" onclick="openSubjectsreference()" id="codebutton" class="finder" type="button" /></td>
+                                  </tr>
+                               </table>
+                           </div>
+		                </div>
+	                </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</body>
+</html>

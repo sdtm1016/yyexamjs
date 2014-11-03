@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>供应商往来余额表</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+
+//确定按钮
+function btnConfirm(){
+	var param = new Object();
+	window.parent.closeWindow("sa_stists_khwlyeb_tj");
+	window.parent.openWindow("sa_stists_khwlyeb","sa_stists_khwlyeb_tj",param);
+}
+
+
+$(document).ready(function(){
+	$("#cb1querybox").attr("disabled",true);
+	$("#cb1querybox").css("background-color","#D4D0C8");
+	$("#cb1queryboxfinder").attr("disabled",true);
+	
+
+	$("#cb2querybox").attr("disabled",true);
+	$("#cb2querybox").css("background-color","#D4D0C8");
+	$("#cb2queryboxfinder").attr("disabled",true);
+	
+});
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:410px;height:204px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+		
+		
+		<div class="border_outside" style="width:392px;height:52px;margin-left:4px;margin-top:6px;">
+			<div class="border_inside" style="width:390px;height:50px;">
+			
+			
+				<table>
+					<tr>
+						<td>查询对象</td>
+						<td>
+							<select style="width:98px;">
+								<option>供应商</option>
+								<option>供应商分类</option>
+								<option>供应商总公司</option>
+								<option>地区分类</option>
+								<option>部门</option>
+								<option>主管部门</option>
+								<option>业务员</option>
+								<option>主管业务员</option>
+							</select>
+						</td>
+						<td align="center" width="24">〓</td>
+						<td><input type="text" style="width:166px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="v_a_m"><input type="checkbox" id="cb1" onclick=""/><label for="cb1">范围</label></td>
+						<td align="center">—</td>
+						<td><input id="cb1querybox" type="text" style="width:166px;"/><input type="button" class="finder" id="cb1queryboxfinder"/></td>
+					</tr>
+				</table>
+			
+			
+			</div>
+		</div>
+
+		
+		
+		
+		<div class="border_outside" style="width:392px;height:106px;margin-left:4px;margin-top:1px;">
+			<div class="border_inside" style="width:390px;height:104px;">
+			
+			
+				
+				<table>
+					<tr>
+						<td>明细对象</td>
+						<td>
+							<select style="width:98px;">
+								<option>供应商</option>
+								<option>部门</option>
+								<option>业务员</option>
+							</select>
+						</td>
+						<td align="center">〓</td>
+						<td><input type="text" style="width:166px;"/><input type="button" class="finder"/></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="v_a_m"><input type="checkbox" id="cb2"/><label for="cb2">范围</label></td>
+						<td align="center">—</td>
+						<td><input type="text" style="width:166px;" id="cb2querybox"/><input type="button" class="finder" id="cb2queryboxfinder"/></td>
+					</tr>
+					<tr>
+						<td>币　　种</td>
+						<td>
+							<select style="width:98px;">
+								<option>所有币种</option>
+								<option>人民币</option>
+							</select>
+						</td>
+						<td align="center">月份</td>
+						<td>
+							<select style="width:87px;">
+								<option>2012.12</option>
+							</select>
+							—
+							<select style="width:87px;">
+								<option>2012.12</option>
+							</select>
+						
+						</td>
+					</tr>
+					
+					<tr>
+						<td>余　　额</td>
+						<td><input type="text" style="width:92px;"/></td>
+						<td align="center">—</td>
+						<td><input type="text" style="width:186px;"/></td>
+					</tr>
+					
+					
+					
+				</table>
+			
+			
+			</div>
+		</div>
+
+		
+		
+		
+		
+		
+		<div style="width:370px;height:26px;margin-top:6px;margin-left:10px;" class="v_a_m">
+			
+			<input type="checkbox" id="cb3"/><label for="cb3">包含入库单</label>
+			<input type="checkbox" id="cb4"/><label for="cb4">包含未审核发票</label>
+			<input type="button" value="确定" onclick="btnConfirm();" style="margin-left:80px;"/>
+			<input type="button" value="取消" onclick="window.parent.closeWindow('sa_stists_khwlyeb_tj');"/>
+		
+		</div>
+	</div>
+</body>
+</html>

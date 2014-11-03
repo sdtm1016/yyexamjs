@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>栏目选择1</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+.optional_table{border-collapse: collapse;width:100%;height:100%;}
+.optional_table tbody tr {height: 12px;padding:0px;}
+.optional_table tbody tr td {height: 12px;padding:0px;cursor:default;}
+</style>
+
+<script type="text/javascript">
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+
+$(document).ready(function(){
+	$.ajax({
+		url:"wageItw!queryIncomeTaxIndex.action",
+		type:"post",
+		data:"cgzgradenum=" + cgzgradenum,
+		success:function(data,status){
+			var dygzxmList = data.list[0];
+			var sdxm_ = data.list[1];
+			$("#dygzxm").html("");//清空下拉列表
+			var str = "";
+			$.each(dygzxmList,function(index,i){
+				str = '<option value="' + i.igzitemId + '">' + i.csetgzitemname + '</option>';
+				$("#dygzxm").append(str);
+			});
+			$("#sdxm_").val(sdxm_[0].csdArticle);//所得项目
+			$("#dygzxm").val(sdxm_[0].igzitemId);//清空下拉列表
+		},
+		dataType:"json"
+	});
+});
+	//确认按钮事件
+	function btnConfirm(){
+		var flag=0;
+		jConfirm('是否重算数据?', '提示', function(r) {
+				if(r){
+					flag=1;		
+					$.ajax({
+						url:"wageItw!saveParameter.action",
+						type:"post",
+						dataType:"json",
+						async: false , //采用同步， 如果重算 较耗时，避免下一界面时间差引起查询错误
+						data:"cgzgradenum=" + cgzgradenum+"&wasdsp.csdArticle="+$("#sdxm_").val()+"&wasdsp.igzitemId="+$("#dygzxm").val()+"&flag="+flag,
+						success:function(data,status){
+						}
+					});
+				}else{
+					flag=2;
+					$.ajax({
+						url:"wageItw!saveParameter.action",
+						type:"post",
+						dataType:"json",
+						async: false , //采用同步， 如果重算 较耗时，避免下一界面时间差引起查询错误
+						data:"cgzgradenum=" + cgzgradenum+"&wasdsp.csdArticle="+$("#sdxm_").val()+"&wasdsp.igzitemId="+$("#dygzxm").val()+"&flag="+flag,
+						success:function(data,status){
+						}
+					});
+				}
+
+				window.parent.closeWindow('wa_tax_columnchoose');
+				window.parent.openWindow('wa_tax_main','wa_tax_columnchoose');
+			});
+
+		
+		
+	}
+</script>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:426px;height:230px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:406px;height:210px;margin-top:10px;margin-left:10px;">
+			
+			
+			<div style="width:163px;float:left;">
+			
+				<fieldset class="v_a_m">
+					<legend>栏目</legend>
+					<div style="height:150px;">
+						
+						标准栏目：
+						<select size="4" style="width:140px;">
+							<option>人员编号</option>
+							<option>姓名</option>
+							<option>所得期间</option>
+							<option>所得项目</option>
+							<option>收入额合计</option>
+							<option>减费用额</option>
+							<option>应纳税所得额</option>
+							<option>税率</option>
+							<option>速算扣除数</option>
+							<option>扣缴所得税额</option>
+						</select>
+						<br><br>
+						可选栏目：
+						<div style="width:140px;height:30px;border:2px inset #ccc;overflow-y:auto;">
+							<table id="optional_table" class="optional_table" border="0">
+								<tbody>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>完税证字号</td>
+									</tr>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>纳税日期</td>
+									</tr>
+									<tr>
+										<td width="14"><input type="checkbox"/></td>
+										<td>备注</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</fieldset>
+	
+			
+			</div>
+			
+			
+			<div style="width:106px;float:left;margin-left:5px;">
+			
+				<fieldset class="v_a_m">
+					<legend>所得项目</legend>
+					<div style="height:150px;">
+						个人所得税申报表中“所得项目”项内容默认是“工资”，若不是此内容，请在下栏中输入：<br><br>
+						<input id="sdxm_" type="text" style="width:80px;"/>
+					</div>
+				</fieldset>
+	
+			
+			</div>
+			
+			<div style="width:126px;float:left;margin-left:5px;">
+			
+				<fieldset class="v_a_m">
+					<legend>对应工资项目</legend>
+					<div style="height:150px;">
+						个人所得税申报表中“收入额合计”项所对应的工资项目默认是“实发工资”，若不是此项，请在下栏中选择：<br><br>
+						<select id="dygzxm">
+						</select>
+					</div>
+				</fieldset>
+	
+			
+			</div>
+			
+			<div style="float:none;clear:both;text-align:right;padding-top:4px;">
+				<input type="button" value="确认" onclick="btnConfirm()"/>&nbsp;&nbsp;
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_tax_columnchoose');"/>&nbsp;&nbsp;
+			</div>
+		
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+/************** 可选栏目 表格复选控制功能实现： *****************/
+	var ot = document.getElementById("optional_table");
+	for(var i=0;i<ot.rows.length;i++){
+		
+		ot.rows[i].cells[1].ondblclick=function(event){
+			var evt = (window.event || event);
+			var evtsrc = (evt.srcElement || evt.target);
+			var cb = evtsrc.parentNode.cells[0].getElementsByTagName("input")[0];
+			cb.click();
+		}
+		
+	}
+	
+/*******************************/
+</script>
+
+</html>

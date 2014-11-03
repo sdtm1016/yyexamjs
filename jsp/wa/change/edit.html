@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>编辑</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<style type="text/css">
+	#datatable_2_header td {background-color:#fff;}
+</style>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:510px;height:360px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:490px;height:340px;margin-top:10px;margin-left:10px;">
+			
+			
+			<div style="width:100%;height:26px;">
+				请对个人工资数据进行输入和修改：
+			</div>
+			
+			
+			<div style="width:100%;height:282px;">
+				
+				
+				
+				<div class="border_outside" style="height:280px;width:210px;float:left;">
+					<div class="border_inside" style="height:278px;width:208px;line-height:18px;">
+					
+					
+						<table id="datatable_1" border="0" style="width:170px;margin-left:12px;margin-top:20px;">
+							<tbody id="datatable_1_bodyer">
+								<tr>
+									<td style="width:60px;" valign="top">类别名称：</td>
+									<td>工业企业演示账套（新会计制度）</td>
+								</tr>
+								<tr>
+									<td>部门：</td>
+									<td>总经办</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>人员类别：</td>
+									<td>企业管理人员</td>
+								</tr>
+								<tr>
+									<td>人员编号：</td>
+									<td>001</td>
+								</tr>
+								<tr>
+									<td>人员姓名：</td>
+									<td>张雨</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>应发合计：</td>
+									<td>7,980.00</td>
+								</tr>
+								<tr>
+									<td>扣款合计：</td>
+									<td>958.60</td>
+								</tr>
+								<tr>
+									<td>实发合计：</td>
+									<td>7,022.00</td>
+								</tr>
+							</tbody>
+						</table>
+					
+					
+					</div>
+				</div>
+	
+				
+				
+				<div style="width:274px;height:278px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:-2px;background-color:#fff;">
+				
+					<table id="datatable_2" border=1 class="table_style" style="width:250px;">
+						<thead>
+							<tr id="datatable_2_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:130px;">项目名称</td>
+								<td style="width:120px;">内容</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_2_bodyer">
+							<tr>
+								<td>副食补助</td>
+								<td>450.00</td>
+							</tr>
+							<tr>
+								<td>岗位工资</td>
+								<td>2,880.00</td>
+							</tr>
+							<tr>
+								<td>工资分摊001</td>
+								<td>7,980.00</td>
+							</tr>
+							<tr>
+								<td>基本工资</td>
+								<td>3,600.00</td>
+							</tr>
+							<tr>
+								<td>加班费</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>加班天数</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>奖金</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>请假扣款</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>请假天数</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>日工资</td>
+								<td>160.00</td>
+							</tr>
+							<tr>
+								<td>养老保险</td>
+								<td>108.00</td>
+							</tr>
+							<tr>
+								<td>医疗保险</td>
+								<td>288.00</td>
+							</tr>
+							<tr>
+								<td>住房补助</td>
+								<td>600.00</td>
+							</tr>
+							<tr>
+								<td>电话补贴</td>
+								<td>450.00</td>
+							</tr>
+							<tr>
+								<td>住房公积金</td>
+								<td>288.00</td>
+							</tr>
+							<tr>
+								<td>代扣税</td>
+								<td>274.00</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					
+				</div>
+				
+				
+			</div>
+			
+			<div style="width:100%;height:20px;padding:10px;">
+				状态：<input type="text" value="变动状态" style="width:54px;height:14px;line-height:14px;background-color:#D4D0C8;"/>
+				<input type="button" value="  <上一人  " disabled="disabled" style="margin-left:50px;"/>
+				<input type="button" value="  下一人>  "/>
+				<input type="button" value="  确认  "/>
+				<input type="button" value="  取消  " onclick="window.parent.closeWindow('wa_change_edit');"/>
+				
+				
+			</div>
+		
+		</div>
+	</div> 
+</body>
+
+<script type="text/javascript">
+
+
+	/****双击单元格，“内容”列进入编辑状态****/
+	var dt_2 = document.getElementById("datatable_2_bodyer");
+	
+	for(var i=0;i<dt_2.rows.length;i++){
+		dt_2.rows[i].cells[0].ondblclick=dt_2.rows[i].cells[1].ondblclick=function(){
+			var tempValue = this.parentNode.cells[1].innerHTML;
+			this.parentNode.cells[1].innerHTML="<input type=\"text\" value=\""+tempValue+"\" style=\"width:116px;height:16px;line-height:16px;border:none;\" onblur=\"javascript:this.parentNode.innerHTML=this.value;\"/>";
+			this.parentNode.cells[1].getElementsByTagName("input")[0].focus();
+		}
+	}
+</script>
+
+</html>

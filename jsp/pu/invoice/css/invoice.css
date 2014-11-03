@@ -1,0 +1,30 @@
+.inputtable {border-collapse: collapse;}
+
+.table_style {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;font-size:12px;}
+.table_style thead tr{height:24px;}
+.table_style thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+.table_style tbody tr {background-color:#ffffff;}
+.table_style tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+
+
+.table_header {border-collapse: collapse;cursor:default;position:relative;z-index:40;background-color:#fff;}
+.table_header tr {height:18px;}
+.table_header td {border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+
+
+.table_bodyer {border-collapse: collapse;cursor:default;position:relative;z-index:20;}
+.table_bodyer tr {height:18px;}
+.table_bodyer td {border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+
+
+.table_footer {border-collapse: collapse;cursor:default;}
+.table_footer tr {height:18px;background-color:#ddd;}
+.table_footer td {border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+
+
+.colblu {color:#00f}
+.colred {color:#f00}
+.colblack {color:#000}
+
+
+

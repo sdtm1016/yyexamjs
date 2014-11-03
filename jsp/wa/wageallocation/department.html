@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门名称参照</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.excheck-3.4.min.js"></script>
+<script type="text/javascript">
+var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+$(document).ready(function(){
+	$.ajax({
+		url:'ztree!loadWaDeptTree.action',
+		type:'post',
+		data:'cgzgradename='+cgzgradename,
+		dataType:'json',
+		async : false,
+		success:function(data){
+			treeNodes = data.listTree;
+			var zNodes=[];
+            for (var i = 0; i<treeNodes.length; i++) {
+            	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+            	zNodes.push(nodeObj);
+            }
+            $.fn.zTree.init($("#dpt_tree"), setting, zNodes);
+		}
+	});
+});
+	
+		/*** 树构建代码 开始 ***/
+		var setting = {	
+				check: {
+					enable: true,
+					chkStyle: "checkbox"
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				}
+			};
+		/*** 树构建代码 结束 ***/
+		
+		
+		
+		//确认按钮
+		function btnConfirm(){
+			var zTree = $.fn.zTree.getZTreeObj("dpt_tree");
+			var checkedNodes = zTree.getCheckedNodes();
+			var names = "";
+			var ids = "";
+			var param = {};
+			for(var i = 0; i<checkedNodes.length; i++){
+				names += checkedNodes[i].name + ",";
+				ids += checkedNodes[i].id + ",";
+			}
+			param.names = names.substring(0,names.length-1);
+			param.ids = ids.substring(0,ids.length-1);
+			if (checkedNodes.length > 0) {
+				window.parent.deliverValue('wa_wageallocation_department',param);
+				
+				//关闭本窗体
+				window.parent.closeWindow('wa_wageallocation_department');
+			}
+		}
+		
+		
+		
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:176px;height:234px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+				<div class="border_outside" style="height:196px;width:166px;margin-left:4px;margin-top:4px;">
+					<div class="border_inside" style="height:194px;width:164px;">
+					
+					
+						<div style="width:160px;height:190px;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+						
+							<div id="dpt_tree" class="ztree"></div>
+						
+						</div>
+					
+					
+					</div>
+				</div>
+				
+				<div style="width:100%;height:20px;text-align:center;margin-top:4px;">
+					<input type="button" value="确认" onclick="btnConfirm();"/>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('wa_wageallocation_department');"/>
+				</div>
+				
+		
+	</div>
+</body>
+</html>

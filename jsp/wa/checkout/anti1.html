@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>反结账</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+var wa_isWageSets=window.parent.parent.wa_isWageSets;
+$(document).ready(function(){
+	
+	//加载本月可以 反结账的工资类别
+	$.ajax({
+		url:"wageBusiness!queryReverseCgzgradenumList.action",
+		data:{},
+		type:"post",
+		dataType:"json",
+		async:false,
+		success:function(data){
+			var waaccountList = data.waaccountList;
+			/*工资帐套信息*/
+			var waAccount=data.waAccount;
+			$("#waType").html("");
+			if(waaccountList.length==0){
+				jAlert("当前月份数据不能进行反结账处理!","提示",function(){
+					window.parent.closeWindow('wa_checkout_anti1');
+				});	
+			}else{
+				/*添加小于启动日期、1月份 、等于当前启动月 不能进行反结账处理 2013-8-15 lyl  start*/
+				var dstartTime=waAccount.dstartTime;//启动日期
+				dstartTime=dstartTime.substring(0,dstartTime.indexOf("T"));
+				var start=dstartTime.split('-');
+				var operDate=getCookie("operDate");//当前登录日期
+				var year=operDate.split('-');
+				if(dstartTime==operDate||year[1]==1||start[1]>year[1]){
+					jAlert("当前月份数据不能进行反结账处理!","提示",function(){
+						window.parent.closeWindow('wa_checkout_anti1');
+					});	
+				}else{
+					$("#waType").html("");
+					for(var i=0 ;i<waaccountList.length;i++){
+						$("#waType").append("<option value='"+waaccountList[i].cgzgradenum+"'>"+waaccountList[i].cgzgradenum+"["+waaccountList[i].cgzgradename+"]</option>");
+					}
+				}
+				/*end */
+			}
+			
+		}
+	});
+	
+});
+
+
+
+function btnConfirm(){
+	var s = document.getElementById("waType");
+	if(s.selectedIndex==-1){
+		jAlert("请选择工资类别。");
+		return;
+	}
+	var o = s.options[s.selectedIndex];
+	var p = {};
+	p.cgzgradenum = o.value;
+	p.cgzgradename = o.text;
+	window.parent.openWindow("wa_checkout_anti2","wa_checkout_anti1",p);
+	//var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	
+	
+	
+}
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:400px;height:160px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:380px;height:140px;margin-top:10px;margin-left:10px;">
+			
+			<div style="width:256px;float:left;">
+				<fieldset style="width:250px;height:130px;">
+					<legend>请选择反结账工资类别：</legend>
+					<div>
+						<select id="waType" size="100" style="width:240px;margin-left:5px;height:110px;">
+							<option value='001'>001[正式人员]</option>
+							<option value='002'>002[外包人员]</option>
+							<option value='003'>003[荣誉顾问]</option>
+						</select>
+					</div>
+				</fieldset>
+			</div>
+			
+			<div style="width:120px;text-align:center;float:left;">
+				<br/><br/>
+				<input type="button" value="确定" onclick="btnConfirm();"/><br/><br/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_checkout_anti1')"/>
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

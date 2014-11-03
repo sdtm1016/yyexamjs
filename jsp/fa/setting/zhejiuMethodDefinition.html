@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>折旧方法定义</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+.smallbutton{font-family:宋体;width:18px;height:18px;margin:0px;margin-left:-3px;text-align:center;padding:0px;padding-top:-2px;line-height:12px;}
+.li_1 {list-style:none;width:190px;height:18px;line-height:16px;background-image:url('../../../images/icon/folder.gif');background-repeat:no-repeat;background-position:2px 3px;padding-left:20px;padding-top:1px;padding-right:0px;cursor:default;font-family:宋体;};
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<script type="text/javascript">
+	//来标志那个按钮被点击1(+-*/) 2('('、')') 3(0-9/ .) 4(左侧树
+	var text = "";
+	var lastText = "";
+	var treeItems="";
+	//窗体加载完成后获取父窗体传来的参数:	
+	//当前选中的项
+	var currentSelectedItem = null;
+	//当前活动的TextArea
+	var currentActivedArea = null;
+	$.ajaxSetup({cache:false});
+	var mark="save";
+	function doload(){
+		//拼装构建左侧列表项
+		setAreaEnabled("sdeprformula");
+		var dep = window.parent.valueMap.get("fa_setting_zhejiuMethodDefinition");
+		if(dep!=null){
+			mark="update";
+			$("#fadepreid").val(dep.id);
+			$("#sname").val(dep.sname);
+			$("#sdeprformula").val(dep.sdeprrateformula);
+			$("#sdeprrateformula").val(dep.sdeprformula);
+		}
+		var listDiv = document.getElementById("itemList");
+		$.ajax({
+		    url: "faDeprecia!selectfaItems",
+		    type: 'post',
+		    dataType: "json",
+		    success: function(data){
+		    	var listHTML = "";
+		    	var faItems=data.faItems;
+		    	treeItems=data.faItems;
+		    	for(var i=0;i<faItems.length;i++){
+		    		var faItem=faItems[i];
+					listHTML += "<li class='li_1' onclick='doSelect(this)' sname='"+faItem.sname+"' ondblclick='doAppend(this)'>"+faItem.scaption+"</li>";
+				}
+		    	listDiv.innerHTML = listHTML;
+		    }
+		  });
+	}
+</script>
+</head>
+<body onload="doload()">
+	<input type="hidden" value="" id="fadepreid" />
+	<div class="container" style="float:left;width:490px;height:370px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:482px;height:364px;margin-top:2px;margin-left:4px;">			
+				<div style="height:28px;padding-left:4px;">
+					<input type="button" id='jia' value="+" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='jian' value="-" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='cheng' value="*" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='chu' value="/" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='lkh' value="(" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='rkh' value=")" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" value="→" onclick="toAppend();" class="smallbutton"/>
+					
+					<input type="button" id='0' value="0" onclick="doAppend(this);" class="smallbutton" style="margin-left:6px;"/>
+					<input type="button" id='1' value="1" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='2' value="2" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='3' value="3" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='4' value="4" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='5' value="5" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='6' value="6" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='7' value="7" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='8' value="8" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='9' value="9" onclick="doAppend(this);" class="smallbutton"/>
+					<input type="button" id='dian' value="." onclick="doAppend(this);" class="smallbutton"/>
+				</div>
+			
+				<div class="border_outside" style="height:300px;width:478px;float:left;">
+					<div class="border_inside" style="height:298px;width:476px;line-height:18px;">
+						<div style="width:164px;height:100%;float:left;">
+							<div style="text-align:center;">折旧项目</div>
+							<ul id="itemList" style="width:160px;height:276px;border:2px inset #ccc;margin-top:0px;background-color:#fff;padding:0px;overflow-x:hidden;overflow-y:auto;"></ul>
+						</div>
+						<div style="width:306px;height:100%;float:left;margin-left:4px;">
+							<br>
+							名称：<input type="text" id="sname" style="width:260px;height:14px;line-height:14px;"/><br>
+							<input type="radio" onclick="setAreaEnabled('sdeprformula');" name="rd_1" id="rd_1_1" checked="checked"/><label for="rd_1_1">月折旧率 = </label><br>
+							<textarea id="sdeprformula" style="width:300px;height:100px;"></textarea><br>
+							<input type="radio" onclick="setAreaEnabled('sdeprrateformula');" name="rd_1" id="rd_1_2"/><label for="rd_1_2">月折旧额 = </label><br>
+							<textarea id="sdeprrateformula" style="width:300px;height:100px;" disabled="disabled"></textarea>
+						</div>
+					</div>
+				</div>
+	
+				<div style="height:28px;">
+					<div style="width:240px;float:left;color:blue;font-weight:bold;margin-top:4px;">
+						注意：使用年限在此指（使用年限*12）
+					</div>
+					<div style="width:240px;float:left;text-align:right;margin-top:4px;">
+						<input type="button" value="确定" onclick="btnConfirm();"/>
+						<input type="button" value="取消" onclick="window.parent.closeWindow('fa_setting_zhejiuMethodDefinition')"/>
+					</div>
+				</div>
+		
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+	
+	
+	
+	//左边列表项选中处理方法
+	function doSelect(tem){
+		if(currentSelectedItem != null){
+			currentSelectedItem.style.backgroundColor = "";
+			currentSelectedItem.style.color = "";
+		}
+		
+		tem.style.backgroundColor = "#0a246a";
+		tem.style.color = "#fff";
+		currentSelectedItem = tem;
+	}
+	
+	
+	//文本域内容拼接方法
+	function doAppend(tem){
+		if(tem.tagName == "LI"){
+			text = tem.innerHTML;
+		}
+		if(tem.tagName == "INPUT"){
+			text = tem.value;
+		}
+		var id=$(currentActivedArea).attr('id');
+		getFocusTextarea(id,text);
+
+		
+		/*if(currentActivedArea != null){
+			currentActivedArea.innerHTML = currentActivedArea.innerHTML + text;
+		}*/
+
+	}
+	
+	
+	
+	//"→"按钮点击处理方法
+	function toAppend(){
+		var id=$(currentActivedArea).attr('id');
+		getFocusTextarea(id,currentSelectedItem.innerHTML);
+		/*if(currentSelectedItem != null){
+			currentActivedArea.innerHTML = currentActivedArea.innerHTML + currentSelectedItem.innerHTML;
+		}*/
+	}
+
+	//文本域切换方法
+	function setAreaEnabled(areaId){
+		if(currentActivedArea!=null){
+			currentActivedArea.disabled = true;
+		}
+		var area = document.getElementById(areaId);
+		area.disabled = false;
+		currentActivedArea = area;
+	}
+	
+	/*textarea 光标在那 填充到哪 id textarea 的id insertValue要插入的值 */
+	function getFocusTextarea(id,insertValue){
+		var textarea = document.getElementById(id);
+		var areaValue = textarea.value;
+		//获得文本域的焦点位置
+		var ss = textarea.selectionStart;
+		//如果文本域是获得了焦点的，说明有可能是要在文本内容之间插入公式
+		if(ss>0){
+			var s1 = areaValue.substr(0,ss);
+			var s2 = areaValue.substr(ss,areaValue.length);
+			textarea.value = s1 + insertValue + s2;
+			textarea.selectionStart = ss + insertValue.length;
+		}
+		//否则，则按默认的拼接方式
+		else{
+			textarea.value = areaValue.substr(0,areaValue.length) + insertValue;
+		}
+
+	}
+	
+	//“确认”按钮处理方法
+	function btnConfirm(){
+		var sname=$("#sname").val();
+		var sdeprformula=$("#sdeprformula").val();
+		var sdeprrateformula=$("#sdeprrateformula").val();
+		if(sname==null||sname==""){
+			jAlert("公式名称不可以为空");
+			return;
+		}
+		if(sdeprformula==""||sdeprformula==null||sdeprrateformula==""||sdeprrateformula==null){
+			jAlert("公式不可以为空");
+			return;
+		}
+		/*月折旧率 条件判断开始 */
+		var reg=/\+|\-|\*|\/|\(|\)/;
+		var textareaArr1=sdeprformula.split(reg);
+		for(var i=0;i<textareaArr1.length;i++){
+			var val=textareaArr1[i];
+			if(val!=""&&val!=null){
+				if(val-0!=val){//字符串判断
+					var sign=false;
+					for(var j=0;j<treeItems.length;j++){
+						var inner=treeItems[j].scaption;
+						if(val==inner){
+							sign=true;
+							break;
+						}else{
+							sign=false;
+							continue;
+						}
+					}
+					if(!sign){
+						jAlert("公式定义不正确");
+						return;
+					}
+				}else{//数字判断
+					if(val.indexOf(".")==0){
+						jAlert("公式定义不正确");
+						return;
+					}
+				}
+			}
+		}
+		/*判断()括号是否相等*/
+		var sum=0;
+		var times=0;
+		for(var i=0;i<sdeprformula.length;i++){
+			var c=sdeprformula.charAt(i);
+			if(c=='('){
+				sum++;
+			}
+			if(c==')'){
+				times++;
+			}
+		}
+		if(sum!=times){
+			jAlert('公式定义不正确');
+			return;	
+		}
+		//特殊字符判断
+		var regstr=/(\+|\-|\*|\/){2,}|(\+|\-|\*|\/){1,}\)|\((\+|\-|\*|\/|\)){1,}/ig;
+		if(sdeprformula.match(regstr)!=null&&sdeprformula.match(regstr)!=""){
+			jAlert("公式定义不正确");
+			return;
+		}
+		if(sdeprformula.indexOf('+')==0||sdeprformula.indexOf('-')==0||sdeprformula.indexOf('*')==0||sdeprformula.indexOf('/')==0||sdeprformula.indexOf(')')==0){
+			jAlert("公式定义不正确");
+			return;
+		}
+		var laststr=sdeprformula.charAt(sdeprformula.length-1);
+		if(laststr=="+"||laststr=="-"||laststr=="*"||laststr=="/"||laststr=="("){
+			jAlert("公式定义不正确");
+			return;
+		}
+		/*月折旧率 条件判断结束  */
+		/*月折旧额  条件判断开始 */
+		var textareaArr3=sdeprrateformula.split(reg);
+		for(var i=0;i<textareaArr3.length;i++){
+			var val=textareaArr3[i];
+			if(val!=null&&val!=""){
+				if(val-0!=val){//字符串判断
+					var sign=false;
+					for(var j=0;j<treeItems.length;j++){
+						var inner=treeItems[j].scaption;
+						if(val==inner){
+							sign=true;
+							break;
+						}else{
+							sign=false;
+							continue;
+						}
+					}
+					if(!sign){
+						jAlert("公式定义不正确");
+						return;
+					}
+				}else{//数字判断
+					if(val.indexOf(".")==0){
+						jAlert("公式定义不正确");
+						return;
+					}
+				}
+			}
+		}
+		/*判断()括号是否相等*/
+		var sum=0;
+		var times=0;
+		for(var i=0;i<sdeprrateformula.length;i++){
+			var c=sdeprrateformula.charAt(i);
+			if(c=='('){
+				sum++;
+			}
+			if(c==')'){
+				times++;
+			}
+		}
+		if(sum!=times){
+			jAlert('公式定义不正确');
+			return;	
+		}
+		//特殊字符判断
+		if(sdeprrateformula.match(regstr)!=null&&sdeprrateformula.match(regstr)!=""){
+			jAlert("公式定义不正确");
+			return;
+		}
+		if(sdeprrateformula.indexOf('+')==0||sdeprrateformula.indexOf('-')==0||sdeprrateformula.indexOf('*')==0||sdeprrateformula.indexOf('/')==0||sdeprrateformula.indexOf(')')==0){
+			jAlert("公式定义不正确");
+			return;
+		}
+		var laststr=sdeprrateformula.charAt(sdeprformula.length-1);
+		if(laststr=="+"||laststr=="-"||laststr=="*"||laststr=="/"||laststr=="("){
+			jAlert("公式定义不正确");
+			return;
+		}
+		/*月折旧额 条件判断结束  */
+		
+		//月折旧率 、月折旧额是否相互包含
+		if(sdeprformula.indexOf('月折旧额')==-1&&sdeprrateformula.indexOf('月折旧率')==-1){
+			jAlert("月折旧率和月折旧额 必须关联");
+			return;
+		}
+		
+		if(mark=="save"){
+			var param="depreciation.sname="+sname+"&depreciation.sdeprformula="+sdeprrateformula+"&depreciation.sdeprrateformula="+sdeprformula;
+			$.ajax({
+			    url: "faDeprecia!saveFadeprecia",
+			    type: 'post',
+			    dataType: "json",
+			    cache:false,
+			    data:param,
+			    success: function(data){
+			    	window.parent.getWindow("fa_setting_zhejiuMethod").doload();
+			    	window.parent.closeWindow('fa_setting_zhejiuMethodDefinition');
+			    }
+			  });	
+		}else if(mark=="update"){
+			var ids=$("#fadepreid").val();
+			var param="depreciation.id="+ids+"&depreciation.sname="+sname+"&depreciation.sdeprformula="+sdeprrateformula+"&depreciation.sdeprrateformula="+sdeprformula;
+			$.ajax({
+			    url: "faDeprecia!updataFadeprecia",
+			    type: 'post',
+			    dataType: "json",
+			    cache:false,
+			    data:param,
+			    success: function(data){
+			    	window.parent.getWindow("fa_setting_zhejiuMethod").doload();
+			    	window.parent.closeWindow('fa_setting_zhejiuMethodDefinition');
+			    }
+			  });
+		}
+	}	
+</script>
+
+</html>

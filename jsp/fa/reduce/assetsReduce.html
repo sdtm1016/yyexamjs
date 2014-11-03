@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>资产减少</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+.table_style thead tr{height:20px;}
+.inputArea {width:100%;border-collapse: collapse;}
+</style>
+<script type="text/javascript">
+	/**/
+	function dosave(){
+		/*李波新增   2013-11-08*/
+		if(currentQueryButton != null){
+			currentQueryButton.style.display = 'none';
+			currentQueryButton = null;
+		}
+		if(currentEditCell!=null){
+			currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+			currentEditCell=null;
+		}
+		/*结束  2013-11-08*/
+		var param=doseri();
+		if(param==""){
+			return;
+		}
+		$.ajax({
+			url: "faCards!deleteCard",
+			type: 'post',
+			async:false,
+			cache:false,
+			data:param,
+			dataType:"json",
+			success: function(data){
+				var mark=data.mark.split(":");
+				var cars=mark[1].split(",");
+				var coutnoIds=new Array();
+				for(var i=0;i<cars.length;i++){
+					coutnoIds.push({index:cars[i],coutsign:"资产减少"});
+				}
+				if(mark[0]=="TRUE"){
+					$("#datatable_1_bodyer").html("");
+					selectCard="";
+					window.parent.openWindow('fa_operate_dsign','fa_reduce_assetsReduce',{coutnoIds:coutnoIds});
+				}else{
+					$("#datatable_1_bodyer").html("");
+					selectCard="";
+					jAlert("所选卡片已经减少成功");
+				}
+			}
+		});
+	}
+	
+	/***
+	*序列化
+	*/
+	function doseri(){
+		var tbody_data=$("#datatable_1_bodyer").children();
+		if(tbody_data.length==0){
+			return "";
+		}
+		var len=tbody_data.length;
+		var resurtparm="";
+		for(var i=0;i<len;i++){
+			var trd=tbody_data[i];
+			var tdd=trd.cells;
+			if(tdd[8].innerHTML==""){
+				jAlert(tdd[0].innerHTML+"卡片未填写减少方式");
+				return "";
+			}
+			if(tdd[3].innerHTML==""){/*李波新增   2013-11-08*/
+				jAlert(tdd[0].innerHTML+"减少日期不可以为空");
+				return "";
+			}
+			var scardnum="faCardssheetsVO["+i+"].scardnum="+trd.getAttribute("facardid")+"&";
+			var memreason="faCardssheetsVO["+i+"].memreason="+tdd[7].innerHTML+"&";
+			var dblaftervalue="";
+			if(tdd[5].innerHTML!=""){
+				dblaftervalue="faCardssheetsVO["+i+"].dblaftervalue="+tdd[5].innerHTML+"&";	
+			}
+			var dbltransvalue="";
+			if(tdd[6].innerHTML!=""){
+				dbltransvalue="faCardssheetsVO["+i+"].dbltransvalue="+tdd[6].innerHTML+"&";	
+			}
+			var dtransdate="faCardssheetsVO["+i+"].dtransdate="+tdd[3].innerHTML+"&";
+			var sorgdisposeid="faCardssheetsVO["+i+"].sorgdisposeid="+tdd[8].innerHTML+"&";
+			var lsheetnum="faCardssheetsVO["+i+"].lsheetnum=7&";
+			resurtparm=resurtparm+scardnum+memreason+dblaftervalue+dbltransvalue+dtransdate+sorgdisposeid+lsheetnum;
+		}
+		return resurtparm.substring(0,resurtparm.length-1);
+	}
+	function dodelete(){
+		if(currentSeletedRow!=null){
+			var delecard=currentSeletedRow.cells[0].innerHTML;
+			currentSeletedRow.parentNode.removeChild(currentSeletedRow);
+			selectCard=selectCard.replace(delecard,"");
+			currentSeletedRow=null;	
+		}
+		var tbody_data=$("#datatable_1_bodyer").children();
+		if(tbody_data.length==0){
+			$("#delbut").attr("disabled",true);
+			$("#addbut").attr("disabled",true);
+		}
+	}
+	function doclose(){
+		jConfirm('是否取消本次操作？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				window.parent.closeWindow('fa_reduce_assetsReduce');
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:700px;height:310px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:690px;height:300px;margin-top:6px;margin-left:4px;">
+			
+			<div class="border_outside" style="width:690px;height:52px;">
+				<div class="border_inside" style="width:688px;height:50px;line-height:18px;">
+				
+				
+					<table class="inputArea">
+						<tr>
+							<td width="70">卡片编号</td>
+							<td>
+								<input type="hidden" id="cardid">
+								<input type="text" id="cardNo" readonly="readonly"/>
+								<input type="button" class="finder" style="margin-bottom:-5px;" onclick="javascript:focusArea='topArea';callbackcallbackTargetElement=this.parentNode.getElementsByTagName('input')[0];window.parent.openWindow('fa_basic_ref_cr','fa_reduce_assetsReduce')"/>
+							</td>
+							<td align="right">
+								<input type="button" value="增加" onclick="addRow();"/>
+								<input type="button" id="addbut" disabled="disabled" value="确定" onclick="dosave()"/>
+							</td>
+						</tr>
+						
+						
+						<tr>
+							<td>资产编号</td>
+							<td>
+								<input type="text" id="assetsNo" readonly="readonly"/>
+								<input type="hidden" id="faName">
+								<input type="button" class="finder" style="margin-bottom:-5px;" onclick="javascript:focusArea='topArea';callbackcallbackTargetElement=this.parentNode.getElementsByTagName('input')[0];window.parent.openWindow('fa_basic_ref_cr','fa_reduce_assetsReduce')"/>
+							</td>
+							<td align="right">
+								<input type="button" id="delbut" disabled="disabled" onclick="dodelete()" value="移除"/>
+								<input type="button" onclick="doclose()" value="取消"/>
+							</td>
+						</tr>
+					</table>
+					
+				
+				
+				</div>
+			</div>
+			
+			<div style="width:688px;height:244px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;">
+				
+					<table id="datatable_1" border=1 class="table_style" style="width:688px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<td style="width:64px;">卡片编号</td>
+								<td style="width:64px;">资产编号</td>
+								<td style="width:80px;">资产名称</td>
+								<td style="width:80px;">减少日期</td>
+								<td style="width:80px;">减少方式</td>
+								<td style="width:80px;">清理收入</td>
+								<td style="width:80px;">清理费用</td>
+								<td style="width:160px;">清理原因</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+							
+						</tbody>
+					</table>
+					
+					
+				</div>
+		
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+var callbackTargetElement = null;//弹出返回值相关目标元素
+var focusArea = null;//当前焦点所在组件区为，主要用于区分是否在表格里，因为表格里动态创建的文本框没有ID，弹窗返回值需要根据表头进行确定怎样取值
+var selectCard="";//存储已经添加的卡片编号
+
+
+/************ 查询文本框相关代码 S *************/
+
+var currentQueryButton = null;
+
+var focusArea = null;//查询文本框组件的所在区域，用于弹窗返回值处理函数依据此变量值为目标文本框赋值指引方向
+function queryButtonClick(){
+	focusArea = "tableCell";
+	
+	var currentEditCellName = document.getElementById("datatable_1_header").cells[currentEditCell.cellIndex].innerHTML;	
+	switch(currentEditCellName){
+
+	case "减少日期":
+		WdatePicker({
+			  el:'my97DatePickerField',
+			  position:{left:80,top:20}//某些情况会挡住文本框，现在进行绝对定位,经过确认的。（我觉的不合理lichunhui）
+		   });
+		break;
+	case "减少方式":
+		var mark = "decrease";
+		window.parent.openWindow('fa_basic_ref_amr','fa_reduce_assetsReduce',mark);
+		break;
+	 }
+}
+
+
+//接收弹窗返回值函数
+function deliverValue(param){	
+	//如果是表格上方区域的文本框弹出窗体的
+	if(focusArea=='topArea'){
+		document.getElementById("cardid").value=param.id;
+		document.getElementById("cardNo").value=param.cardCode;
+		document.getElementById("assetsNo").value=param.faCode;
+		document.getElementById("faName").value=param.faName;
+	}else if(focusArea=='tableCell'){//如果是表格里的文本框弹出窗体的
+		var currentEditCellName = document.getElementById("datatable_1_header").cells[currentEditCell.cellIndex].innerHTML;	
+		switch(currentEditCellName){
+		case "减少方式":
+			callbackTargetElement.value=param.name;
+			currentSeletedRow.cells[8].innerHTML = param.code;
+			break;		
+		 }
+	}
+}
+
+/****************** 表格组件相关代码 S *******************/
+
+
+
+/**
+ * 增行
+ */
+function addRow(){
+	var cardNo=$("#cardNo").val();
+	if(cardNo==null||cardNo==""){
+		return;
+	}else{
+		if(selectCard.indexOf(cardNo)>0){
+			return;
+		}else{
+			selectCard=selectCard+","+cardNo;
+		}
+	}
+	var tb = document.getElementById("datatable_1_bodyer");
+	var row = tb.insertRow(tb.rows.length);
+	row.setAttribute("facardid",$("#cardid").val());
+	row.style.height="18px";
+	for(var i=0;i<9;i++){
+		row.insertCell(i);
+	}
+	row.cells[0].style.backgroundColor="#D4D0C8";
+	row.cells[1].style.backgroundColor="#D4D0C8";
+	row.cells[2].style.backgroundColor="#D4D0C8";
+
+	row.cells[0].style.color="#000";
+	row.cells[1].style.color="#000";
+	row.cells[2].style.color="#000";
+	
+	row.cells[8].style.display="none";
+	row.cells[0].innerHTML=$("#cardNo").val();
+	row.cells[1].innerHTML=$("#assetsNo").val();
+	row.cells[2].innerHTML=$("#faName").val();
+	cellEdition();
+	rowSelection();
+	if(currentSeletedRow!=null){
+		currentSeletedRow.style.backgroundColor="#fff";
+		currentSeletedRow.style.color="#000";
+	}
+	row.style.backgroundColor="#00f";
+	row.style.color="#fff";
+	currentSeletedRow=row;
+	$("#delbut").attr("disabled",false);
+	$("#addbut").attr("disabled",false);
+}
+
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+function rowSelection(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+	
+		datatable_1.rows[i].onclick=function(e){
+			
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+
+/***** 选中行代码结束*******/
+
+
+
+
+
+//单元格编辑控制方法
+var currentEditRow = null;
+var currentEditCell = null;
+
+function cellEdition(){	
+	var datatable_bodyer = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_bodyer.rows.length;i++){
+		for(var j=0;j<datatable_bodyer.rows[i].cells.length;j++){
+			datatable_bodyer.rows[i].cells[j].ondblclick=function(event){
+				
+				var evt=(window.event || event);//获得事件
+				var cell = (evt.srcElement || evt.target);
+				
+				if(cell.tagName!="TD"){
+					cell = cell.parentNode;
+				}
+				
+					//避免重复双击，重复往TD里添加innerHTML内容产生混乱
+					if(cell.getElementsByTagName("input").length==0){
+						
+						//如果有其他单元格正处于编辑状态，那么还需要将其他单元格取消编辑状态
+						if(currentEditCell!=null){
+							currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+							currentEditCell=null;
+						}
+						
+						var title = document.getElementById("datatable_1_header").cells[cell.cellIndex].innerHTML;
+						
+						var querybox_htmlstr = "<div><input type=\"text\" class=\"querybox\" style=\"width:100%;border:none;\"/><input type=\"button\" onclick=\"queryButtonClick(this);\" class=\"innerfinder\" style=\"display:block;margin-top:0px;\"/><div class=\"floatclear\"></div></div>";
+						
+						switch(title){
+	
+						case "减少方式":
+							var querybox_htmlstr_1 = "<div><input type=\"text\" onfocus='dofocustoenter(\"FaOrigins\",this,\"focusArea\",\"tableCell\",\"\",\"\")' class=\"querybox\" style=\"width:100%;border:none;\"/><input type=\"button\" onclick=\"queryButtonClick(this);\" class=\"innerfinder\" style=\"display:block;margin-top:0px;\"/><div class=\"floatclear\"></div></div>";
+							//往单元格TD里添加查询文本框
+							var temp = cell.innerHTML;
+							cell.innerHTML = querybox_htmlstr_1;
+							var textbox = cell.getElementsByTagName("input")[0];
+							//cell.getElementsByTagName("input")[1].setAttribute("onclick","tableCellWindowMaper('"+title+"')");
+							textbox.value = temp;
+							textbox.focus();
+							callbackTargetElement = textbox;
+							currentEditCell = cell;
+							focusArea = "tableCell";//焦点所在区域（用于弹出返回值处理函数获取目标文本框做参考）
+							break;
+	
+						case "减少日期":
+							//往单元格TD里添加查询文本框
+							var temp = cell.innerHTML;
+							var querybox_htmlstr1 = "<div><input readonly=\"readonly\" type=\"text\" class=\"querybox\" style=\"width:100%;border:none;\"/><input type=\"button\" onclick=\"queryButtonClick(this);\" class=\"innerfinder\" style=\"display:block;margin-top:0px;\"/><div class=\"floatclear\"></div></div>";
+							cell.innerHTML = querybox_htmlstr1;
+							var textbox = cell.getElementsByTagName("input")[0];
+							//cell.getElementsByTagName("input")[1].setAttribute("onclick","tableCellWindowMaper('"+title+"')");
+							textbox.value = temp;
+							textbox.id="my97DatePickerField";
+							textbox.focus();
+							WdatePicker({
+								  el:'my97DatePickerField',
+								  position:{left:80,top:20}//某些情况会挡住文本框，现在进行绝对定位,经过确认的。（我觉的不合理lichunhui）
+							   });
+							callbackTargetElement = textbox;
+							currentEditCell = cell;
+							focusArea = "tableCell";//焦点所在区域（用于弹出返回值处理函数获取目标文本框做参考）
+							break;
+						
+						case "清理收入":
+						case "清理费用":
+						case "清理原因":
+							
+							//往单元格TD里添加查询文本框
+							var temp = cell.innerHTML;
+							cell.innerHTML = "<input type=\"text\" value=\"sd\" style=\"width:100%;border:none;\"/>";
+							var textbox = cell.getElementsByTagName("input")[0];
+							textbox.value = temp;
+							textbox.focus();
+							currentEditCell = cell;
+							break;
+						
+						}
+						
+						
+					}
+					
+				
+				
+			};
+		}
+		
+	}
+}
+
+
+
+
+/****************** 表格组件相关代码 E *******************/
+
+
+
+
+/******************** 组件公共document.onclick方法 S **********************/
+document.onclick=function(e){
+	
+	var evt=(window.event || e);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+
+	//如果当前有显示的查询按钮，则隐藏
+	if(currentQueryButton != null && evtsrc.className != "querybox" && evtsrc.className != "innerfinder"){
+		currentQueryButton.style.display = 'none';
+		currentQueryButton = null;
+	}
+
+	//如果表格中存在正在编辑的单元格
+	if(currentEditCell!=null){
+		if(evtsrc.parentNode.parentNode != currentEditCell && evtsrc.parentNode != currentEditCell){
+			currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+			currentEditCell=null;
+			
+		}
+
+	}
+	
+	
+};
+/******************** 组件公共document.onclick方法 E **********************/
+	cellEdition();
+	rowSelection();
+</script>
+
+</html>

@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>资产类别</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+<link rel="stylesheet" type="text/css" href="../../../css/fixedTable.css">
+<style type="text/css">
+	.normalInput{width:200px;}
+	.normalInput1{width:180px;}
+	.smallInput{width:100px;}
+	#table_1_bodyer tr td{height:18px;}
+	#table_2_bodyer tr td{height:18px;border-right:1px solid #000;border-bottom:1px solid #000;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>	
+<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+<script type="text/javascript" src="../../../js/fixedTable.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<script type="text/javascript">
+	/*
+	*查找选中的节点
+	*treeId 页面上树标签的id
+	*treeAttr 匹配的属性
+	*treeAttrValue 匹配的属性值
+	*/
+	function getSelectedTreeNode(treeId,treeAttr,treeAttrValue){
+		var zTree = $.fn.zTree.getZTreeObj(treeId);
+	  	var node = zTree.getNodesByParam(treeAttr,treeAttrValue,null);
+	  	return node;
+	}
+	/*
+	*根据层级和实体来生成资产类别编码
+	*
+	*/
+	function setnumInput(level,obj){
+		var strHtml = "";
+		var idcode = 0;
+		var snumvalue;
+		for(var i=0;i<level;i++){
+			idcode = i+1;
+			snumvalue = "snum"+idcode;
+			strHtml+="<input id='faassettypes_sNum"+idcode+"' disabled style='width:20px;' value='"+obj[snumvalue]+"'/>";
+		}
+		return strHtml;
+	}
+	/*
+	*增加资产类别时生成新才input标签
+	*/
+	function numAddInput(){
+		var strHtml = "";
+		var node = getSelectedTreeNode("treeDemo","id",$("#faAssettypesId").val());
+		var idcode = node[0].level+1;
+		var numRule = node[0].numRule;
+		
+		node = getSelectedTreeNode("treeDemo","parenid",$("#faAssettypesId").val());
+		var numvalue = 0;
+		var snumvalue;
+		for(var i=0;i<node.length;i++){
+			snumvalue = "num"+node[0].level;
+			/*转换成整形*/
+			snumvalue = node[i][snumvalue]-0;
+			if(snumvalue>numvalue){
+				numvalue = snumvalue;
+			}
+		}
+		numvalue = numvalue+1;
+		numRule = numRule.substring(idcode-1,idcode);
+		/*转换成字符串*/
+		numvalue=""+numvalue;
+		var len = numvalue.length;
+		/*自动补零*/
+		if(numRule>len){
+			len = numRule-len;
+			for(var i=0;i<len;i++){
+				strHtml += ""+0;
+			}
+		}
+		
+		numvalue = strHtml+numvalue;
+		strHtml = "";
+		strHtml+="<input id='faassettypes_sNum"+idcode+"' style='width:20px;' value='"+numvalue+"'/>";
+		$("#faassettypes_sNums").append(strHtml);
+	}
+	/*修改最后一个编码项*/
+	function numEditorInput(){
+		var node = getSelectedTreeNode("treeDemo","id",$("#faAssettypesId").val());
+		var level = node[0].level;
+		var numRule = node[0].numRule;
+		numRule = numRule.substring(level-1,level);
+		$("#faassettypes_sNum"+level).removeAttr("disabled");
+	}
+	/*保存方法*/
+	function saveFaAssettypes(){
+		var faAssettypes_Id = $("#faAssettypesId").val();
+		var faassettypes_sParentID = $("#faassettypes_sParentID").val();
+		var faassettypes_sName = $("#faassettypes_sName").val();
+		if(faassettypes_sName==""){
+			jAlert("类别名称不能为空!","提示信息",function(){
+				$("#faassettypes_sName").focus();
+			});
+			return false;
+		}else{
+			var faassettypes_iLife = $("#faassettypes_iLife").val();
+			var faassettypes_dblBVRate = $("#faassettypes_dblBVRate").val()/100;
+			var faassettypes_sUnit = $("#faassettypes_sUnit").val();
+			var faassettypes_iDeprType = $("#faassettypes_iDeprType >option:selected").val();
+			var faassettypes_sDeprMethodNu = $("#faassettypes_sDeprMethodNu").val();
+			var faassettypes_sModelID = $("#faassettypes_sModelID").attr("sModelIdValue");
+		  	var len = $("#faassettypes_sNums >input").length;
+		  	var idcode;
+		  	var faassettypes_sNum1=null;
+		  	var faassettypes_sNum2=null;
+		  	var faassettypes_sNum3=null;
+		  	var faassettypes_sNum4=null;
+		  	for(i=0;i<len;i++){
+		  		idcode=i+1;
+		  		switch (idcode) {
+		  			case 1:
+		  				faassettypes_sNum1 = $("#faassettypes_sNum1").val();
+		  				 break;
+		  			case 2:
+		  				faassettypes_sNum2 = $("#faassettypes_sNum2").val();
+		  				 break;
+		  			case 3:
+		  				faassettypes_sNum3 = $("#faassettypes_sNum3").val();
+		  				break;
+		  			case 4:
+		  				faassettypes_sNum4 = $("#faassettypes_sNum4").val();
+		  				break;
+		  		}
+		  	}
+		  	var flag = true;
+		  	var faassettypedata=null;
+			if($("#editorType").val()==0){
+				/*添加*/
+			  	var node = getSelectedTreeNode("treeDemo","id",faAssettypes_Id);
+			  	var level = node[0].level+1;
+			  	/*
+				$.post("faAssettypes!addFaAssettypes",{snum1:faassettypes_sNum1,snum2:faassettypes_sNum2,snum3:faassettypes_sNum3,snum4:faassettypes_sNum4,sparentid:faassettypes_sParentID,sname:faassettypes_sName,ilife:faassettypes_iLife,dblbvrate:faassettypes_dblBVRate,sunit:faassettypes_sUnit,ideprtype:faassettypes_iDeprType,sdeprmethodnu:faassettypes_sDeprMethodNu,smodelid:faassettypes_sModelID,ilevel:level},function(jsonDate){
+					reloadZtree($("#faAssettypesId").val());
+					$("#editorState").val(0);
+					winui.tab.showIndex(0);
+					/*启用选项卡
+					winui.tab.setDisabled(0,false);
+					return true;
+				},"json").error(function(){
+					jAlert("请求失败！");
+					return false;
+				});*/
+				faassettypedata={snum1:faassettypes_sNum1,snum2:faassettypes_sNum2,snum3:faassettypes_sNum3,snum4:faassettypes_sNum4,sparentid:faassettypes_sParentID,sname:faassettypes_sName,ilife:faassettypes_iLife,dblbvrate:faassettypes_dblBVRate,sunit:faassettypes_sUnit,ideprtype:faassettypes_iDeprType,sdeprmethodnu:faassettypes_sDeprMethodNu,smodelid:faassettypes_sModelID,ilevel:level};
+				$.ajax({
+					url:"faAssettypes!addFaAssettypes",
+					type:"post",
+					dataType:"json",
+					data:faassettypedata,
+					async : false,   
+					error: function () {
+			            jAlert('请求失败'); 
+			            flag=false;
+			        }, 
+			        success:function(){
+						reloadZtree($("#faAssettypesId").val());
+						$("#editorState").val(0);
+						winui.tab.showIndex(0);
+						/*启用选项卡*/
+						winui.tab.setDisabled(0,false);
+			        }
+				});
+			}else{
+				/*修改*/
+				faassettypedata = {id:faAssettypes_Id,snum1:faassettypes_sNum1,snum2:faassettypes_sNum2,snum3:faassettypes_sNum3,snum4:faassettypes_sNum4,sparentid:faassettypes_sParentID,sname:faassettypes_sName,ilife:faassettypes_iLife,dblbvrate:faassettypes_dblBVRate,sunit:faassettypes_sUnit,ideprtype:faassettypes_iDeprType,sdeprmethodnu:faassettypes_sDeprMethodNu,smodelid:faassettypes_sModelID};
+				/*
+				$.post("faAssettypes!updateFaAssettypes",{id:faAssettypes_Id,snum1:faassettypes_sNum1,snum2:faassettypes_sNum2,snum3:faassettypes_sNum3,snum4:faassettypes_sNum4,sparentid:faassettypes_sParentID,sname:faassettypes_sName,ilife:faassettypes_iLife,dblbvrate:faassettypes_dblBVRate,sunit:faassettypes_sUnit,ideprtype:faassettypes_iDeprType,sdeprmethodnu:faassettypes_sDeprMethodNu,smodelid:faassettypes_sModelID},function(jsonDate){
+					reloadZtree($("#faAssettypesId").val());
+					$("#editorState").val(0);
+					winui.tab.showIndex(0);
+					/*启用选项卡
+					winui.tab.setDisabled(0,false);
+					return true;
+				},"json").error(function(){
+					jAlert("请求失败！");
+					return false;
+				});*/
+				$.ajax({
+					url:"faAssettypes!updateFaAssettypes",
+					type:"post",
+					dataType:"json",
+					data:faassettypedata,
+					async : false,   
+					error: function () {
+			            jAlert('请求失败'); 
+			            flag=false;
+			        }, 
+			        success:function(){
+						reloadZtree($("#faAssettypesId").val());
+						$("#editorState").val(0);
+						winui.tab.showIndex(0);
+						/*启用选项卡*/
+						winui.tab.setDisabled(0,false);
+			        }
+				});
+			}
+			return flag;
+		}
+	}
+	/*操作或者保存按钮恢复以前状态*/
+	function rebackstate(){
+		getFaAssettypesTable($("#faAssettypesId").val());
+	}
+	/*表单设置成可修改*/
+	function formEditorState(){
+		$("#faassettypes_sName").removeAttr("disabled");
+		$("#faassettypes_iLife").removeAttr("disabled");
+		$("#faassettypes_dblBVRate").removeAttr("disabled");
+		$("#faassettypes_sUnit").removeAttr("disabled");
+		$("#faassettypes_iDeprType").removeAttr("disabled");
+		$("#faassettypes_sDeprMethodNu").removeAttr("disabled");
+		$("#faassettypes_sDeprMethodNuFinder").attr("disabled",false);
+		$("#faassettypes_sDepr").removeAttr("disabled");
+	}
+	/*取消方法*/
+	function cancelFaAssettypes(){
+		jConfirm("是否取消本次操作？", "确认对话框", function(confirmflag){
+			if(confirmflag){
+				rebackstate();
+				$("#editorState").val(0);
+				/*启用选项卡*/
+				winui.tab.setDisabled(0,false);
+			}
+		});
+	}
+	/*刷新方法*/
+	function refreshFaAssettypes(){
+		reloadZtree($("#faAssettypesId").val());
+	}
+	/*删除方法*/
+	function delteFaAssettypes(){
+		if($("#editorState").val()==1){
+			jAlert("没有保存数据,请先保存数据然后进行此操作.");
+			return false;
+		}
+		var snum=""
+		$("#faassettypes_sNums").children().each(function(){
+			snum=snum+""+$(this).val();
+		});
+		if(isExitsTableRef(snum,"FA_ASSETTYPES","SNUM")){
+			jAlert("该类别已经被使用不可删除");
+			return false;
+		}
+		jConfirm('确定删除当前记录吗？', '确认对话框', function(confirmflag){
+			if(confirmflag){
+				var faAssettypes_Id = $("#faAssettypesId").val();
+			  	var node = getSelectedTreeNode("treeDemo","id",faAssettypes_Id);
+				$.post("faAssettypes!deleteFaAssettypes",{id:faAssettypes_Id,sparentid:node[0].parenid},function(jsonDate){
+					reloadZtree(0);
+				},"json").error(function(){
+					jAlert("请求失败！");
+				});
+			}
+		});
+	}
+	/*点击之前事件*/
+	function beforeClick(treeId, treeNode, clickFlag){
+		//var flag = true;
+		//ztree节点
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		if($("#faAssettypesId").val()!=treeNode.id){
+			if($("#editorState").val()==1){
+				jConfirm('是否保存数据？', '确认对话框', function(confirmflag){
+					if(confirmflag){
+						//判断是否正常保存
+						var currentflag = saveFaAssettypes();
+						if(!currentflag){
+							return;
+						}
+					}
+					if($("#faAssettypesId").val()!=treeNode.id){
+						var selNode = zTree.getNodeByParam("id", treeNode.id);
+	        			zTree.selectNode(selNode);
+						getFaAssettypesTable(treeNode.id);
+					}
+				});
+			}else{
+				if($("#faAssettypesId").val()!=treeNode.id){
+					var selNode = zTree.getNodeByParam("id", treeNode.id);
+        			zTree.selectNode(selNode);
+					getFaAssettypesTable(treeNode.id);
+				}
+			}
+		}
+		return false;
+	}
+	/*
+	*树节点的点击事件
+	*/
+	function onClick(event, treeId, treeNode, clickFlag) {
+		
+	}
+	
+	function doideprtypename(ideprtype){
+		if(ideprtype=="0"){
+			return "总不提折旧";
+		}else if(ideprtype=="1"){
+			return "总提折旧";
+		}else if(ideprtype=="2"){
+			return "正常计提";
+		}else{
+			return "";
+		}
+	}
+	
+	/*
+	*根据资产类别父节点的id查找子节点
+	*/
+	function getFaAssettypesTable(parenid){
+		$("#faAssettypesId").val(parenid);
+		$.ajax({
+		    url: "faAssettypes!findFaAssettypesByparenid",
+		    type: 'post',
+		    data:{parentId:parenid},
+		    dataType: "json",
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(dataJson){
+		    	var strHtml = "";
+				var strHtml1 = "";
+				var k=null;
+				for(var i=0;i<dataJson.faAssettypesList.length;i++){
+					strHtml+="<tr>";
+					var dblbvrate="";
+					if(dataJson.faAssettypesList[i].snum!=null&&dataJson.faAssettypesList[i].snum!=""){
+						if(dataJson.faAssettypesList[i].snum==null){
+							dataJson.faAssettypesList[i].snum="";
+						}
+						if(dataJson.faAssettypesList[i].sname==null){
+							dataJson.faAssettypesList[i].sname="";
+						}
+						if(dataJson.faAssettypesList[i].ilife==null){
+							dataJson.faAssettypesList[i].ilife="";
+						}
+						if(dataJson.faAssettypesList[i].dblbvrate==null){
+							dblbvrate=dataJson.faAssettypesList[i].dblbvrate="";
+						}else{
+							dblbvrate=numberround(dataJson.faAssettypesList[i].dblbvrate*100,2);
+						}
+						if(dataJson.faAssettypesList[i].sunit==null){
+							dataJson.faAssettypesList[i].sunit="";
+						}
+						if(dataJson.faAssettypesList[i].ideprtype==null){
+							dataJson.faAssettypesList[i].ideprtype="";
+						}
+						if(dataJson.faAssettypesList[i].sdeprmethodnu==null){
+							dataJson.faAssettypesList[i].sdeprmethodnu="";
+						}
+						if(dataJson.faAssettypesList[i].smodelid==null){
+							dataJson.faAssettypesList[i].smodelid="";
+						}else{
+							dataJson.faAssettypesList[i].smodelid="通用样式";
+						}
+					}else{
+						k=i;
+						dataJson.faAssettypesList[i].snum="";
+						if(dataJson.faAssettypesList[i].sname==null){
+							dataJson.faAssettypesList[i].sname="";
+						}
+						dataJson.faAssettypesList[i].ilife="";
+						dataJson.faAssettypesList[i].dblbvrate="";
+						dblbvrate="";
+						dataJson.faAssettypesList[i].sunit="";
+						dataJson.faAssettypesList[i].ideprtype="";
+						dataJson.faAssettypesList[i].sdeprmethodnu="";
+						dataJson.faAssettypesList[i].smodelid="";
+					}
+					var depremethod="";
+					if(dataJson.faAssettypesList[i].sdeprmethodnu!=null&&dataJson.faAssettypesList[i].sdeprmethodnu!=""){
+						depremethod=dataJson.faAssettypesList[i].sdeprmethodnu.split(",")[1];
+					}
+					strHtml+="<td class='onerow'>"+dataJson.faAssettypesList[i].sname+"</td>";
+					strHtml+="<td class='onerow'>"+dataJson.faAssettypesList[i].ilife+"</td>";
+					strHtml+="<td class='onerow'>"+dblbvrate+"</td>";
+					strHtml+="<td class='onerow'>"+dataJson.faAssettypesList[i].sunit+"</td>";
+					strHtml+="<td class='onerow'>"+doideprtypename(dataJson.faAssettypesList[i].ideprtype)+"</td>";
+					strHtml+="<td class='onerow'>"+depremethod+"</td>";
+					strHtml+="<td class='onerow'>"+dataJson.faAssettypesList[i].smodelid+"</td>";
+					strHtml+="</tr>";
+					
+					strHtml1+="<tr>";
+					strHtml1+="<td class='onerow'>"+dataJson.faAssettypesList[i].snum+"</td>";
+					strHtml1+="</tr>";
+				}
+				/*填充列表*/
+				$("#table_1_bodyer").empty();
+				$("#table_1_bodyer").html(strHtml1);
+				
+				$("#table_2_bodyer").empty();
+				$("#table_2_bodyer").html(strHtml);
+				var tb1=$("#table_1_bodyer tr").eq(k).clone();
+				var tb2=$("#table_2_bodyer tr").eq(k).clone();
+				$("#table_1_bodyer tr").eq(k).remove();
+				$("#table_2_bodyer tr").eq(k).remove();
+				$("#table_1_bodyer").prepend(tb1);
+				$("#table_2_bodyer").prepend(tb2);
+				
+				/*判断节点是否显示*/
+				if(dataJson.faAssettypes.bvisible>0){
+					$("#operate").attr("disabled","true");
+					/*清空表单*/
+					$("#faassettypes_sNums").empty();
+					$("#faassettypes_sParentID").val("").attr("disabled","true");
+					
+					$("#faassettypes_sParentname").val("").attr("disabled","true");
+					
+					$("#faassettypes_sName").val("").attr("disabled","true");
+					$("#faassettypes_iLife").val("").attr("disabled","true");
+					$("#faassettypes_dblBVRate").val("").attr("disabled","true");
+					$("#faassettypes_sUnit").val("").attr("disabled","true");
+					$("#faassettypes_iDeprType").val("").attr("disabled","true");
+					$("#faassettypes_sDeprMethodNu").val("");
+					$("#faassettypes_sDepr").val("").attr("disabled",true);
+				}else{
+					$("#operate").removeAttr("disabled");
+					/*填充表单*/
+				  	var node = getSelectedTreeNode("treeDemo","id",dataJson.faAssettypes.sparentid);
+					/*设置编码*/
+					strHtml = "";
+					strHtml = setnumInput(dataJson.faAssettypes.ilevel,dataJson.faAssettypes);
+					$("#faassettypes_sNums").empty().append(strHtml);
+					$("#faassettypes_sParentID").val(dataJson.faAssettypes.sparentid).attr("disabled","true");
+				  	$("#faassettypes_sParentname").val(node[0].name).attr("disabled","true");
+					$("#faassettypes_sName").val(dataJson.faAssettypes.sname).attr("disabled","true");
+					$("#faassettypes_iLife").val(dataJson.faAssettypes.ilife).attr("disabled","true");
+					$("#faassettypes_dblBVRate").val(numberround(dataJson.faAssettypes.dblbvrate*100,2)).attr("disabled","true");
+					$("#faassettypes_sUnit").val(dataJson.faAssettypes.sunit).attr("disabled","true");
+					$("#faassettypes_iDeprType").val(dataJson.faAssettypes.ideprtype).attr("disabled","true");
+					if(dataJson.faAssettypes.sdeprmethodnu!=null&&dataJson.faAssettypes.sdeprmethodnu!=""){
+						$("#faassettypes_sDeprMethodNu").val(dataJson.faAssettypes.sdeprmethodnu);
+						$("#faassettypes_sDepr").val(dataJson.faAssettypes.sdeprmethodnu.split(",")[1]).attr("disabled","true");
+						$("#faassettypes_sDeprMethodNuFinder").attr("disabled",true);
+					}else{
+						$("#faassettypes_sDeprMethodNu").val("");
+						$("#faassettypes_sDepr").val("").attr("disabled","true");
+						$("#faassettypes_sDeprMethodNuFinder").attr("disabled",true);
+					}
+				}
+				$("#refresh").removeAttr("disabled");
+				$("#save").attr("disabled","true");
+				$("#cancel").attr("disabled","true");
+				/*判断节点是否可以添加下级节点*/
+				if(dataJson.faAssettypes.lbyused>0||dataJson.faAssettypes.ilevel>=4){
+					$("#add").attr("disabled","true");
+				}else{
+					$("#add").removeAttr("disabled");
+				}
+				/*判断节点是否可以删除*/
+				if(dataJson.faAssettypes.lbyused==0&&dataJson.faAssettypes.lchilds==0){
+					$("#delete").removeAttr("disabled");
+				}else{
+					$("#delete").attr("disabled","true");
+				}
+				//设置成不可编辑状态
+				$("#editorState").val(0);
+		    }
+		});
+	}
+	function reloadZtree(treeid){
+		$.ajax({
+		    url: "ztree!loadFaAssettypesTree",
+		    type: 'post',
+		    dataType: "json",
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(dataJson){
+		    	var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+				if(treeid==0){
+				  	getFaAssettypesTable(node.id)
+					zTree.selectNode(zTree.getNodeByParam("level", 0));
+				}else{
+				  	getFaAssettypesTable(treeid);
+					zTree.selectNode(zTree.getNodeByParam("id",treeid));
+				}
+		    }
+		});
+	}
+	//默认的折旧方法
+	var defaultFasDepr=null;
+	//程序入口
+	$(document).ready(function(){
+		//查询默认的折旧方法
+		$.ajax({
+		    url: "faAssettypes!finddefaultFasDepr.action",
+		    type: 'post',
+		    dataType: "json",
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(data){
+		    	defaultFasDepr = data.defaultFasDepr;
+		    }
+		});
+		//加载资资产类别树
+		$.ajax({
+		    url: "ztree!loadFaAssettypesTree",
+		    type: 'post',
+		    dataType: "json",
+		    async:false,
+		    error:function(){
+		    	jAlert("请求失败!");
+		    },
+		    success: function(dataJson){
+		    	var setting = {	
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},
+						callback: {
+							beforeClick:beforeClick,
+							onClick: onClick
+						}
+				};
+				var zNodes =[];
+				treeNodes = dataJson.listTree;
+		        for (var i = 0; i<treeNodes.length; i++) {
+		        	var nodeObj =  eval('(' + treeNodes[i] + ')') ;
+		        	zNodes.push(nodeObj);
+		        }
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			  	var node = zTree.getNodes()[0];
+			  	getFaAssettypesTable(node.id)
+				zTree.selectNode(node);
+		    }
+		});
+		/*
+		*为保存按钮添加点击事件
+		*/
+		$("#save").unbind("click").click(function(){
+			var node = getSelectedTreeNode("treeDemo","id",$("#faAssettypesId").val());
+			var level = node[0].level;
+			var numRule = node[0].numRule;
+			var idcode=level;
+			if($("#editorType").val()==0){
+				idcode = level+1;
+			}
+			numRule = numRule.substring(idcode-1,idcode);
+			if($("#faassettypes_sNum"+idcode).val().length!=numRule){
+				jAlert("类别编码不符合编码规则。");
+				return false;
+			}
+			/*同级别是否有相同的编码*/
+			if($("#editorType").val()==1){
+				node = getSelectedTreeNode("treeDemo","parenid",node[0].parenid);
+			}else{
+				node = getSelectedTreeNode("treeDemo","parenid",$("#faAssettypesId").val());
+			}
+			var flag = 0;
+			var snumvalue;
+			for(var i=0;i<node.length;i++){
+				if($("#faAssettypesId").val()==node[i].id){
+					continue;
+				}
+				snumvalue = "num"+node[0].level;
+				/*转换成整形*/
+				snumvalue = node[i][snumvalue]-0;
+				if(snumvalue==$("#faassettypes_sNum"+idcode).val()){
+					flag=1;
+				}
+			}
+			if(flag==1){
+				jAlert("类别编码已经存在！");
+				return false;
+			}else{
+				/*保存数据*/
+				saveFaAssettypes();
+			}
+		});
+		/*
+		*为取消按钮添加点击事件
+		*/
+		$("#cancel").unbind("click").click(function(){
+			cancelFaAssettypes();
+		});
+		/*
+		*为添加按钮添加点击事件
+		*/
+		$("#add").unbind("click").click(function(){
+			$("#editorState").val(1);
+			$("#editorType").val(0);
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			$("#operate").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			
+			$("#faassettypes_sParentID").val($("#faAssettypesId").val());
+			$("#faassettypes_sParentname").val($("#faassettypes_sName").val());
+			$("#faassettypes_sName").val("");
+			
+			/*增加编码项*/
+			numAddInput();
+			
+			formEditorState()
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+			
+			//设置默认则就选项
+			if(defaultFasDepr!=""&&defaultFasDepr!=null&&$("#faassettypes_sDeprMethodNu").val()==""){
+				$("#faassettypes_sDeprMethodNu").val(defaultFasDepr);
+				$("#faassettypes_sDepr").val(defaultFasDepr.split(",")[1]);
+			}
+		});
+		/*
+		*为编辑按钮添加点击事件
+		*/
+		$("#operate").unbind("click").click(function(){
+			
+			var snum=""
+			$("#faassettypes_sNums").children().each(function(){
+				snum=snum+""+$(this).val();
+			});
+			if(isExitsTableRef(snum,"FA_ASSETTYPES","SNUM")){
+				jAlert("该类别已经被使用不可修改");
+				return false;
+			}
+			
+			$("#editorState").val(1);
+			$("#editorType").val(1);
+			$("#save").removeAttr("disabled");
+			$("#cancel").removeAttr("disabled");
+			$("#operate").attr("disabled","true");
+			$("#add").attr("disabled","true");
+			$("#refresh").attr("disabled","true");
+			
+			/*修改最后一个编码项*/
+			numEditorInput();
+			formEditorState();
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		  	var node = zTree.getNodesByParam("id",$("#faAssettypesId").val(),null);
+		  	if(node[0].lbyused>0){
+		  		$("#faassettypes_iDeprType").attr("disabled","true");
+		  	}
+			winui.tab.showIndex(1);
+			/*禁用选项卡*/
+			winui.tab.setDisabled(0,true);
+		});
+		/*
+		*为删除按钮添加点击事件
+		*/
+		$("#delete").unbind("click").click(function(){
+			delteFaAssettypes();
+		});
+		/*为刷新按钮添加点击事件*/
+		$("#refresh").unbind("click").click(function(){
+			refreshFaAssettypes();
+		});
+	})
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:600px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:380px;margin-top:10px;margin-left:10px;border:0px solid blue;">
+			<div class="buttongroup">
+				<div class="group">
+                    <div><input type="button" value="操作" class="operateIco" id="operate"/></div>
+					<div><input type="button" value="添加" class="addIco" id="add"/></div>
+					<div><input type="button" value="删除" class="delIco" id="delete"/></div>
+				</div>
+				<div class="group">
+                    <div><input type="button" value="保存" id="save" class="saveIco"/></div>
+					<div><input type="button" value="取消" class="cancelIco" id="cancel"/></div>
+                    <div><input type="button" value="刷新" class="refreshIco" id="refresh"/></div>
+                    <div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('fa_setting_assetsClass');"/></div>
+				</div>
+			</div>
+			
+            
+            <div style="margin-top:5px;width:100%;">
+            	<div style="margin-left:0px;width:30%;float:left;height:335px;overflow-x:scroll;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;">
+                	<div class="zTreeDemoBackground left">
+                         <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+                <div style="background-color: #D4D0C8;height:335px;width:68%;float:right;">
+                	<div type="tab" id="tab1" style="float:left;">
+		                <div>
+			               <div>列表视图</div>
+			               <div>单张视图</div>
+		                </div>
+		                <div style="width:388px;height:316px;">
+			              <div>
+								<div onscroll="tableScroll(this);" style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+										<div id="left_table" style="width:80px;height:0px;position:relative;z-index:20000;float:left;">
+										   <table id="table_1_header" class="table_header" style="width:80px;">
+												<thead>
+													<tr>
+														<td class="onerow" >类别编码</td>
+													</tr>
+												</thead>
+											<tbody id="table_1_bodyer" class="table_bodyer" style="width:80px; background-color:#D4D0C8;">
+												<tr>
+												</tr>
+											</tbody>
+										</table>
+									   </div>
+									   <div style="width:600px;margin-left:80px;float:left;">
+										   <table id="table_2_header" class="table_header" style="width:600px; ">
+												<thead>
+													<tr id="datatable_2_header">
+								  					  <td class="onerow">类别名称</td>
+													  <td class="onerow">使用年限</td>
+					                                  <td class="onerow">净残值率(%)</td>
+					                                  <td class="onerow">计量单位</td>
+					                                  <td class="onerow">计提属性</td>
+					                                  <td class="onerow">折旧方法</td>
+					                                  <td class="onerow">卡片样式</td>
+													</tr>
+												</thead>
+												 <tbody id="table_2_bodyer" class="table_bodyer" style="width:600px;">
+												 </tbody>
+											</table>
+									   </div>
+								   </div>
+							</div>
+			               <div style="border:2px inset #ccc;width:368px;height:296px;margin-left:2px;margin-top:2px;overflow:auto;">
+                               <table id="content_zhou">
+                               	  <tr>
+                                  	<td>类别编码：</td>
+                                    <td id="faassettypes_sNums"></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>上级名称：</td>
+                                    <td><input id="faassettypes_sParentname" style="background: #D4D0C8" type="text" class="normalInput" /><input id="faassettypes_sParentID" class="normalInput" type="hidden"/></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>类别名称：</td>
+                                    <td><input id="faassettypes_sName" class="normalInput" value="电子类" /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>使用年限:</td>
+                                    <td><input  id="faassettypes_iLife" class="smallInput" value="" /></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>净残值率:</td>
+                                    <td><input  id="faassettypes_dblBVRate" class="smallInput" value="5" />%</td>
+                                  </tr>
+                                  <tr>
+                                  	<td>计量单位:</td>
+                                    <td><input  id="faassettypes_sUnit" class="smallInput" value="" /></td>
+                                  </tr>
+                                  <tr>
+                                    <td>计提属性:</td>
+                                    <td>
+                                      <select id="faassettypes_iDeprType" class="normalInput1">
+                                        <option value="2" selected="selected">正常计提</option>
+                                        <option value="1">总提折旧</option>
+                                        <option value="0">总不提折旧</option>
+                                      </select>
+                                    </td>
+                                  
+                                  </tr>
+                                  <tr>
+                                  	<td>折旧方法：</td>
+                                    <td><input id="faassettypes_sDeprMethodNu" type="hidden" class="normalInput1" /><input id="faassettypes_sDepr" class="normalInput1" /><input class="finder" disabled="disabled" id="faassettypes_sDeprMethodNuFinder" type="button" onclick="window.parent.openWindow('fa_basic_ref_dmr','fa_setting_assetsClass');"/></td>
+                                  </tr>
+                                  <tr>
+                                  	<td>卡片样式：</td>
+                                    <td><input id="faassettypes_sModelID" sModelIdValue="1" class="normalInput1" disabled value="通用样式" /><input disabled class="finder" type="button"  /></td>
+                                  </tr>
+                               </table>
+                           </div>
+		                </div>
+	                </div>
+                </div>
+            </div>
+            
+            
+		</div>
+	</div>
+	<input type="hidden" id="faAssettypesId"/>
+	<!-- 根据editorType来判断增加还是修改 0:是增加。1:是修改-->
+	<input type="hidden" id="editorType" value="0"/>
+	<!-- 根据editorState来判断编辑状态 0:不可编辑。1:可编辑-->
+	<input type="hidden" id="editorState" value="0"/>
+</body>
+<script type="text/javascript">
+function deliverValue(param){
+	document.getElementById("faassettypes_sDeprMethodNu").value=param.code+","+param.name;
+	document.getElementById("faassettypes_sDepr").value=param.name;
+}
+</script>
+</html>

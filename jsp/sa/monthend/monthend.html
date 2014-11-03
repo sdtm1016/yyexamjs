@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>月末结账</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+		.table_style {border-collapse: collapse;cursor:default;margin-top:0px;margin-left:0px;font-size:12px;}
+		.table_style thead tr{height:24px;}
+		.table_style thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#fff;text-align:center;}
+		.table_style tbody tr {background-color:#ffffff;}
+		.table_style tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+		.hide{ display:none}
+		#btn tr td{padding-left:5px;padding-right:10px;}
+		#bottom{ color:red; margin-left:2px;}
+		.bg_color{ background-color:#00C;color:#FFF}
+	</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<!-- 引入公共js函数 -->
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<!-- 引入公共引用函数 -->
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/monthend.js"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	//初始化什么时候那条被选中
+	addBgColor(3);
+	/*设置那个被选中*/
+	function addBgColor(i){
+		$("#datatable_1_bodyer tr").each(function(index, element) {
+				if(index==i-1){
+				$(this).css({'background-color':'#009','color':'#FFF'});
+				$(this).attr("added","true")
+			}
+		})
+	};
+
+	/*确定按钮点击事件*/
+	$("#ok").unbind("click").bind("click",function(){
+			$(this).attr("disabled","disabled");
+			$("#cancle").attr("disabled","disabled");
+		 var addedtr=$("#datatable_1_bodyer tr[added='true']");
+		 addedtr.css({'background-color':'#fff','color':'#000'});//添加背景色，字体颜色
+		 addedtr.find("span").html("是");//将标记改成是
+		var next=	 addedtr.next();//相邻着的下一条被选中
+		next.css({'background-color':'#009','color':'#FFF'});
+		next.attr("added","true")
+		});
+	
+	
+
+
+});
+</script>
+</head>
+<body>
+		<div class="container" style="float:left;width:350px;height:370px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;border:0px solid red;">
+		<div style="width:330px;height:350px;margin-top:10px;margin-left:10px;border:0px solid blue;"  >
+		<div>&nbsp;蓝条处是当前会计月</div>
+		<div style="width:320px;height:250px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:2px;background-color:#fff;">
+				
+					<table id="datatable_1" border=1 class="table_style" style="width:320px;">
+						<thead>
+							<tr id="datatable_1_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:80px;">会计月份</td>
+								<td style="width:80px;">起止日期</td>
+								<td style="width:80px;">截止日期</td>
+								<td style="width:80px;">是否结账</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_bodyer">
+							<tr>
+								<td>1</td>                            	
+								<td>2013-01-01</td>
+								<td>2013-01-31</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>2</td>                            	
+								<td>2013-02-01</td>
+								<td>2013-02-28</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr  >
+								<td>3</td>                            	
+								<td>2013-03-01</td>
+								<td>2013-03-31</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>4</td>                            	
+								<td>2013-04-01</td>
+								<td>2013-04-30</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>5</td>                            	
+								<td>2013-05-01</td>
+								<td>2013-05-31</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>6</td>                            	
+								<td>2013-06-01</td>
+								<td>2013-06-30</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>7</td>                            	
+								<td>2013-07-01</td>
+								<td>2013-07-31</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>8</td>                            	
+								<td>2013-08-01</td>
+								<td>2013-08-31</td>
+								<td><span>否</span></td>
+							</tr>
+							<tr>
+								<td>9</td>                            	
+								<td>2013-09-01</td>
+								<td>2013-09-30</td>
+								<td><span>否</span></td>
+							</tr>       
+							<tr>
+								<td>10</td>                            	
+								<td>2013-10-01</td>
+								<td>2013-10-31</td>
+								<td><span>否</span></td>
+							</tr>    
+							<tr>
+								<td>11</td>                            	
+								<td>2013-11-01</td>
+								<td>2013-11-30</td>
+								<td><span>否</span></td>
+							</tr>   
+							<tr>
+								<td>12</td>                            	
+								<td>2013-12-01</td>
+								<td>2013-12-31</td>
+								<td><span>否</span></td>
+							</tr>                                                                                                  
+						</tbody>
+					</table>
+				</div>
+                <div align="center">
+                	<table id="btn">
+                    	<tr>
+                        	<td><input type="button" onclick= "closeAccount_sa();"  id="ok" value="月末结账"/></td>
+                            <td><input type="button"  onclick= "upcloseAccount_sa();" id="cancle" value="取消结账"/></td>
+                            <td><input type="button" onclick= "checkAccount_sa();" id="check" value="月末检测"/></td>
+                            <td><input type="button" onclick= "exitAccount_sa();" id="exit" value="  退出  "/></td>
+                        </tr>
+                    </table>
+                </div>
+               <div id="bottom">
+               		如果应收按单据日期记账,销售本月如果有未复核的发票,月末<br>
+                    结账后,这些未复核的发票应收就不能按单据日期计算了,除非<br>
+                    在应收改成按业务日期记账
+               </div>
+
+
+              
+                
+		</div>
+	</div>
+</body>
+</html>

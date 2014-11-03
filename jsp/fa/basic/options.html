@@ -1,0 +1,679 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>选项设置</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/tab.css">
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.tab.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<style type="text/css">
+
+.stepslabel {float:none;clear:both;height:40px;line-height:40px;margin-left:-8px;}
+.stepslabel .div1 {margin-left:4px;float:left;}
+.stepslabel .div2 {margin-left:4px;float:right;color:#00cc00;font-weight:bold;font-size:14px;font-family:verdana;}
+
+.gradually {background-color:#D4D0C8;}
+.gradually .textbox {width:26px;height:20px;line-height:12px;padding:0px;border:1px solid #000;}
+.gradually .incbtn1{width:16px;height:11px;padding:0px;margin:0px;font-size:10px;font-family:黑体;font-weight:bold;background-image:url('../../../images/icon/up1.gif');background-position:2px 0px;background-repeat:no-repeat;}
+.gradually .incbtn2{width:16px;height:11px;padding:0px;margin:0px;font-size:10px;font-family:黑体;font-weight:bold;background-image:url('../../../images/icon/down1.gif');background-position:2px 0px;background-repeat:no-repeat;}
+
+.info span{color:blue;}
+
+</style>
+	<script type="text/javascript">
+	
+	
+
+	
+	
+	
+//递计算框递增函数
+function increasing(btn,max){
+	var inputt = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	if(parseInt(inputt.value)<max){
+		inputt.value = parseInt(inputt.value)+1;
+	}
+} 
+function increas(btn){
+	var inputt = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	var lengths=$("#length").html();
+	if(parseInt(lengths)<10){
+		inputt.value = parseInt(inputt.value)+1;
+		$("#length").html(parseInt(lengths)+1)
+	}
+}
+//递计算框递减函数
+function decline(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	if(input.value>1){
+		input.value = parseInt(input.value)-1;
+	}
+}
+function declines(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	var lengths=$("#length").html();
+	if(input.value>1){
+		input.value = parseInt(input.value)-1;
+		$("#length").html(parseInt(lengths)-1)
+	}
+}
+
+
+//固定资产编码方式单选按钮处理函数
+function setiCardNumAutoTypeEnable(value){
+	if($("#iCardNumAutoType").val()=="0"){
+		$("#iCardNumAutoType").attr("disabled",false);
+	}else{
+		$("#iCardNumAutoType").attr("disabled",true);
+	}
+	//document.getElementById("iCardNumAutoType").disabled = value;
+	var snl = document.getElementById("iCardSequenceNum").getElementsByTagName("input");
+	for(var i=0;i<snl.length;i++){
+		snl[i].disabled = value;
+	}
+	if(value==false){
+		if($("#iCardNumAutoType").children().length==5){
+			$($("#iCardNumAutoType").children()[0]).remove();
+		}
+	}
+}
+
+//对账 复选按钮事件处理
+function setMappingAccountCompentEnable(checkbox){
+	var mac = document.getElementById("mappingAccountCompent");
+	var maci = mac.getElementsByTagName("input");
+	if(checkbox.checked==true){
+		mac.style.color="#000";
+		for(var i=0;i<maci.length;i++){
+			maci[i].disabled=false;
+		}
+	}else{
+		mac.style.color="#888";
+		for(var i=0;i<maci.length;i++){
+			maci[i].disabled=true;
+		}
+	}
+}
+/**
+ * 加载初始化数据
+ */
+function init(){
+	var is=iscansubmit();
+	if(!is){
+		$("#submitbut").attr("disabled",true);
+	}
+	var	accountId=getCookie("accountCode");//账套号
+	var	accountName=getCookie("accountName");//账套名称
+	var	cunitname=getCookie("cunitname");//使用单位
+	var	ccurname=getCookie("ccurname");//本位币
+	var	userName=getCookie("userName");//主管姓名
+	
+	
+	
+	$("#accountId").val(accountId);
+	$("#accountName").val(accountName);
+	$("#cunitname").val(cunitname);
+	$("#ccurname").val(ccurname);
+	$("#userName").val(userName);
+
+	
+	
+	$("#accountId").attr("disabled",true);
+	$("#accountName").attr("disabled",true);
+	$("#cunitname").attr("disabled",true);
+	$("#ccurname").attr("disabled",true);
+	$("#userName").attr("disabled",true);
+	
+	
+	
+	var sFixedAssetsSubjectNum="";
+	var sFixedAssetsSubjectName="";
+	var sDeprTotalSubjectNum="";
+	var sDeprTotalSubjectName="";
+	var sDefaultAssetSubjectNum="";
+	var sDefaultAssetSubjectName="";
+	var sDefaultDeprTotalSubjectNum="";
+	var sDefaultDeprTotalSubjectName="";
+	var sOffsetTaxNum="";
+	var sOffsetTaxName="";
+	$.ajax({
+	    url: "faInitializa!optioninit",
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	var depreciations=data.depreciations;
+			for(var i=0;i<depreciations.length;i++){
+				var depreci=depreciations[i];
+				$("#sDeprMethodNum").append("<option value='"+depreci.id+"'>"+depreci.sname+"</option>")
+			}
+			var informations=data.informations;
+			for(var i=0;i<informations.length;i++){
+				var accinfor=informations[i];
+				var cname=accinfor.cname;
+				var cvalue=accinfor.cvalue;
+				if(cvalue=="null"||cvalue==""||cvalue==null){
+					cvalue="";
+				}
+				if(cname=="bCalcDepr"){
+					if(cvalue=="TRUE"){
+						$("#"+cname).html("是");
+					}else{
+						$("#"+cname).html("否");
+					}	
+				}else if(cname=="dStartDate"){
+					$("#"+cname).html(cvalue.substring(0,cvalue.length-3).replace("-","."));
+				}else if(cname=="sFixedAssetsSubjectNum"){
+					sFixedAssetsSubjectNum=cvalue;
+				}else if(cname=="sFixedAssetsSubjectName"){
+					sFixedAssetsSubjectName=cvalue;
+				}else if(cname=="sDeprTotalSubjectNum"){
+					sDeprTotalSubjectNum=cvalue;
+				}else if(cname=="sDeprTotalSubjectName"){
+					sDeprTotalSubjectName=cvalue;
+				}else if(cname=="sDefaultAssetSubjectNum"){
+					sDefaultAssetSubjectNum=cvalue;
+				}else if(cname=="sDefaultAssetSubjectName"){
+					sDefaultAssetSubjectName=cvalue;
+				}else if(cname=="sDefaultDeprTotalSubjectNum"){
+					sDefaultDeprTotalSubjectNum=cvalue;
+				}else if(cname=="sDefaultDeprTotalSubjectName"){
+					sDefaultDeprTotalSubjectName=cvalue;
+				}else if(cname=="sOffsetTaxNum"){
+					sOffsetTaxNum=cvalue;
+				}else if(cname=="sOffsetTaxName"){
+					sOffsetTaxName=cvalue;
+				}else if(cname=="sTypeNumType"){
+					var cvalues=cvalue.split("");
+					var length=0;
+					$("input[name='sTypeNumType']").each(function (j){
+						this.value=cvalues[j];
+						length=length+(cvalues[j]-0);
+						$("#length").html(length);
+					});
+				}else if(cname=="iCardNumType"){
+					$("input[name='iCardNumType'][value='"+cvalue+"']").attr("checked",true);
+					if(cvalue=="0"){
+						setiCardNumAutoTypeEnable(true);
+					}else{
+						setiCardNumAutoTypeEnable(false);
+					}
+				}else{
+					if(cvalue=="TRUE"){
+						$("#"+cname).attr("checked",true);
+					}else{
+						$("#"+cname).val(cvalue);
+					}
+					if(cname=="bAutoZW"){
+						setMappingAccountCompentEnable($("#"+cname)[0]);
+					}
+				}
+			}
+			if(sFixedAssetsSubjectNum!=""){
+				$("#sFixedAssetsSubject").val(sFixedAssetsSubjectNum+","+sFixedAssetsSubjectName);
+			}
+			if(sDeprTotalSubjectNum!=""){
+				$("#sDeprTotalSubject").val(sDeprTotalSubjectNum+","+sDeprTotalSubjectName);
+			}
+			if(sDefaultAssetSubjectNum!=""){
+				$("#sDefaultAssetSubject").val(sDefaultAssetSubjectNum+","+sDefaultAssetSubjectName);
+			}
+			if(sDefaultDeprTotalSubjectNum!=""){
+				$("#sDefaultDeprTotalSubject").val(sDefaultDeprTotalSubjectNum+","+sDefaultDeprTotalSubjectName);	
+			}
+			if(sOffsetTaxNum!=""){
+				$("#sOffsetTax").val(sOffsetTaxNum+","+sOffsetTaxName);
+			}
+	    }
+	  });
+}
+
+$(document).ready(function(){
+	init();
+});
+
+
+
+
+/**
+ * 保存选项设置
+ */
+function dosave(){
+	/*财务接口*/
+	var bAutoZW=""
+	var sFixedAssetsSubjectNum=""
+	var sFixedAssetsSubjectName=""
+	var sDeprTotalSubjectNum=""
+	var sDeprTotalSubjectName=""
+	var bAllowUnequality=""
+	if($("#bAutoZW").attr("checked")=="checked"){
+		bAutoZW="TRUE";
+		var sFixed=$("#sFixedAssetsSubject").val().split(",");
+		var sDepr=$("#sDeprTotalSubject").val().split(",");
+		sFixedAssetsSubjectNum=sFixed[0];
+		sFixedAssetsSubjectName=sFixed[1];
+		sDeprTotalSubjectNum=sDepr[0];
+		sDeprTotalSubjectName=sDepr[1];
+		if($("#bAllowUnequality").attr("checked")=="checked"){
+			bAllowUnequality="TRUE";
+		}else{
+			bAllowUnequality="FALSE";
+		}
+	}else{
+		bAutoZW="FALSE";
+	}
+	var bSendToZWAfterChange=""
+	if($("#bSendToZWAfterChange").attr("checked")=="checked"){
+		bSendToZWAfterChange="TRUE";
+	}else{
+		bSendToZWAfterChange="FALSE";
+	}
+	var bWriteZWBeforeEnd=""
+	if($("#bWriteZWBeforeEnd").attr("checked")=="checked"){
+		bWriteZWBeforeEnd="TRUE";
+	}else{
+		bWriteZWBeforeEnd="FALSE";
+	}
+	var sOriginOffsetTax=$("#sOriginOffsetTax").val();	
+	var sDefaultAssetSubject=$("#sDefaultAssetSubject").val().split(",");
+	var sDefaultAssetSubjectNum=sDefaultAssetSubject[0];
+	var sDefaultAssetSubjectName=sDefaultAssetSubject[1];
+	var sDefaultDeprTotalSubject=$("#sDefaultDeprTotalSubject").val().split(",");
+	var sDefaultDeprTotalSubjectNum=sDefaultDeprTotalSubject[0];
+	var sDefaultDeprTotalSubjectName=sDefaultDeprTotalSubject[1];
+	var sOffsetTax=$("#sOffsetTax").val().split(",");
+	var sOffsetTaxNum=sOffsetTax[0];
+	var sOffsetTaxName=sOffsetTax[1];
+	/*折旧信息*/
+	var sDeprMethodNum=$("#sDeprMethodNum").val();
+	var iDeprSendPeriod=$("#iDeprSendPeriod").val();
+	var bCurMonthMakeAddDepr="";
+	if($("#bCurMonthMakeAddDepr").attr("checked")=="checked"){
+		bCurMonthMakeAddDepr="TRUE";
+	}else{
+		bCurMonthMakeAddDepr="FALSE";
+	}
+	var bCurMonthMakeDownDepr="";
+	if($("#bCurMonthMakeDownDepr").attr("checked")=="checked"){
+		bCurMonthMakeDownDepr="TRUE";
+	}else{
+		bCurMonthMakeDownDepr="FALSE";
+	}
+	var bLastMonthMakeUpDepr="";
+	if($("#bLastMonthMakeUpDepr").attr("checked")=="checked"){
+		bLastMonthMakeUpDepr="TRUE";
+	}else{
+		bLastMonthMakeUpDepr="FALSE";
+	}
+	/*其他*/
+	var iYearsToDel=$("#iYearsToDel").val();
+	var sTypeNumType="";
+	$("input[name='sTypeNumType']").each(function(index){
+		sTypeNumType=sTypeNumType+$(this).val()+"";
+	});
+	var iCardNumType=$("input[name='iCardNumType']:checked").val();
+	var iCardNumAutoType=$("#iCardNumAutoType").val()
+	var iCardSequenceNumLength=$("#iCardSequenceNumLength").val();
+	var bAddSuccession="";
+	if($("#bAddSuccession").attr("checked")=="checked"){
+		bAddSuccession="TRUE";
+	}else{
+		bAddSuccession="FALSE";
+	}
+	var param="faInitial.bautozw="+bAutoZW+"&faInitial.sfixedassetssubjectnum="+sFixedAssetsSubjectNum+"&faInitial.sfixedassetssubjectname="+sFixedAssetsSubjectName
+	+"&faInitial.sdeprtotalsubjectnum="+sDeprTotalSubjectNum+"&faInitial.sdeprtotalsubjectname="+sDeprTotalSubjectName+"&faInitial.ballowunequality="+bAllowUnequality
+	+"&faInitial.bsendtozwafterchange="+bSendToZWAfterChange+"&faInitial.bwritezwbeforeend="+bWriteZWBeforeEnd+"&faInitial.soriginoffsettax="+sOriginOffsetTax
+	+"&faInitial.sdefaultassetsubjectnum="+sDefaultAssetSubjectNum+"&faInitial.sdefaultassetsubjectname="+sDefaultAssetSubjectName
+	+"&faInitial.sdefaultdeprtotalsubjectnum="+sDefaultDeprTotalSubjectNum+"&faInitial.sdefaultdeprtotalsubjectname="+sDefaultDeprTotalSubjectName
+	+"&faInitial.soffsettaxnum="+sOffsetTaxNum+"&faInitial.soffsettaxname="+sOffsetTaxName+"&faInitial.sdeprmethodnum="+sDeprMethodNum+"&faInitial.ideprsendperiod="+iDeprSendPeriod
+	+"&faInitial.bcurmonthmakeadddepr="+bCurMonthMakeAddDepr+"&faInitial.bcurmonthmakedowndepr="+bCurMonthMakeDownDepr+"&faInitial.blastmonthmakeupdepr="+bLastMonthMakeUpDepr
+	+"&faInitial.iyearstodel="+iYearsToDel+"&faInitial.stypenumtype="+sTypeNumType+"&faInitial.icardnumtype="+iCardNumType
+	+"&faInitial.icardnumautotype="+iCardNumAutoType+"&faInitial.icardsequencenumlength="+iCardSequenceNumLength+"&faInitial.baddsuccession="+bAddSuccession;
+	$.ajax({
+	    url: "faInitializa!saveoption",
+	    type: 'post',
+	    dataType: "json",
+	    data:param,
+	    success: function(data){
+	    	window.parent.closeWindow('fa_basic_options');
+	    }
+	 });
+}
+/**
+ * 折旧汇总分配周期变化提示
+ */
+function doperiodchan(){
+	jAlert("企业在计提折旧时，可根据所处的行业和自身实际情况确定计提折旧和将折旧归集入成本和费用的周期。系统具体的处理方法是每个期间均计提折旧，但折旧的汇总分配按设定的周期进行，把该周期内各期间计提的折旧汇总分配");
+}
+function iscansubmit(){
+	var res=false;
+	$.ajax({
+	    url: "faInitializa!iscansubmit",
+	    type: 'post',
+	    dataType: "json",
+	    cache:false,
+	    async:false,
+	    success: function(data){
+	    	var mark=data.mark;
+	    	if(mark=="0"){
+	    		res=true;
+	    	}else{
+	    		res=false;
+	    	}
+	    }
+	 });
+	return res;
+}
+/**
+ * 卡片年限变化提示
+ */
+function doyearchan(){
+	jAlert("根据制度规定已清理的资产的资料应保留5年，所以系统缺省时限为5年，只有五年后才能将相关资产的卡片和变动单删除（删除是指从系统的数据库中彻底删除）。使用者可根据需要修改这个时限");
+}
+
+var targetId = null;
+/**
+ * 显示参照窗体
+ */
+function showSubRef(target){
+	targetId = target;
+	
+	window.parent.openWindow('dsign_subjectsreference','fa_basic_options');
+}
+
+//接收弹窗返回值
+function deliverValue(valueObject){
+
+	var textbox = document.getElementById(targetId);
+	
+	if(targetId!="sOriginOffsetTax"){
+		textbox.value=valueObject.selKemuCode+","+valueObject.selKemuName;
+		textbox.setAttribute("selKemuName",valueObject.selKemuName);
+	}
+	
+	if(targetId=="sOriginOffsetTax"){
+		var ids = "";
+		var value = "";
+		for(var i=0;i<valueObject.length;i++){
+			ids += valueObject[i].id + ",";
+		}
+		textbox.value=ids;
+
+	}
+}
+
+
+/**
+ * 显示可纳税调整的增加方式窗体
+ */
+function showAddMethodRef(target){
+	targetId = target;
+	var param = $("#"+targetId).val();
+	window.parent.openWindow('fa_basic_addmethod','fa_basic_options',param);
+}
+function doblur(temp){
+	var vl=$(temp).val();
+	if((vl-0)!=vl){
+		$(temp).val("5");
+	}else{
+		if((vl-0)<1){
+			$(temp).val("1");	
+		}else if((vl-0)>5){
+			$(temp).val("5");
+		}
+	}
+}
+</script>
+	
+</head>
+<body>
+	<div class="container" style="float:left;width:456px;height:360px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:436px;height:340px;margin-top:10px;margin-left:10px;">
+			
+					
+			<div type="tab">
+				<div>
+					<div>与账务系统接口</div>
+					<div>基本信息</div>
+					<div>折旧信息</div>
+					<div>其他</div>
+				</div>
+				<div style="width:434px;height:284px;">
+					<div>
+					
+						<div class="v_a_m"><input type="checkbox" id="bAutoZW" onclick="setMappingAccountCompentEnable(this);"/><label for="bAutoZW">与账务系统进行对账</label></div>
+						<div style="margin-left:50px;color:#888;" id="mappingAccountCompent">
+							<fieldset style="width:320px;height:66px;">
+								<legend>对账科目</legend>
+								<div>
+									固定资产对账科目<input id="sFixedAssetsSubject"  type="text" style="width:130px;" onfocus="dofocustoenter('code',this,'targetId','sFixedAssetsSubject','','')" disabled="disabled"/><input type="button" class="finder" onclick="showSubRef('sFixedAssetsSubject')" disabled="disabled"/><br>
+									累计折旧对账科目<input id="sDeprTotalSubject"  type="text" style="width:130px;" onfocus="dofocustoenter('code',this,'targetId','sDeprTotalSubject','','')" disabled="disabled"/><input type="button" class="finder" onclick="showSubRef('sDeprTotalSubject')" disabled="disabled"/>
+								</div>
+							</fieldset>
+							<div class="v_a_m"><input id="bAllowUnequality" type="checkbox" disabled="disabled"/><label for="bAllowUnequality">在对账不平情况下不允许固定资产月末结账</label></div>
+						</div>
+					
+						<div class="v_a_m"><input type="checkbox" id="bSendToZWAfterChange"/><label for="bSendToZWAfterChange">业务发生后立即制单</label></div>
+						<div class="v_a_m"><input type="checkbox" id="bWriteZWBeforeEnd"/><label for="bWriteZWBeforeEnd">月末结账前一定要完成制单登账业务</label></div>
+						
+						<table>
+							<tr>
+								<td align="right">可纳税调整的增加方式：</td>
+								<td align="center" width="260"><input id="sOriginOffsetTax" type="text" readonly="readonly" style="width:130px;height:12px;"/><input type="button" onclick="showAddMethodRef('sOriginOffsetTax')" class="finder"/></td>
+							</tr>
+							<tr>
+								<td align="right">[固定资产]缺省入账科目：</td>
+								<td align="center" width="260"><input type="text" id="sDefaultAssetSubject" onfocus="dofocustoenter('code',this,'targetId','sDefaultAssetSubject','','')" style="width:130px;height:12px;"/><input type="button" onclick="showSubRef('sDefaultAssetSubject')" class="finder"/></td>
+							</tr>
+							<tr>
+								<td align="right">[累计折旧]缺省入账科目：</td>
+								<td align="center" width="260"><input type="text" id="sDefaultDeprTotalSubject" onfocus="dofocustoenter('code',this,'targetId','sDefaultDeprTotalSubject','','')" style="width:130px;height:12px;"/><input type="button" onclick="showSubRef('sDefaultDeprTotalSubject')" class="finder"/></td>
+							</tr>
+							<tr>
+								<td align="right">可抵扣税额入账科目：</td>
+								<td align="center" width="260"><input type="text" id="sOffsetTax" onfocus="dofocustoenter('code',this,'targetId','sOffsetTax','','')" style="width:130px;height:12px;"/><input type="button" onclick="showSubRef('sOffsetTax')" class="finder"/></td>
+							</tr>
+						</table>
+						
+						
+							
+						
+					</div>
+					<div style="margin-top:10px;margin-left:10px;">
+					
+						
+						<table>
+							<tr>
+								<td align="left" valign="top" width="120">账套号</td>
+								<td align="left" width="260"><input id="accountId" type="text" style="width:70px;height:12px;"/><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">账套名称</td>
+								<td align="left" width="260"><input id="accountName" type="text" style="width:270px;height:12px;"/><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">使用单位</td>
+								<td align="left" width="260"><input id="cunitname" type="text" style="width:270px;height:12px;"/><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">本位币</td>
+								<td align="left" width="260"><input id="ccurname" type="text" style="width:70px;height:12px;"/><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">主管姓名</td>
+								<td align="left" width="260"><input id="userName" type="text" style="width:170px;height:12px;"/><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">本账套计提折旧</td>
+								<td align="left" width="260"><span style="color:blue;" id="bCalcDepr"></span><br><br></td>
+							</tr>
+							<tr>
+								<td align="left" valign="top">账套启用月份</td>
+								<td align="left" width="260" id="dStartDate"></td>
+							</tr>
+						</table>
+					</div>
+					<div style="margin-left:10px;margin-top:10px;">
+						<br><br>
+						<div style="height:20px;">
+							主要折旧方法
+						</div>
+						
+						<div style="height:40px;">
+							<select style="width:220px;margin-left:180px;" id="sDeprMethodNum">
+								
+							</select>
+						</div>
+						
+						<fieldset style="width:380px;height:40px;">
+							<legend>折旧汇总分配周期</legend>
+							<div style="text-align:center;">
+								<select style="width:60px;" id="iDeprSendPeriod" onchange="doperiodchan()">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="6">6</option>
+									<option value="12">12</option>
+								</select>个月
+							</div>
+						</fieldset>
+						
+						
+						
+						<div class="v_a_m" style="line-height:20px;">
+							下次折旧分配月份:<br>
+							<div style="text-align:center;" id="nextMonth"></div>
+							<input type="checkbox" id="bCurMonthMakeAddDepr"/><label for="bCurMonthMakeAddDepr">当月增加的固定资产，当月不提折旧</label><br>
+							<input type="checkbox" id="bCurMonthMakeDownDepr"/><label for="bCurMonthMakeDownDepr">当月减少的固定资产，当月仍提折旧</label><br>
+							<input type="checkbox" id="bLastMonthMakeUpDepr"/><label for="bLastMonthMakeUpDepr">当(月初已计提月份=可使用月份-1)时将剩余折旧全部提足(工作量法除外)</label>
+						</div>
+						
+						
+						
+						
+						
+					</div>
+					<div style="margin-left:6px;">
+					
+						<div>已发生资产减少卡片可删除时限：</div>
+						<div style="margin-left:290px;">
+							<div class="gradually">
+								<div style="float:left;"><input id="iYearsToDel" readonly="readonly" class="textbox" type="text" value="2" style="line-height:14px;"/></div>
+								<div style="float:left;">
+									<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increasing(this,100);doyearchan()"/></div>
+									<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="decline(this);doyearchan()"/></div>
+								</div>
+								
+							</div>
+						&nbsp;年
+						</div>
+						
+						<fieldset style="width:390px;height:60px;">
+								<legend>资产类别编码方式</legend>
+								<div style="text-align:center;">
+									<table>
+										<tr>
+											<td align="left" width="100">级别</td>
+											<td>1</td>
+											<td>2</td>
+											<td>3</td>
+											<td>4</td>
+											<td>总长度</td>
+										</tr>
+										<tr>
+											<td align="left">编码长度</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input name="sTypeNumType" readonly="readonly" class="textbox" type="text" value=""/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);" style=""/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input name="sTypeNumType" readonly="readonly" class="textbox" type="text" value=""/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input name="sTypeNumType" readonly="readonly" class="textbox" type="text" value=""/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input name="sTypeNumType" readonly="readonly" class="textbox" type="text" value=""/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td width="80"><span id="length"></span></td>
+										</tr>
+									</table>
+								</div>
+							</fieldset>
+							<fieldset style="width:390px;height:76px;">
+								<legend>固定资产编码方式</legend>
+								<div>
+									<div style="width:170px;height:60px;float:left;" class="v_a_m">
+										<input type="radio" name="iCardNumType" value="0" id="rd_2_1" onclick="setiCardNumAutoTypeEnable(true);"/><label for="rd_2_1">手工输入</label>
+										<input type="radio" name="iCardNumType" value="1" id="rd_2_2" onclick="setiCardNumAutoTypeEnable(false);"/><label for="rd_2_2">自动编码</label>
+									</div>
+								
+									<div style="width:218px;height:60px;float:left;">
+										<select id="iCardNumAutoType" disabled="disabled" style="width:210px;">
+											<option value="0"></option>
+											<option value="1">类别编号+序号</option>
+											<option value="2">部门编号+序号</option>
+											<option value="3">类别编号+部门编号+序号</option>
+											<option value="4">部门编号+类型编号+序号</option>
+										</select>
+										<br>
+										<br>
+										<div style="float:left;height:26px;line-height:26px;">序号长度：</div>
+											<div class="gradually" id="iCardSequenceNum">
+												<div style="float:left;"><input class="textbox" onblur="doblur(this)" disabled="disabled" id="iCardSequenceNumLength" type="text" value="" style="line-height:14px;" disabled="disabled"/></div>
+												<div style="float:left;">
+													<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increasing(this,5);" disabled="disabled"/></div>
+													<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="decline(this);" disabled="disabled"/></div>
+												</div>
+											</div>
+									</div>
+								
+								</div>
+							</fieldset>
+						
+						<div class="v_a_m"><input id="bAddSuccession" type="checkbox" /><label for="bAddSuccession">连续增加</label></div>
+							
+						
+						
+					</div>
+				</div>
+			</div>
+			
+			<div style="text-align:right;margin-top:5px;">
+				<input type="button" id="submitbut" value="确定" onclick="dosave()"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('fa_basic_options');"/>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	
+</script>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>收发类别参照表</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript">
+		/**
+		*程序入口
+		*/
+		$(document).ready(function(){
+			//查找收发类别 如果没有则设置预置数据
+			$.ajax({
+				url:"rdStyle!findRdStylesBy.action",
+				type:"post",
+				data:{brdflag:1},
+				async:false,
+				datatype:"json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success:function(jsonData){
+					var strHtml = "";
+					var listRdStyle = jsonData.listRdStyle;
+					for(var i=0;i<listRdStyle.length;i++){
+						if(listRdStyle[i].brdend==0){
+							continue;
+						}
+						strHtml+="<tr rdStyleid='"+listRdStyle[i].id+"' onclick='selectTr(this)' ondblclick='checkTr(this)'>";
+						strHtml+="	<td>"+strNullProc(listRdStyle[i].crdcode)+"</td>";
+						strHtml+="	<td>"+strNullProc(listRdStyle[i].crdname)+"</td>";
+						strHtml+="</tr>";
+					}
+					$("#rdStyleRefTable").empty().append(strHtml);
+					selectTr($("#rdStyleRefTable >tr:first")[0]);
+				}
+			});
+		});
+		//选中行
+		function selectTr(currentTr){
+			$(currentTr).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+		}
+		//选择当前行
+		function checkTr(currentTr){
+			var selId = $(currentTr).attr("rdStyleid");
+			var selCode = $(currentTr).find("td:first").text();
+			var selName= $(currentTr).find("td:eq(1)").text();
+			
+			var param = {};
+			param.cId=selId;
+			param.ccode=selCode;
+			param.cname=selName;
+			//付返回值
+			window.parent.deliverValue("pu_purchasetype_lb",param);
+			window.parent.closeWindow('pu_purchasetype_lb');
+		}
+	</script>
+</head>
+<body style="padding:0;">
+	<div style="width:394px;height:208px;overflow:auto;margin-top:-6px;margin-left:-6px;border:2px inset #ccc;">
+		<table class="table_style">
+			<thead>
+				<tr>
+					<td>类别编码</td>
+					<td>类别名称</td>
+				</tr>
+			</thead>
+			<tbody id="rdStyleRefTable">
+			
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>月末处理</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+
+
+</style>
+<script type="text/javascript">
+var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+var iperiod = window.parent.parent.login_iperiod ;
+var iyear = window.parent.parent.login_iyear ;
+
+
+$(document).ready(function(){
+	
+		$("#iperiod").html(iperiod);
+		$("#iyear").html(iyear);
+		$.ajax({
+			url:"wageBusiness!monthEndCheck.action",
+			data:{"cgzgradenum":cgzgradenum},
+			type:"post",
+			dataType:"json",
+			async:false,
+			success:function(data){
+				if(data.flag=="1"){
+					jAlert("本月已做月结，不能重复处理","提示",function(){
+					window.parent.closeWindow("wa_checkout_endproccess");
+					});
+				}
+				if(data.flag=="2"){
+					jAlert("当前登陆期间不可做结账操作","提示",function(){
+					window.parent.closeWindow("wa_checkout_endproccess");
+					});
+				}
+				if(data.flag=="3"){
+					jAlert("结账检测遇到错误","提示",function(){
+					window.parent.closeWindow("wa_checkout_endproccess");
+					});
+				}
+			}
+		});
+		
+		
+	
+	
+	
+	
+});
+
+
+
+function btnConfirm(){
+	
+	var p = {};
+	p.p1 = "p1";
+	p.p2 = "p2";
+	
+	window.parent.openWindow("wa_checkout_reset","wa_checkout_endproccess",p);
+}
+
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:410px;height:196px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:380px;height:176px;margin-top:10px;margin-left:15px;">
+			
+			
+			<div style="width:110%;height:150px;">
+			
+			
+				<fieldset style="width:100px;height:130px;float:left;">
+					<legend>当前会计期间：</legend>
+					<div class="v_a_m">
+						<h3><span id="iyear">2013</span>年<span id="iperiod">5</span>月</h3>
+						<div><input type="radio" id="rd_1" checked="checked"/><label for="rd_1">月末处理</label></div>
+						
+					</div>
+				</fieldset>
+						
+			
+				<fieldset style="width:210px;height:130px;float:left;margin-left:14px;">
+					<legend>月末处理</legend>
+					<div style="width:220px;">
+						<table style="width:200px;margin-left:10px;">
+							<tr>
+								<td width="12" valign="top">1、</td><td>将本月工资明细设置为不可修改状态。</td>
+							</tr>
+							<tr>
+								<td width="12" valign="top">2、</td><td>自动生成下月工资明细表。</td>
+							</tr>
+							<tr>
+								<td width="12" valign="top">3、</td><td>新增或删除人员不会对本月数据产生影响。</td>
+							</tr>
+							<tr>
+								<td width="12" valign="top">4、</td><td>不影响系统其它功能的执行。</td>
+							</tr>
+						</table>
+					</div>
+				</fieldset>
+						
+			
+			
+			
+			</div>
+			
+		
+			<div style="width:100%;height:30px;text-align:right;margin-top:4px;">
+				<input type="button" value="确认" onclick="btnConfirm();"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_checkout_endproccess')"/>
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

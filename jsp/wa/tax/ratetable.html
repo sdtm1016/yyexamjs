@@ -1,0 +1,492 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>税率</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+#datatable_1_bodyer tr td {text-align:right;}
+
+</style>
+<script type="text/javascript">
+
+var parentParam = window.parent.valueMap.get("wa_tax_ratetable");
+    //项目类别编号
+    var cgzgradenum = "";
+cgzgradenum= window.parent.parent.wa_currentWaAccount.cgzgradenum;//工资类别编号
+    
+	//递计算框递增函数
+	function increasing(btn){
+		var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+		input.value = parseInt(input.value)+1;
+	}
+	
+	//递计算框递减函数
+	function decline(btn){
+		var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+		input.value = parseInt(input.value)-1;
+	}
+	
+	$(document).ready(function(){
+		onloadPage();
+		initYoutlay();
+		$("#okbtn").unbind("click").bind("click",function(){
+			var mark=0;
+			$("#datatable_1_bodyer tr").each(function(i){
+				if(mark==1){
+					return false;
+				}
+				$(this).find("td").each(function(j){
+						var text=$(this).html();
+						if(j==3){
+							if(text==""||text==null){
+								jAlert("税率不为空!","提示",function(){
+								mark=1;
+								return false;
+								});
+							}
+						}
+						if(j==4){
+							if(text==""||text==null){
+								jAlert("速算扣除数不为空!","提示",function(){
+								mark=1;
+								return false
+								});
+							}
+						}
+						
+				});
+			});
+			if(mark==1){return;}
+			var param="";
+			var flag=0;
+			$("#datatable_1_bodyer tr").each(function(i){
+				param+="&wasdsl["+i+"].islId="+parseInt($(this).find("td:eq(0)").html());
+				param+="&wasdsl["+i+"].yminLevel="+parseInt($(this).find("td:eq(1)").html());
+				param+="&wasdsl["+i+"].ymaxLevel="+$(this).find("td:eq(2)").html();
+				param+="&wasdsl["+i+"].isl="+parseInt($(this).find("td:eq(3)").html());
+				param+="&wasdsl["+i+"].ysskcs="+parseInt($(this).find("td:eq(4)").html());
+				param+="&wasdsl["+i+"].cgzgradenum="+cgzgradenum;
+			});
+			jConfirm('调整税率表后,个人所得税需重新计算,是否重新计算?', '提示', function(r) {
+				if(r){flag=1}else{flag=2}
+				param+="&wasdsp.cgzgradenum="+cgzgradenum+"&wasdsp.youtlay="+$("#youtlay").val()
+				+"&wasdsp.youtpluslay="+$("#youtpluslay").val()+"&flag="+flag;
+				$.ajax({
+					url:"wageItw!savewasdssl.action",
+					type:"post",
+					data:param,
+					dataType:"json",
+					success:function(data){
+						if(data.status==1){
+							window.parent.getWindow('wa_tax_main').countTax();
+							window.parent.closeWindow('wa_tax_ratetable');	
+						}
+					}
+					});
+				
+			});
+			
+	
+		});
+
+	});
+	
+	
+	function onloadPage(){
+		$.ajax({
+			url:"wageItw!queryTable.action",
+			type:"post",
+			async:false,
+			data:"cgzgradenum="+cgzgradenum,
+			success:function(data,status){
+				var data1 = data.list[0];
+				var list1 = data.list[1];
+				$("#datatable_1_bodyer").html("");//清空数据
+				var str = "";
+				$.each(list1,function(index,i){
+					str = '<tr><td>' + i.islId + 
+						'</td><td>'+ transFloat(i.yminLevel) + 
+						'</td><td>'+transFloat2(i.ymaxLevel)+
+						'</td><td>'+transFloat(i.isl)+
+						'</td><td>'+transFloat(i.ysskcs)+
+						'</td><td style="display:none">'+i.id+
+						'</td></tr>';
+					$("#datatable_1_bodyer").append(str);
+				});
+			},
+			dataType:"json"
+		});
+		setEditable();
+	}
+	/**
+	初始化所得税设置属性
+	*/
+	function initYoutlay(){
+		var param="";
+		param+="&wasdsp.cgzgradenum="+cgzgradenum;
+		$.ajax({
+			url:"wageItw!queryWasdsp.action",
+			type:"post",
+			async:false,
+			data:param,
+			success:function(data){
+			var w=data.wasdsp
+			$("#youtlay").val(w.youtlay);
+			$("#youtpluslay").val(w.youtpluslay);
+			}
+		});
+	}
+	/**
+	 * 遇到数值的时候，转换成小数点后两位
+	 */
+		function transFloat(value){
+			if(value!=null && value!=""){
+				value=parseFloat(value).toFixed(2);
+			} else if(value==null || value==""||value==undefined||(value-0)==0){
+				value="0.00";
+			}
+			return value;
+		}
+		/**
+		 * 遇到数值的时候，转换成小数点后两位
+		 */
+			function transFloat2(value){
+				if(value!=null && value!=""){
+					value=parseFloat(value).toFixed(2);
+				} else if(value==null || value==""||value==undefined||(value-0)==0){
+					value="";
+				}
+				return value;
+			}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:516px;height:290px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:496px;height:270px;margin-top:10px;margin-left:8px;">
+			
+			<div style="height:26px;width:90%;margin-top:4px;margin-left:30px;">
+				<div style="width:330px;float:left;">
+					<div style="float:left;">基数：</div>
+					<div class="gradually">
+						<div style="float:left;"><input class="textbox" type="text" id="youtlay" value="2000" style="width:50px;"/></div>
+						<div style="float:left;">
+							<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+							<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+						</div>
+					</div>
+					
+					<div style="float:left;margin-left:30px">附加费用：</div>
+					<div class="gradually">
+						<div style="float:left;"><input class="textbox" type="text" id='youtpluslay' value="2800" style="width:50px;"/></div>
+						<div style="float:left;">
+							<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+							<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			
+			<fieldset style="width:474px;height:190px;float:left;">
+				<legend>计算公式</legend>
+				<div style="width:480px;height:160px;">
+					
+					<div style="width:392px;height:180px;border:2px inset #ccc;overflow-x:auto;overflow-y:no;float:left;background-color:#808080;">
+				
+					<table id="datatable_1" border=1 class="table_style" style="width:390px;">
+						<thead>
+							<tr id="datatable_1_header" style="height:12px;">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:34px;">级次</td>
+								<td style="width:110px;">应纳所得额下限</td>
+								<td style="width:110px;">应纳所得额上限</td>
+								<td style="width:50px;">税率(%)</td>
+								<td style="width:80px;">速算扣除数</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_1_bodyer">
+							<tr>
+								<td>1</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>8</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+							<tr>
+								<td>9</td>
+								<td>500.00</td>
+								<td>2000.00</td>
+								<td>10.00</td>
+								<td>25.00</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div style="width:80px;height:180px;float:left;text-align:center;">
+					
+						<br><br><br><br>
+						<input type="button" value="增加" onclick="addRow();"/><br><br><input type="button" id='del' value="删除" onclick="deleteRow();"/>
+					
+					</div>
+					
+					
+				</div>
+			</fieldset>
+			
+			<div style="height:26px;width:95%;margin-top:10px;text-align:right;float:none;clear:both;">
+				<input type="button" value="确认" id="okbtn"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('wa_tax_ratetable');"/>
+					
+			</div>
+			
+		</div>
+	</div>
+</body>
+
+
+<script type="text/javascript">
+
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+
+function rowSelection(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+
+		datatable_1.rows[i].onclick=function(e){
+			
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+}
+
+
+/**
+ * 增行
+ */
+function addRow(){
+	var datatable_1 = document.getElementById("datatable_1_bodyer");
+	var lastRow=$(datatable_1).find("tr:last");//当前最后一行
+	var minLevel=parseInt(lastRow.find("td:eq(1)").html());//下限
+	lastRow.find("td:eq(2)").html(transFloat(minLevel+1));
+	var row = datatable_1.insertRow(datatable_1.rows.length);	
+
+	var cell1 = row.insertCell(0);
+	cell1.innerHTML = datatable_1.rows.length;
+
+	var cell2 = row.insertCell(1);
+	cell2.innerHTML = transFloat(minLevel+1);
+	
+	var cell3 = row.insertCell(2);
+	cell3.innerHTML = "";
+
+	var cell4 = row.insertCell(3);
+	cell4.innerHTML = "";
+	
+	var cell4 = row.insertCell(4);
+	cell4.innerHTML = "";
+	
+	setEditable();
+	rowSelection();
+	if($("#datatable_1_bodyer tr").length>1){
+		$("#del").attr("disabled",false);
+	}
+}
+
+
+
+
+//删除行
+function deleteRow(){
+	jConfirm('是否删除最末次税率级次?', '提示', function(r) {
+		if(r){
+			var datatable_1 = document.getElementById("datatable_1_bodyer");
+			datatable_1.deleteRow($("#datatable_1_bodyer tr").length-1);
+			$("#datatable_1_bodyer tr:last").find("td:eq(2)").html("");
+			if($("#datatable_1_bodyer tr").length==1){
+				$("#del").attr("disabled",true);
+			}
+			setEditable();	
+		}
+		});
+	
+	
+}
+
+
+
+
+
+/***** 可编辑列相关代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被编辑的列全局变量
+var currentEditCell=null;
+
+function setEditable(){
+	var datatable_1= document.getElementById("datatable_1_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+
+		var datatable_1 = document.getElementById("datatable_1_bodyer");
+
+		for(var j=0;j<datatable_1.rows[i].cells.length;j++){
+			datatable_1.rows[i].cells[j].ondblclick=function(e){
+				var evt=(window.event || e);//获得事件
+				var td = (evt.srcElement || evt.target);
+
+				if(td.tagName!="TD"){
+					td = td.parentNode;
+				}
+				
+				
+				//如果被双击单元格是0或1列，则不可编辑
+				if(td.cellIndex==0 || td.cellIndex==1){
+					jAlert("数据不可修改！");
+					return false;
+				}
+				
+
+				
+				//避免重复双击，重复往TD里添加innerHTML内容产生混乱
+				if(td.getElementsByTagName("input").length==0){
+					
+					//如果有其他单元格正处于编辑状态，那么还需要将其他单元格取消编辑状态
+					if(currentEditCell!=null){
+						currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+						currentEditCell=null;
+					}
+					
+
+					//往单元格TD里添加文本框和按钮
+					var temp = td.innerHTML;
+					var component = "<input type='text' value='"+temp+"' style='border:none;height:12px;line-height:12px;width:100%;'/>";
+					td.innerHTML=component;
+					td.getElementsByTagName("input")[0].focus();
+					currentEditCell=td;
+
+				}
+				
+			}
+		}
+		
+		
+	}
+
+}
+
+
+
+
+
+
+
+//单元失去焦点，执行单元格取消编辑状态动作：
+document.onmousedown=function(e){
+	var evt=(window.event || e);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+	
+	if(currentEditCell!=null){
+		//jAlert(currentEditCell.innerHTML);
+		//jAlert(evtsrc.type);
+		if(evtsrc.tagName!="INPUT" || (evtsrc.tagName=="INPUT" && evtsrc.type=="button")){
+			
+			var val=currentEditCell.getElementsByTagName("input")[0].value;
+			var $_td=$(currentEditCell);
+			var $_row=$_td.parent();
+			if($_row.index()==$("#datatable_1_bodyer tr").length-1&&currentEditCell.cellIndex==2){
+				currentEditCell.innerHTML="";
+			}else{
+				currentEditCell.innerHTML=transFloat(val);
+				if(currentEditCell.cellIndex==2){
+					var lastValue=parseInt($_row.find("td:eq(1)").html());
+					if(val==null||val=="")val=0;
+					if(parseInt(val)<=lastValue){
+						jAlert("上限不能小于等于下限!","提示",function(){
+							currentEditCell.innerHTML=transFloat(lastValue+1);
+							$_row.next().find("td:eq(1)").html(transFloat(lastValue+1));
+						});
+					}else{
+						$_row.next().find("td:eq(1)").html(transFloat(parseInt(val)));
+					}
+				}
+			}
+			
+			currentEditCell=null;
+		}
+	}
+	
+}
+
+/***** 可编辑列相关代码结束 *******/
+
+
+
+	setEditable();
+	rowSelection();
+</script>
+
+</html>

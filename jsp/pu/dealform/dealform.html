@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>单据处理</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+
+<script type="text/javascript" src="js/dealform.js"></script>
+
+<style type="text/css">
+.table_header {border-collapse:collapse;cursor:default;font-size:12px;}
+.table_header tr {background-color:#fff;height:20px;}
+.table_header td {border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;padding:0px;}
+
+
+.table_bodyer {border-collapse:collapse;cursor:default;font-size:12px;}
+.table_bodyer tr {background-color:#fff;height:20px;}
+.table_bodyer td {border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;padding:0px;}
+
+tr {white-space:nowrap;}
+th {overflow:hidden;}
+td {overflow:hidden;}
+
+</style>
+<script type="text/javascript">
+/*
+$(document).ready(function(){
+	
+	$.ajax({
+		url:"?",
+		type:"post",
+		data:"?=" + "?",
+		success:function(data,status){
+			var rstlst = data.list[0];
+			
+			for ( var i = 0; i < rstlst.length; i++) {
+				
+			}
+		},
+		dataType:"json"
+	});
+});
+*/
+</script>
+	
+</head>
+<body>
+	<div class="container" style="float:left;width:650px;height:450px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div style="width:643px;height:443px;margin-top:1px;margin-left:3px;">
+			
+			
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			
+			<div class="buttongroup">
+				
+				<div class="group">
+					<div><input type="button" value="增加" onclick="addApVouch();" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="删除" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/delete.gif');" disabled="disabled"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="过滤" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/screening.gif');"/></div>
+					<div><input type="button" value="定位" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/return.gif');"/></div>
+					<div><input type="button" value="单据" onclick="" style="background-image:url('../../../images/icon/calculate.gif');" disabled="disabled"/></div>
+					<div><input type="button" value="刷新" onclick="" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				
+				<div class="group">
+					<div><input type="button" id ="allSelect" value="全选" onclick="allTableAp();"  style="background-image:url('../../../images/icon/allyes.gif');"/></div>
+					<div><input type="button" id ="unallSelect"  value="全消" onclick="unallTableAp();" disabled="disabled" style="background-image:url('../../../images/icon/allno.gif');"/></div>
+					<div><input type="button" value="审核" onclick="window.parent.closeWindow('');" disabled="disabled" style="background-image:url('../../../images/icon/yes.gif');"/></div>
+					<div><input type="button" value="弃审" onclick="window.parent.closeWindow('');" disabled="disabled" style="background-image:url('../../../images/icon/difficulty.gif');"/></div>
+				</div>
+				
+				<div class="group">
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('pu_dealform_dealform');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+				
+			</div>
+			
+			<div style="width:640px;height:404px;background-color:#fff;">
+				
+				<div style="width:640px;height:62px;border:1px solid #000;">
+					<div style="width:640px;height:40px;line-height:40px;text-align:center;font-size:20px;font-family:正楷;font-weight:bold;color:#000;text-decoration:underline;">
+						单据明细表
+					</div>
+					<div style="padding-left:14px;">
+						张数<input  id = "vouchCount"   type="text" style="border:1px solid #000;background-color:#eee;" value="1"/>
+					</div>
+				</div>
+				
+				<div>
+				
+				
+				
+					<!-- 表头代码 S -->
+					<div style="position:absolute;margin-top:1px;margin-left:1px;z-index:603;">
+						
+						<!-- 表头左侧 -->
+						<div style="float:left;width:226px;">
+							<table class="table_header" width="226">
+								<tr>
+									<td width="66">选择标志</td>
+									<td width="54">审核人</td>
+									<td width="106">单据类型</td>
+								</tr>
+							</table>
+						</div>
+						
+						<!-- 表头右侧  -->
+						<div style="float:left;width:412px;overflow:hidden;">
+							<table id="scroll_header" class="table_header" width="1194">
+								<tr>
+									<td width="80">单据编号</td>
+									<td width="80">单据日期</td>
+									<td width="130">供应商</td>
+									<td width="50">币种</td>
+									<td width="106">原币金额</td>
+									<td width="106">本币金额</td>
+									<td width="106">原币余额</td>
+									<td width="106">本币余额</td>
+									<td width="108">部门</td>
+									<td width="54">业务员</td>
+									<td width="80">到期日</td>
+									<td width="108">账期管理</td>
+									<td width="80">报销日期</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<!-- 表头代码 E -->
+					
+					
+					<!-- 左侧表体代码 S -->
+					<div style="width:226px;height:305px;overflow:hidden;float:none;clear:both;position:absolute;margin-top:21px;margin-left:1px;z-index:602;">
+						<table id="bodyer_left" class="table_bodyer" width="226">
+							
+						</table>
+					</div>
+					<!-- 左侧表体代码 E -->
+						
+		
+					<!-- 右侧表体代码 S -->
+					<div style="width:640px;height:341px;border:1px solid #000;overflow:auto;z-index:601;" onscroll="tableScroll(this);">
+				
+						<table id="bodyer_right" class="table_bodyer" style="margin-left:226px;margin-top:20px;width:1194px;">
+							
+						</table>
+				
+					</div>
+					<!-- 右侧表体代码 E -->
+				
+				
+				
+				
+				</div>
+				
+			</div>
+		
+		</div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>
