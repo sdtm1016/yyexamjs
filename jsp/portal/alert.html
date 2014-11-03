@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+</head>
+<body >
+	<div style="text-align: center;font-size: 12px;">
+		<table border="1" align="center">
+			<tr>
+				<td valign="middle"><img src="../../images/basic/alert.gif"></td>
+				<td valign="middle" id="message"></td>
+			</tr>
+		</table>
+		<br>
+		<input type="button" value="确定" onclick="window.parent.closeWindow('basic_alert');" />
+	</div>
+	<script type="text/javascript">
+		var param=window.parent.valueMap.get("basic_alert");
+		document.getElementById("message").innerHTML=param;
+	</script>
+</body>
+</html>

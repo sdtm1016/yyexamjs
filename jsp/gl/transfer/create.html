@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>转账生成</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+		.v_a_m input {vertical-align:middle;margin-bottom:3px;}
+		
+		.left_table_style tbody tr {text-align:left;vertical-align:middle;height:42px;}
+		
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../../../js/publicFunction.js"></script>
+    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+    
+	
+	<script type="text/javascript" src="js/create.js"></script>
+	
+	<script type="text/javascript">
+	
+	
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:626px;height:408px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:610px;height:388px;margin-left:6px;margin-top:8px;">
+			
+			<div style="width:100%;height:28px;">
+				<div id="toppanel_1" style="float:left;">
+					结转月份
+					<select id="monthselector" style="width:100px;">
+					</select>
+				</div>
+				
+				<div id="toppanel_2" style="float:left;margin-left:10px;display:none;">
+					开始月份
+					<select id="beginmonthselector" style="width:100px;">
+					</select>
+				</div>
+				
+				<div id="toppanel_3" style="float:left;margin-left:10px;display:none;">
+					结束月份
+					<select id="endmonthselector" style="width:100px;">
+					</select>
+				</div>
+				
+				<div id="toppanel_4" style="float:left;margin-left:10px;display:none;">
+					外币币种
+					<select id="currencyselector" style="width:100px;">
+					</select>
+				</div>
+				
+				<div id="toppanel_5" style="float:left;margin-left:10px;display:none;">
+					类型
+					<select id="codetypeselector" style="width:100px;" onchange="selectCodeType()">
+						<option value = "">全部</option>
+						<option value = "0">收入</option>
+						<option value = "1">支出</option>
+					</select>
+				</div>
+				
+				<div id="toppanel_6" style="float:right;text-align:right;">
+					<input type="button" onclick="allSelectGrid()" value="全选" />
+					<input type="button" onclick="allcancelSelectGrid()" value="全消" style="margin-left:10px;"/>
+				</div>
+			</div>
+			
+			<div style="width:100%;height:290px;">
+				
+				
+				<div class="border_outside" style="height:290px;width:146px;float:left;">
+					<div class="border_inside" style="height:288px;width:144px;">
+					
+					
+					
+					
+						<div style="width:140px;margin-left:2px;margin-top:20px;">
+						
+							<table class="left_table_style">
+								<tbody>
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_1" onclick="queryUserTranDirGrid()" checked="checked"/>
+										</td>
+										<td>
+											<label for="radio_1">自定义转账</label>
+										</td>
+										<td>
+											<input type="button" onclick="openUserTran()" class="finder"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_2" onclick="queryCspTranDirGrid()"/>
+										</td>
+										<td>
+											<label for="radio_2">对应结转</label>
+										</td>
+										<td>
+											<input type="button" onclick="openCspTran()" class="finder"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_3" onclick="querySaleTranDirGrid()"/>
+										</td>
+										<td>
+											<label for="radio_3">销售成本结转</label>
+										</td>
+										<td>
+											<input type="button" onclick="openSaleTran()" class="finder"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_4" onclick="querySalePlanTranDirGrid()"/>
+										</td>
+										<td>
+											<label for="radio_4">销售（计划价）销售成本结转</label>
+										</td>
+										<td>
+											<input type="button" onclick="openSalePlanTran()" class="finder"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_5" onclick="queryExchTranDirGrid()"/>
+										</td>
+										<td>
+											<label for="radio_5">汇兑损益结转</label>
+										</td>
+										<td>
+											<input type="button" onclick="openExchTran()" class="finder"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td>
+											<input type="radio" name="radiogroup" id="radio_6" onclick="queryPeriodTranDirGrid('')"/>
+										</td>
+										<td>
+											<label for="radio_6">期间损益结转</label>
+										</td>
+										<td>
+											<input type="button" onclick="openPeriodTran()" class="finder"/>
+										</td>
+									</tr>
+									
+								</tbody>
+							</table>
+						
+						</div>
+						
+					</div>
+						
+				</div>
+				
+				
+				<div id="table_container" style="width:450px;height:290px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:8px;background-color:#808080;">
+				
+					<table id="datatable_1" border=1 class="table_style">
+						<thead>
+							<tr>
+								<td style="width:100px;">编号</td>
+								<td style="width:100px;">转账说明</td>
+								<td style="width:60px;">凭证类别</td>
+								<td style="width:60px;">是否结转</td>
+								
+							</tr>
+						</thead>
+						<tbody id="datatable">
+							
+						</tbody>
+					</table>
+					
+					
+					<table id="datatable_2" border=1 class="table_style" style="width:1010px;display:none;">
+						<thead>
+							<tr>
+								<td style="width:80px;">编号</td>
+								<td style="width:100px;">凭证类别</td>
+								<td style="width:100px;">摘要</td>
+								<td style="width:100px;">转出科目编码</td>
+								<td style="width:100px;">转出科目名称</td>
+								<td style="width:100px;">转出辅助项</td>
+								<td style="width:100px;">转入科目编码</td>
+								<td style="width:100px;">转入科目名称</td>
+								<td style="width:100px;">转入辅助项</td>
+								<td style="width:60px;">是否结转</td>
+								<td style="width:50px;">系数</td>
+							</tr>
+						</thead>
+						<tbody id="datatable2">
+							
+						</tbody>
+					</table>
+					
+					
+					<table id="datatable_3" border=1 class="table_style" style="display:none;">
+						<thead>
+							<tr>
+								<td style="width:100px;">成本科目编码</td>
+								<td style="width:100px;">成本科目名称</td>
+								<td style="width:50px;">单位</td>
+								<td style="width:50px;">币种</td>
+							</tr>
+						</thead>
+						<tbody id="datatable3">
+							
+						</tbody>
+					</table>
+					
+					
+					<table id="datatable_4" border=1 class="table_style" style="width:1260px;display:none;">
+						<thead>
+							<tr>
+								<td style="width:100px;">成本科目编码</td>
+								<td style="width:100px;">成本科目名称</td>
+								<td style="width:100px;">计量单位</td>
+								<td style="width:100px;">销售金额</td>
+								<td style="width:100px;">销售数量</td>
+								<td style="width:100px;">库存金额</td>
+								<td style="width:100px;">库存数量</td>
+								<td style="width:100px;">应转数量</td>
+								<td style="width:100px;">应转金额</td>
+								<td style="width:100px;">平均单价</td>
+								<td style="width:100px;">库存科目编码</td>
+								<td style="width:100px;">库存科目名称</td>
+								<td style="width:60px;">是否结转</td>
+								
+								
+							</tr>
+						</thead>
+						<tbody id="datatable4">
+							
+						</tbody>
+					</table>
+					
+					
+					<table id="datatable_5" border=1 class="table_style" style="width:770px;display:none;">
+						<thead>
+							<tr>
+								<td style="width:100px;">科目编码</td>
+								<td style="width:100px;">科目名称</td>
+								<td style="width:50px;">币种</td>
+								<td style="width:60px;">是否结转</td>
+							</tr>
+						</thead>
+						<tbody id="datatable5">
+							
+						</tbody>
+					</table>
+					
+					
+					<table id="datatable_6" border=1 class="table_style" width="800" style="display:none;">
+						<thead>
+							<tr>
+								<td style="width:200px;">损益科目编码</td>
+								<td style="width:200px;">损益科目名称</td>
+								<td style="width:200px;">损益科目账类</td>
+								<td style="width:200px;">利润科目编码</td>
+								<td style="width:200px;">利润科目名称</td>
+								<td style="width:200px;">利润科目账类</td>
+								<td style="width:50px;">是否结转</td>								
+							</tr>
+						</thead>
+						<tbody id="datatable6">
+							
+						</tbody>
+					</table>
+					
+					
+				</div>
+				
+				
+			</div>
+			
+			<div style="width:100%;height:70px;">
+				
+				<div class="v_a_m" style="margin-top:14px;width:100%;height:44px;">
+					<div style="float:left;">
+						<div id="datatable_1_other">
+							<input type="radio" value= "1" name="radiogroup_2" id="rg_2_1"/><label for="rg_2_1">按所有辅助项结转</label>
+							<input type="radio"  value= "2"  name="radiogroup_2" id="rg_2_2" checked="checked"/><label for="rg_2_2">按有发生的辅助项结转</label>
+						</div>
+						<div>
+							&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="bhwjzpz" style="vertical-align:middle; margin-bottom:3px;"><label for="bhwjzpz">包含未记账凭证</label>
+						</div>
+					</div>
+					<div style="float:right;">
+						<input type="button" value="确定" onclick= "execBautoTran();" >&nbsp;&nbsp;
+						<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('gl_transfer_create');">
+						&nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	initMonthselector();
+</script>
+	
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../../css/public.css">
+  <link rel="stylesheet" href="../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  <script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+  <script type="text/javascript" src="../../js/publicFunction.js"></script>
+  
+  <script type="text/javascript" src="../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+  <script type="text/javascript" src="../../js/ztree3.4/subjectTree.js"></script>
+  <script type="text/javascript" src="js/subjectsreference.js"></script>
+	
+		<SCRIPT type="text/javascript">
+		loadSubjectZtree();  		
+	</SCRIPT>
+	
+  
+<title>科目参照</title>
+<style type="text/css">
+	html,body{padding:5px;margin:0px;background-color:#D4D0C8;font-size:12px;font-family:宋体;}
+	
+	
+	.class1 div{height:210px;float:left;}
+	
+	.treecon{width:350px;background-color:#fff;}
+	.buttoncon{text-align:right;width:66px;padding:0px;margin:0px;}
+	.buttoncon input{margin-top:10px;}
+	
+	.class2 {margin-top:10px;}
+	.class2 div{float:left;margin-left:1px;}
+	.class2 input{vertical-align:middle; margin-bottom:3px;}
+	
+	
+</style>
+   
+
+</head>
+<body>
+
+<div style="width:430px;height:320px;">
+	<div class="class1">
+		
+		<div class="treecon" style="border:2px inset #ccc;overflow:scroll;">
+			<ul id="subjectTree" class="ztree"></ul>
+		
+			</div>
+		<div class="buttoncon">
+			<br/>
+			<input type="button" value="确定"  onclick = "selSubject();"/>
+			<input type="button" value="常用" onclick = "subjectConst()"/>
+			<input type="button" value="编辑" onclick = "subjectEdit()"/>
+			<input type="button" value="取消" onclick = "subjectCancel()"/>
+		</div>
+		
+	</div>
+	<div style="clear:both; float:none;"> </div>
+	<div class="class2">
+	<br>
+		<fieldset>
+			<legend>过滤条件</legend>
+			<div>
+			
+				<div>
+					<input type="checkbox" id="cb1" onclick = " selCb1()" /><label for="cb1">个人往来</label><br/>
+					<input type="checkbox" id="cb6" onclick = " selCb6()"/><label for="cb6">客户往来</label>
+				</div>
+				
+				<div>
+					<input type="checkbox" id="cb2"/ onclick = " selCb2()"><label for="cb2">供应商往来</label><br/>
+					<input type="checkbox" id="cb7"/ onclick = " selCb7()"><label for="cb7">部门核算</label>
+				</div>
+				
+				<div>
+					<input type="checkbox" id="cb3"/><label for="cb3">项目核算</label><br/>
+					<input type="checkbox" id="cb8"/><label for="cb8">外币核算</label>
+				</div>
+				
+				<div>
+					<input type="checkbox" id="cb4"/><label for="cb4">数量核算</label><br/>
+					<input type="checkbox" id="cb9"/><label for="cb9">末级科目</label>
+				</div>
+					
+				<div>
+					<input type="checkbox" id="cb5"/><label for="cb5">日记账</label><br/>
+					<input type="checkbox" id="cb10"/><label for="cb10">银行账</label>
+				</div>
+				
+				
+				
+			</div>
+			<input style="margin-top:25px;margin-left:10px;" type="button" value="过滤" onclick = " filter()"/>
+		</fieldset>
+	</div>
+	
+	
+</div>
+
+
+</body>
+</html>

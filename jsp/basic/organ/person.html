@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>职员档案</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+  	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+  
+	<script type="text/javascript" src="js/person.js"></script>
+	
+	
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+ <style type="text/css">
+ html,body{font-size:12px;}
+ table{border-collapse: collapse;}
+ table td{height:16px;line-height:16px;background-color:#fff;border:1px solid #ccc;border-style:outset;}
+ table input{height:14px;line-height:14px;background-color:#fff;border:none;width:95%;}
+ .header{background-color:#ccc;}
+ </style>
+ </head>
+ 
+ <body style="z-index: 0;background-color:#D4D0C8;">
+ 
+     
+  <div style="width:100%;height:100%;font-size:12px;">
+	<div>
+		&emsp;<input type="image"  onfocus="this.blur();" src = "../../../images/buttons/add.jpg" onmousedown="this.src='../../../images/buttons/pushadd.jpg';" onmouseup="this.src='../../../images/buttons/add.jpg';" onmouseout="this.src='../../../images/buttons/add.jpg';" onclick="add()"/>
+		&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/del.jpg" onmousedown="this.src='../../../images/buttons/pushdel.jpg';" onmouseup="this.src='../../../images/buttons/del.jpg';" onmouseout="this.src='../../../images/buttons/del.jpg';" onclick="del()"/>
+		<!-- 
+		&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/update.jpg" onmousedown="this.src='../../../images/buttons/pushupdate.jpg';" onmouseup="this.src='../../../images/buttons/update.jpg';" onmouseout="this.src='../../../images/buttons/update.jpg';" onclick="update()"/>
+		 -->
+		&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/exit.jpg" onmousedown="this.src='../../../images/buttons/pushexit.jpg';" onmouseup="this.src='../../../images/buttons/exit.jpg';" onmouseout="this.src='../../../images/buttons/exit.jpg';"  onclick="exit()"/>
+		
+		<p style="color:blue">提示：职员编号、职员名称和所属部门必须录入，职员编号必须唯一。</p>
+	</div>
+	<div id="personTable" style="overflow:auto;width:500px;height:250px;">
+		<table cellspacing="0" width="100%">
+		
+			<tr class="header">
+				<td style="background-color:#ccc;"  >职员编号</td>
+				<td style="background-color:#ccc;">职员名称</td>
+				<td style="background-color:#ccc;">职员助记码</td>
+				<td style="background-color:#ccc;">所属部门</td>
+				
+				<td style="background-color:#ccc;">职员属性</td>
+			</tr>
+			<tbody id="include" style="background-color: #FFFFFF">
+			</tbody>
+			
+			<tr id="addPerson" style="background-color:#fff;">
+				<td onclick="selectTd(this)"><input id="personcode" name="person.cpersoncode" width=100%/></td>
+				<td onclick="selectTd(this)"><input id="cpersonname" name="person.cpersonname"  onblur = "onTextblur(this)"  width=100%/></td>
+				<td onclick="selectTd(this)" ><input id="cpersonhelp" name="person.cpersonhelp"   width=100%/></td>
+				<td id='dept' onclick="selectTd(this)" valign="middle"><input id="cdepcode" type="hidden" name="person.cdepcode"  width=100%/>
+				<input id="cdepname"  name="person.cdepname" onfocus="dofocustoenter('Department',this,'','','','')" style="width:75%;"/>
+				<input type="button" class="finder" style="width:15px;height:15px;" onclick="javascript:windowParamTarget=this;window.parent.openWindow('basic_grid_departmentGridRef','person');"/></td>
+				<td onclick="selectTd(this)" ondblclick="doubleSelect(this);"><input id="cpersonprop" name="person.cpersonprop"  width=100%/></td>
+			</tr>
+		</table>
+	</div>
+ 
+  
+  
+  </div>
+ </body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>操作员管理</title>
+<style type="text/css">
+	.buttongroup {height:40px;background-color:#D4D0C8;cursor:default;}
+	.buttongroup .group {padding-right:10px;float:left;margin:3px auto 3px 0px;}
+	.buttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+	.buttongroup .group div input {width:31px;height:35px;padding-top:15px;padding-left:1px;font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;}
+</style>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script src="../../js/publicFunction.js"></script>
+<script>
+//变色函数-----开始
+var highlightcolor='#d4d0c8';
+var recoveryColor='#ffffff';
+var clickcolor='#d4d0c8';
+var tempColor='#ffffff';
+
+//选择行
+var hasSelect = null;
+function selectRow(event){
+	if(hasSelect!=null){
+		$(hasSelect).attr("bgcolor",recoveryColor);
+	}
+	$(event).attr("bgcolor",clickcolor);
+	hasSelect = event;
+}
+
+function verifyPwd(){
+	var pwd = $("#pwd").val();
+	var confirmPwd = $("#confirmPwd").val();
+	if(pwd!=confirmPwd){
+		$("#pwd").focus();  
+		jAlert("输入的口令和确认口令不一致，请重输！");
+		return false;
+	}
+	return true;
+}
+
+function addOperator(){
+	$("#mar_title").html("增加操作员");
+	$("form")[0].reset();
+	$("[name='uaUser.nstate']").val(0);
+	$("#nstate").hide();
+	$("#add").show();
+	$("#change").hide();
+	$("[name='uaUser.cuserId']").attr("disabled",false);
+	$("#operatorDialog").css("display","");
+}
+function selectState(){
+	if($("[name='uaUser.nstate']").val()==0){
+		$("[#nstate").val("启用当前操作员");
+		$("[name='uaUser.nstate']").val(1);
+	}else{
+		$("[#nstate").val("注销当前操作员");
+		$("[name='uaUser.nstate']").val(0);
+	}
+	
+}
+
+var number;
+var name;
+var pwd;
+var confirmPwd;
+var dept;
+function add(){
+	$("[name='uaUser.id']").val(null);
+	if(!isnull($("#userid")[0])){
+		return;
+	}
+	if(!isnull($("#username")[0])){
+		return;
+	}
+	if(verifyPwd()){
+		var is = true;
+		$("#include").children().each(function(index){
+			if($($(this).children().get(0)).html()==$("[name='uaUser.cuserId']").val()){
+				jAlert("操作员:["+$("[name='uaUser.cuserId']").val()+"]已经存在,不能添加！");
+				
+				
+					is = false;
+					return;
+				}
+			});
+	if(is){
+		var uaUser = $("form").serialize();
+		//添加按钮不可用
+		$("#add").attr("disabled",true);
+		$.ajax({
+			url: "uaUser!create",
+			type: 'post',
+			data:uaUser,
+			dataType: "json",
+			success: function(data){
+				var isSuccess=data.isSuccess;
+				if(isSuccess=="success"){
+					exit();
+					jAlert("添加成功！");
+					addOperator();
+					queryAll();
+				}else{
+					jAlert("添加失败！");
+				}
+				//添加按钮可用
+				$("#add").attr("disabled",false);
+			}
+		  });
+		    
+	  }
+	}
+}
+
+function del(){
+	$.ajax({
+	    url: "uaUser!delete?uaUser.id="+$(hasSelect).attr("id"),
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	var isSuccess=data.isSuccess;
+	    	if(isSuccess=="1"){
+	    		jAlert("删除成功！");
+		    	queryAll();
+	    	}else{
+	    		jAlert("操作员正在使用，不可以删除！");
+	    	}
+	    }
+	  });
+}
+
+function update(){
+	if(verifyPwd()){
+	$("[name='uaUser.cuserId']").attr("disabled",false);
+	if(!isnull($("#username")[0])){
+		return;
+	}
+	var uaUser = $("form").serialize();
+	$.ajax({
+	    url: "uaUser!update",
+	    type: 'post',
+	    data:uaUser,
+	    dataType: "json",
+	    success: function(data){
+	    	var isSuccess=data.isSuccess;
+	    	if(isSuccess=="success"){
+				exit();
+				jAlert("修改成功！");
+				queryAll();
+			}else{
+				jAlert("添加失败！");
+			}
+	    }
+	  });
+	}
+}
+
+function queryAll(){
+	$("#include").html("");
+	$.ajax({
+	    url: "uaUser!queryList",
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	var listOperators = data.rows;
+	    	for(var i = 0;i<listOperators.length;i++){
+	    		if(listOperators[i].cuserId!="admin"){
+	    			var nstatetemp = "注销";
+		    		if(listOperators[i].nstate==0){
+		    			nstatetemp="有效";
+		    		}
+		    		var passw=listOperators[i].cpassword;
+		    		if(listOperators[i].cpassword==null){
+		    			passw="";
+		    		}
+		    		var cdep=listOperators[i].cdept;
+		    		if(listOperators[i].cdept==null||listOperators[i].cdept=="NULL"){
+		    			cdep="";
+		    		}
+		    		$("#include").append('<tr id ="'+listOperators[i].id+'" name="'+passw+'" bgcolor="#FFFFFF"' 
+		    				+'onclick = "selectRow(this)" ondblclick="changeOperator(this)">'
+		    				+'<td>'+listOperators[i].cuserId+'</td>'
+		    				+'<td>'+listOperators[i].cuserName+'</td>'
+		    				+'<td>'+cdep+'</td>'
+		    				+'<td id="'+listOperators[i].nstate+'">'+nstatetemp+'</td>'
+		    				+'</tr >');
+	    		}
+	    	}
+	    	hasSelect = null;
+	    }
+	  });
+}
+function changeOperator(){
+	if(hasSelect==null){
+		jAlert("请选择要修改的操作员！");
+		return;
+	}
+	$("#mar_title").html("修改操作员");
+	$("#add").hide();
+	$("#change").show();
+	$("[name='uaUser.cuserId']").attr("disabled",true);
+	$("[name='uaUser.id']").val($(hasSelect).attr("id"));
+	$("[name='uaUser.cuserId']").val($(hasSelect).children().eq(0).html());
+	$("[name='uaUser.cuserName']").val($(hasSelect).children().eq(1).html());
+	$("[name='uaUser.cdept']").val($(hasSelect).children().eq(2).html());
+	$("[name='uaUser.nstate']").val($(hasSelect).children().eq(3).attr("id"));
+	$("#nstate").show();
+	if($("[name='uaUser.nstate']").val()=="0"){
+		$("#nstate").val("注销当前操作员");
+	}else{
+		$("#nstate").val("启用当前操作员");
+	}
+	$("[#pwd").val($(hasSelect).attr("name"));
+	$("[#confirmPwd").val($(hasSelect).attr("name"));
+	$("#operatorDialog").css("display","");
+}
+function delOperator(){
+	if(hasSelect==null){
+		jAlert("请选择一行后，再操作！");
+		return;
+	}
+	
+	
+	jConfirm("确认删除操作员:["+$(hasSelect).children().eq(0).html()+"]吗?","确认信息",function(flag){
+		if(flag==true){
+			del();
+		}
+	});
+	
+	
+}
+function exitWindow(){
+	window.parent.closeWindow('operator');
+}
+
+function exit(){
+	$("#operatorDialog").css("display","none");
+}
+$(function() {
+	queryAll();
+});
+</script>
+</head>
+<body bgcolor="#D4D0C8" style="font-size: 12px;">
+	<div id="operatorDialog" style="border:1px #000000 solid;display: none;
+		width:370px;height:200px;position: absolute;margin: 30px 30px;background-color: #D4D0C8;font-size: 12px;">
+		<div style="background-color: #213d74;width: 100%;height:15px;color: #ffffff;font-size: 14px;margin: 1 1 0 0;text-align: left" id="mar_title"></div>
+		<br>
+		<form>
+		<input type="hidden" name = "uaUser.id"/>
+		<table style="width:340px">
+			<tr>
+				<td style="width:70px;text-align: right">编号：</td><td colspan="2"><input style="width:120px" id="userid" type="text" name = "uaUser.cuserId" onblur="isSpecialChar(this);judgmentnum(this,10,0)"/></td>
+			</tr>
+			<tr>
+				<td style="width:70px;text-align: right">姓名：</td>
+				<td>
+					<input style="width:120px" id="username" type="text" name = "uaUser.cuserName" onblur="isSpecialChar(this);"/>
+				</td>
+				<td><input type = "button" style="display: none;font-size: 12px" id="nstate" onclick ="selectState()"><input type="hidden" name = "uaUser.nstate"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:70px;text-align: right">口令：</td>
+				<td colspan="2"><input style="width:80px" id = "pwd" type = "password" name = "uaUser.cpassword" onblur="isSpecialChar(this)"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;确认口令：<input style="width:80px" id = "confirmPwd" type = "password" onblur="isSpecialChar(this)"/>
+				</td>
+			</tr>
+			<!-- <tr>
+				<td style="width:100px;text-align: right">账户状态：</td>
+				<td><input type = "button" id = "nstate" onclick ="selectState()">
+					<input type="hidden" name = "uaUser.nstate"/></td>
+			</tr> -->
+			<tr>
+				<td style="width:70px;text-align: right">所属部门：</td><td colspan="2"><input style="width:150px" type="text" name = "uaUser.cdept" onblur="isSpecialChar(this)"/></td>
+			</tr>
+		</table>
+		</form>
+		<hr>
+		<div style="text-align: center">
+			<input type="button" value="帮助" />
+			<input id = "add" type="button" value="增加" onclick="add()"/>
+			<input id = "change" type="button" value="修改" onclick="update()"/>
+			<input type="button" value="退出" onclick="exit()"/>
+		</div>
+	</div> 
+	<div class="buttongroup">
+		<div class="group">
+			<div>
+				<input type="button" value="增加" onclick="addOperator()" onfocus="this.blur();" style="background-image:url('../../images/icon/add.gif');"/>
+			</div>
+			<div>
+				<input type="button" value="修改" onclick="changeOperator()" onfocus="this.blur();" style="background-image:url('../../images/icon/update.gif');"/>
+			</div>
+			<div>
+				<input type="button" value="删除" onclick="delOperator()" onfocus="this.blur();" style="background-image:url('../../images/icon/delete.gif');"/>
+			</div>
+		</div>
+		<div class="group">
+			<div>
+				<input type="button" value="帮助" onfocus="this.blur();" style="background-image:url('../../images/icon/help.gif');"/>
+			</div>
+			<div>
+				<input type="button" value="退出" onclick="exitWindow()" onfocus="this.blur();" style="background-image:url('../../images/icon/exit.gif');"/>
+			</div>
+		</div>
+	</div>
+	<div>
+		<table width="100%" border="0" cellpadding="0" cellspacing="1"  bgcolor="#000000" style="text-align: center">
+			<tr bgcolor="#808080" >
+				<td>操作员ID</td>
+				<td>操作员全名</td>
+				<td>部门</td>
+				<td>有效状态</td>
+			</tr>
+			<tbody id="include">
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

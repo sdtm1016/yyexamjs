@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+ 
+ <html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>修改账套窗体</title>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<style type="text/css">
+	html,body {padding:5;margin:0;background-color:#D4D0C8;font-family:宋体;font-size:12px;}
+	input {outline:none;vertical-align:middle;margin-bottom:3px;}
+	#buttonbar {text-align:center;}
+	#buttonbar input {width:75px;height:22px;padding-top:0px;}
+	.paneltable{font-size:12px;}
+	#panel2 input{height:12px;}
+	.paneltitle{width:270px;text-align:left;font-size:15px;font-weight:bold;}
+	table td{text-align:left;}
+	.discription{margin-top:10px;padding:0px;padding-left:20px;margin-left:0px;text-align:left;}
+</style>
+<script type="text/javascript" src="js/updateAccount.js"></script>
+</head>
+<body>
+	<div style="margin-top:15px;margin-left:10px;">
+		<div style="width:130px;float:left;"><img src="../../images/sm/createAccount.jpg" width="152" height="279" border=0/></div>
+		<div style="float:right;text-align:left;width:380px;text-align:center;">
+			<form id="updateForm" style="margin:0;padding:0;">
+			<!-- form panel 1 S -->
+				<div id="panel1">
+					<div class="paneltitle">账套信息</div>
+					<div class="discription">此页面可输入当前有关账套信息。<br/><br/><br/><br/></div>
+					<table border=0 class="paneltable" style="margin-left:30px;">
+						<tr>
+							<td>已存账套：</td>
+							<td>
+								<select id="existed" style="width:210px;" disabled="disabled">
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>账套号：</td>
+							<td><input type="text" style="width:210px;" name="uaAccount.caccId" onblur="isnumber(this);judgmentnum(this,3,0);" id="caccId" disabled="disabled"/></td>
+						</tr>
+						<tr>
+							<td>账套名称：</td>
+							<td><input type="text" style="width:210px;" name="uaAccount.caccName" id="caccName"/></td>
+						</tr>
+						<tr>
+							<td>账套路径：</td>
+							<td><input type="text" style="width:210px;" value="/localhost/account/" disabled="disabled" name="uaAccount.caccPath" id="caccPath"/></td>
+						</tr>
+						<tr>
+							<td>启用会计期：</td>
+							<td>
+								<input id="iyear" type="text" name="uaAccount.iyear" style="width:50px;" disabled="disabled"/>&nbsp;
+								<input id="imonth" type="text" name="uaAccount.imonth" style="width:30px;" disabled="disabled"/>月
+								<input type="button" value="会计期间设置" onClick="periodIsNull();" disabled="disabled"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			<!-- form panel 1 E -->
+			<!-- form panel 2 S -->
+				<div id="panel2" style="display:none;">
+					<div class="paneltitle">单位信息</div>
+					<div class="discription">此页面输入贵单位的单位信息。</div>
+					
+					<table border=0 class="paneltable">
+						<tr>
+							<td>单位名称：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cunitname" id="cunitname"/></td>
+						</tr>
+						<tr>
+							<td>单位简称：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cunitabbre" id="cunitabbre"/></td>
+						</tr>
+						<tr>
+							<td>单位地址：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cunitaddr" id="cunitaddr"/></td>
+						</tr>
+						<tr>
+							<td>法人代表：</td>
+							<td><input type="text" name="uaAccount.cunitlp" id="cunitlp" style="width:100px;"/>　 邮政编码：<input type="text" name="uaAccount.cunitzap" id="cunitzap" onblur="judgmentnum(this,6,0)" style="width:100px;"/></td>
+						</tr>
+						<tr>
+							<td>联系电话：</td>
+							<td><input id="iyear" type="text" name="uaAccount.cunittel" id="cunittel" style="width:100px;"/>　 　 传真：<input type="text" name="uaAccount.cunitfax" style="width:100px;"/></td>
+						</tr>
+						<tr>
+							<td>电子邮件：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cunitemail" id="cunitemail"/></td>
+						</tr>
+						<tr>
+							<td>税号：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cunittaxno" id="cunittaxno" onblur="judgmentnum(this,20,0)"/></td>
+						</tr>
+						<tr>
+							<td>备注一：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cfinkind" id="cfinkind"/></td>
+						</tr>
+						<tr>
+							<td>备注二：</td>
+							<td><input type="text" style="width:286px;" name="uaAccount.cfintype" id="cfintype"/></td>
+						</tr>
+					</table>
+				</div>
+			<!-- form panel 2 E -->
+			<!-- form panel 3 S -->
+				<div id="panel3" style="display:none;">
+					<div class="paneltitle">核算类型</div>
+					<div style="">此页面输入你选择的核算类型。<br/><br/><br/></div>
+					<table border=0 class="paneltable" style="margin-left:50px;">
+						<tr>
+							<td>本币代码：</td>
+							<td><input type="text" name="uaAccount.ccurcode" onblur="isnull(this)" disabled="disabled" id="ccurcode" value="RMB" style="width:164px;"/></td>
+						</tr>
+						<tr>
+							<td>本币名称：</td>
+							<td><input type="text" name="uaAccount.ccurname" onblur="isnull(this)" disabled="disabled" id="ccurname" value="人民币" style="width:164px;"/></td>
+						</tr>
+						<tr>
+							<td>企业类型：</td>
+							<td>
+								<input type="hidden" name="uaAccount.centtype" id="centtype" disabled="disabled"/>
+								<select id="centtype_s" onChange="$('#centtype').val(this.value);" style="width:164px;" disabled="disabled">
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>行业性质：</td>
+							<td>
+								<input type="hidden" name="uaAccount.ctradekind" id="ctradekind" disabled="disabled"/>
+								<select id="ctradekind_s" onChange="setCtradekindChange();" style="width:164px;" disabled="disabled">
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>账套主管：</td>
+							<td>
+								<input type="hidden" name="uaAccount.caccMaster" id="caccMaster" disabled="disabled"/>
+								<select id="caccMaster_s" onChange="$('#caccMaster').val(this.value);" disabled="disabled">
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" style="padding-top:6px;"><input type="checkbox" style="float:left;margin-top:-4px;" id="cb_8" disabled="disabled"/><label for="cb_8">按行业性质预置科目</label><input type="button" disabled="disabled" value="科目预览" style="float:right;"/></td>
+						</tr>
+					</table>
+				</div>
+			<!-- form panel 3 E -->
+			<!-- form panel 4 S -->
+				<div id="panel4" style="display:none;">
+					<div class="paneltitle">基础信息</div>
+					
+					<div class="discription">此页面设置您的<span id="accid"></span>账套<span id="year"></span>年度账基础信息。<br/><br/><br/><br/></div>
+					<div style="padding-left:100px;text-align:left;line-height:26px;">
+						<div><input type="checkbox" name="accountBean.inventoryclass" id="inventory"/><label for="inventory">存货是否分类</label></div>
+						<div><input type="checkbox" name="accountBean.customerclass" id="client"/><label for="client">客户是否分类</label></div>
+						<div><input type="checkbox" name="accountBean.vendorclass" id="supplier"/><label for="supplier">供应商是否分类</label></div>
+						<div><input type="checkbox" name="accountBean.foreignCurrency" id="foreignCurrency"/><label for="foreignCurrency">有无外币核算</label></div>
+					</div>
+					<div style="color:blue;font-size:14px;text-align:left;margin-top:4px;padding:0px 44px 20px 44px;">
+						说明：客户分类和供应商分类，可以对它们进行分级管理，对有较多客户和供应商时，建议选择分类管理。
+					</div>
+				</div>
+			<!-- form panel 4 E -->
+			</form>
+		</div>
+	</div>
+	<div style="clear:both;">
+		<hr>
+		<div id="buttonbar">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" id="helpButton" value="帮助" onClick="" />&nbsp;
+			<input type="button" id="cancelButton" value="放弃" onClick="window.parent.closeWindow('updateAccount');"/>&nbsp;&nbsp;&nbsp;
+			<input type="button" id="prevButton" value="上一步" onClick="prev();" disabled ="disabled"/>&nbsp;
+			<input type="button" id="nextButton" value="下一步" onClick="next();"/>&nbsp;
+			<input type="button" id="finisButton" value="完成" onClick="updateAccount();" disabled ="disabled"/>
+		</div>
+	</div>
+</body>
+</html>

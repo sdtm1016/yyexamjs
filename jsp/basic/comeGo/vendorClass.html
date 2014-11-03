@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <title> 供应商分类 </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+  	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<!-- 增加树css js-->	
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<!-- 调用编码规则js -->
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+	<script type="text/javascript">
+	//程序入口
+	$(document).ready(function(){
+		//加载编码原则显示和编码级次
+		var vendorClassStar=grademark('vendorclass');
+		var gradeValue = grademarkValue('vendorclass'); 
+		$("#bmgz").val(vendorClassStar).attr("gradeValue",gradeValue);
+		//装载树节点
+		queryVendorClassTree(null);
+	});
+	//树节点集合的全局变量
+	var zNodes = [];
+	//当前选中的树节点
+	var currentTreeNode=null;
+	//保存时状态的全局变量
+	var action = null;
+	//所有供应商分类对象的集合
+	var vendorClassList=null;
+	//查询供应商分类树
+	function queryVendorClassTree(vendorClassCode){
+		//ztree配置
+		var setting = {
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				onClick: ZtreeClick,
+				onDblClick: ZtreeDblClick
+			}
+		};
+		//ztree加载树节点
+		$.ajax({
+			url:"vendorClass!queryVendorClass.action",
+			type:"post",
+			dataType:"json",
+			async : false,   
+			error: function () {
+	            jAlert('请求失败');   
+	        }, 
+			success:function(jsonData){
+				vendorClassList = jsonData.vendorClassList;
+				zNodes = getVendorClassListNodes(vendorClassList);
+				$.fn.zTree.init($("#vendorClassTree"), setting, zNodes);
+				//默认选中节点(根节点)
+				var zTree = $.fn.zTree.getZTreeObj("vendorClassTree");
+				if(vendorClassCode==null){
+					vendorClassCode = "SUPTYPE";
+				}
+				var selNode = zTree.getNodeByParam("id", vendorClassCode);
+    			zTree.selectNode(selNode);
+    			//显示详细信息
+    			showNodeInformation(selNode);
+			}
+		});	
+	}
+	//获取供应商分类树节点的方法
+	function getVendorClassListNodes(vendorClassList){
+		zNodes = [];
+		var gradeValue= $("#bmgz").attr("gradeValue");
+		if(gradeValue==""){
+			jAlert("编码规则不能为空!");
+			return;
+		}
+		var node = "";
+		var vendorClass;
+		var nodeObj;
+		//根节点
+		node = "{id:'SUPTYPE',name:'供应商分类',open:true}";
+		nodeObj =  eval('(' + node + ')') ;
+    	zNodes.push(nodeObj);
+		for(var i=0;i<vendorClassList.length;i++){
+			vendorClass = vendorClassList[i];
+			//本级次
+			var ivcgrade = vendorClass.ivcgrade;
+			//供应商分类编码
+			var cvccode = vendorClass.cvccode;
+			//父节点id
+			var parentid ;
+			if(ivcgrade==1){
+				parentid = "SUPTYPE";
+			}else{
+				var rule = gradeValue.charAt(ivcgrade-1);
+				var endindex = cvccode.length-rule;
+				parentid = cvccode.substring(0,endindex);
+			}
+			node = "{" + "id:'" + cvccode + "'," + "pId:'" + parentid + "',"
+			+ "ivcgrade:'" + vendorClass.ivcgrade + "',"	
+			+ "vendorClassId:'" + vendorClass.id + "',"
+			+ "vendorClassName:'" + vendorClass.cvcname + "',"
+			+ "bvcend:'" + vendorClass.bvcend + "',"
+			+ "name:'(" +cvccode+")"+ vendorClass.cvcname + "'" + ",open:true" + "}";
+			
+			nodeObj =  eval('(' + node + ')') ;
+        	zNodes.push(nodeObj);
+		}
+		return zNodes;
+	}
+	//ztree单击事件
+	function ZtreeClick(event, treeId, treeNode, clickFlag){
+		showNodeInformation(treeNode);
+	}
+	//ztee双击事件
+	function ZtreeDblClick(event, treeId, treeNode){
+		
+	}
+	//在数的右侧展示树节点的信息
+	function showNodeInformation(treeNode){
+		currentTreeNode = treeNode;
+		if(treeNode.id=="SUPTYPE"){
+			//类别编码
+  			$("#cvccode").val("");
+			//类别名称
+  			$("#cvcname").val("");
+		}else{
+			//类别编码
+  			$("#cvccode").val(treeNode.id);
+			//类别名称
+  			$("#cvcname").val(treeNode.vendorClassName);
+		}
+			$("#cvccode").attr("readonly",true).css("background-color","#ccc");
+			$("#cvcname").attr("readonly",true).css("background-color","#ccc");
+		//设置成不可编辑状态
+		setEditorState(false);
+	}
+	//设置按钮的编辑状态 state:true 可编辑,state:false 不可编辑
+	function setEditorState(state){
+		if(state){
+  			//放弃,保存按钮设置成可用
+  			$("#giveupVendorClass").attr("disabled",false);
+  			$("#saveVendorClass").attr("disabled",false);
+  			//增加,修改,删除,按钮设置成不可用
+  			$("#addVendorClass").attr("disabled",true);
+  			$("#updateVendorClass").attr("disabled",true);
+  			$("#deleteVendorClass").attr("disabled",true);
+		}else{
+  			//放弃,保存按钮设置成不可用
+  			$("#giveupVendorClass").attr("disabled",true);
+  			$("#saveVendorClass").attr("disabled",true);
+  			//增加,修改,删除,按钮设置成可用
+  			$("#addVendorClass").attr("disabled",false);
+  			$("#updateVendorClass").attr("disabled",false);
+  			$("#deleteVendorClass").attr("disabled",false);
+		}
+	}
+	//添加按钮点击事件
+	function addVendorClass(){
+		if(currentTreeNode!=null){
+			//设置成可编辑状态
+			setEditorState(true);
+			$("#cvccode").attr("readonly",false).css("background-color","#ffffff").focus();
+			$("#cvcname").attr("readonly",false).css("background-color","#ffffff").val("");
+			action = "add";
+		}
+	} 
+	//修改按钮点击事件
+	function updateVendorClass(){
+		if(currentTreeNode!=null){
+			if(currentTreeNode.id=="SUPTYPE"){
+				jAlert("请选择要修改的货物分类!");
+				return;
+			}
+			//设置成可编辑状态
+			setEditorState(true);
+			$("#cvcname").attr("readonly",false).css("background-color","#ffffff").focus();
+			action = "update";
+		}
+	}
+	//删除按钮点击事件
+	function deleteVendorClass(){
+		if(currentTreeNode!=null){
+			if(currentTreeNode.id=="SUPTYPE"){
+				jAlert("请选择要删除的供应商分类!");
+				return;
+			}
+			jConfirm("确定要删除选中的供应商分类吗?", "确认对话框", function(confirmflag){
+				if(confirmflag){
+					if(currentTreeNode.bvcend==0){
+						jAlert("不能删除存在下级分类的分类!");
+						return;
+					}
+					var id = currentTreeNode.vendorClassId;
+					//js判断
+					var sourceValue = 	id;
+					var sourceTable = 	"VENDORCLASS";
+					var sourceField = 	"cvccode";
+					var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+					if (isExits==true) {
+						jAlert("该供应商分类已经被使用，不能删除!");
+					    return false;			
+					}
+					//是否修改父节点的bssend字段
+					var updateflag = true;
+					//判读当前节点的父节点是否有其他子节点
+					for(var i=0;i<zNodes.length;i++){
+						var vendorClass = zNodes[i];
+						if(vendorClass.pId==currentTreeNode.pId&&vendorClass.vendorClassId!=id){
+							updateflag=false;
+						}
+					}
+					//删除请求后台
+					$.ajax({
+						url: "vendorClass!delete.action?vendorClass.id="+id,
+						type: 'post',
+						data:{parentCode:currentTreeNode.pId,updateflag:updateflag},
+						dataType: "json",
+						async : false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							if(data.isdelete==true){
+								queryVendorClassTree(currentTreeNode.pId);
+							}else{
+								jAlert("该供应商分类已经被使用，不能删除!");
+						   }
+						}
+					});
+				}
+			});
+		}
+	}
+	//保存按钮店家事件
+	function saveVendorClass(){
+		var flag = saveVendorClassCheck();
+		if(!flag){
+			return;
+		}else{
+			//组织数据
+			var vendorClass="vendorClass.cvccode="+$("#cvccode").val()+"&vendorClass.cvcname="+$("#cvcname").val();
+			//请求地址
+			var url="";
+			if(action=="add"){
+				vendorClass+="&vendorClass.ivcgrade="+$("#igrade").val();
+				vendorClass+="&vendorClass.bvcend="+1;//是末级节点
+				vendorClass+="&parentCode="+$("#bend").attr("parentcode");
+				url="vendorClass!create.action";
+			}else if(action=="update"){
+				vendorClass+="&vendorClass.ivcgrade="+currentTreeNode.ivcgrade;
+				vendorClass+="&vendorClass.bvcend="+currentTreeNode.bvcend;
+				vendorClass+="&vendorClass.id="+currentTreeNode.vendorClassId;
+				url="vendorClass!update.action";
+			}
+			//保存按钮设置成不可用
+			$("#saveVendorClass").attr("disabled",true);
+			$.ajax({
+				url: url,
+				type: 'post',
+				data:vendorClass,
+				dataType: "json",
+				async : false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					//重新查询树
+					queryVendorClassTree($("#cvccode").val());
+				}
+			  });
+		}
+	}
+	//放弃按钮点击事件
+	function giveup(){
+		showNodeInformation(currentTreeNode);
+	}
+	//保存结算方式时检查方法
+	function saveVendorClassCheck(){
+		var flag = true;
+		var cvccode = $("#cvccode").val();
+		if (cvccode=="") {
+			jAlert("类别编码不允许为空！","提示信息",function(){
+				$("#cvccode").focus();
+			});
+			return false;
+		}else if(cvccode=="SUPTYPE"){
+			jAlert("类别编码不符合要求！","提示信息",function(){
+				$("#cvccode").focus();
+			});
+			$("#cvccode").focus();
+			return false;
+		}
+		if ($("#cvcname").val()=="") {
+			jAlert("类别名称不允许为空！","提示信息",function(){
+				$("#cvcname").focus();
+			});
+			return false;
+		}
+		//传到后台数据
+		var vendorClass="vendorClass.cvccode="+$("#cvccode").val();
+		//添加时判断编码是否唯一
+		if(action=="add"){
+			$.ajax({
+				url: "vendorClass!isUniquenessVendorClassCode.action",
+				type: 'post',
+				data:vendorClass,
+				dataType: "json",
+				async : false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					if(data.isuniqueness==false){
+						jAlert("该类别编码已经被使用，请重新输入类别编码!","提示信息",function(){
+							$("#cvccode").focus();
+						});
+						flag = false;
+					}
+				}
+			  });
+			if(!flag){
+				return false;
+			}
+			//编码规则
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			//每一级的编码规则
+			var gradeValueList = gradeValue.split("");
+			//编码的长度
+			var len = cvccode.length;
+			//查看是否符合规则的标志
+			var fitflag =false;
+			//判断是否符合编码规则
+			var currentrule= null;
+			for(var i=0;i<gradeValueList.length;i++){
+				if(i==0){
+					currentrule=gradeValueList[i];
+				}else{
+					currentrule=currentrule*1+gradeValueList[i]*1;
+				}
+				//判断是否符合编码规则
+				if(len==currentrule){
+					fitflag = true;
+					//设置编码级次
+					var issgrade = i+1;
+					$("#igrade").val(issgrade);
+					break;
+				}
+			}
+			if(!fitflag){
+				jAlert("此编码不符合分类编码原则,请重新编码!","提示信息",function(){
+					$("#cvccode").focus();
+				});
+				return false;
+			}
+			//编码级次
+			var issgrade = $("#igrade").val();
+			if(issgrade!=1){
+				var rule = gradeValue.charAt(issgrade-1);
+				var endindex = cvccode.length-rule;
+				var parentid = cvccode.substring(0,endindex);
+				//存储父节点的编码
+				$("#bend").attr("parentcode",parentid);
+				//设置标志
+				fitflag = false;
+				//判读是否有上级编码
+				for(var i=0;i<vendorClassList.length;i++){
+					var vendorClass = vendorClassList[i];
+					//结算方式编码
+					var cvccode = vendorClass.cvccode;
+					if(parentid==cvccode){
+						fitflag = true;
+					}
+				}
+				if(!fitflag){
+					jAlert("不存在此分类的上级分类,请重新输入!","提示信息",function(){
+						$("#cvccode").focus();
+					});
+					flag = false;
+				}
+			}
+		}
+		return flag;
+	}
+	</script>
+ </head>
+ <body style="background-color: #D4D0C8;">
+	 <div style="width:530px;height:300px;background-color:#D4D0C8;font-size: 12px">
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" id ="addVendorClass" value="增加" onclick="addVendorClass()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" id ="updateVendorClass" value="修改" onclick="updateVendorClass()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" id ="deleteVendorClass" value="删除" onclick="deleteVendorClass()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" id ="giveupVendorClass" value="放弃" onclick="giveup()" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+					<div><input type="button" id ="saveVendorClass" value="保存" onclick="saveVendorClass()" style="background-image:url('../../../images/icon/save.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" disabled="disabled" style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('vendorClass');"/></div>
+				</div>
+			</div>
+<!-- 		<div> -->
+<!-- 			&emsp;<input type="image"  onfocus="this.blur();" src = "../../../images/buttons/add.jpg" onmousedown="this.src='../../../images/buttons/pushadd.jpg';" onmouseup="this.src='../../../images/buttons/add.jpg';" onmouseout="this.src='../../../images/buttons/add.jpg';" onclick="add()"/> -->
+<!-- 			&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/save.jpg" onmousedown="this.src='../../../images/buttons/pushsave.jpg';" onmouseup="this.src='../../../images/buttons/save.jpg';" onmouseout="this.src='../../../images/buttons/save.jpg';"  onclick="save()"/> -->
+<!-- 			&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/del.jpg" onmousedown="this.src='../../../images/buttons/pushdel.jpg';" onmouseup="this.src='../../../images/buttons/del.jpg';" onmouseout="this.src='../../../images/buttons/del.jpg';" onclick="del()"/> -->
+<!-- 			&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/update.jpg" onmousedown="this.src='../../../images/buttons/pushupdate.jpg';" onmouseup="this.src='../../../images/buttons/update.jpg';" onmouseout="this.src='../../../images/buttons/update.jpg';" onclick="update()"/> -->
+<!-- 			&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/exit.jpg" onmousedown="this.src='../../../images/buttons/pushexit.jpg';" onmouseup="this.src='../../../images/buttons/exit.jpg';" onmouseout="this.src='../../../images/buttons/exit.jpg';"  onclick="window.parent.closeWindow('vendorClass');"/> -->
+<!-- 			<hr/> -->
+<!-- 		</div> -->
+		<hr/>
+		<div style="margin-top:5px;">
+			<div style="width:164px;height:280px;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow:auto;">
+				<ul id="vendorClassTree" class="ztree" style="margin-left:-20px;"></ul>
+		    </div>
+			<div style="margin-left:10px;width:55%;float:left;height:300px;border:1px;solid blue;">
+				<div id="form1">
+					类别编码：<input id="cvccode" type="text" name="vendorClass.cvccode" size="26"   readonly="readonly" onblur = "isSpecialChar(this)"/><br/><br/>
+					类别名称：<input id="cvcname" type="text" name="vendorClass.cvcname" size="26"  readonly="readonly" onblur = "isSpecialChar(this)"/><br/>
+					<input id="igrade" type="hidden" name="vendorClass.ivcgrade"  readonly="readonly"/>
+					<input id="bend" type="hidden" name="vendorClass.bvcend" size="26"  readonly="readonly"/>
+					&emsp;<div>编码原则：<input id="bmgz" type="text" name="" readonly="readonly" style="border:0;background:transparent;" /></div><br/>
+				</div>
+			</div>
+		</div>
+	</div>
+ </body>
+</html>

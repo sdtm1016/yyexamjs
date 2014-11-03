@@ -1,0 +1,800 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>固定资产初始化向导</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<style type="text/css">
+
+.stepslabel {float:none;clear:both;height:40px;line-height:40px;margin-left:-8px;}
+.stepslabel .div1 {margin-left:4px;float:left;}
+.stepslabel .div2 {margin-left:4px;float:right;color:#00cc00;font-weight:bold;font-size:14px;font-family:verdana;}
+
+.gradually {background-color:#D4D0C8;}
+.gradually .textbox {width:26px;height:20px;line-height:12px;padding:0px;border:1px solid #000;}
+.gradually .incbtn1{width:16px;height:11px;padding:0px;margin:0px;font-size:10px;font-family:黑体;font-weight:bold;background-image:url('../../../images/icon/up1.gif');background-position:2px 0px;background-repeat:no-repeat;}
+.gradually .incbtn2{width:16px;height:11px;padding:0px;margin:0px;font-size:10px;font-family:黑体;font-weight:bold;background-image:url('../../../images/icon/down1.gif');background-position:2px 0px;background-repeat:no-repeat;}
+
+.info span{color:blue;}
+
+</style>
+
+<script type="text/javascript">
+
+//当前步骤面板
+var currentPanelIndex=1;
+
+//上一步
+function prevPanel(){
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex--;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+//下一步
+function nextPanel(){
+	if(currentPanelIndex==5){
+		if(!facode()){
+			return;
+		}
+	}
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex++;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+/**
+ * 初始化完成按钮功能
+ */
+function finish(){
+	var dStartDate=($("#dStartDate").val()+"-01").replace(".","-");//启用时间
+	var bCalcDepr="";//是否计提旧折
+	var sDeprMethodNum="";//折旧方法
+	if($("#bCalcDepr").attr("checked")=="checked"){
+		bCalcDepr="TRUE";
+		sDeprMethodNum=$("#sDeprMethodNum").val();
+	}else{
+		bCalcDepr="FLASE";
+	}
+	var iDeprSendPeriod=$("#iDeprSendPeriod").val();//折旧周期
+	var bLastMonthMakeUpDepr="";//是否补足折旧
+	if($("#bLastMonthMakeUpDepr").attr("checked")=="checked"){
+		bLastMonthMakeUpDepr="TRUE";
+	}else{
+		bLastMonthMakeUpDepr="FALSE";
+	}
+	
+	var sTypeNumType="";//资产类别编码方式
+	$("input[name='sTypeNumType']").each(function(index){
+		sTypeNumType=sTypeNumType+$(this).val()+"";
+	});
+	var iCardNumType=$("input[name='iCardNumType']:checked").val();//固定资产编码方式
+	var iCardNumname=0;
+	if(iCardNumType=="1"){
+		iCardNumname=$("#iCardNumAutoType").val();//自动编码时的编码规则
+	}
+	var iCardSequenceNumLength=$("#iCardSequenceNumLength").val();
+	
+	var isaccount="";//是否对账
+	var sFixedAssetsid="";
+	var sDeprTotalid="";
+	var sFixedAssetsSubject="";//固定资产科目
+	var sDeprTotalSubject="";//累计这就科目
+	if($("#isaccount").attr("checked")=="checked"){
+		isaccount="TRUE";
+		var sFixed=$("#sFixedAssetsSubject").val().split(",");
+		var sDepr=$("#sDeprTotalSubject").val().split(",");
+		sFixedAssetsid=sFixed[0];
+		sFixedAssetsSubject=sFixed[1];
+		sDeprTotalid=sDepr[0];
+		sDeprTotalSubject=sDepr[1];
+	}else{
+		isaccount="FALSE";
+	}
+	var bAllowUnequality="";//在对账不平衡的情况下允许固定资产月末结账
+	if($("#bAllowUnequality").attr("checked")=="checked"){
+		bAllowUnequality="TRUE";
+	}else{
+		bAllowUnequality="FALSE";
+	}
+	var param="faInitial.dstartdate="+dStartDate+"&faInitial.bcalcdepr="+bCalcDepr+"&faInitial.sdeprmethodnum="+sDeprMethodNum
+		+"&faInitial.ideprsendperiod="+iDeprSendPeriod+"&faInitial.blastmonthmakeupdepr="+bLastMonthMakeUpDepr+"&faInitial.stypenumtype="+sTypeNumType
+		+"&faInitial.icardnumtype="+iCardNumType+"&faInitial.icardnumautotype="+iCardNumname+"&faInitial.bautozw="+isaccount
+		+"&faInitial.sfixedassetssubjectnum="+sFixedAssetsid+"&faInitial.sfixedassetssubjectname="+sFixedAssetsSubject
+		+"&faInitial.sdeprtotalsubjectnum="+sDeprTotalid+"&faInitial.sdeprtotalsubjectname="+sDeprTotalSubject
+		+"&faInitial.ballowunequality="+bAllowUnequality+"&faInitial.icardsequencenumlength="+iCardSequenceNumLength;
+	$.ajax({
+	    url: "faInitializa!saveinit",
+	    type: 'post',
+	    dataType: "json",
+	    data:param,
+	    success: function(data){
+	    	window.parent.closeWindow('fa_basic_Initialization');
+	    	window.parent.toPage('FA','FA.html');
+	    }
+	  });
+}
+
+//显示“√”控制
+function showHook(panelIndex){
+	
+	for(var i=1;i<=panelIndex;i++){
+		document.getElementById("steps_flag_"+i).innerHTML="√";
+	}
+	for(var i=panelIndex;i<=6;i++){
+		
+		document.getElementById("steps_flag_"+i).innerHTML="&nbsp;";
+	}
+	
+	for(var i=1;i<=6;i++){
+		document.getElementById("steps_title_"+i).style.fontWeight="normal";
+	}
+	document.getElementById("steps_title_"+panelIndex).style.fontWeight="bold";
+	
+}
+
+//根据当前面板显示或隐藏底部按钮
+function setFace(panelIndex){
+
+	var btnFinish = document.getElementById("btnFinish");
+	var btnPrev = document.getElementById("btnPrev");
+	var btnNext = document.getElementById("btnNext");
+	
+	switch(panelIndex){
+		case 1:
+			btnPrev.disabled=true;
+			btnNext.disabled=false;
+			btnFinish.disabled=true;
+		break;
+		
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			btnNext.disabled=false;
+			btnPrev.disabled=false;
+			btnFinish.disabled=true;
+		break;
+		
+		case 6:
+			btnPrev.disabled=false;
+			btnNext.disabled=true;
+			btnFinish.disabled=false;
+			settle();
+		break;
+	}
+	
+	showHook(panelIndex);
+}
+
+//点击复选框禁启用元素
+function setChildDisabled(cb,id){
+	var child = document.getElementById(id).childNodes;
+	if(cb.checked==true){
+		for(var i=0;i<child.length;i++){ 
+			if(child[i].nodeType==1){
+				child[i].childNodes[0].disabled=false;
+				child[i].childNodes[1].disabled=false;
+				child[i].style.color="#000000";
+			}
+		}
+	}else{
+		for(var i=0;i<child.length;i++){
+			if(child[i].nodeType==1){
+				child[i].childNodes[0].disabled=true;
+				child[i].childNodes[1].disabled=true;
+				child[i].style.color="#808080";
+			}
+		}
+	}
+}
+
+//递计算框递增函数
+function increasing(btn,max){
+	var inputt = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	if(parseInt(inputt.value)<max){
+		inputt.value = parseInt(inputt.value)+1;
+	}
+} 
+function increas(btn){
+	var inputt = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	var lengths=$("#length").html();
+	if(parseInt(lengths)<10){
+		inputt.value = parseInt(inputt.value)+1;
+		$("#length").html(parseInt(lengths)+1)
+	}
+}
+
+//递计算框递减函数
+function decline(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	if(input.value>1){
+		input.value = parseInt(input.value)-1;
+	}
+}
+function declines(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	var lengths=$("#length").html();
+	if(input.value>1){
+		input.value = parseInt(input.value)-1;
+		$("#length").html(parseInt(lengths)-1)
+	}
+}
+
+
+//点击第一面板同意与否按钮时执行下一步按钮的禁启用
+function setNextButtonEnable(value){
+	document.getElementById("btnNext").disabled=value;
+}
+
+
+//固定资产编码方式单选按钮处理函数
+function setiCardNumAutoTypeEnable(value){
+	document.getElementById("iCardNumAutoType").disabled = value;
+	var snl = document.getElementById("iCardSequenceNum").getElementsByTagName("input");
+	for(var i=0;i<snl.length;i++){
+		snl[i].disabled = value;
+	}
+	if(value==false){
+		if($("#iCardNumAutoType").children().length==5){
+			$($("#iCardNumAutoType").children()[0]).remove();
+		}
+	}
+}
+
+//对账 复选按钮事件处理
+function setMappingAccountCompentEnable(checkbox){
+		var mac = document.getElementById("mappingAccountCompent");
+		var maci = mac.getElementsByTagName("input");
+	if(checkbox.checked==true){
+		mac.style.color="#000";
+		for(var i=0;i<maci.length;i++){
+			maci[i].disabled=false;
+		}
+	}else{
+		
+		mac.style.color="#888";
+		for(var i=0;i<maci.length;i++){
+			maci[i].disabled=true;
+		}
+	}
+}
+/**
+ * 初始化数据查询，加载页面初始数据
+ *
+ */
+function init(){
+	var	accountId=getCookie("accountCode");//账套号
+	var	accountName=getCookie("accountName");//账套名称
+	var	cunitname=getCookie("cunitname");//使用单位
+	var	ccurname=getCookie("ccurname");//本位币
+	var	operDate=getCookie("operDate");//登录时间
+	$("#accountId").html(accountId);
+	$("#companyName").html(accountName);
+	$("#usedUnit").html(cunitname);
+	$("#currency").html(ccurname);
+	var opers=operDate.split("-");
+	var year=opers[0];
+	var mouth=opers[1]-0;
+	while(mouth<=12){
+		var time="";
+		if(mouth<10){
+			time=year+".0"+mouth;
+		}else{
+			time=year+"."+mouth;
+		}
+		$("#dStartDate").append("<option value='"+time+"'>"+time+"</option>");
+		mouth++;
+	}
+	$.ajax({
+	    url: "faInitializa!fainit",
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	var depreciations=data.depreciations;
+			for(var i=0;i<depreciations.length;i++){
+				var depreci=depreciations[i];
+				if(depreci.flag=="1"){
+					$("#sDeprMethodNum").append("<option id='isyes' selected='selected' value='"+depreci.id+"'>"+depreci.sname+"</option>")
+				}else{
+					if(i==0){
+						$("#sDeprMethodNum").append("<option id='isno' value='"+depreci.id+"'>"+depreci.sname+"</option>")
+					}else{
+						$("#sDeprMethodNum").append("<option value='"+depreci.id+"'>"+depreci.sname+"</option>")
+					}
+				}
+			}
+	    }
+	  });
+}
+/**
+ * 初始化最后一步展示
+ */
+function settle(){
+	var companyName=getCookie("accountName");//账套名称
+	var usedUnit=getCookie("cunitname");//使用单位
+	var	userName=getCookie("userName");//主管姓名
+	var sTypeNumType="";//资产类别编码方式
+	$("input[name='sTypeNumType']").each(function(index){
+		sTypeNumType=sTypeNumType+$(this).val()+"";
+	});
+	var iCardNumType=$("input[name='iCardNumType']:checked").val();
+	var iCardNumname="";//固定资产编码方式
+	if(iCardNumType=="0"){
+		iCardNumname="手工输入";
+	}else if(iCardNumType=="1"){
+		iCardNumname="自动编码 = "+$("#iCardNumAutoType").children("[value='"+$("#iCardNumAutoType").val()+"']").html();
+	}
+	var bCalcDepr="";//是否计提旧折
+	var sDeprMethodNum="";//折旧方法
+	if($("#bCalcDepr").attr("checked")=="checked"){
+		bCalcDepr="是";
+		sDeprMethodNum=$("#sDeprMethodNum").children("[value='"+$("#sDeprMethodNum").val()+"']").html();
+	}else{
+		bCalcDepr="否";
+	}
+	var iDeprSendPeriod=$("#iDeprSendPeriod").val()+"个月";//折旧周期
+	var dStartDate=$("#dStartDate").val()+".01";//启用时间
+	var isaccount="";//是否对账
+	var sFixedAssetsSubject="";//固定资产科目
+	var sDeprTotalSubject="";//累计这就科目
+	if($("#isaccount").attr("checked")=="checked"){
+		isaccount="是";
+		sFixedAssetsSubject=$("#sFixedAssetsSubject").val();
+		sDeprTotalSubject=$("#sDeprTotalSubject").val();
+	}else{
+		isaccount="否";
+	}
+	var bAllowUnequality="";//在对账不平衡的情况下允许固定资产月末结账
+	if($("#bAllowUnequality").attr("checked")=="checked"){
+		bAllowUnequality="是";
+	}else{
+		bAllowUnequality="否";
+	}
+	$("#infoAcctountName").html(companyName);
+	$("#infoUsedUnit").html(usedUnit);
+	$("#infoMasterName").html(userName);
+	$("#infoAssetClassesCodeingMthod").html(sTypeNumType);
+	$("#infoIsManualInput").html(iCardNumname);
+	$("#infoIsDepreciation").html(bCalcDepr);
+	$("#infoMainDepreciationMethod").html(sDeprMethodNum);
+	$("#infoDepreciationCycle").html(iDeprSendPeriod);
+	$("#infoAccountBeginMonth").html(dStartDate);
+	$("#infoExecuteMapping").html(isaccount);
+	$("#infoAlwaysAllowCheckOut").html(bAllowUnequality);
+	$("#infoFaMappingCode").html(sFixedAssetsSubject);
+	$("#infoDepreciationMappingCode").html(sDeprTotalSubject);
+}
+/**
+ * 判断对账科目是否为空
+ */
+function facode(){
+	if($("#isaccount").attr("checked")=="checked"){
+		if($("#sFixedAssetsSubject").val()==""||
+			$("#sFixedAssetsSubject").val()==null||
+			$("#sDeprTotalSubject").val()==""||
+			$("#sDeprTotalSubject").val()==null){
+			jAlert("对账科目不可以为空");
+			return false;
+		}
+	}
+	return true;
+};
+
+//存储返回值接收控件的ID
+var target = null;
+//接受弹窗返回值函数
+function deliverValue(param){
+	//param.selKemuCode+":"+param.selKemuName;
+	document.getElementById(target).value=param.selKemuCode+","+param.selKemuName;
+}
+function alerCode(child,paren,tar){
+	target=tar;
+	window.parent.openWindow(child,paren);
+}
+function dodepre(tem){
+	if(tem.checked){
+		$("#sDeprMethodNum").attr("disabled",false)
+		$("#iDeprSendPeriod").attr("disabled",false)
+		$("#isno").attr("selected","");
+		$("#isyes").attr("selected","selected");
+	}else{
+		$("#sDeprMethodNum").attr("disabled","disabled");
+		$("#iDeprSendPeriod").attr("disabled","disabled");
+		$("#isyes").attr("selected","");
+		$("#isno").attr("selected","selected");
+	}
+}
+
+function doblur(temp){//控制序号长度
+	var vl=$(temp).val();
+	if((vl-0)!=vl){
+		$(temp).val("5");
+	}else{
+		if((vl-0)<1){
+			$(temp).val("1");	
+		}else if((vl-0)>5){
+			$(temp).val("5");
+		}
+	}
+}
+
+</script>
+</head>
+<body onload="init()">
+<form id="form1">
+	<div class="container" style="float:left;width:560px;height:350px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:540px;height:330px;margin-top:10px;margin-left:10px;">
+			<div style="width:100%;height:286px;">
+				<fieldset style="height:272px;float:left;padding:0px;">
+					<legend>步骤</legend>
+					<div style="width:92px;margin-left:10px;">
+						
+						
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_1" style="font-weight:bold;">1.约定及说明</div>
+							<div class="div2" id="steps_flag_1">&nbsp;</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_2">2.启用月份</div>
+							<div class="div2" id="steps_flag_2">&nbsp;</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_3">3.折旧信息</div>
+							<div class="div2" id="steps_flag_3">&nbsp;</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_4">4.编码方式</div>
+							<div class="div2" id="steps_flag_4">&nbsp;</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_5">5.财务接口</div>
+							<div class="div2" id="steps_flag_5">&nbsp;</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_title_6">6.完成</div>
+							<div class="div2" id="steps_flag_6">&nbsp;</div>
+						</div>
+					</div>
+				</fieldset>
+			
+				
+				
+				
+				<div style="height:286px;width:410px;float:left;margin-left:5px;">
+					
+						<!-- 步骤面板1 开始 -->
+						<div id="steps_panel_1" style="width:100%;height:100%;display:block;">
+							
+							<div style="width:410px;height:236px;border:2px inset #ccc;overflow:auto;background-color:#fff;">
+							
+								请您在进行初始化之前认真阅读如下条款：<br>
+								------------------------------------------<br>
+								您将要初始化的固定资产账套的基本信息如下：<br>
+								账套号：<span id="accountId"></span><br>
+								账套名称：<span id="companyName"></span><br>
+								使用单位：<span id="usedUnit"></span><br>
+								本位币：<span id="currency"></span><br>
+								-------------------------------------------------<br>
+								资产管理的基本原则：<br>
+								本系统资产管理采用严格的序时管理，序时到日。<br>
+								各种变动变动后折旧计算和分配汇总原则：<br>
+								1、本系统发生与折旧计算有关的变动后，加速折旧法在变动生效的当期以净值作为计提原值，以剩余使用年限为计提年限计算折旧；直线法还以原公式计算（因公式中已考虑了价值变动和年限调整）。以前修改的月折旧额或单位折旧的继承值无效。<br>
+								2、与折旧计算有关的变动是除了部门转移、类别调整、使用状况调整外的由变动单引起的变动。<br>
+								3、原值调整、累计折旧调整、净残值（率）调整下月有效。<br>
+								4、折旧方法调整、使用年限调整当月生效。<br>
+								5、使用状况调整下月有效.<br>
+								6、折旧分配：部门转移和类别调整当月计提的折旧分配分配到变动后部门和类别。<br>
+								7、本系统各种变动后计算折旧采用未来适用法，不自动调整以前的累计折旧，采用追溯适用法的企业只能手工调整累计折旧。<br>
+								8、报表统计：当月折旧和计提原值的汇总汇总到变动后部门和类别。<br>
+								9、如果选项中“当月初使用月份=使用年限*12-1时是否将折旧提足(工作量法除外)”的判断结果是“是”，则除工作量法外，该月月折旧额=净值-净残值，并且不能手工修改；如果判断结果是“否”，则该月不提足，并且可手工修改，但如以后各月按照公式计算的月折旧率或额是负数时，认为公式无效，令月折旧率=0，月折旧额=净值-净残值。<br>
+								-------------------------------------------------------------------------------------------------<br>							
+							</div>
+							<div style="margin-left:280px;" class="v_a_m">
+								<input type="radio" name="ad_1" id="rd_1_1" onclick="setNextButtonEnable(false);"/><label for="rd_1_1">我同意</label><br>
+								<input type="radio" name="ad_1" id="rd_1_2" onclick="setNextButtonEnable(true);"/><label for="rd_1_2">我不同意</label>
+							</div>
+						</div>
+						<!-- 步骤面板1 结束 -->
+					
+					
+						<!-- 步骤面板2 开始 -->
+						<div id="steps_panel_2" style="width:100%;height:100%;display:none;">
+							
+							<fieldset style="width:390px;height:150px;">
+								<legend>账套启用月份</legend>
+								<div style="text-align:center;">
+									<br><br><br><br>
+									<select id="dStartDate">
+									</select>
+								</div>
+							</fieldset>
+							<fieldset style="width:390px;height:106px;">
+								<legend>说明</legend>
+								<div>
+									<br>
+									在正式使用本系统前，必须将截至到该日期前的所有固定资产资料录入本系统，否则系统将不能正确进行固定资产的各项管理及核算工作。
+								</div>
+							</fieldset>
+						</div>
+						<!-- 步骤面板2 结束 -->
+						<!-- 步骤面板3 开始 -->
+						<div id="steps_panel_3" style="width:100%;height:100%;display:none;">
+							
+							<div class="v_a_m">
+								<input onclick="dodepre(this)" type="checkbox" id="bCalcDepr" checked="checked"/><label for="bCalcDepr" style="font-size:14px;font-weight:bold;">本账套计提折旧</label>
+							</div>
+							<br>
+							<div style="height:30px;">
+								主要折旧方法
+								<select style="width:220px;margin-left:80px;" id="sDeprMethodNum">
+									
+								</select>
+							</div>
+							<br>
+							<fieldset style="width:390px;height:40px;">
+								<legend>折旧总会分配周期</legend>
+								<div style="text-align:center;">
+									<select style="width:60px;" id="iDeprSendPeriod">
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+									</select>个月
+								</div>
+							</fieldset>
+							
+							<div>
+								<br>
+								<input type="checkbox" id="bLastMonthMakeUpDepr" checked="checked"/>
+								<label for="bLastMonthMakeUpDepr">当(月初已计提月份=可使用月份-1)时将剩余折旧全部提足(工作量法除外)</label>
+								<br>
+								下次折旧分配月份:<br>
+								<div style="text-align:center;" id="nextMonth"></div>
+							</div>
+							<br>
+							<fieldset style="width:390px;height:60px;">
+								<legend>说明</legend>
+								<div style="text-align:center;">
+									使用单位根据自身情况选择主要折旧方法，计提折旧的企业可以根据自己的需要来确定资产的折旧分配周期，系统缺省的折旧分配周期为1个月。
+								</div>
+							</fieldset>
+							
+						</div>
+						<!-- 步骤面板3 结束 -->
+					
+						<!-- 步骤面板4 开始 -->
+						<div id="steps_panel_4" style="width:100%;height:100%;display:none;">
+							<fieldset style="width:390px;height:60px;">
+								<legend>资产类别编码方式</legend>
+								<div style="text-align:center;">
+									<table>
+										<tr>
+											<td align="left" width="100">级别</td>
+											<td>1</td>
+											<td>2</td>
+											<td>3</td>
+											<td>4</td>
+											<td>总长度</td>
+										</tr>
+										<tr>
+											<td align="left">编码长度</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input readonly="readonly" name="sTypeNumType" class="textbox" type="text" value="2"/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);" style=""/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input readonly="readonly" name="sTypeNumType" class="textbox" type="text" value="1"/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input readonly="readonly" name="sTypeNumType" class="textbox" type="text" value="1"/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="gradually">
+													<div style="float:left;"><input readonly="readonly" name="sTypeNumType" class="textbox" type="text" value="2"/></div>
+													<div style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increas(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="declines(this);"/></div>
+													</div>
+												</div>
+											</td>
+											<td width="80"><span id="length">6</span></td>
+										</tr>
+									</table>
+								</div>
+							</fieldset>
+							
+							
+							<br>
+							<fieldset style="width:390px;height:76px;">
+								<legend>固定资产编码方式</legend>
+								<div>
+									<div style="width:170px;height:60px;float:left;" class="v_a_m">
+										<input type="radio" value="0" name="iCardNumType" id="rd_2_1" onclick="setiCardNumAutoTypeEnable(true);" checked="checked"/><label for="rd_2_1">手工输入</label>
+										<input type="radio" value="1" name="iCardNumType" id="rd_2_2" onclick="setiCardNumAutoTypeEnable(false);"/><label for="rd_2_2">自动编码</label>
+									</div>
+								
+									<div style="width:218px;height:60px;float:left;">
+										<select id="iCardNumAutoType" disabled="disabled" style="width:210px;">
+											<option value="0"></option>
+											<option value="1">类别编号+序号</option>
+											<option value="2">部门编号+序号</option>
+											<option value="3">类别编号+部门编号+序号</option>
+											<option value="4">部门编号+类型编号+序号</option>
+										</select>
+										<br>
+										<br>
+										<div style="float:left;height:26px;line-height:26px;">序号长度：</div>
+											<div class="gradually" id="iCardSequenceNum">
+												<div style="float:left;"><input disabled="disabled" onblur="doblur(this)" id="iCardSequenceNumLength" class="textbox" type="text" value="5" style="line-height:14px;"/></div>
+												<div style="float:left;">
+													<div><input type="button" disabled="disabled" onfocus="this.blur();" class="incbtn1" onclick="increasing(this,5);"/></div>
+													<div><input type="button" disabled="disabled" onfocus="this.blur();" class="incbtn2" onclick="decline(this);"/></div>
+												</div>
+											</div>
+									</div>
+								
+								</div>
+							</fieldset>
+							<br>
+							
+							<fieldset style="width:390px;height:76px;">
+								<legend>说明</legend>
+								<div>
+									<br>
+									1.本系统类别编码最长可为4级10位。<br><br>
+									2.本系统推荐类别编码使用国家规定4级6位（2112）方式。
+								</div>
+							</fieldset>
+						</div>
+						<!-- 步骤面板4 结束 -->
+					
+						<!-- 步骤面板5 开始 -->
+						<div id="steps_panel_5" style="width:100%;height:100%;display:none;">
+							<div class="v_a_m"><input type="checkbox" checked="checked" id="isaccount" onclick="setMappingAccountCompentEnable(this);"/><label for="cb_3">与账务系统进行对账</label></div>
+							<div style="margin-left:50px;" id="mappingAccountCompent">
+								<fieldset style="width:320px;height:66px;">
+									<legend>对账科目</legend>
+									<div>
+										固定资产对账科目<input onfocus="dofocustoenter('code',this,'target','sFixedAssetsSubject','','')" id="sFixedAssetsSubject" type="text" style="width:130px;"/><input type="button" class="finder" onclick="alerCode('dsign_subjectsreference','fa_basic_Initialization','sFixedAssetsSubject')"/><br>
+										累计折旧对账科目<input onfocus="dofocustoenter('code',this,'target','sDeprTotalSubject','','')" id="sDeprTotalSubject" type="text" style="width:130px;"/><input type="button" class="finder" onclick="alerCode('dsign_subjectsreference','fa_basic_Initialization','sDeprTotalSubject')"/>
+									</div>
+								</fieldset>
+								<input type="checkbox" id="bAllowUnequality"/><label for="bAllowUnequality">在对账不平衡的情况下不允许固定资产月末结账</label>
+								
+								
+							</div>
+							<br><br><br><br><br><br>
+							<fieldset style="width:390px;height:66px;">
+								<legend>说明</legend>
+								<div>
+									选择向账务系统传输数据后，本系统将于账务系统接口，这样可进行固定资产核算业务的自动转账工作。
+								</div>
+							</fieldset>
+							
+							
+						</div>
+						<!-- 步骤面板5 结束 -->
+					
+						<!-- 步骤面板6 开始 -->
+						<div id="steps_panel_6" style="width:100%;height:100%;display:none;">
+						
+							您已经进行了账套信息的基本设置工作。您所设置的大部分信息在选择'完成'按钮后不允许再修改，因此请检查输入信息是否确保正确，如不正确，请回到相应的步骤进行修改。
+							
+							<div style="width:100%;height:1px;border-top:1px solid red;margin-top:4px;"></div>
+							<table class="info" width="100%">
+								<tr>
+									<td align="left" width="150">账套名称</td>
+									<td><span id="infoAcctountName"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>使用单位</td>
+									<td><span id="infoUsedUnit"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>主管姓名</td>
+									<td><span id="infoMasterName"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>资产类别编码方式</td>
+									<td><span id="infoAssetClassesCodeingMthod"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>固定资产编码方式</td>
+									<td><span id="infoIsManualInput"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>本账套计提折旧</td>
+									<td><span id="infoIsDepreciation"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>主要折旧方法</td>
+									<td><span id="infoMainDepreciationMethod"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+								<tr>
+									<td>折旧汇总分配周期</td>
+									<td><span>&nbsp;</span></td>
+									<td><span id="infoDepreciationCycle"></span></td>
+								</tr>
+								<tr>
+									<td>账套启用月份</td>
+									<td><span id="infoAccountBeginMonth"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+							</table>
+							
+							
+							<div style="width:100%;height:1px;border-top:1px dashed red;margin-top:4px;"></div>
+							
+							<table class="info" width="100%">
+								<tr>
+									<td align="left" width="250">与账务系统进行对账</td>
+									<td><span id="infoExecuteMapping"></span></td>
+								</tr>
+								<tr>
+									<td>在对账不平情况下不允许固定资产月末结账</td>
+									<td><span id="infoAlwaysAllowCheckOut"></span></td>
+								</tr>
+								<tr>
+									<td>固定资产对账科目</td>
+									<td><span id="infoFaMappingCode"></span></td>
+								</tr>
+								<tr>
+									<td>累计折旧对账科目</td>
+									<td><span id="infoDepreciationMappingCode"></span></td>
+									<td><span>&nbsp;</span></td>
+								</tr>
+							</table>
+							
+							
+							
+						</div>
+						<!-- 步骤面板6 结束 -->
+					
+				</div>
+			</div>
+			
+			
+			
+		<div style="width:98%;height:30px;margin-top:20px;text-align:right;">
+			
+				<input type="button" value="退出"     id="btnExit" onclick="window.parent.closeWindow('fa_basic_Initialization');"/>
+				<input type="button" value="<<上一步" id="btnPrev" onclick="prevPanel();" disabled="disabled"/>
+				<input type="button" value="下一步>>" id="btnNext" onclick="nextPanel();" disabled="disabled"/>
+				<input type="button" value="完成"     id="btnFinish" onclick="finish();" disabled="disabled"/>
+			
+		</div>
+			
+		</div>
+	</div>
+</form>
+</body>
+</html>

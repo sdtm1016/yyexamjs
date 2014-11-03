@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>总账_选项</title>
+	<link rel="stylesheet" type="text/css" href="base.css" />
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script> 	
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	
+	<script type="text/javascript" src="js/option.js"></script>
+	<script type="text/javascript"> 
+	queryParam("GL");
+    </script>
+</head>
+
+<body style="background-color:#f0f0f0">
+<div class="wrap">
+	<div class="z_content">
+    	<div class="z_content_nav">
+        	<ul>
+                <li><a href="#" onclick="tab(1)" id="connav_1" style="background:url(../../../images/gl/z_01.png) no-repeat 0 -42px;">凭证</a></li>
+                <li><a href="#" onclick="tab(2)" id="connav_2" style="background:url(../../../images/gl/z_01.png) no-repeat 0 0;">账簿</a></li>
+                <li><a href="#" onclick="tab(3)" id="connav_3" style="background:url(../../../images/gl/z_01.png) no-repeat 0 -21px;">会计日历</a></li>
+                <li><a href="#" onclick="tab(4)" id="connav_4" style="background:url(../../../images/gl/z_01.png) no-repeat 0 0;">其他</a></li>
+            
+            </ul>
+        </div>
+        <div class="z_content_box">
+        <div class="z_content_boxn">
+        	<!-- 凭证页面 ↓-->
+            <div id="conbox1">
+            	<div class="conbox1_l fl">
+                	<div class="conbox1_l_01">
+                    	<h2>制单控制</h2>
+                        <ul>
+                        	<li><label><input type="checkbox" class="z_check_1" name = "bMakShtSort"  id="bMakShtSort" />制单序时控制<input type="checkbox" class="z_check_1" style="margin:0 2px 0 20px;" name = "bCheque" id="bCheque" />支票控制</label></li>
+                            <li><input type="checkbox" class="z_check_1" checked="checked" name = "bCurRed" id="bCurRed" />资金及来往赤字控制</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bVouchCode" id="bVouchCode" />制单权限控制到科目</li>
+                            <li><input type="checkbox" class="z_check_1" checked="checked"  name = "bProofModify" id="bProofModify" />允许修改、作废他人填制的凭证</li>
+                            <li><input type="checkbox" class="z_check_1" checked="checked"  name = "bQueryOtherPz" id="bQueryOtherPz" />允许查看他人填制的凭证</li>
+                            <li><input type="checkbox" class="z_check_1" checked="checked"  name = "bOthCtlSubj" id="bOthCtlSubj" />可以使用其他系统受控科目</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bCashFluxItem" id="bCashFluxItem" />现金流量项目必录</li>
+                        </ul>
+                    </div>
+                    <div class="conbox1_l_02">
+                    	<h2>凭证控制</h2>
+                        <ul>
+                        	<li><input type="checkbox" class="z_check_1" checked="checked" name = "bProofFoldNote" id="bProofFoldNote" />打印凭证页脚姓名</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bProofVert"  id="bProofVert" />凭证审核控制到操作员</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bProofSign" id="bProofSign" />出纳凭证必须经由出纳签字</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bNotCheckJz" id="bNotCheckJz" />未审核的凭证允许记账</li>
+                            <li><input type="checkbox" class="z_check_1" name = "bPrintItemCCode" id="bPrintItemCCode" />打印醒目核算凭证时,显示项目分类编码</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="conbox1_r fl">
+                	<div class="conbox1_r_01">
+                    	<h2>凭证编号方式</h2>
+                        <p><input type="radio" name="radio1" value="1" class="z_check_1" checked="checked" id="t14" />系统编号<input type="radio" name="radio1" class="z_check_1" value="2"  style="margin:0 2px 0 50px;"/>手工编号</p>
+                    </div>
+                    <div class="conbox1_r_01" id="t14">
+                    	<h2>外币核算</h2>
+                        <p>汇率方式<input type="radio" name="iXchgRateStl" value="2" class="z_check_1" checked="checked" style="margin:0 2px 0 10px;" />固定汇率<input type="radio" name="iXchgRateStl"  value="1" class="z_check_1" style="margin:0 2px 0 10px;"/>浮动汇率</p>
+                    </div>
+                    <div class="conbox1_r_02" id="t14">
+                    	<h2><input type="checkbox" checked="checked" class="z_check_1" name = "t14" id="t14" />预算控制</h2>
+                        <p><label style="color:#a7a7a7"><input type="radio" name="radio3" value="1" class="z_check_1" checked="checked" disabled="disabled"/>精细预算控制</label><label style="color:#a7a7a7"><input type="radio" name="radio3" value="2"  class="z_check_1" style="margin:0 2px 0 15px;" disabled="disabled"/>粗放预算控制</label></p>
+                    </div>
+                    <div class="conbox1_r_01" id="t14">
+                    	<h2>新增凭证时，自动带入的凭证日期</h2>
+                        <p><input type="radio" name="bNewPzDateDefaultValue" value="TURE" class="z_check_1" checked="checked" />登录日期<input type="radio" name="bNewPzDateDefaultValue" value="FALSE" class="z_check_1" style="margin:0 2px 0 8px;"/>最后一次录入的凭证日期</p>
+                    </div>
+                    <div class="conbox1_r_03" id="iPZDisp">
+                    	<h2><input type="checkbox" class="z_check_1"/>合并凭证显示、打印</h2>
+                        <ul>
+                        	<li><input type="radio" name="radio5" value="1" class="z_check_1" checked="checked" />按科目、摘要相同方式合并</li>
+                            <li><input type="radio" name="radio5" value="2" class="z_check_1" />按科目相同方式合并</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 账簿页面 ↓-->
+            <div id="conbox2">
+            	<div class="conbox2_t">
+                	<div class="conbox2_t_l fl">
+                    	<div class="conbox2_t_l_01">
+                        	<h2>打印位数宽度(包括小数点及小位数)</h2>
+                            <ul>
+                            	<li><p>摘要&nbsp;</p><p class="z_textbox"><input type="text" value="20" class="z_text" name = ""iBreifWdth id="iBreifWdth" /></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(汉字)</p></li>
+                                <li><p>外币&nbsp;</p><p class="z_textbox"><input type="text" value="16" class="z_text"  name = "iFgnCurDgt" id="iFgnCurDgt"/></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(数字)</p></li>
+                                <li><p>数量&nbsp;</p><p class="z_textbox"><input type="text" value="16" class="z_text"  name = "iQuanDgt" id="iQuanDgt"/></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(数字)</p></li>
+                            </ul>
+                            <ul>
+                            	<li><p>金额&nbsp;</p><p class="z_textbox"><input type="text" value="16" class="z_text"  name = "iMnyDgt" id="iMnyDgt" /></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(数字)</p></li>
+                                <li><p>汇率&nbsp;</p><p class="z_textbox"><input type="text" value="12" class="z_text"  name = "iExchLength" id="iExchLength" /></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(数字)</p></li>
+                                <li><p>单价&nbsp;</p><p class="z_textbox"><input type="text" value="12" class="z_text"  name = "iPriceLength" id="iPriceLength"/></p><p style="width:16px;"><input type="button" value="" class="z_butt_3" /><input type="button" value="" class="z_butt_4" /></p><p>&nbsp;(数字)</p></li>
+                            </ul>
+                        </div>
+                        <div class="conbox2_t_l_02">
+                        	<input type="checkbox" class="z_check_1" name = "bQryCtlSubj"; id="bQryCtlSubj"/>明细账查询权限控制到科目
+                        </div>
+                    </div>
+                    <div class="conbox2_t_r fl">
+                    	<div class="conbox2_t_r_01">
+                        	<h2>明细账(日记账，多栏账)打印方式</h2>
+                            <p><input type="radio" name="radio1" value="1" class="z_check_1"/>按月排页<input type="radio" name="radio1" class="z_check_1"  value="2" checked="checked"  style="margin:0 2px 0 20px;"/>按年排页</p>
+                        </div>
+                        <div class="conbox2_t_r_02">
+                        	<h2><input type="checkbox" class="z_check_1" id="bProofFitPrt"/>凭证、账簿套打</h2>
+                            <ul>
+                            	<li><input type="radio" name="radio2" value="1" class="z_check_1" checked="checked" id="t1"/>用友财务通版</li>
+                            	<li><input type="radio" name="radio2" value="2" class="z_check_1" id="t1"/>用友6.0</li>
+                                <li><input type="radio" name="radio2" value="3" class="z_check_1" id="t1"/>用友7.0</li>
+                                <li><input type="radio" name="radio2" value="4" class="z_check_1" id="t1"/>账簿通(上海版)</li>
+                            </ul>
+                            <ul style="border-left:1px solid #a0a0a0;">
+                            	<li><input type="radio" name="radio3" value="1" class="z_check_1" />连续<br />(针式打印机)</li>
+                            	<li><input type="radio" name="radio3" value="2" class="z_check_1" checked="checked" />非连续<br />(激光/喷墨打印机)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="conbox2_c">
+                	<h2>凭证(5~20)、正式账每页打印行数(25~60)</h2>
+                    <div class="conbox2_c_box">
+                    <div class="conbox2_c_boxs">
+                    	<table cellpadding="0" cellspacing="0" border="0">
+                        	<tr>
+                            	<td class="tab_td_1">&nbsp;</td>
+                                <td class="tab_td_1">金额式</td>
+                                <td class="tab_td_1">外币金额式</td>
+                                <td class="tab_td_1">数量金额式</td>
+                                <td class="tab_td_7">外币数量式</td>
+                            </tr>
+                            <tr>
+                            	<td class="tab_td_1">明细账</td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text" name="iMnyPrtLn"  id="iMnyPrtLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text" name="iFgnCurPrnLn" id="iFgnCurPrnLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text" name="iQuanMnyPrnLn" id="iQuanMnyPrnLn" /></td>
+                                <td class="tab_td_4" align="right"><input type="text" value="30" class="z_text" name="iQuanFgnCurPrnLn" id="iQuanFgnCurPrnLn" /></td>
+                            </tr>
+                            <tr>
+                            	<td class="tab_td_1">日记账</td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text"  name="iMnyDryPrnLn" id="iMnyDryPrnLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text" name="iFgnCurDryPrnLn"  id="iFgnCurDryPrnLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text" name="iQuanMnyDryPrnLn"  id="iQuanMnyDryPrnLn" /></td>
+                                <td class="tab_td_4" align="right"><input type="text" value="30" class="z_text" name="iQuanFgnDryPrnLn"  id="iQuanFgnDryPrnLn" /></td>
+                            </tr>
+                            <tr>
+                            	<td class="tab_td_1">多栏账</td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text"  name="iMnyMulPrnLn" id="iMnyMulPrnLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text"  name="iFgnMnyPrnLn" id="iFgnMnyPrnLn" /></td>
+                                <td class="tab_td_2" align="right"><input type="text" value="30" class="z_text"  name="iQuanMnyMulPrnLn" id="iQuanMnyMulPrnLn" /></td>
+                                <td class="tab_td_4" align="right"><input type="text" value="30" class="z_text"  name="iQuanFgnMulPrnLn" id="iQuanFgnMulPrnLn" /></td>
+                            </tr>
+                            <tr>
+                            	<td class="tab_td_5">凭证</td>
+                                <td class="tab_td_3" align="right"><input type="text" value="30" class="z_text"  name="iMnyDgt" id="iMnyDgt" /></td>
+                                <td class="tab_td_3" align="right">---</td>
+                                <td class="tab_td_3" align="right">---</td>
+                                <td class="tab_td_6" align="right"><input type="text" value="30" class="z_text" name="iMnyDgt"  id="iMnyDgt" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+                <div class="conbox2_b">
+                	<a><input type="button" value="重置套打纸张设置" class="z_butt_2" /></a><a><input type="button" value="凭证打印内容设置" class="z_butt_2" /></a>
+                </div>
+            </div>
+            <!-- 会计日历页面 ↓-->
+            <div id="conbox3">
+            	<div class="conbox3_h"><p>启用会计年度</p><p class="z_text_1box"><input type="text" value="2010" class="z_text_1" /></p><p style="padding-left:46px;">启用日期</p><p class="z_text_2box"><input type="text" value="2010.01.01" class="z_text_2" id="dGLStartDate" /></p></div>
+                <div class="conbox3_box fl">
+                    <div class="conbox3_boxs">
+                    	<table cellpadding="0" cellspacing="1" border="0" bgcolor="#000000" >
+                        	<tr bgcolor="#F0F0F0"  align="center">
+                            	<td width="78" height="17">会计期间</td>
+                                <td width="98" >开始日期</td>
+                                <td width="98" >结束日期</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">1</td>
+                                <td bgcolor="#ffffff">2010.01.01</td>
+                                <td bgcolor="#ffffff">2010.01.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">2</td>
+                                <td bgcolor="#ffffff">2010.02.01</td>
+                                <td bgcolor="#ffffff">2010.02.28</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">3</td>
+                                <td bgcolor="#ffffff">2010.03.01</td>
+                                <td bgcolor="#ffffff">2010.03.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">4</td>
+                                <td bgcolor="#ffffff">2010.04.01</td>
+                                <td bgcolor="#ffffff">2010.04.30</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">5</td>
+                                <td bgcolor="#ffffff">2010.05.01</td>
+                                <td bgcolor="#ffffff">2010.05.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">6</td>
+                                <td bgcolor="#ffffff">2010.06.01</td>
+                                <td bgcolor="#ffffff">2010.06.30</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">7</td>
+                                <td bgcolor="#ffffff">2010.07.01</td>
+                                <td bgcolor="#ffffff">2010.07.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">8</td>
+                                <td bgcolor="#ffffff">2010.08.01</td>
+                                <td bgcolor="#ffffff">2010.08.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">9</td>
+                                <td bgcolor="#ffffff">2010.09.01</td>
+                                <td bgcolor="#ffffff">2010.09.30</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">10</td>
+                                <td bgcolor="#ffffff">2010.10.01</td>
+                                <td bgcolor="#ffffff">2010.10.31</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">11</td>
+                                <td bgcolor="#ffffff">2010.11.01</td>
+                                <td bgcolor="#ffffff">2010.11.30</td>
+                            </tr>
+                            <tr  align="center">
+                            	<td height="17" bgcolor="#F0F0F0">12</td>
+                                <td bgcolor="#ffffff">2010.12.01</td>
+                                <td bgcolor="#ffffff">2010.12.31</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="conbox3_boxr fl">
+                	<img src="../../../images/gl/z_03.png" height="166" width="162" />
+                </div>
+            </div>
+            <!-- 其他页面 ↓-->
+            <div id="conbox4">
+            	<div class="conbox4_l fl">
+                	<ul>
+                    	<li><span>账套名称</span><p class="z_text_3box fl"><input type="text" class="z_text_3" value="北京泰祥科技有限公司" /></p></li>
+                        <li><span>单位名称</span><p class="z_text_3box fl"><input type="text" class="z_text_3" value="北京泰祥科技有限公司" /></p></li>
+                        <li><span>账套路径</span><p class="z_text_3box fl"><input type="text" class="z_text_3" value="C:\UFSMART\Admin\\ZT131" /></p></li>
+                        <li><span>行业性质</span><p class="z_text_3box fl"><input type="text" class="z_text_3" value="2007年新会计准则" /></p></li>
+                        <li><span>科目级长</span><p class="z_text_3box fl"><input type="text" class="z_text_3" value="4,2,2,2" /></p></li>
+                        <li><span>数量小数位</span><p class="z_text_4box fl"><input type="text" class="z_text_4" value="5" id="iQuanDecDgt" /></p></li>
+                        <li><span>单价小数位</span><p class="z_text_4box fl"><input type="text" class="z_text_4" value="5" id="iPriceDecDgt" /></p></li>
+                        <li><span>本位币精度</span><p class="z_text_4box fl"><input type="text" class="z_text_4" value="2" id="dGLStartDate" /></p></li>
+                    </ul>
+                </div>
+                <div class="conbox4_r fl">
+                	<div class="conbox4_r_01"  >
+                    	<h2>部门排序方式</h2>
+                        <p><input type="radio" name="iDepSrtStl" value="1" class="z_check_1" />按编码排序<input type="radio" name="iDepSrtStl" value="2" class="z_check_1" checked="checked" style="margin:0 2px 0 30px;"/>按名称排序</p>
+                    </div>
+                    <div class="conbox4_r_01"  >
+                    	<h2>个人排序方式</h2>
+                        <p><input type="radio" name="iPerSrtStl" value="1" class="z_check_1"/>按编码排序<input type="radio" name="iPerSrtStl" value="2" class="z_check_1" checked="checked" style="margin:0 2px 0 30px;"/>按名称排序</p>
+                    </div>
+                    <div class="conbox4_r_01" >
+                    	<h2>项目排序方式</h2>
+                        <p><input type="radio" name="iItmSrtStl" value="1" class="z_check_1" />按编码排序<input type="radio" name="iItmSrtStl" value="2" class="z_check_1" checked="checked" style="margin:0 2px 0 30px;"/>按名称排序</p>
+                    </div>
+                    <div class="conbox4_r_02">
+                    	<h2> 本位币</h2>
+                        <ul>
+                        	<li><span>币符</span><p class="z_text_5box fl"><input type="text" class="z_text_5" value="RMB" /></p></li>
+                            <li><span>币名</span><p class="z_text_5box fl"><input type="text" class="z_text_5" value="人民币" /></p></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <script type="text/javascript">
+			function  tab(x){
+				if(x==1){
+					document.getElementById("connav_1").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -42px";
+					document.getElementById("conbox1").style.display="block";
+					document.getElementById("conbox2").style.display="none";
+					document.getElementById("conbox3").style.display="none";
+					document.getElementById("conbox4").style.display="none";
+					document.getElementById("connav_2").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_3").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -21px";
+					document.getElementById("connav_4").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					}
+				if(x==2){
+					document.getElementById("connav_2").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -42px";
+					document.getElementById("conbox2").style.display="block";
+					document.getElementById("conbox1").style.display="none";
+					document.getElementById("conbox3").style.display="none";
+					document.getElementById("conbox4").style.display="none";
+					document.getElementById("connav_1").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_3").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -21px";
+					document.getElementById("connav_4").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					}
+				if(x==3){
+					document.getElementById("connav_3").style.background="url(../../../images/gl//z_01.png) no-repeat 0 -63px";
+					document.getElementById("conbox3").style.display="block";
+					document.getElementById("conbox1").style.display="none";
+					document.getElementById("conbox2").style.display="none";
+					document.getElementById("conbox4").style.display="none";
+					document.getElementById("connav_1").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_2").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_4").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					}
+				if(x==4){
+					document.getElementById("connav_4").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -42px";
+					document.getElementById("conbox4").style.display="block";
+					document.getElementById("conbox1").style.display="none";
+					document.getElementById("conbox2").style.display="none";
+					document.getElementById("conbox3").style.display="none";
+					document.getElementById("connav_1").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_2").style.background="url(../../../images/gl/z_01.png) no-repeat 0 0";
+					document.getElementById("connav_3").style.background="url(../../../images/gl/z_01.png) no-repeat 0 -21px";
+					}
+				}
+			
+		</script>
+		
+		   <!-- 按钮 start -->
+         <div class="z_butt_box">
+         	<a><input type="button" value="帮助" onclick="help();"class="z_butt_1" /></a><a style="margin:0 15px 0 350px; display:inline"><input type="button" value="确定" class="z_butt_1"  onclick="updateParam();"/></a><a><input type="button" value="放弃" onclick="abort();" class="z_butt_1" /></a>
+         </div>
+         <!-- 按钮 end -->
+  </div>
+ 
+</div>
+</body>
+
+      
+</html>

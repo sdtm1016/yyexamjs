@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>公式向导</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/glfw2.js"></script>
+	
+	<script type="text/javascript">
+	
+	function conversioncode_s(type,nowinput,executeClearBlur){
+		var c_val=$(nowinput).val().split(",")[0];
+		if(c_val==""){
+			return;
+		}
+		$.ajax({
+		    url: "consulteditAction!findbycodeorname",
+		    type: 'post',
+		    dataType: "json",
+		    cache:false,
+		    async:false,
+		    data:"tablename="+type+"&param="+c_val,
+		    success: function(data){
+		    	var d_result=data.result;
+		    	var param={};
+		    	var t_message="";
+		    	if(d_result!=""){
+		    		var ress=d_result.split(":");
+		    		if(ress[0]=="0"){
+		    			if(type=="code"){
+		    				param.selKemuCode=ress[2];
+		    				param.selKemuName=ress[3];
+				    	}
+		    		}else{
+		    			if(type=="code"){
+		    				param.selKemuCode="";
+		    				param.selKemuName="";
+		    				t_message="录入科目错误！<br>科目不存在或科目非明细级！";
+				    	}
+		    		}
+		    	}else{
+		    		if(type=="code"){
+	    				param.selKemuCode="";
+	    				param.selKemuName="";
+	    				t_message="录入科目错误！<br>科目不存在或科目非明细级！";
+			    	}
+		    	}
+		    	deliverValue(param);
+		    	if(t_message!=""){
+		    		jAlert(t_message,"提示信息",function (){
+		    			$(nowinput).focus();
+		    		});
+		    	}
+		    }
+		  });
+	}
+	
+	
+	//继续输入公式复选框控制处理函数
+	function setdis(checkbox){
+		var rdgc = document.getElementById("rdgc");
+		
+		if(checkbox.checked==true){
+			rdgc.style.display="block";
+			
+			checkbox.parentNode.parentNode.style.border="1px solid #666";
+		}else{
+			rdgc.style.display="none";
+			checkbox.parentNode.parentNode.style.border="none";
+		}
+		
+	}
+	
+	
+	
+	
+	/***
+	 *此变量用于为三个弹出科目的文本框取值赋值提供目标
+	 */
+	var target="";
+	
+	//实现取值窗体值函数（从子窗体传过来的）
+	function deliverValue(paramObject){
+		//客户id
+        if (target=="cusid") {
+        	$("#cusid").attr("dbValue",paramObject.ccode).val(paramObject.cname);
+        	//document.getElementById("cusid").setAttribute("dbValue", paramObject.ccode) ;
+        	//document.getElementById("cusid").value= paramObject.cname ;
+        }
+		//供应商id
+        else if (target=="supid") {
+        	$("#supid").attr("dbValue",paramObject.ccode).val(paramObject.cname);
+        	//document.getElementById("supid").setAttribute("dbValue", paramObject.ccode) ;
+        	//document.getElementById("supid").value= paramObject.cname ;
+        }
+		//部门id
+		else if (target=="deptid") {
+			$("#deptid").attr("dbValue",paramObject.ccode).val(paramObject.cname);
+			//document.getElementById("deptid").setAttribute("dbValue", paramObject.ccode) ;
+        	//document.getElementById("deptid").value= paramObject.cname ;	
+        }
+		//个人id
+		else if (target=="personid") {
+			$("#personid").attr("dbValue",paramObject.ccode).val(paramObject.cname);
+			//document.getElementById("personid").setAttribute("dbValue", paramObject.ccode) ;
+        	//document.getElementById("personid").value= paramObject.cname ;
+		}
+		//项目id
+		else if (target=="itemid") {
+			$("#itemid").attr("dbValue",paramObject.gradecode).val(paramObject.gradename);
+			/*添加项目返回参数(2013-8-26) lyl*/
+			//document.getElementById("itemid").setAttribute("dbValue", paramObject.gradecode) ;
+        	//document.getElementById("itemid").value= paramObject.gradename ;
+		}
+       //科目id
+		else if (target=="codeid") {
+			$("#codeid").attr("dbValue",paramObject.selKemuCode).val(paramObject.selKemuName);
+			//document.getElementById("codeid").setAttribute("dbValue", paramObject.selKemuCode) ;
+        	//document.getElementById("codeid").value= paramObject.selKemuName ;
+		}
+		
+		
+	}
+	/**
+	 * 添加项目参照界面(2013-8-26) lyl
+	 */
+	function openItem(){
+		if(cassItem!=null){
+			var itemParam = {};
+			itemParam.cassItem = cassItem;
+			window.parent.openWindow("basic_comref_fitemref","gl_transfer_fw2",itemParam);
+			target='itemid';	
+		}else{
+			jAlert("此科目核算科目没有指定项目大类!");
+		}
+		
+	}
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:350px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:320px;height:380px;margin-left:10px;margin-top:10px;">
+			<div style="width:100%;height:70px;">
+				
+				<fieldset>
+				<legend>公式说明</legend>
+				<div id="fn_content" style="margin-left:0px;width:320px;color:blue;">
+					数量期初余额[SQC()]:取指定科目和期间的数量期初余额<br/>
+					参数说明：所有惨呼均可缺省<br/>
+					科目缺省当取当前行科目，月份缺省取结转月份
+				</div>
+			</fieldset>
+				
+				
+			</div>
+			
+			
+			<div style="text-align:center;margin-top:10px;">
+				<div>科&nbsp;&nbsp;目&nbsp;<input type="text" onblur= "target='codeid';conversioncode_s('code',this);queryCodeAddInfo()" id="codeid"  dbValue = ""  style="width:160px;"/><input type="button" class="finder" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_fw2');target='codeid';"/></div>
+				<div>期&nbsp;&nbsp;间
+					<select id= "selperiod" style="width:64px;">
+						<option>月</option>
+						<option>年</option>
+					</select>&nbsp;&nbsp;
+					方&nbsp;&nbsp;向
+					<select id = "selfx" style="width:64px;">
+						
+						<option>借</option>
+						<option>贷</option>
+						
+					</select>&nbsp;&nbsp;&nbsp;&nbsp;
+				</div>
+				<div>客&nbsp;&nbsp;户&nbsp;<input type="text"  onfocus="dofocustoenter('Customer',this,'target','cusid','','')" dbValue = "" id="cusid" style="width:160px;"/><input id = "cusbtn" type="button" class="finder" onclick="javascript:window.parent.openWindow('basic_comref_cusref','gl_transfer_fw2');target='cusid';"/></div>
+				<div>供应商&nbsp;<input type="text" dbValue = ""  onfocus="dofocustoenter('Vendor',this,'target','supid','','')" id="supid" style="width:160px;"/><input id = "supbtn" type="button" class="finder" onclick="javascript:window.parent.openWindow('basic_comref_supref','gl_transfer_fw2');target='supid';"/></div>
+				<div >部&nbsp;&nbsp;门&nbsp;<input type="text" onfocus="dofocustoenter('Department',this,'target','deptid','','')" dbValue = "" id="deptid" style="width:160px;"/><input id = "deptbtn" type="button" class="finder" onclick="javascript:window.parent.openWindow('basic_comref_dptref','gl_transfer_fw2');target='deptid';"/></div>
+				<div >个&nbsp;&nbsp;人&nbsp;<input type="text" onfocus="dofocustoenter('Person',this,'target','personid','','')" dbValue = "" id="personid" style="width:160px;"/><input id = "personbtn" type="button" class="finder" onclick="javascript:window.parent.openWindow('basic_comref_personref','gl_transfer_fw2');target='personid';"/></div>
+				<div >项&nbsp;&nbsp;目&nbsp;<input type="text"  dbValue = "" id="itemid" style="width:160px;"/><input id = "itembtn"  type="button" class="finder" onclick="openItem();"/></div>
+			
+			</div>
+			
+			<div class="v_a_m" style="margin-left:20px;margin-top:5px;height:20px;">
+				<input type="radio" name="rd_1" value="1" id="rd_1_1" ><label for="rd_1_1">按默认值取数</label>
+				
+				<input type="radio" name="rd_1" value="2"  id="rd_1_2" checked="checked" style="margin-left:20px;"><label for="rd_1_2">按科目(辅助项)总数取数</label>
+				
+			</div>
+			
+			
+			
+			<div style="width:100%;height:70px;margin-top:5px;" class="v_a_m">
+				
+				<fieldset style="border:none;">
+				<legend><input type="checkbox" id="cb_1" onclick="setdis(this);" disabled="disabled"/><label for="cb_1">继续输入公式</label></legend>
+				<div id="rdgc" style="margin-left:0px;width:320px;display:none;">
+					运算符：
+					<input type="radio" name="rd_2" id="rd_2_1" checked="checked"/><label for="rd_2_1">+(加)</label>&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="rd_2" id="rd_2_2"/><label for="rd_2_2">-(减)</label>&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="rd_2" id="rd_2_3"/><label for="rd_2_3">*(乘)</label>&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="rd_2" id="rd_2_4"/><label for="rd_2_4">/(除)</label>&nbsp;&nbsp;&nbsp;
+				</div>
+			</fieldset>
+			</div>
+			<div style="width:100%;height:26px;text-align:right;">
+				<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('gl_transfer_fw2');"/>&nbsp;
+				<input type="button" value="上一步" onclick="javascript:window.parent.closeWindow('gl_transfer_fw2');window.parent.openWindow('gl_transfer_fw1','gl_transfer_fw2');"/>&nbsp;
+				<input type="button" value="下一步" disabled="disabled"/>&nbsp;&nbsp;
+				<input type="button" value="完成" onclick="getFuncString()"/>&nbsp;
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+//获取父窗体传来的值
+var valueObject = window.parent.valueMap.get("gl_transfer_fw2");
+var selFuncDesc= valueObject.selFuncDesc;
+var selFuncName= valueObject.selFuncName;
+var d_code=valueObject.code;
+document.getElementById("codeid").value=d_code;
+$("#codeid").attr("dbValue",d_code);
+//document.getElementById("codeid").dbValue=d_code;
+//辅助项信息判断
+queryCodeAddInfo();
+//将值作为文本放进fn_content DIV里
+document.getElementById("fn_content").innerHTML="公司名称：" + selFuncDesc + ";函数：" + selFuncName;
+
+</script>
+
+	
+
+</html>

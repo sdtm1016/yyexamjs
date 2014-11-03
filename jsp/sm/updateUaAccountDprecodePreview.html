@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>科目预览</title>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<style type="text/css">
+	body{background-color:#D4D0C8;font-family:宋体;padding:5px;margin:0;}
+	table{border:0;font-size:12px;cursor:default;}
+	th{border:1px;border-style:outset;border-color:#eee;font-weight:normal;background-color:#D4D0C8;text-align:center;}
+	td{border:1px;border-style:outset;border-color:#eee;text-align:left;}
+	input{display:none;float:left;}
+	#tabpanel div{display:none;}
+</style>
+<script type="text/javascript">
+
+
+	var currentLoginedUaAccount=null;
+	
+	// SysManagerId、行业性质名称
+	var sysManagerId = null;
+	var ctradekind = null;
+	
+	
+	
+	
+	
+
+	
+	function showTab(id){
+		
+		//document.getElementById(id).style.display="block";
+		
+		
+		//var buts = document.getElementById("tabbutton").getElementsByTagName("input");
+		
+		
+		var tabs = document.getElementById("tabpanel").getElementsByTagName("div");
+		
+		for(var i=0;i<tabs.length;i++){
+			
+			if(tabs[i].parentNode.id=="tabpanel"){
+				if(tabs[i].id!=id){
+					tabs[i].style.display="none";
+				}else{
+					tabs[i].style.display="block";
+					tabs[i].getElementsByTagName("div")[0].style.display="block";
+				}
+			}
+			
+		}
+		
+		
+
+		/*
+		for(var i=0;i<buts.length;i++){
+			
+			if(buts[i].value!=id){
+				buts[i].style.display="none";
+			}else{
+				buts[i].style.display="block";
+			}
+			
+		}
+		*/
+		
+	}
+	
+	//页面加载的时候加载初始化数据查询函数里要调用此函数来显示填充了数据的tab
+	function initDisTab(){
+		
+		//1.隐藏所有tab
+
+		var tabs = document.getElementById("tabpanel").getElementsByTagName("div");
+		for(var i=0;i<tabs.length;i++){
+			tabs[i].style.display="none";
+		}
+		
+		//2.没有数据的tab，button也不显示
+		var buts = document.getElementById("tabbutton").getElementsByTagName("input");
+		
+		for(var i=0;i<buts.length;i++){
+			var id = buts[i].value;
+			var dataTable = document.getElementById(id).getElementsByTagName("table")[1];
+			if(dataTable.rows.length<=0){
+				buts[i].style.display="none";
+			}else{
+				buts[i].style.display="block";
+			}
+		
+			
+			
+		}
+		
+		
+		
+	}
+	
+	
+	
+	
+	$(document).ready(function() {
+		
+		//1.初始化tab表格
+		
+		var tabs = document.getElementById("tabpanel").getElementsByTagName("div");
+		
+		for(var i=0;i<tabs.length;i++){
+			
+			//判断是否是目标div
+			if(tabs[i].parentNode.id=="tabpanel"){
+
+
+				//tabs[i].style.height="280px";
+				
+				//得到表头和表内容区
+				tableHeader = tabs[i].getElementsByTagName("table")[0];
+				tableHeader.rows[0].cells[0].style.width="70px";
+				tableHeader.rows[0].cells[1].style.width="100px";
+				tableHeader.rows[0].cells[2].style.width="200px";
+				
+				
+				//tableHeader.style="border:0;font-size:12px;cursor:default";
+
+				tableContent = tabs[i].getElementsByTagName("div")[0];
+				
+				//设置格tab为带滚动条
+				tableContent.style.height="260px";
+				tableContent.style.overflow="auto";
+			}
+		}
+		
+		
+		
+		
+		//1.获得弹出本窗体窗体的 SysManagerId、行业性质名称
+		try{
+			sysManagerId = window.parent.document.getElementById("updateAccount").getElementsByTagName("iframe")[0].contentWindow.sysManagerId;
+			ctradekind = window.parent.document.getElementById("updateAccount").getElementsByTagName("iframe")[0].contentWindow.ctradekind;
+		}catch(e){
+			jAlert("异常：获取修改账套窗体内变量失败");
+		}
+		
+		//alert("T3ID:"+sysManagerId+",行业性质:"+ctradekind);
+		
+		
+		//2.根据SysManagerId、行业性质名称查询科目信息
+		
+		$.ajax({
+			url:"glDprecode!findBySysManagerIdAndCtradeName.action",
+			data:"glDprecode.sysManagerId="+sysManagerId+"&glDprecode.ctradeName="+ctradekind,
+			type:"post",
+			success:function(data,status){
+				//alert(data.glDprecodeList.length);
+				var gdl = data.glDprecodeList;
+				
+				// adt = allDataTable “全部”选项卡
+				var adt = document.getElementById("全部").getElementsByTagName("table")[1];
+				
+				//4.将数据填充到相应的tab表里
+				for(var i=0;i<gdl.length;i++){
+					
+					//得到当前科目数据的科目类别名
+					var cclass = gdl[i].cclass;
+					
+					var tab = document.getElementById(cclass);
+					table = tab.getElementsByTagName("table")[1];
+					
+					//动态向表格填充行：
+					var row = table.insertRow(table.rows.length);
+					var adt_row = adt.insertRow(adt.rows.length);
+					
+					//“级次”列
+					var igrade = row.insertCell(0);
+					var adt_igrade = adt_row.insertCell(0);
+					
+					//“科目编码”列
+					var ccode = row.insertCell(1);
+					var adt_ccode = adt_row.insertCell(1);
+					
+					//“科目名称”列
+					var ccodeName = row.insertCell(2);
+					var adt_ccodeName = adt_row.insertCell(2);
+					
+					
+					
+					//初始化设置“级次”列
+					igrade.style.backgroundColor="#D4D0C8";
+					igrade.style.border="1px";
+					igrade.style.borderStyle="outset";
+					igrade.style.borderColor="#eee";
+					igrade.style.textAlign="center";
+					igrade.innerHTML=gdl[i].igrade;
+					igrade.style.width="70px";
+					
+
+					adt_igrade.style.backgroundColor="#D4D0C8";
+					adt_igrade.style.border="1px";
+					adt_igrade.style.borderStyle="outset";
+					adt_igrade.style.borderColor="#eee";
+					adt_igrade.style.textAlign="center";
+					adt_igrade.innerHTML=gdl[i].igrade;
+					adt_igrade.style.width="70px";
+					
+					
+					//初始化设置“科目编码”列
+					ccode.style.backgroundColor="#FFFFFF";
+					ccode.style.border="1px solid #D4D0C8";
+					//ccode.style.textAlign="center";
+					ccode.innerHTML=gdl[i].ccode;
+					ccode.style.width="100px";
+					
+					adt_ccode.style.backgroundColor="#FFFFFF";
+					adt_ccode.style.border="1px solid #D4D0C8";
+					//adt_ccode.style.textAlign="center";
+					adt_ccode.innerHTML=gdl[i].ccode;
+					adt_ccode.style.width="100px";
+					
+					//初始化设置“科目名称”列
+					ccodeName.style.backgroundColor="#FFFFFF";
+					ccodeName.style.border="1px solid #D4D0C8";
+					//ccodeName.style.textAlign="center";
+					ccodeName.innerHTML=gdl[i].ccodeName;
+					ccodeName.style.width="200px";
+					
+					adt_ccodeName.style.backgroundColor="#FFFFFF";
+					adt_ccodeName.style.border="1px solid #D4D0C8";
+					//ccodeName.style.textAlign="center";
+					adt_ccodeName.innerHTML=gdl[i].ccodeName;
+					adt_ccodeName.style.width="200px";
+					
+					
+				}
+
+				initDisTab();
+				//默认让第一个tab显示
+				showTab("全部");
+				
+			},
+			error:function(data,status){
+				jAlert(data.message);
+			},
+			dataType:"json"
+		});
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	});
+</script>
+</head>
+<body style="background-color: #d4d0c8;">
+	<div id="tabbutton">
+		<input type="button" onclick="showTab('全部');" value="全部"/>
+		<input type="button" onclick="showTab('资产');" value="资产"/>
+		<input type="button" onclick="showTab('负债');" value="负债"/>
+		<input type="button" onclick="showTab('共同');" value="共同"/>
+		<input type="button" onclick="showTab('权益');" value="权益"/>
+		<input type="button" onclick="showTab('成本');" value="成本"/>
+		<input type="button" onclick="showTab('损益');" value="损益"/>
+		<input type="button" onclick="showTab('无分类');" value="无分类"/>
+		<input type="button" onclick="showTab('地勘类');" value="地勘类"/>
+		<input type="button" onclick="showTab('收入费用');" value="收入费用"/>
+		<input type="button" onclick="showTab('净资产');" value="净资产"/>
+		<input type="button" onclick="showTab('表外科目');" value="表外科目"/>
+		<input type="button" onclick="showTab('占用');" value="占用"/>
+		<input type="button" onclick="showTab('来源');" value="来源"/>
+		<input type="button" onclick="showTab('收入');" value="收入"/>
+		<input type="button" onclick="showTab('支出');" value="支出"/>
+		<input type="button" onclick="showTab('基金');" value="基金"/>
+		
+	</div>
+	<div id="tabpanel" style="clear:both;">
+	
+		<div id="全部">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+	
+		<div id="资产">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="负债">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="共同">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="权益">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="成本">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="损益">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		<div id="无分类">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div id="地勘类">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		<div id="收入费用">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div id="净资产">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div id="表外科目">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div id="占用">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div id="来源">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		<div id="收入">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		<div id="支出">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		<div id="基金">
+			<table cellspacing="0">
+				<tr><th>级次</th><th>科目编码</th><th>科目名称</th></tr>
+			</table>
+			<div>
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+		
+		
+	</div>
+</body>
+</html>

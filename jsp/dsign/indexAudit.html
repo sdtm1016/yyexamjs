@@ -1,0 +1,798 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>审核凭证</title>
+<link rel="stylesheet" type="text/css" href="css/base.css" />
+<!-- 引入凭证组件全部对象定义 2012.09.11-->  
+<script type="text/javascript" src="js/dsignDomain.js"></script>
+<!-- 引入jquery组件 -->
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<!-- 引入公共js函数 -->
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../js/tableRef.js"></script>
+
+<!-- 引入日期组件 -->
+<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../js/winui/plugin/winui.menubar.xhtml1.0.js"></script>
+
+
+
+<script type="text/javascript">
+
+//窗体ID，本变量不能删除，用于引入的js中的函数弹出子窗体时传参，由于很多凭证页面都引入同一套js，js里函数无法确定窗体ID，只能从页面动态获取。
+var pageWindowId="dsignAudit";
+
+$(function(){
+	 $(document.body).find("input[type='text']").attr("readonly",true);
+});
+
+
+
+
+
+</script>
+
+<style type="text/css">
+.buttongroup {height:40px;background-color:#D4D0C8;cursor:default;}
+.buttongroup .group {padding-right:10px;float:left;margin:3px auto 3px 0px;}
+.buttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+.buttongroup .group div input {width:31px;height:35px;padding-top:15px;padding-left:1px;font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;outline:none;}
+
+.buttongroup ul {position:relative;margin-left:0px;margin-top:35px;width:80px;border:2px outset #ccc;background-color:#D4D0C8;padding:0px;cursor:default;}
+.buttongroup li {list-style:none;height:18px;line-height:18px;padding-left:10px;}
+.buttongroup li:hover {background-color:#0a246a;color:#fff;}
+
+</style>
+	
+
+</head>
+
+<body style="padding:0px 0px 0px 0px;">
+<div class="wrap">
+	<div class="head" style="padding-left:10px;">
+	
+	<div style="width:100%;height:19px;">
+	<div type="menubar" style="display:none;">
+		<div>
+			<div>文件(F)</div>
+			<div>
+				<div>预览 </div>
+				<div>打印</div>
+				<div>输出</div>
+				<hr/>
+				<div onclick="">退出</div>
+			</div>
+		</div>
+		<div>
+			<div>审核(E)</div>
+			<div>
+				<div onclick="auditDsign();">审核凭证</div>
+				<div onclick="cancelAuditDsign();">取消审核</div>
+				<hr/>
+				<div onclick="auditAlldsign()">成批审核凭证</div>
+				<div onclick="unauditAlldsign()">成批取消审核</div>
+				<hr/>
+				<div onclick="errorDsign()">标错/取消</div>
+			</div>
+		</div>
+		<div>
+			<div>查看(V)</div>
+			<div>
+				<div onclick="">查询</div>
+				<hr/>
+				<div onclick="firstPageDsign()">首张凭证</div>
+				<div onclick="">上张凭证</div>
+				<div onclick="">下张凭证</div>
+				<div onclick="">末张凭证</div>
+				<hr/>
+				<div onclick="">查辅助明细</div>
+				<div onclick="">查找分单</div>
+				<div onclick="">科目转换</div>
+				<hr/>
+				<div onclick="">联查明细账</div>
+				<div onclick="">联查原始单据</div>
+			</div>
+		</div>
+		<div>
+			<div>工具(T)</div>
+			<div>
+				<div onclick="">计算器</div>
+				<div onclick="">会计日历</div>
+			</div>
+		</div>
+		<div>
+			<div>帮助(H)</div>
+			<div>
+				<div onclick="">帮助主题</div>
+				<div onclick="">索引</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	
+	
+	<div class="buttongroup">
+		<div class="group">
+			<div><input type="button" value="打印" style="background-image:url('../../images/icon/print.gif');"/></div>
+			<div><input type="button" value="预览" style="background-image:url('../../images/icon/preview.gif');"/></div>
+			<div><input type="button" value="输出" style="background-image:url('../../images/icon/output.gif');"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" value="审核" style="background-image:url('../../images/icon/pzsh.gif');" onclick="auditDsign()"/></div>
+			<div><input type="button" value="取消" style="background-image:url('../../images/icon/pzqx.gif');" onclick="cancelAuditDsign()"/></div>
+			<div><input type="button" value="标错" style="background-image:url('../../images/icon/pzbc.gif');" onclick="errorDsign()"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" value="查询" style="background-image:url('../../images/icon/telescope.gif');" onclick="queryDsign()"/></div>
+			<div><input type="button" value="流量" style="background-image:url('../../images/icon/pzsh.gif');"      onclick="showCashFlow()"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" value="首张" style="background-image:url('../../images/icon/firstcard.gif');" onclick="firstAuditAccvouchkey()"/></div>
+			<div><input type="button" value="上张" style="background-image:url('../../images/icon/prevcard.gif');"  onclick="upAuditAccvouchKey()"/></div>
+			<div><input type="button" value="下张" style="background-image:url('../../images/icon/nextcard.gif');"  onclick="downAuditAccvouchkey()"/></div>
+			<div><input type="button" value="末张" style="background-image:url('../../images/icon/lastcard.gif');"  onclick="lastAuditAccvouchkey()"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" value="帮助" style="background-image:url('../../images/icon/help.gif');" onclick=""/></div>
+			<div><input type="button" value="退出" style="background-image:url('../../images/icon/exit.gif');" onclick="javascript:window.parent.closeWindow('dsignAudit');"/></div>
+		</div>
+	</div>
+	
+	
+      
+    </div>
+    <div class="content">
+    	<div id="errorDsignimg" style="position:absolute;display:none;margin-top:0px;margin-left:0px;"><img src="images/errorDsign.png" style="width:67px;height:30px;"/></div>
+    	<div id="zuofeiDsignimg" style="position:absolute;display:none;margin-top:0px;margin-left:0px;"><img src="images/zuofeiDsign.jpg" style="width:67px;height:30px;"/></div>
+	    <div id="yishengchengDsignimg" style="position:absolute;display:none;margin-top:0px;margin-left:0px;"><img src="images/yishengchengDsign.jpg" style="width:67px;height:30px;"/></div>
+        	
+    	<p class="z_02"></p><p class="z_03"></p>
+        <table cellpadding="0" cellspacing="0" border="0" class="z_tab_01">
+        	<tr>
+            	<td colspan="3" height="6">&nbsp;</td>
+            </tr>
+        	<tr>
+            	<td colspan="2" rowspan="2" class="z_tab_01_title">
+            	<h1>
+            	<span id="dsignName" >收款凭证</span>
+            	</h1></td>
+                <td height="18"><input type="text"  id="addInfo1" onkeydown="return addInfo1KeyDown(this);"  onfocus="return checkProducerDate()" class="z_tab_01_text01" /></td>
+            </tr>
+            <tr>
+                <td height="18"><input type="text" id="addInfo2" onkeydown="return addInfo2KeyDown(this);"  onfocus="return checkProducerDate()" class="z_tab_01_text01" /></td>
+            </tr>
+            <tr>
+                <td width="180" height="20"><span class="z_tab_01_span01" id="dsignType" >收</span><span>&nbsp;字</span>
+                <div class="z_tab_01_span02" id="dsignNumber" style="float:left;height:14px;margin-top:4px;" >0001</div></td>
+               
+                <td width="280"><span>制单日期：</span><input type="text" class="z_tab_01_span03" id="producerDate" style="float:left;" onclick="showDateFinder();" value="2013-01-01"/><input id='finder_pdf' type="button" onclick="WdatePicker({el:'producerDate',onpicking:function(dp){$('#finder_pdf').hide();$dp.hide();}})" class="finder" style="display:none;"/></td>
+				<td width="110"><span>附单据数：</span><span><input type="text"  id="addNumber"  onfocus="return checkProducerDate()" class="z_tab_01_text02" /></span></td>
+            </tr>
+        </table>
+        <table id="header" cellpadding="0" cellspacing="0" border="0" align="center" class="z_tab_02">
+        	<!-- 凭证组件表头-->
+        	<tr bgcolor="#FFFFFF">
+            	<td class="z_tab_02_td_1" style="width:153px;">摘要</td>
+                <td class="z_tab_02_td_2" style="width:254px;">科目名称</td>
+                <td class="z_tab_02_td_2s">外币</td>
+                <td class="z_tab_02_td_3">借方金额</td>
+                <td class="z_tab_02_td_4" style="border-bottom:none;">&nbsp;</td>
+                <td class="z_tab_02_td_3">贷方金额</td>
+                <td class="z_tab_02_td_5" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+        </table>
+        <div style="height:175px; width:670px; margin:0 auto; overflow:hidden">
+        	<div class="yscroll">
+        		<input type="button" value="↑" onclick="scrollDown()" class="prev_buton"/>
+        		<input type="button" value="↓" onclick="scrollUp()" class="next_buton"/>
+        	</div>
+         <table id="gridtable" cellpadding="0" cellspacing="0" border="0" align="center" class="z_tab_03">
+        	<tr bgcolor="#FFFFFF" row="1"  onclick="dataRowClickBiz(this)">
+              	<td class="z_tab_03_td_1" rowspan="2" style="width:150px;"><input style="width:100%;height:100%;line-height:30px;" type="text" class="z_zy" id="r1_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid" dbValue ="1" value="收到投资" onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)" onblur="cellBlur(this)"  onDblClick = "selZhaiyao(this)"   readonly=true /></td>
+                <td class="z_tab_03_td_2"  rowspan="2" style="width:250px;">
+                
+                <textarea style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  id="r1_c2"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""    onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)" onblur="cellBlur(this)" onDblClick = "selKemu(this,'dsignAudit')">银行存款</textarea>
+                </td>
+                <td class="z_tab_02_td_2s" style="height:16px;">
+                	<!-- 外币 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_07">
+                    	<tr row="1" col="5"  id="r1_c5" dbValue="123456789012345" >
+                        	<td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r1_c5_1"  mcol="1" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_2"  mcol="2" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)"/> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_3"  mcol="3" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)"/></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r1_c5_4"  mcol="4" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_5"  mcol="5" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_6"  mcol="6" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r1_c5_7"  mcol="7" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_8"  mcol="8" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_9"  mcol="9" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r1_c5_10"  mcol="10" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_11"  mcol="11" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_12"  mcol="12" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_r"><input type="text" size="1" value="" id= "r1_c5_13"  mcol="13" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r1_c5_14"  mcol="14" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g" style=" height:16px;border:none"><input type="text" size="1" value="" id= "r1_c5_15"  mcol="15" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)"/></td>
+                         </tr>
+                    </table><!-- 外币 end -->
+                </td>
+                <td class="z_tab_03_td_3"  rowspan="2">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_04">
+                    	<tr row="1" col="3"  id="r1_c3" dbValue="123456789012345" >
+                        	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_1"  mcol="1"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_2"  mcol="2"  value=""     onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_3"  mcol="3"  value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_4"  mcol="4"  value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_5"  mcol="5"  value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_6"  mcol="6"  value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_7"   mcol="7"  value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_8"   mcol="8"  value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />3</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_9"    mcol="9"  value=""     onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_10"  mcol="10"  value=""     onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_11"   mcol="11" value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_12"   mcol="12" value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r1_c3_13"  mcol="13"  value=""     onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_14"   mcol="14" value=""    onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r1_c3_15"  mcol="15" value=""     onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                         </tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td class="z_tab_03_td_4"  rowspan="2" style="border-bottom:none">&nbsp;</td>
+                <td class="z_tab_03_td_3"  rowspan="2">
+                	<!-- 贷方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row= "1" col="3"  id="r1_c4" dbValue="123456789012345">
+                        	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_16"  mcol="16"  value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_17"  mcol="17"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_18"  mcol="18"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_19"  mcol="19"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_20"  mcol="20"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_21"  mcol="21"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_22"  mcol="22"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_23"  mcol="23"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_24"  mcol="24"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_25"  mcol="25"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_26"  mcol="26"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_27"  mcol="27"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r1_c3_28"  mcol="28"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_29"  mcol="29"  value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)"  /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r1_c3_30"  mcol="30"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 贷方金额 end -->
+                </td>
+                <td class="z_tab_03_td_5" rowspan="2" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+            <tr row="1" onclick="dataRowClickBiz(this)">
+            	<td style="height:17px;display:none;">
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_07">
+                    	<tr row="1" col="6"  id="r1_c6" dbValue="123456789012345">
+                        	<td class="z_tab_07_01" id = "r1_c6_1"></td>
+                            <td class="z_tab_07_02"><input type="text" size="1" id= "r1_c6_2"  value="4"   onkeydown="return mexchcellKeyControl(this)" onfocus="exchangeRateFocus(this)" onblur="exchangeRateBlur(this)"  /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr bgcolor="#FFFFFF" row="2" onclick="dataRowClickBiz(this)" >
+            	<td class="z_tab_03_td_1" rowspan="2"><input style="width:100%;height:100%;line-height:30px;"  type="text" class="z_zy" id="r2_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="收到投资" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)"  onblur="cellBlur(this)" onDblClick = "selZhaiyao(this)" /> </td>
+                <td class="z_tab_03_td_2" rowspan="2" style="width:250px;">
+                
+                 
+                <textarea style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  id="r2_c2"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""  onkeydown="return cellKeyControl(this)"  onfocus="cellFocus(this)"  onblur="cellBlur(this)"  onDblClick = "selKemu(this,'dsignAudit')">实收资本</textarea>
+                </td>
+                <td class="z_tab_02_td_2s" style="height:16px;">
+                	<!-- 外币 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_07">
+                    	<tr row="2" col="5"  id="r2_c5" dbValue="123456789012345" >
+                        	<td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r2_c5_1"  mcol="1" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_2"  mcol="2" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_3"  mcol="3" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r2_c5_4"  mcol="4" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_5"  mcol="5" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_6"  mcol="6" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r2_c5_7"  mcol="7" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_8"  mcol="8" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_9"  mcol="9" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r2_c5_10"  mcol="10" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_11"  mcol="11" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_12"  mcol="12" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_r"><input type="text" size="1" value="" id= "r2_c5_13"  mcol="13" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r2_c5_14"  mcol="14" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g" style=" height:16px;border:none"><input type="text" size="1" value="" id= "r2_c5_15"  mcol="15" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 外币 end -->
+                </td>
+                <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	
+                    	<tr row="2" col="3"  id="r2_c3" dbValue="123456789012345">
+                        	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_1"  mcol="1"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_2"  mcol="2"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_3"  mcol="3"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_4"  mcol="4"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_5"  mcol="5"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_6"  mcol="6"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_7"   mcol="7"  value=""  onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_8"   mcol="8"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_9"    mcol="9"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_10"  mcol="10"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_11"   mcol="11" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_12"   mcol="12" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r2_c3_13"  mcol="13"  value=""   onkeydown="return mcellKeyControl(this)" onfocus="mcellFocus(this)" onblur="mcellBlur(this)"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_14"   mcol="14" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r2_c3_15"  mcol="15" value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+
+                         </tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_4" rowspan="2" style="border-bottom:none">&nbsp;</td>
+                <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 贷方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="2" col="3"  id="r2_c4" dbValue="123456789012345">
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_16"  mcol="16"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_17"  mcol="17"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_18"  mcol="18"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_19"  mcol="19"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_20"  mcol="20"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_21"  mcol="21"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_22"  mcol="22"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_23"  mcol="23"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />3</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_24"  mcol="24"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_25"  mcol="25"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_26"  mcol="26"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_27"  mcol="27"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r2_c3_28"  mcol="28"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_29"  mcol="29"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r2_c3_30"  mcol="30"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" />0</td>
+          </tr>
+                    </table><!-- 贷方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_5" rowspan="2" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+            <tr row="2" onclick="dataRowClickBiz(this)">
+            	<td style="height:17px;display:none;">
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_07">
+                    	<tr row="2" col="6"  id="r2_c6" dbValue="123456789012345" >
+                        	<td class="z_tab_07_01" id= "r2_c6_1" ></td>
+                            <td class="z_tab_07_02"><input type="text" size="1" id= "r2_c6_2"  value="4"   onkeydown="return mexchcellKeyControl(this)"  onfocus="exchangeRateFocus(this)" onblur="exchangeRateBlur(this)" /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr bgcolor="#FFFFFF" row="3"  onclick="dataRowClickBiz(this)">
+               	<td class="z_tab_03_td_1" rowspan="2"><input style="width:100%;height:100%;line-height:30px;" type="text" class="z_zy" id="r3_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)"  onblur="cellBlur(this)" onDblClick = "selZhaiyao(this)" /> </td>
+                <td class="z_tab_03_td_2" rowspan="2" style="width:250px;">
+                
+                <textarea style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  id="r3_c2"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""   onkeydown="return cellKeyControl(this)"  onfocus="cellFocus(this)" onblur="cellBlur(this)" onDblClick = "selKemu(this,'dsignAudit')"></textarea>
+                
+                </td>
+             	<td class="z_tab_02_td_2s" style="height:16px;">
+                	<!-- 外币 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_07">
+                    	<tr row="3" col="5"  id="r3_c5" dbValue="123456789012345" >
+                        	<td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r3_c5_1"  mcol="1" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_2"  mcol="2" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_3"  mcol="3" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r3_c5_4"  mcol="4" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_5"  mcol="5" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_6"  mcol="6" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r3_c5_7"  mcol="7" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_8"  mcol="8" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_9"  mcol="9" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r3_c5_10"  mcol="10" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_11"  mcol="11" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_12"  mcol="12" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_r"><input type="text" size="1" value="" id= "r3_c5_13"  mcol="13" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r3_c5_14"  mcol="14" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g" style=" height:16px;border:none"><input type="text" size="1" value="" id= "r3_c5_15"  mcol="15" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 外币 end -->
+                </td>
+                <td class="z_tab_03_td_3" rowspan="2">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="3" col="3"  id="r3_c3" dbValue="123456789012345">
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_1"  mcol="1"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_2"  mcol="2"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_3"  mcol="3"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_4"  mcol="4"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_5"  mcol="5"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_6"  mcol="6"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_7"   mcol="7"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_8"   mcol="8"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_9"    mcol="9"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_10"  mcol="10"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_11"   mcol="11" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_12"   mcol="12" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r3_c3_13"  mcol="13"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_14"   mcol="14" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r3_c3_15"  mcol="15" value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+          </tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_4" rowspan="2" style="border-bottom:none">&nbsp;</td>
+                <td class="z_tab_03_td_3" rowspan="2">
+                	<!-- 贷方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="3" col="3"  id="r3_c4" dbValue="123456789012345">
+                           	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_16"  mcol="16"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_17"  mcol="17"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_18"  mcol="18"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_19"  mcol="19"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_20"  mcol="20"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_21"  mcol="21"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_22"  mcol="22"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_23"  mcol="23"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_24"  mcol="24"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r3_c3_25"  mcol="25"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_26"  mcol="26"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_27"  mcol="27"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r3_c3_28"  mcol="28"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r3_c3_29"  mcol="29"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r3_c3_30"  mcol="30"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                      </tr>
+                    </table><!-- 贷方金额 end -->
+                </td>
+                <td class="z_tab_03_td_5" rowspan="2" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+            <tr row="3" onclick="dataRowClickBiz(this)">
+            	<td style="height:17px;display:none;">
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_07">
+                    	<tr  row="3" col="6"  id="r3_c6" dbValue="123456789012345" >
+                        	<td class="z_tab_07_01" id= "r3_c6_1" ></td>
+                            <td class="z_tab_07_02"><input type="text" size="1" id= "r3_c6_2"  value="4"   onkeydown="return mexchcellKeyControl(this)"  onfocus="exchangeRateFocus(this)" onblur="exchangeRateBlur(this)"  /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr bgcolor="#FFFFFF" row="4"  onclick="dataRowClickBiz(this)">
+            	<td class="z_tab_03_td_1" rowspan="2"><input style="width:100%;height:100%;line-height:30px;"  type="text" class="z_zy" id="r4_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)"  onblur="cellBlur(this)"  onDblClick = "selZhaiyao(this)" /> </td>
+                <td class="z_tab_03_td_2" rowspan="2" style="width:250px;">
+                
+                <textarea style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  id="r4_c2"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""  onkeydown="return cellKeyControl(this)"  onfocus="cellFocus(this)"  onblur="cellBlur(this)"  onDblClick = "selKemu(this,'dsignAudit')"></textarea>
+                </td>
+                <td class="z_tab_02_td_2s" style="height:16px;">
+                	<!-- 外币 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_07">
+                    	<tr row="4" col="5"  id="r4_c5" dbValue="123456789012345" >
+                        	<td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r4_c5_1"  mcol="1" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_2"  mcol="2" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_3"  mcol="3" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r4_c5_4"  mcol="4" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_5"  mcol="5" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_6"  mcol="6" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r4_c5_7"  mcol="7" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_8"  mcol="8" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_9"  mcol="9" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r4_c5_10"  mcol="10" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_11"  mcol="11" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_12"  mcol="12" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_r"><input type="text" size="1" value="" id= "r4_c5_13"  mcol="13" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r4_c5_14"  mcol="14" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g" style=" height:16px;border:none"><input type="text" size="1" value="" id= "r4_c5_15"  mcol="15" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 外币 end -->
+                </td>
+                <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="4" col="3"   id="r4_c3" dbValue="123456789012345">
+                       	    <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_1"  mcol="1"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_2"  mcol="2"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_3"  mcol="3"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_4"  mcol="4"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_5"  mcol="5"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_6"  mcol="6"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_7"   mcol="7"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_8"   mcol="8"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_9"    mcol="9"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_10"  mcol="10"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_11"   mcol="11" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_12"   mcol="12" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r4_c3_13"  mcol="13"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_14"   mcol="14" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r4_c3_15"  mcol="15" value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                  </tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_4" rowspan="2" style="border-bottom:none">&nbsp;</td>
+                <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 贷方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="4" col="3"  id="r4_c4" dbValue="123456789012345">
+                            	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_16"  mcol="16"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_17"  mcol="17"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_18"  mcol="18"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_19"  mcol="19"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_20"  mcol="20"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_21"  mcol="21"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_22"  mcol="22"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_23"  mcol="23"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_24"  mcol="24"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r4_c3_25"  mcol="25"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_26"  mcol="26"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_27"  mcol="27"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r4_c3_28"  mcol="28"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r4_c3_29"  mcol="29"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r4_c3_30"  mcol="30"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                      </tr>
+                    </table><!-- 贷方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_5" rowspan="2" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+             <tr row="4" onclick="dataRowClickBiz(this)">
+            	<td style="height:17px;display:none;">
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_07">
+                    	<tr row="4" col="6"  id="r4_c6" dbValue="123456789012345" >
+                        	<td class="z_tab_07_01"  id= "r4_c6_1" ></td>
+                            <td class="z_tab_07_02"><input type="text" size="1" id= "r4_c6_2"  value="4"   onkeydown="return mexchcellKeyControl(this)"  onfocus="exchangeRateFocus(this)" onblur="exchangeRateBlur(this)"  /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr bgcolor="#FFFFFF" row="5"  onclick="dataRowClickBiz(this)">
+           		<td class="z_tab_03_td_1" rowspan="2"><input style="width:100%;height:100%;line-height:30px;"  type="text" class="z_zy" id="r5_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)" onblur="cellBlur(this)"  onDblClick = "selZhaiyao(this)" /> </td>
+                <td class="z_tab_03_td_2" rowspan="2" style="width:250px;">
+                
+                
+                
+                <textarea style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  id="r5_c2"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""  onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)"  onblur="cellBlur(this)"  onDblClick = "selKemu(this,'dsignAudit')" ></textarea>
+                
+                </td>
+                <td class="z_tab_02_td_2s" style="height:16px;">
+                	<!-- 外币 start -->
+                	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_07">
+                    	<tr row="5" col="5"  id="r5_c5" dbValue="123456789012345" >
+                        	<td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r5_c5_1"  mcol="1" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_2"  mcol="2" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /> </td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_3"  mcol="3" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r5_c5_4"  mcol="4" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_5"  mcol="5" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_6"  mcol="6" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r5_c5_7"  mcol="7" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_8"  mcol="8" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_9"  mcol="9" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_b"><input type="text" size="1" value="" id= "r5_c5_10"  mcol="10" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_11"  mcol="11" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_12"  mcol="12" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_r"><input type="text" size="1" value="" id= "r5_c5_13"  mcol="13" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g"><input type="text" size="1" value="" id= "r5_c5_14"  mcol="14" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                            <td class="z_tab_07_td_g" style=" height:16px;border:none"><input type="text" size="1" value="" id= "r5_c5_15"  mcol="15" onkeydown="return mexchcellKeyControl(this)"  onfocus="mexchcellFocus(this)" onblur="mexchcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 外币 end -->
+                </td>
+              <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="5" col="3"  id="r5_c3" dbValue="123456789012345">
+                           	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_1"  mcol="1"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_2"  mcol="2"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_3"  mcol="3"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_4"  mcol="4"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_5"  mcol="5"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_6"  mcol="6"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_7"   mcol="7"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_8"   mcol="8"  value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_9"    mcol="9"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_10"  mcol="10"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_11"   mcol="11" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_12"   mcol="12" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r5_c3_13"  mcol="13"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_14"   mcol="14" value=""  onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r5_c3_15"  mcol="15" value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+               			</tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_4" rowspan="2" style="border-bottom:none">&nbsp;</td>
+                <td  class="z_tab_03_td_3" rowspan="2">
+                	<!-- 贷方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="5" col="3"  id="r5_c4" dbValue="123456789012345">
+                         	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_16"  mcol="16"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_17"  mcol="17"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_18"  mcol="18"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_19"  mcol="19"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_20"  mcol="20"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_21"  mcol="21"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_22"  mcol="22"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_23"  mcol="23"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_24"  mcol="24"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r5_c3_25"  mcol="25"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_26"  mcol="26"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_27"  mcol="27"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r5_c3_28"  mcol="28"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r5_c3_29"  mcol="29"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r5_c3_30"  mcol="30"  value=""   onkeydown="return mcellKeyControl(this)"  onfocus="mcellFocus(this)" onblur="mcellBlur(this)" /></td>
+                         </tr>
+                    </table><!-- 贷方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_5" rowspan="2" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+             <tr row="5" onclick="dataRowClickBiz(this)">
+            	<td style="height:17px;display:none;">
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_07">
+                    	<tr row="5" col="6"  id="r5_c6" dbValue="123456789012345" >
+                        	<td class="z_tab_07_01" id= "r5_c6_1" ></td>
+                            <td class="z_tab_07_02"><input type="text" size="1" id= "r5_c6_2"  value="4"   onkeydown="return mexchcellKeyControl(this)" onfocus="exchangeRateFocus(this)" onblur="exchangeRateBlur(this)" /></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+         </table>
+        </div>
+        <table cellpadding="0" cellspacing="0" border="0" class="z_tab_05">
+         	<tr bgcolor="#FFFFFF">
+            	<td ondblclick="editOtherInfo();" class="z_tab_05_td_1">票号</td>
+                <td colspan="3" ondblclick="editOtherInfo();"  class="cursor_pen" style="width:327px;border-bottom:none;border-left:none;"><input type="text" class="z_zy" style="float:left;width:20px;height:12px;line-height:12px;text-align:left;" id="subjectJsfs"    dbValue ="1" value=""  /><span id="shortLine1" style="float:left;">-</span><input size="20" type="text" class="z_tab_05_text01" style="float:left;width:180px;border:none;" id="ticketNumber"   value=""  dbValue =""  onfocus="codeAddFocus(this)"/></td>
+                <!--  
+            	<td class="z_tab_05_td_1">票号</td>
+                <td class="z_tab_05_td_01"><input size="20" type="text" class="z_tab_05_text01" id="ticketNumber"   value=""  /></td>
+                <td class="z_tab_05_td_2">&nbsp;</td>
+                <td class="z_tab_05_td_02">&nbsp;</td>
+                 -->
+                <td class="z_tab_05_td_3" rowspan="3">合计</td>
+                <td  class="z_tab_03_td_3" rowspan="3">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="hj" col="3" id="rhj_c3" dbValue="123456789012345">
+                           	<td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_1"  mcol="1"  value=""    /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_2"  mcol="2"  value=""    /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_3"  mcol="3"  value=""   /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_4"  mcol="4"  value=""  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_5"  mcol="5"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_6"  mcol="6"  value=""   /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_7"   mcol="7"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_8"   mcol="8"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_9"    mcol="9"  value=""    /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_10"  mcol="10"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_11"   mcol="11" value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_12"   mcol="12" value=""   /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_13"  mcol="13"  value=""    /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_14"   mcol="14" value=""   /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_15"  mcol="15" value=""    /></td>
+               			</tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_4" rowspan="3">&nbsp;</td>
+                <td  class="z_tab_03_td_3" rowspan="3">
+                	<!-- 借方金额 start -->
+                	<table cellpadding="0" cellspacing="0" border="0" class="z_tab_04">
+                    	<tr row="hj" col="3" id="rhj_c4" dbValue="123456789012345">
+                           	<td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_16"  mcol="1"  value=""    /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_17"  mcol="2"  value=""    /> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_18"  mcol="3"  value=""   /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_19"  mcol="4"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_20"  mcol="5"  value=""  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_21"  mcol="6"  value=""   /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_22"   mcol="7"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_23"   mcol="8"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_24"    mcol="9"  value=""   /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_25"  mcol="10"  value=""   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_26"   mcol="11" value=""  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_27"   mcol="12" value=""  /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_28"  mcol="13"  value=""    /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_29"   mcol="14" value="" /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_30"  mcol="15" value=""    /></td>
+               			</tr>
+                    </table><!-- 借方金额 end -->
+                </td>
+                <td  class="z_tab_03_td_5" rowspan="3" style="border-bottom:none;border-right:1px solid #00002B">&nbsp;</td>
+            </tr>
+            <tr class="cursor_pen">
+            	<td ondblclick="editOtherInfo();" class="z_tab_05_td_1">日期</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_05_td_01"><input size="20" type="text" class="z_tab_05_text01" id = "subjectDate" value=""  /></td>
+                <td ondblclick="editOtherInfo();" class="z_tab_05_td_2">单价</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_05_td_02"><input size="20" type="text" class="z_tab_05_text02" id = "subjectPrice" value=""  /></td>
+            </tr>
+            <tr class="cursor_pen">
+            	<td class="z_tab_05_td_1" style="border-bottom:1px solid #00002B">&nbsp;</td>
+                <td class="z_tab_05_td_01" style="border-bottom:1px solid #00002B">&nbsp;</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_05_td_2" style="border-bottom:1px solid #00002B">数量</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_05_td_02" style="border-bottom:1px solid #00002B"><input size="20" type="text" class="z_tab_05_text02" id = "subjectNumber"  value=""  /><span id="units"></span></td>
+            </tr>
+         </table>
+         <table cellpadding="0" cellspacing="0" border="0" class="z_tab_06">
+         	<tr>
+            	<td rowspan="2" class="z_tab_06_td_01">备注</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_02" style="border-bottom:none;width:140px;">项&nbsp;目</td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_03" style="border-left:none; border-bottom:none"><input size="20" type="text" class="z_tab_06_text01"  id = "subjecProject"  value=""  /></td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_02" style="border-left:none; border-bottom:none;">部&nbsp;&nbsp;门</td>
+                <td ondblclick="editOtherInfo();"  class="z_tab_06_td_04" style="border-left:none; border-bottom:none;"><input size="20" type="text" class="z_tab_06_text02" id = "subjectDept"  value=""  /></td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_02" style="border-left:none; border-bottom:none">个&nbsp;人</td>
+                <td ondblclick="editOtherInfo();"  class="z_tab_06_td_05" style="border-left:none; border-bottom:none;"><input size="20" type="text" class="z_tab_06_text03" id = "subjecPerson"  value=""  /></td>
+                <td class="z_tab_03_td_5" rowspan="2"  style="border-right:1px solid">&nbsp;</td>
+            </tr>
+            <tr>
+            	<td ondblclick="editOtherInfo();" class="z_tab_06_td_02"><span id="customerSpan">客&nbsp;户</span><span id="supSpan">供应商</span></td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_03" style="border-left:none"><input size="20" type="text" class="z_tab_06_text01" id = "subjectCustomer"  value=""  /><input size="20" type="text" class="z_tab_06_text01" id="subjectSup"/></td>
+                <td ondblclick="editOtherInfo();" class="z_tab_06_td_02" style="border-left:none">业务员</td>
+                <td ondblclick="editOtherInfo();"  class="z_tab_06_td_04" style="border-left:none"><input size="20" type="text" class="z_tab_06_text02" id = "subjectBusiness"  value=""  /></td>
+            	<td colspan="2" style="border-left:none"><img src="images/z_04.bmp" /><img src="images/z_05.bmp" /><img src="images/z_06.bmp"  onclick="editOtherInfo();" /></td>
+            </tr>
+        
+         </table>
+        
+         <p class="z_p">
+         	<span class="z_p_span_01" >记账</span><span class="z_p_span_05" id="bookkeeper" ></span>
+         	<span class="z_p_span_02" >审核</span><span class="z_p_span_05" id="audit" ></span>
+         	<span class="z_p_span_03" >出纳</span><span class="z_p_span_05" id="cashier" ></span>
+         	<span class="z_p_span_04" >制单</span><span class="z_p_span_05" id="producer"></span>
+         </p>
+    </div>
+</div>
+
+<!-- add by lval 20130628 -->
+<div id ="outVouchInfo" style="display:none;">
+   <input id="coutaccset" type="text" />
+   <input id="ioutyear" type="text" />
+   <input id="coutsysname" type="text" />
+   <input id="doutbilldate" type="text" />
+   <input id="ioutperiod" type="text" />
+   <input id="coutsign" type="text" />
+   <input id="coutnoId" type="text" />
+   <input id="doutdate" type="text" />
+   <input id="coutbillsign" type="text" />
+   <input id="coutid" type="text" />
+   <input id="coutsysver" type="text" />
+</div>
+
+
+</body>
+<script type="text/javascript" src="js/dsignInit.js"></script>
+<script type="text/javascript" src="js/dsignMoney.js"></script>
+<script type="text/javascript" src="js/dsignSumMoney.js"></script>
+<script type="text/javascript" src="js/dsignExchMoney.js"></script>
+<!-- 凭证审核js -->
+<script type="text/javascript" src="js/dsignAudit.js"></script>
+
+<script type="text/javascript" src="js/dsign.js"></script>
+<!-- 科目辅助核算信息 -->
+<script type="text/javascript" src="js/dsignAddCode.js"></script>
+<!-- 关键字翻页控制js -->
+<script type="text/javascript" src="js/dsignAccvouchPage.js"></script>
+
+<!-- 后台交互js -->
+<script type="text/javascript" src="js/dsignOperation.js"></script>
+
+<!-- 翻页控制js -->
+<script type="text/javascript" src="js/dsignPageControl.js"></script>
+
+<!-- 凭证组件关键字 -->
+<script type="text/javascript" src="js/accvouchKeyDomain.js"></script>
+
+
+<script type="text/javascript">
+    //录入标志
+    inputBz = false;
+    saveDsignBz = false;
+    dsignOpType = "audit";
+    var valueObject = window.parent.valueMap.get("dsignAudit");
+
+	//已审核凭证张数
+	 auditCount =valueObject.auditCount;
+	//未审核凭证张数
+	 unauditCount = valueObject.unauditCount;
+	//凭证总张数
+	 billCount = valueObject.billCount;
+	 
+    //默认隐藏外币列
+	fcch();
+	 //fccd();
+	//默认辅助核算都不可以用
+   loadCodeAddInitInfo();
+   //初始化凭证显示
+	addDsign();
+    initshowAuditbill();
+  
+    
+    
+</SCRIPT>
+
+</html>

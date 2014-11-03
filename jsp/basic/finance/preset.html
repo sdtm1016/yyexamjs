@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>凭证类别预置</title>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+tr{height:30px;}
+</style>
+<script type="text/javascript">
+	/*设置预置数据*/
+	function setInitializeData(){
+		var dsignCheck = $(":radio:checked");
+		if(dsignCheck.length>0){
+			var dsigntype=$(":radio:checked").attr("dsigntype");
+			if(dsigntype==1||dsigntype==2||dsigntype==3||dsigntype==4){
+				//确定按钮置灰不可用
+				$("#buttonsure").attr("disabled",true);
+				//设置预置数据
+				$.ajax({
+					url: "dsignCategory!setInitializeData",
+					type: 'post',
+					data:{dsigntype:dsigntype},
+					dataType: "json",
+					async : false,
+					error:function(){
+						jAlert("请求失败!");
+						$("#buttonsure").attr("disabled",false);
+					},
+					success: function(data){
+						window.parent.closeWindow('finance_preset');
+						window.parent.openWindow('finance_dsign');
+					}
+				  });
+			}else if(dsigntype==5){
+				window.parent.closeWindow('finance_preset');
+				window.parent.openWindow('finance_dsign');
+			}else{
+				jAlert("参数出错!");
+			}
+		}else{
+			jAlert("请选择分类方式!");
+		}
+	}
+</script>
+</head>
+<body>
+	<div class="container" style="float:left;width:420px;height:260px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:400px;height:230px;margin-top:20px;margin-left:10px;">
+			
+			<div style="height:200px;">
+				
+				<div style="width:140px;float:left;">
+					<img style="margin-top:30px;" src="../../../images/basic/pzlb.jpg">
+				
+				</div>
+				
+				
+				
+	
+				<div class="border_outside" style="width:256px;height:200px;float:left;">
+					<div class="border_inside" style="width:254px;height:198px;">
+					
+						<br>分类方式：<br>
+						<table>
+							<tr>
+								<td valign="middle">
+									<input type="radio" name="rd_1" checked id="rd_1_1" dsigntype="1"/>
+								</td>
+								<td>
+									<label for="rd_1_1">记账凭证</label>
+								</td>
+							</tr>
+							
+							<tr>
+								<td valign="middle">
+									<input type="radio" name="rd_1" id="rd_1_2" dsigntype="2"/>
+								</td>
+								<td>
+									<label for="rd_1_2">收款凭证 付款凭证 转账凭证</label>
+								</td>
+							</tr>
+							
+							<tr>
+								<td valign="middle">
+									<input type="radio" name="rd_1" id="rd_1_3" dsigntype="3"/>
+								</td>
+								<td>
+									<label for="rd_1_3">现金凭证 银行凭证 转账凭证</label>
+								</td>
+							</tr>
+							
+							<tr>
+								<td valign="middle">
+									<input type="radio" name="rd_1" id="rd_1_4" dsigntype="4"/>
+								</td>
+								<td>
+									<label for="rd_1_4">现金收款凭证 现金付款凭证 银行收款凭证 银行付款凭证 转账凭证</label>
+								</td>
+							</tr>
+							
+							<tr>
+								<td valign="middle">
+									<input type="radio" name="rd_1" id="rd_1_5" dsigntype="5"/>
+								</td>
+								<td>
+									<label for="rd_1_5">自定义</label>
+								</td>
+							</tr>
+							
+						</table>
+							
+					
+					
+					</div>
+				</div>
+				
+				
+			</div>
+			
+			<hr style="width:600px;margin-left:-100px;">
+			
+			<div style="width:90%;height:24px;text-align:right;">
+				<input type="button" id="buttonsure" value="确定" onclick="setInitializeData();"/>
+				&nbsp;
+				<input type="button" value="取消" onclick="window.parent.closeWindow('finance_preset');"/>
+			</div>
+		
+		</div>
+	</div>
+</body>
+</html>

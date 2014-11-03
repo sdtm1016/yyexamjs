@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>指定科目</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+
+<style type="text/css">
+.ctrbtn input{width:40px;height:30px;padding:0px;text-align:center;margin-top:4px;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="js/specify.js"></script>
+<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+	
+<script type="text/javascript">
+
+
+
+</script>
+</head>
+<body onload="doinit();">
+	<div class="container" style="float:left;width:550px;height:350px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:530px;height:330px;margin-top:10px;margin-left:10px;">
+			
+			
+			<div style="height:300px">
+				
+				
+				<div class="border_outside" style="width:130px;height:290px;float:left;">
+					<div class="border_inside" style="width:128px;height:288px;line-height:18px;">
+					
+					
+						<div style="margin-top:30px;">
+							<input type="radio" name="rd_1"  onclick="checkBcash();" checked="checked" value = "1" id="rd_1_1"/><label for="rd_1_1">现金总账科目</label>
+						</div>
+					
+						<div style="margin-top:30px;">
+							<input type="radio" name="rd_1" onclick="checkBbank();"  value = "2" id="rd_1_2"/><label for="rd_1_2">银行总账科目</label>
+						</div>
+					
+						<div style="margin-top:30px;">
+							<input type="radio" name="rd_1" onclick="checkBcashitem();" value = "3" id="rd_1_3"/><label for="rd_1_3">现金流量科目</label>
+						</div>
+					
+					
+					</div>
+				</div>
+	
+	
+				<div style="float:left;margin-left:10px;">
+				
+		
+					<div class="border_outside" style="width:380px;height:194px;">
+						<div class="border_inside" style="width:378px;height:192px;line-height:18px;">
+						
+							<div style="float:left;margin-left:10px;">
+								待选科目<br/>
+								<select style="height:170px;width:154px;float:left;" size="20" id="select_1" ondblclick="moveDown()" onchange="sel_1_change(this)">
+		                        	
+		                        </select>
+		                        <select style="height:170px;width:154px;float:left;display:none;" size="20" id="select_1_2" ondblclick="moveDown()">
+		                        </select>
+							</div>
+							
+							
+							<div style="width:50px;height:100%;text-align:center;float:left;" class="ctrbtn">
+							<br/><br/>
+								<input type="button" value=" > " onclick="moveDown();"/><br/>
+	                        	<input type="button" value=" >> "  onclick="allMoveDown();"/><br/>
+	                        	<input type="button" value=" < "  onclick="moveUp();"/><br/>
+	                        	<input type="button" value=" << "  onclick="allMoveUp();"/><br/>
+							
+							</div>
+						
+							<div style="float:left;">
+								已选科目<br/>
+								<select style="height:170px;width:154px;float:left;" size="20" id="select_2" ondblclick="moveUp()">
+		                        </select>
+		                        <select style="height:170px;width:154px;float:left;display:none" size="20" id="select_2_1" ondblclick="moveUp()">
+		                        </select>
+		                        <select style="height:170px;width:154px;float:left;display:none" size="20" id="select_2_2" ondblclick="moveUp()">
+		                        </select>
+		                        
+							</div>
+						
+						</div>
+					</div>
+		
+		
+
+					<fieldset style="width:378px;height:90px;margin:0px;padding:0px;">
+						<legend>说明</legend>
+						<div style="padding:10px;padding-left:20px;">
+							1.只有科目性质（余额方向）为“借方”的科目可被指定为现金科<br/>目或银行科目。<br/>
+							2.被指定为现金/银行科目的会计科目可以查询现金日记账、银<br/>行日记账及资金日报。
+						</div>
+					</fieldset>
+									
+		
+				</div>
+				
+			</div>
+			
+			<div style="text-align:right;">
+			
+				<input type="button" onclick="setCode();" value="确认"/>
+				<input type="button" onclick="window.parent.closeWindow('finance_specify');" value="取消" style="margin-right:20px;"/>
+				
+				
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+				<div style="width:224px;height:100%;float:left;">
+					
+					
+					
+					
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<div style="width:90px;height:100%;float:left;text-align:center;">
+					<br><br><br><br><br>
+					<input type="button" value="确认" onclick=" setCode() "/><br>
+					<input type="button" value="取消" onclick="window.parent.closeWindow('finance_specify');"/>
+				</div>
+				
+				
+				
+				
+				
+				
+</body>
+</html>

@@ -1,0 +1,1084 @@
+﻿
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+
+<!-- 以下代码为浏览器兼容代码，请勿删除！ -->
+<!--[if IE 7]>
+<meta http-equiv="X-UA-Compatible" content="IE=7">
+<![endif]-->
+
+<!-- 以下代码为浏览器兼容代码，请勿删除！ -->
+<!--[if IE 8]>
+<meta http-equiv="X-UA-Compatible" content="IE=8">
+<![endif]-->
+
+<!-- 以下代码为浏览器兼容代码，请勿删除！ -->
+<!--[if IE 9]>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<![endif]-->
+
+<!-- 以下代码为浏览器兼容代码，请勿删除！ -->
+<!--[if IE 10]>
+<meta http-equiv="X-UA-Compatible" content="IE=10">
+<![endif]-->
+
+
+
+<title>信息门户主页面</title>
+
+<style type="text/css">
+*{font-family:宋体;font-size:12px;}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../js/jquery-easyui-1.3.1/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="../../js/jquery-easyui-1.3.1/themes/icon.css">
+<link rel="stylesheet" href="css/index.css" type="text/css"/>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="js/variables.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/fl_navigation_filter.js"></script>
+<script type="text/javascript" src="js/bs_navigation_filter.js"></script>
+<script type="text/javascript" src="js/gl_navigation_filter.js"></script>
+<script type="text/javascript" src="js/wa_navigation_filter.js"></script>
+<script type="text/javascript" src="js/fa_navigation_filter.js"></script>
+<script type="text/javascript" src="js/pu_navigation_filter.js"></script>
+<script type="text/javascript" src="js/sa_navigation_filter.js"></script>
+<script type="text/javascript" src="js/mr_navigation_filter.js"></script>
+
+<script type="text/javascript" src="../../js/jquery-easyui-1.3.1/easyloader.js"></script>
+<script type="text/javascript" src="../../js/winui/winui.js"></script>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.contextmenu.js"></script>
+<link rel="stylesheet" type="text/css" href="../../css/contextmenu.css">
+
+
+<script type="text/javascript">
+  
+
+</script>
+
+</head>
+<body onload="cookieSetHtml();">
+
+
+<div>
+
+	
+	<!-- 凭证页面.科目参照 subjectsreference.html -->
+	<div id="dsign_subjectsreference"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="340" title="科目参照"
+		src="../dsign/subjectsreference.html"></div>		
+	
+	
+	<!-- 重新注册 department.html -->
+	<div id="relogin"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="560" height="440" title="重新注册"
+		src="../sm/portallogin.html"></div>
+		
+
+	<!-- 部门档案窗体 department.html -->
+	<div id="department"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="560" height="440" title="部门档案"
+		src="../basic/organ/department.html"></div>
+	
+	<!-- 职员档案窗体 person.html -->
+	<div id="person"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="540" height="410" title="职员档案"
+		src="../basic/organ/person.html"></div>
+		
+	<!-- 客户分类窗体 customerClass.html -->
+	<div id="customerClass"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="400" title="客户分类"
+		src="../basic/comeGo/customerClass.html"></div>		
+			
+	<!-- 客户档案窗体 customer.html -->
+	<div id="customer"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="810" height="410" title="客户档案"
+		src="../basic/comeGo/customer.html"></div>		
+	
+	<!-- 供应商分类窗体vendorClass.html -->
+	<div id="vendorClass"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="400" title="供应商分类"
+		src="../basic/comeGo/vendorClass.html"></div>		
+	
+	
+	<!-- 供应商档案vendor.html -->
+	<div id="vendor"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="810" height="410" title="供应商档案"
+		src="../basic/comeGo/vendor.html"></div>		
+	
+	
+	
+	<!-- 会计科目code.html -->
+	<div id="finance_code"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="590" height="450" title="会计科目"
+		src="../basic/finance/code.html"></div>		
+	
+	<!-- 指定科目specify.html -->
+	<div id="finance_specify"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="550" height="375" title="指定科目"
+		src="../basic/finance/specify.html"></div>		
+	
+	
+	<!-- 凭证类别design.html -->
+	<div id="finance_dsign"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="480" height="330" title="凭证类别"
+		src="../basic/finance/dsign.html"></div>		
+	
+	
+	<!-- 凭证类别预置 -->
+	<div id="finance_preset"
+		style="margin-left: 50px;margin-top: 30px; padding: auto; display: none;"
+		type="window" width="420" height="285" title="凭证类别预置"
+		src="../basic/finance/preset.html"></div>
+	
+	
+	
+	<!-- 外币设置foreignCurrency.html -->
+	<div id="foreignCurrency"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="410" height="380" title="外币设置"
+		src="../basic/finance/foreignCurrency.html"></div>		
+	
+	
+	
+	
+	
+	<!-- 存货分类窗体inventoryClass.html -->
+	<div id="inventoryClass"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="400" title="存货分类"
+		src="../basic/inventory/inventoryClass.html"></div>		
+	
+	
+	<!-- 存货档案inventory.html -->
+	<div id="inventory"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="810" height="410" title="存货档案"
+		src="../basic/inventory/inventory.html"></div>		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 地区分类窗体vendorClass.html -->
+	<div id="districtClass"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="400" title="地区分类"
+		src="../basic/comeGo/districtClass.html"></div>		
+	
+	
+	
+	
+	<!-- 结算方式窗体vendorClass.html -->
+	<div id="settleStyle"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="500" height="400" title="结算方式"
+		src="../basic/settle/settleStyle.html"></div>		
+	
+	<!-- 付款条件窗体vendorClass.html -->
+	<div id="payCondition"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="540" height="400" title="付款条件"
+		src="../basic/settle/payCondition.html"></div>	
+	
+	
+	<!-- 开户银行bank.html -->
+	<div id="bank"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="540" height="400" title="开户银行"
+		src="../basic/settle/bank.html"></div>
+		
+	
+	
+	
+	
+	
+	
+	<!-- 新增科目 add_code.html -->
+	<div id="basic_finance_addcode"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="460" height="460" title="新增科目"
+		src="../basic/finance/add_code.html"></div>
+		
+	<!-- 修改科目 upd_code.html -->
+	<div id="basic_finance_updcode"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="440" height="460" title="修改科目"
+		src="../basic/finance/upd_code.html"></div>
+		
+	
+	
+	
+	<!-- 下面开始客户档案、部门档案、存货档案、供应商档案、地区档案简单列表定义 王丙建 2012-12-11 -->
+	
+	<!-- 客户档案.客户分类列表--列表现象 customerClassGridRef.html -->
+	<div id="basic_grid_customerClassGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="客户分类"
+		src="../basic/comref/customerClassGridRef.html"></div>
+	<!-- 部门档案-列表显示 -->
+	<div id="basic_grid_departmentGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="部门档案"
+		src="../basic/comref/departmentGridRef.html"></div>
+	
+	<!-- 地区档案-列表显示 -->
+	<div id="basic_grid_dirstrictGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="地区分类"
+		src="../basic/comref/dirstrictGridRef.html"></div>
+	
+	<!-- 存货档案-列表显示 -->
+	<div id="basic_grid_inventoryGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="存货分类"
+		src="../basic/comref/inventoryGridRef.html"></div>
+	
+	<!-- 供应商档案-列表显示 -->
+	<div id="basic_grid_supGridRef"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="520" height="320" title="供应商分类"
+		src="../basic/comref/supGridRef.html"></div>
+	
+	<!-- 客户档案、部门档案、存货档案、供应商档案、地区档案简单列表定义结束 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 下面开始客户档案、部门档案、存货档案、供应商档案、地区档案窗体定义 王丙建 2012-12-11 -->
+	
+	<!-- 外币设置
+	<div id="basic_comref_exch"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="500" height="370" title="参照"
+		src="../basic/finance/foreignCurrency.html"></div>	
+	 -->
+	
+	
+	
+	<!-- 部门档案 窗体 -->
+	<div id="basic_comref_dptref"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="752" height="370" title="部门档案"
+		src="../basic/comref/dptref.html"></div>
+		
+		
+	<!-- 客户档案 窗体 -->
+	<div id="basic_comref_cusref"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="752" height="370" title="客户档案"
+		src="../basic/comref/cusref.html"></div>
+		
+		
+		
+	<!-- 人员档案 窗体 -->
+	<div id="basic_comref_personref"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="752" height="370" title="人员档案"
+		src="../basic/comref/personref.html"></div>
+		
+		
+		
+	<!-- 供应商档案 窗体 -->
+	<div id="basic_comref_supref"
+		style="margin-left: 20px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="752" height="370" title="供应商档案"
+		src="../basic/comref/supref.html"></div>
+		
+	
+	<!-- 客户档案、部门档案、存货档案、供应商档案、地区档案窗体定义结束 -->
+	
+	
+	
+	
+		
+	<!-- 项目目录 窗体 -->
+	<div id="basic_fitem_item"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="600" height="415" title="项目档案"
+		src="../basic/fitem/item.html"></div>
+		
+		
+		
+	<!-- 项目目录.增加 窗体 -->
+	<div id="basic_fitem_add"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="580" height="276" title="项目大类定义_增加"
+		src="../basic/fitem/add.html"></div>
+		
+		
+	<!-- 项目目录.修改 窗体 -->
+	<div id="basic_fitem_update"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="580" height="276" title="项目大类定义_修改"
+		src="../basic/fitem/update.html"></div>
+		
+		
+	<!-- 项目目录.维护 窗体 -->
+	<div id="basic_fitem_maintain"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="570" height="395" title="项目目录维护"
+		src="../basic/fitem/maintain.html"></div>
+		
+	<!-- 项目目录.维护.项目分类参照 -->
+	<div id="basic_comref_fitemgrademodeGridRef"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="项目目录维护"
+		src="../basic/comref/fitemgrademodeGridRef.html"></div>
+		
+	
+	<!-- 工资模块窗体 开始 -->
+	
+	
+	<!-- 工资.建立工资套 wagewizard.html-->
+	<div id="wa_wagecategory_wagewizard"
+		style="margin-left: 120px;margin-top: 100px; padding: auto; display: none;"
+		type="window" width="490" height="305" title="建立工资账套"
+		src="../wa/wagecategory/wagewizard.html"></div>
+		
+	<!-- 工资.工资类别向导 wcw.html-->
+	<div id="wa_wagecategory_wcw"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="320" height="300" title="工资类别向导"
+		src="../wa/wagecategory/wcw.html"></div>	
+		
+		
+	<!-- 工资.新建工资类别 cwc.html-->
+	<div id="wa_wagecategory_cwc"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="386" height="300" title="新建工资类别"
+		src="../wa/wagecategory/cwc.html"></div>
+		
+	
+	<!-- 工资模块窗体 结束 -->
+	
+	
+	
+	
+	
+	<!-- 固定资产模块  开始 -->
+	
+	
+		<!-- 固定资产初始化向导 -->
+		<div id="fa_basic_Initialization"
+			style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+			type="window" width="560" height="375" title="固定资产初始化向导"
+			src="../fa/basic/initialization.html"></div>
+		
+	<!-- 固定资产模块  结束 -->
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 报表模块  开始 -->
+	
+		<!-- 报表设计器 -->
+		<div id="mr_eSReport_eReport"
+			style="margin-left: 50px;margin-top: 10px; padding: auto; display: none;"
+			type="window" width="840" height="420" title="财务报表"
+			src="../mr/eSReport/eReport.html"></div>
+	
+	
+	
+	
+	
+	
+	
+		<!-- 函数编辑相关窗体 开始  -->
+		
+		
+			<!-- 公式定义 -->
+			<div id="mr_general_eSReport_define_formula"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="468" height="121" title="定义公式"
+				src="../mr/eSReport/general/define_formula.html"></div>	
+			
+			<!-- 函数向导 -->
+			<div id="mr_general_eSReport_function_wizard"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="470" height="321" title="函数向导"
+				src="../mr/eSReport/general/function_wizard.html"></div>	
+			
+			<!-- 常规函数编辑 -->
+			<div id="mr_general_eSReport_fun1_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="440" height="350" title="常规函数编辑"
+				src="../mr/eSReport/general/fun1_edit.html"></div>	
+			
+			<!-- 统计函数编辑 -->
+			<div id="mr_general_eSReport_fun2_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="430" height="233" title="统计函数编辑"
+				src="../mr/eSReport/general/fun2_edit.html"></div>	
+			
+			<!-- 数学函数编辑 -->
+			<div id="mr_general_eSReport_fun3_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="374" height="171" title="数学函数编辑"
+				src="../mr/eSReport/general/fun3_edit.html"></div>	
+			
+			
+			
+			
+		
+		<!-- 函数编辑相关窗体 结束  -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 报表模块  结束 -->
+	
+	<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+	<!-- alert和confirm 警告窗口  结束-->
+	
+	
+	
+	
+		<div id="basic_waitmessage"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="waitmessage.html"></div>
+	
+	
+	
+	
+	
+</div>
+
+
+
+
+
+
+	
+	
+<div id="container">
+	<!-- 头部菜单容器 S -->
+	<div id="header">
+		
+		
+		
+		
+		<div onclick="javascript:$('#menu_file').menu('show',{left:21,top:25})">
+			文件
+		</div>
+		<div id="menu_file" class="easyui-menu" style="width:120px;display:none;">
+			
+			<div onclick="reLogin();">重新注册</div>
+			 
+			 <!-- 
+			<div onclick="openWindow('relogin');">重新注册</div>
+			-->
+			<div onclick="exit();" >退出 </div>
+		</div>
+		
+		
+		
+		
+		
+		
+		<div onclick="javascript:$('#menu_setting').menu('show',{left:54,top:25})">
+			基础设置
+		</div>
+		<div id="menu_setting" class="easyui-menu" style="width:120px;display:none;">
+		
+		
+		
+			<div>
+				<span>机构设置</span>
+				<div style="width:150px;">
+				
+					<div onclick="openWindow('department');">部门档案</div>
+					<div onclick="openWindow('person');">职员档案</div>
+					
+				</div>
+			</div>
+			
+			
+			<div>
+				<span>往来单位</span>
+				<div style="width:150px;">
+					<div onclick="bs_wldw_khfl_filter();">客户分类</div>
+					<div onclick="openWindow('customer');">客户档案</div>
+					<div onclick="bs_wldw_gysfl_filter();">供应商分类</div>
+					<div onclick="openWindow('vendor');">供应商档案</div>
+					<div onclick="openWindow('districtClass');">地区分类</div>
+				</div>
+			</div>
+			<div>
+				<span>存货</span>
+				<div style="width:150px;">
+					<div onclick="bs_wldw_chfl_filter();">存货分类</div>
+					<div onclick="openWindow('inventory');">存货档案</div>
+				</div>
+			</div>
+			<div>
+				<span>财务</span>
+				<div style="width:150px;">
+					<div onclick="openWindow('finance_code');">会计科目</div>
+					<div onclick="gl_pzlb_init_filter();">凭证类别</div>
+					<div onclick="openWindow('basic_fitem_item');">项目目录</div>
+					<div onclick="openWindow('foreignCurrency');">外币种类</div>
+				</div>
+			</div>
+			<div>
+				<span>收付结算</span>
+				<div style="width:150px;">
+					<div onclick="openWindow('settleStyle');">结算方式</div>
+					<div onclick="openWindow('payCondition');">付款条件</div>
+					<div onclick="openWindow('bank');">开户银行</div>
+				</div>
+			</div>
+			<!-- 
+			<div class="menu-sep"></div>
+			<div>
+				<span>购销存</span>
+				<div style="width:150px;">
+					<div>仓库档案	</div>
+					<div>库存期初</div>
+				</div>
+			</div>
+			 -->
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div id="M_GL" style="display:none;">总账</div>
+		
+		<div id="menu_GL" class="easyui-menu">
+	<div >
+		<span>设置</span>
+		<div>
+			<div  onclick="gl_shezhi_qichuyue_filter();">期初余额</div>
+			<div  onclick="rfow('gl_set_option');">选项</div>
+		</div>
+	</div>
+
+	<div >
+		<span>凭证</span>
+		<div>
+			<div onclick="gl_tzpz_filter()">填制凭证</div>
+			<div onclick="gl_qzpz_filter()">出纳签字</div>
+		
+			<div onclick="gl_shpz_filter()">审核凭证</div>
+			<div onclick="gl_cxpz_filter()">查询凭证</div>
+			<div onclick="gl_jz_filter()">记账</div>
+			<div onclick="gl_fjz_filter()">恢复记账前状态</div>
+			<div onclick="rfow('gl_bdigest_bdigestEdit');">常用摘要</div>
+		</div>
+	</div>
+
+	<div >
+		<span>账薄查询</span>
+		<div>
+			<div onclick="rfow('gl_ledger_ledgermanage');">总账</div>
+			<div onclick="rfow('gl_detailed_detailed');">明细账</div>
+			<div onclick="rfow('gl_balances_blances_conditions');">余额表</div>
+		</div>
+	</div>
+
+<!-- 
+	<div onclick="alert('辅助查询');">		<span>辅助查询</span>	</div>
+ -->
+	
+	<div onclick="">
+		<span>期末</span>
+		<div>
+			<div>
+				<span>转账定义</span>
+				<div style="width:200px;">
+					<div onclick="rfow('gl_transfer_ats');">自定义转账</div>
+					<div onclick="rfow('gl_transfer_mts');">对应结转</div>
+					<div onclick="rfow('gl_transfer_costs');">销售成本结转</div>
+					<div onclick="rfow('gl_transfer_pacost');">售价（计划价）销售成本结转</div>
+					<div onclick="rfow('gl_transfer_egals');">汇兑损益</div>
+					<div onclick="rfow('gl_transfer_ppals');">期间损益</div>
+				</div>
+			</div>
+			<div onclick="rfow('gl_transfer_create');">转账生成</div>
+			<div onclick="rfow('gl_checkout_checkout');">结账</div>
+		</div>
+	</div>
+	
+</div>
+
+
+
+	<div id="M_WA" style="display:none;">工资</div>
+	<div id="menu_WA" class="easyui-menu">
+		<div>
+			<span>工资类别</span>
+			<div>
+				<div onclick="rfow('wa_wagecategory_owc');">打开工资类别</div>
+				<div onclick="wa_close_wagecategory_filter();">关闭工资类别</div>
+				<div onclick="wa_newWageType()">新建工资类别</div>
+				<div onclick="rfow('wa_wagecategory_dwc');">删除工资类别</div>
+			</div>
+		</div>
+		<div>
+			<span>设置</span>
+			<div style="width:200px;">
+				<div onclick="rfow('wa_other_pais');">人员附加信息设置</div>
+				<div onclick="rfow('wa_other_pcs');">人员类别设置</div>
+				<div onclick="rfow('wa_other_sps');">工资项目设置</div>
+				<div onclick="rfow('wa_other_bas');">银行名称设置</div>
+				<div onclick="wa_setting_dptselection_filter();">部门选择设置</div>
+				<div onclick="rfow('wa_other_as');">权限设置</div>
+				<div onclick="rfow('wa_other_personnelfile_main');">人员档案</div>
+				<div onclick="rfow('wa_other_options');">选项</div>
+			</div>
+		</div>
+
+		<div>
+			<span>业务处理</span>
+			<div style="width:200px;">
+				<div onclick="rfow('wa_change_main');">工资变动</div>
+				<div onclick="rfow('wa_tax_columnchoose');">扣缴所得税</div>
+				<div onclick="rfow('wa_wageallocation_first');">工资分摊</div>
+				<div onclick="rfow('wa_checkout_endproccess');">月末处理</div>
+				<div onclick="wa_anti_filter();">反结账</div>
+			</div>
+		</div>
+
+		<div>
+			<span>统计分析</span>	
+			<div style="width:120px;">
+				<div>
+					<span>账表</span>
+					<div style="width:160px;">
+						<div onclick="rfow('wa_stists_mystists');">我的账表</div>
+						<div onclick="rfow('wa_stists_wagesheet');">工资表</div>
+						<div onclick="rfow('');">工资分析表</div>
+						<div onclick="rfow('wa_stists_nssdsbb_main');">纳税所得申报表</div>
+					</div>
+				</div>
+				<div onclick="rfow('wa_stists_dsignquery');">凭证查询</div>
+			</div>
+			
+			
+			
+		</div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+<div id="M_FA" style="display:none;">固定资产</div>
+<div id="menu_FA" class="easyui-menu">
+
+	<div>
+			<span>设置</span>
+			<div style="width:160px;">
+				<div onclick="rfow('fa_basic_options');">选项</div>
+				<div onclick="openWindow('department');">部门档案</div>
+				<div onclick="rfow('fa_setting_zhejiu');">部门对应折旧科目</div>
+				<div onclick="rfow('fa_setting_assetsClass');">资产类别</div>
+				<div onclick="rfow('fa_setting_plusSubWay');">增减方式</div>
+				<div onclick="rfow('fa_setting_useState');">使用状况</div>
+				<div onclick="rfow('fa_setting_zhejiuMethod');">折旧方法</div>
+			</div>
+		</div>
+		<div>
+			<span>卡片</span>
+			<div style="width:120px;">
+				<div onclick="to_card(0)">录入原始卡片</div>
+				<div onclick="to_card(1)">资产增加</div>
+				<div onclick="getModelFrame().isCardReduce()">资产减少</div>
+				<div>
+					<span>变动单</span>
+					<div style="width:120px;">
+						<div onclick="rfow('fa_card_assetschange');fa_ac_action=1;">原值增加</div>
+						<div onclick="rfow('fa_card_assetschange');fa_ac_action=2;">原值减少</div>
+						<div onclick="rfow('fa_card_assetschange');fa_ac_action=3;">部门转移</div>
+						<div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">使用状况变动</div>
+						<div onclick="rfow('fa_card_changebills');">变动单管理</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<span>处理</span>
+			<div style="width:160px;">
+				<div onclick="getModelFrame().doload();">计提本月折旧</div>
+				<div onclick="rfow('fa_operate_operateCurMonZheJiu');">折旧清单</div>
+				<div onclick="fa_zjfpb_filter()">折旧分配表</div>
+				<div onclick="fa_batchCreateBills_filter();">批量制单</div>
+				<div onclick="rfow('fa_operate_dsignquery');">凭证查询</div>
+				<div onclick="fa_gdzcfjz_filter()">恢复结账前状态</div>
+				<div onclick="fa_jtbyzj_filter()">月末结账</div>
+			</div>
+		</div>
+
+		<div>
+			<span>账表</span>
+			<div style="width:160px;">
+				<div onclick="rfow('fa_stists_mystists');">我的账表</div>
+			</div>
+		</div>
+
+</div>
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<div id="M_PU" style="display:none;">采购</div>
+<div id="menu_PU" class="easyui-menu" style="width:160px;">
+	<div onclick="rfow('pu_ba_beginningAccounting');">
+		<span>期初记账</span>
+	</div>
+	<div onclick="rfow('pu_invoice_invoice');">
+		<span>采购发票</span>
+	</div>
+	
+	<div>
+		<span>供应商往来</span>
+		<div style="width:160px;">
+			<div onclick="rfow('pu_goods_qcyeQuery','',{type:'pu'});">供应商往来期初</div>
+			<div onclick="rfow('pu_goods_vouchQuery' ,'',{type:'pu'});">应付单</div>
+			<div onclick="rfow('pu_pas_pas','',{type:'payment'});">付款结算</div>
+			<div onclick="rfow('pu_canceloperate_qxcztj','',{type:'cancelOperate'});">取消操作</div>
+			
+		</div>
+	</div>
+	
+	<div>
+		<span>供应商往来账表</span>
+		<div style="width:160px;">
+			<div onclick="rfow('');">供应商往来总账</div>
+			<div onclick="rfow('pu_stists_gyswlyeb_tj');">供应商往来余额表</div>
+			<div onclick="rfow('');">供应商往来明细账</div>
+			<div onclick="rfow('pu_stists_gysdzd_tj');">供应商往来对账单</div>
+		</div>
+	</div>
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="M_SA" style="display:none;">销售</div>
+<div id="menu_SA" class="easyui-menu">
+
+	<div>
+		<span>销售发票</span>
+	</div>
+	
+	<div>
+		<span>客户往来</span>
+		<div style="width:160px;">
+			<div onclick="rfow('');">客户往来期初</div>
+			<div onclick="rfow('');">应收单</div>
+			<div onclick="rfow('');">收款结算</div>
+			<div onclick="rfow('sa_canceloperate_filtration','',{type:'cancelOperate'});">取消操作</div>
+		</div>
+	</div>
+	
+	<div>
+		<span>客户往来账表</span>
+		<div style="width:160px;">
+			<div onclick="rfow('');">客户往来总账</div>
+			<div onclick="rfow('sa_stists_khwlyeb_tj');">客户往来余额表</div>
+			<div onclick="rfow('');">客户往来明细账</div>
+			<div onclick="rfow('sa_stists_ywzlfx_tj');">业务账龄分析</div>
+			<div onclick="rfow('sa_stists_khdzd_tj');">客户对账单</div>
+		</div>
+	</div>
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="M_WD">窗口</div><div id="menu_WD" class="easyui-menu">	<div>		<span>注销</span><div>	<div onclick="">		<span>总账系统</span>	</div>	<div onclick="">		<span>工资</span>	</div>	<div onclick="">		<span>采购</span>	</div>	<div onclick="openWindow('mr_report');">		<span>财务报表</span>	</div>	<div onclick="">		<span>销售</span>	</div>	<div onclick="">		<span>固定资产</span>	</div></div>	</div></div>
+		
+		
+		
+		
+		<!-- 
+		
+		<div onclick="javascript:$('#menu_account').menu('show',{left:107,top:25})">总账</div>
+		<div id="menu_account" class="easyui-menu" style="width:120px;">
+			<div>总账</div>
+		</div>
+		 
+		<div onclick="javascript:$('#menu_gongzi').menu('show',{left:290,top:25})">工资</div>
+		<div id="menu_gongzi" class="easyui-menu" style="width:120px;">
+			<div>工资</div>
+		</div>
+		
+		<div onclick="javascript:$('#menu_caigou').menu('show',{left:290,top:25})">采购</div>
+		<div id="menu_caigou" class="easyui-menu" style="width:120px;">
+			<div>采购</div>
+		</div>
+		
+		<div onclick="javascript:$('#menu_sole').menu('show',{left:290,top:25})">销售</div>
+		<div id="menu_sole" class="easyui-menu" style="width:120px;">
+			<div>销售</div>
+		</div>
+		
+		  
+		  
+		<div onclick="javascript:$('#menu_window').menu('show',{left:312,top:25})">
+			窗口
+		</div>
+		<div id="menu_window" class="easyui-menu" style="width:120px;">
+			<div>注销</div>
+		</div>
+		  -->
+		
+		
+		
+		
+	</div>
+	<!-- 头部菜单容器 E -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- 中部容器 S -->
+	<div id="middle">
+		<div class="innerborder">
+	
+	
+	
+	
+	
+	
+	
+	
+	
+			<!-- 左边导航菜单容器 S -->
+			<div id="middleleft">
+			
+				<div><img src="../../images/portal/CTree/ImageListFill/leftheader.jpg" onmouseover="this.src='../../images/portal/CTree/ImageListFill/leftheadermouseover.jpg'" onmouseout="this.src='../../images/portal/CTree/ImageListFill/leftheader.jpg'" style="width:159px;height:86px;"/></div>
+				<div id="leftnav" style="width:159px;height:579px;background-image:url('../../images/portal/CTree/ImageListFill/bg1.jpg');">
+				
+				<script type="text/javascript">
+					var imglst = ["GL","WA","FA","PU","SA","MR"];
+					for(var i=0;i<imglst.length;i++){
+						var str = "<div style='display:none;'><img id=\""+imglst[i]+"\" src=\"../../images/portal/CTree/sysButton/"+imglst[i]+".jpg\" style=\"width:159px;height:30px;border:0px;\" onmouseover=\"this.src='../../images/portal/CTree/sysButton/"+imglst[i]+"Move.jpg'\" onmouseout=\"this.src='../../images/portal/CTree/sysButton/"+imglst[i]+".jpg'\" onclick=\""+imglst[i].toLocaleLowerCase()+"_navigation_filter();\"/></div>"; 
+						document.write(str);
+					}
+					</script>
+				
+				</div>
+			</div>
+			<!-- 左边导航菜单容器 E -->
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- 右边iframe容器 S -->
+			<div id="middleright">
+			
+				<iframe id="rightiframe" frameborder='0' scrolling='no' src="default.html" style="width:861px;height:100%;"></iframe>
+			
+			</div>
+			<!-- 右边iframe容器 E -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		</div>
+	</div>
+	<!-- 中部容器 E -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 底部状态栏容器 S -->
+	<div id="footer">
+		<div id="account" >账套：[]</div>
+		<div id="org" >单位名称：</div>
+		<div id="user" >操作员：</div>
+		<div id="operDate" >业务日期：[2012/9/30]</div>
+		<div id="loginTime" >14:38</div>
+	</div>
+	<!-- 底部状态栏容器 E -->
+	
+	
+	
+	
+	
+	
+</div>
+
+
+	
+<!----- 左侧模块导航.当前模块右键注销菜单 ---->
+<div id="leftnav_contextmenu" class="winui_contextmenu" style="width:60px;">
+<a onclick="module_logout();">注销</a>
+</div>
+	
+
+
+
+
+<div id="cover_1" style="position:absolute;width:1024px;height:32px;top:0px;left:0px;z-index:3000;display:none;background-color:#000;filter:alpha(opacity:0);opacity:0;" onmouseover="$('#leftnav_contextmenu').hide();"></div>
+<div id="cover_2" style="position:absolute;width:162px;height:728px;top:0px;left:0px;z-index:3001;display:none;background-color:#000;filter:alpha(opacity:0);opacity:0;" onmouseover="$('#leftnav_contextmenu').hide();"></div>
+<div id="cover_3" style="position:absolute;width:1024px;height:24px;top:704px;left:0px;z-index:3002;display:none;background-color:#000;filter:alpha(opacity:0);opacity:0;" onmouseover="$('#leftnav_contextmenu').hide();"></div>
+
+</body>
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+<script type="text/javascript" src="../../js/rule.js"></script>
+
+</html>

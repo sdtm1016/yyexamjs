@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>修改项目档案</title>
+<link rel="stylesheet" type="text/css" href="css/base.css" />
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script> 	
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="js/update_pagecontrol.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+<script type="text/javascript" src="../../../js/helpCode.js"></script>
+<script type="text/javascript" src="js/FitemDomain.js"></script>
+<script type="text/javascript" src="js/fitemStruDomain.js"></script>
+</head>
+
+<body>
+    
+    
+    
+        	<!-- 点击增加按钮 弹出框start -->
+                    <div class="z_zj_con">
+                    	<!-- 第一步 -->
+                        <div id="z_zj_con_01">
+                        	<div class="z_zj_con_t">
+                            	<div class="z_zj_con_t_l fl">
+                                <div class="z_zj_con_t_lbox">
+                                	<p class="z_zj_con_t_p1"><a></a>项目大类名称</p>
+                                    <div style=" height:1px;"></div>
+                                    <p class="z_zj_con_t_p2"><a></a>定义项目级次</p>
+                                    <div style="height:1px;"></div>
+                                    <p class="z_zj_con_t_p3"><a></a>定义项目栏目</p>
+                                </div>
+                                </div>
+                                <div class="z_zj_con_t_r fr">
+                                <div class="z_zj_con_t_rbox fr">
+                                	<h3>项目大类名称</h3>
+                                    <dl>
+                                    	<dd>旧项目大类名称<select id="itemBigClass">
+                	<option value="item1">项目大类1</option>
+                    <option value="item2">项目大类2</option>
+                    <option value="item3">项目大类3</option>
+                </select></dd>
+                                        <dd>新项目大类名称<input id='newItemBigClass' type="text"/></dd>
+                                        
+                                    </dl>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 第二步 -->
+                        <div id="z_zj_con_02">
+                        	<div class="z_zj_con_t">
+                            	<div class="z_zj_con_t_l fl">
+                                <div class="z_zj_con_t_lbox">
+                                	<p class="z_zj_con_t_p4"><a></a>项目大类名称</p>
+                                    <div style=" height:1px;"></div>
+                                    <p class="z_zj_con_t_p5"><a></a>定义项目级次</p>
+                                    <div style="height:1px;"></div>
+                                    <p class="z_zj_con_t_p6"><a></a>定义项目栏目</p>
+                                </div>
+                                </div>
+                                <div class="z_zj_con_t_r fr">
+                                <div class="z_zj_con_t_rbox fr">
+                                	<h3>定义项目级别</h3>
+                                    <div style="width:98px; height:166px;margin:0 45px; padding-top:20px; float:left">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="">
+                                        <tr>
+                                            <td width="50" height="20">一级</td>
+                                            <td width="42">
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level1' class="textbox" type="text" value="1"/></div>
+													<div id='btn1' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">二级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level2' class="textbox" type="text" value="0"/></div>
+													<div id='btn2' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">三级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level3' class="textbox" type="text" value="0"/></div>
+													<div id='btn3' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">四级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level4' class="textbox" type="text" value="0"/></div>
+													<div id='btn4' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </div>
+                                    <div style="width:98px; height:166px; margin:0 45px; padding-top:20px; float:left">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="">
+                                        <tr>
+                                            <td width="50" height="20">五级</td>
+                                            <td width="42">
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level5' class="textbox" type="text" value="1"/></div>
+													<div id='btn5' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">六级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level6' class="textbox" type="text" value="0"/></div>
+													<div id='btn6' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">七级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level7' class="textbox" type="text" value="0"/></div>
+													<div id='btn7' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="3" height="26"></td></tr>
+                                        <tr>
+                                            <td width="50" height="20">八级</td>
+                                            <td>
+                                            
+	                                            <div class="gradually">
+													<div style="float:left;"><input id='level8' class="textbox" type="text" value="0"/></div>
+													<div id='btn8' style="float:left;">
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+														<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+													</div>
+												</div>
+                                            
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- 第三步 -->
+                        <div id="z_zj_con_03">
+                        	<div class="z_zj_con_t">
+                            	<div class="z_zj_con_t_l fl">
+                                <div class="z_zj_con_t_lbox">
+                                	<p class="z_zj_con_t_p4"><a></a>项目大类名称</p>
+                                    <div style=" height:1px;"></div>
+                                    <p class="z_zj_con_t_p7"><a></a>定义项目级次</p>
+                                    <div style="height:1px;"></div>
+                                    <p class="z_zj_con_t_p8"><a></a>定义项目栏目</p>
+                                </div>
+                                </div>
+                                <div class="z_zj_con_t_r fr">
+                                <div class="z_zj_con_t_rbox fr">
+                                	<h3>定义项目栏目</h3>
+                                    <p style="height:8px;"></p>
+                                    <div class="z_zj_con_tt">
+                                    	<table id='titleTable' cellpadding="3" cellspacing="1" border="0" bgcolor="#000000">
+                                    		
+                                        	<tr bgcolor="#7EFFFF" >
+                                            	<td>项目编号</td> 
+                                                <td>项目名称</td> 
+                                                <td>是否结算</td> 
+                                                <td>所属分类码</td> 
+                                            </tr>
+                                            
+                                        </table>
+                                    </div>
+                                    <div class="z_zj_con_tb">
+                                    	<div style="height:138px; width:330px;border:1px solid #000;float:left;background-color:#808080;overflow-y:auto;">
+				
+                                        	<table id="edittable_rows" class="table_style" cellpadding="3" cellspacing="0" border="0" bgcolor="#000000">
+                                        		<thead>
+                                            	<tr align="center" bgcolor="#D4D0C5">
+                                                	<td width="14">&nbsp;</td>
+                                                    <td width="180">标题</td>
+                                                    <td width="46">类型</td>
+                                                    <td width="46">长度</td> 
+                                                </tr>
+                                                </thead>
+                                                <tbody id='itemStructureTableRows'>
+                                                <tr>
+                                                	<td width="14" align="center" bgcolor="#D4D0C5">1</td>
+                                                    <td width="180" bgcolor="#7EFFFF">项目编号</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="center">文本</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="right">20</td> 
+                                                </tr>
+                                                <tr>
+                                                	<td width="14" align="center" bgcolor="#D4D0C5">2</td>
+                                                    <td width="180" bgcolor="#ffffff">项目名称</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="center">文本</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="right">60</td> 
+                                                </tr>
+                                                <tr>
+                                                	<td width="14" align="center" bgcolor="#D4D0C5">3</td>
+                                                    <td width="180" bgcolor="#7EFFFF">是否结算</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="center">逻辑</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="right">1</td> 
+                                                </tr>
+                                                <tr>
+                                                	<td width="14" align="center" bgcolor="#D4D0C5">4</td>
+                                                    <td width="180" bgcolor="#7EFFFF">所属分类码</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="center">文本</td>
+                                                    <td width="46" bgcolor="#7EFFFF" align="right">22</td> 
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            	<!-- 说明框 start -->
+                                                <div class="z_shuoming">
+                                                <div class="z_shuomingbox">
+                                                	<h3>说明</h3>
+                                                    <table cellpadding="0" cellspacing="0" background="0">
+                                                    	<tr align="center">
+                                                        	<td width="30"><p style="background:#FFF"></p></td>
+                                                            <td>可修改区域</td>
+                                                            <td width="30"><p style="background:#82FEFC"></p></td>
+                                                            <td>不可修改区域</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                </div>
+                                                <!-- 说明框 end -->
+                                            
+                                        </div>
+                                        <div class="z_zj_con_tb_r fr"><input type="button" value="增加" onclick="addRow();" class="z_butt_10" /><input type="button" value="删除" onclick="delRow();" class="z_butt_10" /></div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="z_zj_con_b">
+                            	<div class="zzj_con_b_butt">
+                            	<table border="0" style="border-collapse: collapse;float:right;">
+                            		<tr>
+                            			<td><input type="button" id="prevButton" value="上一步" class="z_butt_02" onclick="prevPanel();"/></td>
+                            			<td><input type="button" id="nextButton" value="下一步" class="z_butt_02" onclick="nextPanel();"/></td>
+                            			<td><input type="button" id="finishButton" value="完成" class="z_butt_02" onclick="finish();"/></td>
+                            			<td><input type="button" value="退出" class="z_butt_02" onclick="window.parent.closeWindow('basic_fitem_update');"/></td>
+                            		</tr>
+                            	</table>
+                                	
+                                	
+                                	
+                                	
+                                </div>
+                            </div>
+                    </div>
+                
+            <!-- 点击增加按钮 弹出框end -->
+     
+     
+</body>
+
+
+<script type="text/javascript">
+
+</script>
+
+
+
+</html>

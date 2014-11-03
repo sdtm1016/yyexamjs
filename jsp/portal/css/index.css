@@ -1,0 +1,32 @@
+
+	/** 这里 html可以兼容firefox，height百分百是为了设置body、顶层布局容器的高度为100% **/
+	html,body{padding:0;margin:0;background-color:#fff;font-family:宋体;}
+	
+	/**顶层容器样式**/
+	#container{width:1024px;height:748px;min-height:200px;background-color:#fff;font-family:宋体;overflow:hidden;}
+	
+	/**头部菜单容器样式**/
+	#header{width:1024px;height:32px;padding-left:16px;cursor:default;background-image:url('../../../images/portal/CTree/ImageListFill/headerBackground.jpg');background-repeat: repeat-x;}
+		/*
+	#header span{font-size:12px;color:#fff;height:32px;line-height:32px;padding:4px 3px 4px 3px;margin:0px;text-align:center;cursor:default;border:0px solid red;}
+	*/
+	#header div{font-size:12px;color:#fff;padding:4px 5px 4px 5px;margin-top:5px;text-align:center;cursor:default;float:left;}
+	
+	/**中部区域容器样式 高度为768减头部和底部高度以及margin之和**/
+	#middle{width:1022px;height:667px;margin-top:1px;border-top:1px solid #808080;border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+	
+	/**底部状态栏容器样式**/
+	#footer{width:1024px;height:20px;clear:both;border:2px;border-style:outset;border-color:#eee;background-color:#D4D0C8;font-size:12px;}
+	/**底部状态栏单元格div样式**/
+	#footer div{float:left;width:190px;height:16px;line-height:16px;background-color:#D4D0C8;padding-left:10px;margin-left:2px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+	
+	/**中部左边导航菜单容器样式**/
+	#middleleft{width:159px;height:665px;float:left;cursor:default;background-color:#D4F1F9;}
+	
+	/**中部右边iframe容器样式**/
+	#middleright{width:861px;height:665px;float:left;}
+
+	
+	
+	.innerborder{width:1020px;height:665px;border-left:1px solid #404040;border-top:1px solid #404040;border-right:1px solid #d4d0c8;border-bottom:1px solid #d4d0c8;}
+	

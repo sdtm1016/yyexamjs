@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>对照式审核</title>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+		.lefttable {border-collapse: collapse;cursor:default;position:absolute;margin-top:0px;margin-left:0px;width:60px;}
+		.lefttable thead tr{height:24px;}
+		.lefttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.lefttable tbody tr {background-color:#ffffff;}
+		.lefttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		
+		
+		.righttable {border-collapse: collapse;cursor:default;width:940px;margin-left:60px;}
+		.righttable thead tr{height:24px;}
+		.righttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.righttable tbody tr {background-color:#ffffff;}
+		.righttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+		
+	</style>
+</head>
+<body>
+	<div class="container" id="container" style="width:600px;height:330px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:574px;height:320px;margin-left:10px;margin-top:8px;">
+			
+			
+			<div style="width:100%;height:40px;">
+				<div style="float:left;width:50%;color:#000080;margin-top:8px;">
+					<span>日期：2012年10月30日</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>凭证号：收 - 0001</span><br/>
+					<span>制单人：刘飞</span>
+				</div>
+				<div style="text-align:right;width:50%;float:left;margin-top:8px;">
+					<input type="button" value="增加"/>&nbsp;
+					<input type="button" value="删除"/>&nbsp;&nbsp;&nbsp;&nbsp;
+				</div>
+			</div>
+			
+			
+			<div style="width:100%;height:240px;border:2px inset #ccc;overflow-x:scroll;overflow-y:auto;background-color:#808080;">
+				
+				<table border=1 class="lefttable">
+					<thead>
+						<tr>
+							<td width="50">对照结果</td>
+						</tr>
+					</thead>
+					<tbody id="left_table_datarows">
+						<tr><td>&nbsp;</td></tr>
+					</tbody>
+				</table>
+				
+				<table border=1 class="righttable">
+					<thead>
+						<tr id="right_table_header">
+							<td width="100">科目编码</td>
+							<td width="140">科目名称</td>
+							<td width="70">部门</td>
+							<td width="70">个人</td>
+							<td width="70">项目</td>
+							<td width="70">客户</td>
+							<td width="140">供应商</td>
+							<td width="70">方向</td>
+							<td width="70">金额</td>
+							<td width="70">外币</td>
+							<td width="70">数量</td>
+						</tr>
+						
+					</thead>
+					<tbody id="right_table_datarows">
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</div>
+			
+			<div style="float:none;clear:both;"></div>
+			
+			<div style="width:100%;height:30px;margin-top:6px;">
+				<div style="width:50%;height:30px;float:left;">
+					&nbsp;&nbsp;<input type="button" value="对照检查" onclick="javascript:window.parent.openWindow('gl_audit_comparegrid');"/>
+				</div>
+				<div style="width:50%;height:30px;text-align:right;float:left;">
+					<input type="button" value="审核"/>&nbsp;
+					<input type="button" value="退出" onclick="javascript:window.parent.closeWindow('gl_audit_compareaudit');"/>&nbsp;&nbsp;&nbsp;
+				</div>
+			</div>
+			
+			
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+var rtd = document.getElementById("right_table_datarows");
+
+//当前被点击选中的单元格全局变量
+var currentEditCell=null;
+
+for(var i=0;i<rtd.rows.length;i++){
+	for(var j=0;j<rtd.rows[i].cells.length;j++){
+		rtd.rows[i].cells[j].ondblclick=function(){
+			var evt=(window.event || event);//获得事件
+			var td = (evt.srcElement || evt.target);
+
+			if(td.tagName!="TD"){
+				td = td.parentNode;
+			}
+			
+			//如果被双击单元格是“科目名称”列，则不往里面创建文本框和弹窗按钮，退出此函数
+			var headText = document.getElementById("right_table_header").cells[td.cellIndex].innerHTML;
+			if(headText=="科目名称"){
+				return false;
+			}
+			
+			
+			//避免重复双击，重复往TD里添加innerHTML内容产生混乱
+			if(td.getElementsByTagName("input").length==0){
+				
+				//如果有其他单元格正处于编辑状态，那么还需要将其他单元格取消编辑状态
+				if(currentEditCell!=null){
+					currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+					currentEditCell=null;
+				}
+				
+				
+				//往单元格TD里添加文本框和放大镜按钮
+				var temp = td.innerHTML;
+				var component = "<input type='text' value='"+temp+"' style='border:none;height:14px;width:100%;'/><input type='button' style='width:12px;height:12px;margin-left:-24px;'; onclick='switchAction(this);'/>";
+				td.innerHTML=component;
+				td.getElementsByTagName("input")[0].focus();
+				currentEditCell=td;
+			}
+			
+		}
+	}
+	
+	
+}
+
+//单元失去焦点，执行取消编辑状态动作：
+document.onclick=function(){
+	var evt=(window.event || event);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+	
+	if(currentEditCell!=null){
+		if(evtsrc.tagName!="INPUT"){
+			currentEditCell.innerHTML=currentEditCell.getElementsByTagName("input")[0].value;
+			currentEditCell=null;
+		}
+	}
+	
+}
+
+/**
+ * 全局变量，存放当前弹出窗体的动作，用于本页返回值处理函数将返回的值根据此值判断赋值到目的控件
+ */
+var xaction = "";
+
+
+/**
+ * 单元格编辑模式下放大镜按钮弹出目标窗体处理函数
+ */
+function switchAction(button){
+	var td = button.parentNode;
+	if(td.tagName!="TD"){
+		td = button.parentNode.parentNode;
+	}
+	
+	if(td.tagName=="TD"){
+		var cellIndex = td.cellIndex;
+		var th = document.getElementById("right_table_header");
+		var headText = th.cells[cellIndex].innerHTML;
+		
+		switch(headText){
+			case "科目编码" :
+				//弹出科目编码窗体
+				window.parent.openWindow("dsign_subjectsreference","gl_audit_compareaudit");
+				xaction = "kemubianma";
+				break;
+		}
+		
+		
+	}
+	
+}
+
+
+/**
+ * 实现窗体传值接收处理函数
+ */
+function deliverValue(valueObject){
+	//取得列标题名称
+	var headText = document.getElementById("right_table_header").cells[currentEditCell.cellIndex].innerHTML;
+	var textBox = currentEditCell.getElementsByTagName("input")[0];
+	//根据列列标题名称取相应的值将值赋值进当前编辑的单元格内的文本框里
+	switch(headText){
+		case "科目编码" :
+			textBox.value=valueObject.selKemuCode;
+			break;
+	}
+
+	
+	
+}
+
+</script>
+</html>

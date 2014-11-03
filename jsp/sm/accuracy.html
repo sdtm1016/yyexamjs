@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>数据精确度定义</title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+
+
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+
+<script type="text/javascript" src="js/accuracy.js"></script>
+
+
+
+</head>
+<body>
+	<form id="accuracyFrom">
+		<div class="container" style="float:left;width:286px;height:230px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+			<div class="border_outside" style="height:220px;width:278px;margin-top:6px;margin-left:3px;">
+				<div class="border_inside" style="height:218px;width:276px;">
+					<div style="text-align:center;line-height:30px;">
+						请按您单位的需要认真填写
+					</div>
+					<div style="text-align:center;">
+						<div class="border_outside" style="margin:auto;height:150px;width:206px;">
+							<div class="border_inside" style="height:148px;width:204px;line-height:30px;">
+								<div>
+									<div style="padding-right:14px;">存货数量小数位　 
+										<input type="text" name="accInfoList[0].cvalue" id="iStrsQuanDecDgt" style="width:30px;height:14px;"/>
+										<input type="hidden" name="accInfoList[0].id" id="iStrsQuanDecDgtId">
+									</div>
+									<div style="padding-right:14px;">存货单价小数位　
+										<input type="text" name="accInfoList[1].cvalue" id="iStrsPriDecDgt" style="width:30px;height:14px;"/>
+										<input type="hidden" name="accInfoList[1].id" id="iStrsPriDecDgtId">
+									</div>
+									<div style="padding-right:14px;">开票单价小数位　 
+										<input type="text" name="accInfoList[2].cvalue" id="iBillPrice" style="width:30px;height:14px;"/>
+										<input type="hidden" name="accInfoList[2].id" id="iBillPriceId">
+									</div>
+									<div style="padding-right:14px;">　件数　小数位　 
+										<input type="text" name="accInfoList[3].cvalue" id="iNumDecDgt" style="width:30px;height:14px;"/>
+										<input type="hidden" name="accInfoList[3].id" id="iNumDecDgtId">
+									</div>
+									<div style="padding-right:14px;">换算率　小数位　 
+										<input type="text" name="accInfoList[4].cvalue" id="iExchRateDecDgt" style="width:30px;height:14px;"/>
+										<input type="hidden" name="accInfoList[4].id" id="iExchRateDecDgtId">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+					<div style="text-align:right;line-height:40px;padding-right:30px;">
+						<input type="button" value="确认" onclick="ok();"/>&nbsp;
+						<input type="button" value="取消" onclick="cancel();"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</body>
+</html>

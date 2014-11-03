@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>作废凭证表</title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="js/zfpzb.js"></script> 
+<style type="text/css">
+.tableheader{border-collapse: collapse;cursor:default;}
+.tableheader tr{}
+.tableheader td{text-align:center;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;}
+
+.tablebodyer{border-collapse: collapse;cursor:default;}
+.tablebodyer tr{}
+.tablebodyer td{text-align:center;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;background-color:#fff;}
+</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:450px;height:280px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:430px;height:240px;margin-top:10px;margin-left:17px;">
+			
+			<div style="width:355px;height:240px;float:left;">
+				<table class="tableheader" width="353">
+					<thead>
+						<tr>
+							<td width="106">制单日期</td>
+							<td width="106">凭证编号</td>
+							<td width="95">制单人</td>
+							<td width="46">删除?</td>
+						</tr>
+					</thead>
+				</table>
+				<div style="width:369px;height:220px;overflow-y:auto;">
+					<table class="tablebodyer" width="353">
+						<tbody id="datarows">
+						</tbody>
+					</table>
+					
+				</div>
+			</div>
+			<div style="width:70px;height:240px;float:left;text-align:center;margin-left:5px;">
+				
+				<input type="button" value="全选" onclick="allYes()"/><br><br>
+				<input type="button" value="全消" onclick="allNo()"/><br><br>
+				<input type="button" value="确定" onclick="btnConfirm()"/><br><br>
+				<input type="button" value="放弃" onclick="window.parent.closeWindow('gl_dsign_zfpzb')"/><br><br>
+			</div>
+		
+		
+		</div>
+	</div>
+</body>
+</html>

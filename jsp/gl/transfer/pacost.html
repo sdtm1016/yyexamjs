@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>售价（计划价）销售成本结转</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+	<script type="text/javascript">
+
+		/***
+		 *此变量用于为三个弹出科目的文本框取值赋值提供目标
+		 */
+		var targetId="";
+		
+		//实现取值窗体值函数（从子窗体传过来的）
+		function deliverValue(paramObject){
+			document.getElementById(targetId).value=paramObject.selKemuCode;
+			
+			
+		}
+	
+	
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:420px;height:430px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:400px;height:420px;margin-left:10px;margin-top:8px;">
+			
+			<div style="width:100%;">
+				<div style="width:270px;float:left;">
+				
+					<fieldset>
+						<legend>差异额计算方法</legend>
+						<div>
+							<input type="radio" name="rg_1" value="1" id="rg_1_1" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;" checked="checked"/><label for="rg_1_1">售价法&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（收入余额*差异率）</label><br>
+							<input type="radio" name="rg_1" value="0" id="rg_1_2" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;"/><label for="rg_1_2">计划价法&nbsp;&nbsp;&nbsp;&nbsp;（成本余额*差异率）</label>
+						</div>
+					</fieldset>
+				</div>
+				<div style="width:120px;float:left;text-align:right;">
+					<input type="button" id="btnConfirm" value="确定" onclick= "saveSalePlanButtoTran()"><br/><br/>
+					<input type="button" value="放弃" onclick="javascript:window.parent.closeWindow('gl_transfer_pacost');">
+				</div>
+			</div>
+			
+			<div style="width:100%;">
+				
+				
+				
+				<table>
+					<tbody>
+						<tr>
+							<td colspan="2" valign="middle">
+								凭证类别：
+				<select id = "signList">
+						<option value= "0">收 收款凭证</option>
+						<option value= "1">付 付款凭证</option>
+						<option value= "2">转 转账凭证</option>
+				</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td align="right" valign="middle">库存商品科目：</td>
+							<td valign="middle"><input type="text" id="kccode"/><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_pacost');targetId='kccode';" class="finder"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">商品销售收入科目：</td>
+							<td valign="middle"><input type="text" id="srcode"/><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_pacost');targetId='srcode';" class="finder"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">商品销售成本科目：</td>
+							<td valign="middle"><input type="text" id="cbcode"/><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_pacost');targetId='cbcode';" class="finder"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">差异科目：</td>
+							<td valign="middle"><input type="text" id="cycode"/><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_pacost');targetId='cycode';" class="finder"/></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				
+			</div>
+			
+			<div style="width:100%;margin-top:8px;">
+				<fieldset>
+						<legend>月末结转方法</legend>
+						<div>
+							<input type="radio" name="rg_2" value="1" id="rg_2_1" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;" checked="checked"/><label for="rg_2_1">月末结转成本&nbsp;&nbsp;（借&nbsp;成本科目&nbsp;差异科目，贷&nbsp;库存科目）</label><br/>
+							<input type="radio" name="rg_2" value="0" id="rg_2_2" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;"/><label for="rg_2_2">月末调整成本&nbsp;&nbsp;（借&nbsp;成本科目，贷&nbsp;差异科目）</label>
+						</div>
+					</fieldset>
+			</div>
+			
+			<div style="width:100%;margin-top:8px;">
+				<fieldset>
+						<legend>差异率计算方法</legend>
+						<div style="margin-left:60px;">
+							<input type="radio" name="rg_3" value="1" id="rg_3_1" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;" checked="checked"/><label for="rg_3_1">综合差异率</label>
+							<input type="radio" name="rg_3" value="2" id="rg_3_2" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;"/><label for="rg_3_2">个别差异率</label>
+						</div>
+					</fieldset>
+			</div>
+			
+			<div style="width:100%;margin-top:8px;">
+				<fieldset>
+					<legend>差异率计算公式</legend>
+					<div>
+									
+						<table>
+							<tbody>
+								<tr>
+									<td colspan="2" valign="middle">
+										&nbsp;&nbsp;&nbsp;&nbsp;差异率=
+									</td>
+									<td align="center" valign="middle">
+										<div style="width:290px;border-bottom:1px solid #000;">
+											差异科目期初余额&nbsp;&nbsp;
+											<input type="button" style="width:13px;height:12px;padding:0px;background-image:url('../../../images/newbuttons/lansedegou.jpg')" value="dd">&nbsp;
+											<input type="text" style="width:12px;height:10px;line-height:10px;text-align:center;border:none;background:#ddd;" value="+"/>&nbsp;
+											差异科目本期净额&nbsp;&nbsp;
+											<input type="button" style="width:13px;height:12px;padding:0px;background-image:url('../../../images/newbuttons/lansedegou.jpg')" value="dd">
+										</div>
+										<div style="width:290px;">
+											库存科目期初余额&nbsp;&nbsp;
+											<input type="button" style="width:13px;height:12px;padding:0px;background-image:url('../../../images/newbuttons/lansedegou.jpg')" value="dd">&nbsp;
+											<input type="text" style="width:12px;height:10px;line-height:10px;text-align:center;border:none;background:#ddd;" value="+"/>&nbsp;
+											库存科目本期净额&nbsp;&nbsp;
+											<input type="button" style="width:13px;height:12px;padding:0px;background-image:url('../../../images/newbuttons/lansedegou.jpg')" value="dd">
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+				</fieldset>
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="js/pacost.js"></script>
+
+<script type="text/javascript">
+   var paramObject = window.parent.valueMap.get("gl_transfer_pacost");
+   if (paramObject!=null) {
+   		querySalePlanBautotran(paramObject.year,paramObject.month,paramObject.type);
+   }
+   else {
+	   var curLoginPeriod = getLoginPeriod();
+	   var curMonth =  curLoginPeriod.iid;
+	   var curYear = curLoginPeriod.iyear;
+		querySalePlanBautotran(curYear,curMonth,"40");
+   }
+ </script>
+</html>

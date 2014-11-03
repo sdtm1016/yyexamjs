@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> 开户银行 </title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+  
+	<script type="text/javascript" src="js/bank.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	
+	<style type="text/css">
+	
+	
+  #payConditionTable td{height:16px;line-height:16px;background-color:#fff;border:1px solid #ccc;border-style:outset;}
+  #payConditionTableHeader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		
+	</style>
+	
+ </head>
+
+ <body style="font-size:12px;font-family:宋体;padding:0px;background-color: #D4D0C8;">
+ <div style="width:520px;height:340px;background-color: #D4D0C8;">
+	<div>
+&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/add.jpg" onmousedown="this.src='../../../images/buttons/pushadd.jpg';" onmouseup="this.src='../../../images/buttons/add.jpg';" onmouseout="this.src='../../../images/buttons/add.jpg';" onclick="create()"/>
+&emsp;
+<input onfocus="this.blur();" type="image" src = "../../../images/buttons/del.jpg" onmousedown="this.src='../../../images/buttons/pushdel.jpg';" onmouseup="this.src='../../../images/buttons/del.jpg';" onmouseout="this.src='../../../images/buttons/del.jpg';" onclick="del()"/>
+		
+		&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/exit.jpg" onmousedown="this.src='../../../images/buttons/pushexit.jpg';" onmouseup="this.src='../../../images/buttons/exit.jpg';" onmouseout="this.src='../../../images/buttons/exit.jpg';"  onClick="exitWindow()"/>
+		<hr/>
+	</div>
+	<div style="overflow:auto;height:300px;border:2px inset #D4D0C8;">
+		<table id="payConditionTable" border="1" cellspacing="0" style="width:700px;background-color:#f0f0f0;border-style:inset;border-size:2px;border-color:#eee;">
+		
+			<tr id="payConditionTableHeader" bgcolor="#f0f0f0">
+				<td >编码</td>
+				<td >开户银行</td>
+				<td >银行账号</td>
+				<td >暂封标志</td>
+			</tr>
+			<tbody id="include" style="background-color:#FFFFFF;">
+			</tbody>
+			<tr id="addBank" height="18px" style="background-color:#FFFFFF;" onclick = "selectRow(null)" >
+				<td onclick="selectTd(this)"><input style="width:99%;height:12px;border:none;" name="bank.cpaycode" /></td>
+				<td onclick="selectTd(this)"><input style="width:99%;height:12px;border:none;" name="bank.cpayname"/></td>
+				<td onclick="selectTd(this)"><input style="width:99%;height:12px;border:none;"  name="bank.cbaccount"/></td>
+				<td onclick="selectTd(this)"><select name="bank.bbflag" style="width:99%;height:18px;">
+                <option value="0" selected>否</option>
+                <option value="1">是</option>
+			    </select></td>
+			</tr>
+		</table>
+		
+	</div>
+  </div>
+ </body>
+</html>

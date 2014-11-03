@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>销售成本结转一览表</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+		.lefttable {border-collapse: collapse;cursor:default;margin-left:0px;width:150px;}
+		.lefttable thead tr{height:24px;}
+		.lefttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.lefttable tbody tr {background-color:#ffffff;}
+		.lefttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+		
+		
+		.righttable {border-collapse: collapse;cursor:default;width:515px;margin-left:150px;}
+		.righttable thead tr{height:24px;}
+		.righttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.righttable tbody tr {background-color:#ffffff;}
+		.righttable tbody tr td{overflow-x:hidden;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+		
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/costgrid.js"></script>
+	
+	<script type="text/javascript">
+	var valueObject = window.parent.valueMap.get("gl_transfer_costgrid");
+	//显示销售成本转账一览表
+	showCostgrid();
+	function tableScroll(c){
+		document.getElementById("lefttable").style.marginTop="-"+parseInt(c.scrollTop)+"px";
+	}
+	</SCRIPT>
+</head>
+<body>
+	<div class="container" id="container" style="width:800px;height:354px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:800px;height:340px;margin-left:10px;margin-top:8px;">
+			
+			
+			
+			<table style="height:18px;">
+			  <tr>
+			   		<td>凭证类别</td>
+			   		<td id ="csigntext" style="color:blue;">收款凭证</td>
+			   </tr>
+			  
+			 
+			   <tr>
+			   		<td>库存商品科目</td>
+			   		<td  id= "kcCode"  style="color:blue;">1405</td>
+			   		<td  id= "kcCodename" style="color:blue;">库存商品</td>
+			   </tr>
+			   
+			   <tr>
+			   		<td style="width:110px;">商品销售收入科目</td>
+			   		<td id= "srCode" style="width:110px;color:blue;">6601</td>
+			   		<td id= "srCode" style="width:170px;color:blue;">主营业务收入</td>
+			   		<td style="width:24px;"><div style="width:20px;height:18px;border:1px solid #000;background-color:#afa;"></div></td>
+			   		<td style="width:200px;">
+			   			
+			   			不结转此商品的库存金额余额
+			   		</td>
+			   </tr> 
+			   
+			  
+			</table>
+			
+			
+			<div onscroll="tableScroll(this);" style="height:180px;width:100%;border:1px solid #000000;overflow-x:scroll;overflow-y:auto;background-color:#808080;">
+				<div style="position:absolute;z-index:200;height:264px;overflow:hidden;float:left;">
+					<table id="lefttable" border=1 class="lefttable" >
+						<thead>
+							<tr>
+								<td width="150">成本科目编码</td>
+							</tr>
+						</thead>
+						<tbody id="left_table_datarows">
+						</tbody>
+					</table>
+				</div>
+				<div style="position:relative;z-index:100;float:left;">
+					<table   border=1 class="righttable" style="width:150%;">
+						<thead id = "right_table_title">
+							<tr>
+								<td  width="250">成本科目名称</td><td width="100">计量单位</td>
+								<td  width="150">部门编码</td><td width="100">部门名称</td>
+								<td  width="150">个人编码</td><td width="100">个人名称</td>
+								<td  width="150">客户编码</td><td width="100">客户名称</td>
+								<td  width="250">供应商编码</td><td width="100">供应商名称</td>
+								<td  width="150">项目编码</td><td width="100">项目名称</td>
+								
+								<td width="100">销售数量</td><td width="100" >销售金额</td>
+								<td width="100">库存数量</td><td width="100">库存金额</td>
+								<td width="100">应转数量</td><td width="100">平均单价</td>
+								<td width="100">应转金额</td><td width="150" >库存科目编码</td>
+								<td width="250">库存科目名称</td><td width="100">是否结转</td>
+								
+							</tr>
+						</thead>
+						<tbody id="right_table_datarows">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div style="height:40px;text-align:right;">
+				<div style="margin-right:0px;margin-top:20px;">
+				   <input type="button" value="预览"  />&nbsp;
+					<input type="button" value="打印"  />&nbsp;
+					<input type="button" value="确定" onclick = "beginCostTrans()" />&nbsp;
+					<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('gl_transfer_costgrid');"/>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+var rtd = document.getElementById("right_table_datarows");
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+for(var i=0;i<rtd.rows.length;i++){
+	rtd.rows[i].onclick=function(){
+		var evt=(window.event || event);//获得事件
+		var evtsrc = (evt.srcElement || evt.target);
+		if(currentSeletedRow!=null){
+			currentSeletedRow.style.backgroundColor="#fff";
+			currentSeletedRow.style.color="#000";
+		}
+		evtsrc.parentNode.style.backgroundColor="#00f";
+		evtsrc.parentNode.style.color="#fff";
+		currentSeletedRow=evtsrc.parentNode;
+	}
+}
+
+
+
+
+</script>
+</html>

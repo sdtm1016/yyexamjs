@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>发生额及余额查询条件</title>
+<style type="text/css">
+	.out{
+		border-top:1px solid #808080;
+		border-right:1px solid #FFFFFF;
+		border-bottom:1px solid #FFFFFF;
+		border-left:1px solid #808080;
+	}
+	.in{
+		border-top:1px solid #FFFFFF;
+		border-right:1px solid #808080;
+		border-bottom:1px solid #808080;
+		border-left:1px solid #FFFFFF;
+	}
+	.z_butt_09{padding:0;margin:0;border:none;font-size:12px;font-family:"宋体" "SimSun","Arial Narrow"; height:10px; width:16px; background:url(../../../images/buttons/z_img_06.png) no-repeat}
+	.z_butt_10{padding:0;margin:0;border:none;font-size:12px;font-family:"宋体" "SimSun","Arial Narrow"; height:10px; width:16px; background:url(../../../images/buttons/z_img_06.png) no-repeat 0 -10px;}
+</style>
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<!-- 引入公共js函数 -->
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+
+<!-- 引入公共引用函数 -->
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<!-- 增加树 -->	
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+
+<script type="text/javascript" src="js/conditions.js"></script>
+<script type="text/javascript" src="js/myacccountYEBTree.js"></script>	
+	<SCRIPT type="text/javascript">
+		loadMyacccountYEBtree();  		
+	</SCRIPT>
+</head>
+	<body style="font-size: 12px;padding:0px;">
+		<div style="width:488px;height:224px;background-color: #d4d0c8;position:absolute;left:0px;top:0px;">
+			<div class="out" style="float:left;width: 150px;height: 200px;margin-left: 10px;margin-top: 10px;">
+				<div style="width: 148px;height: 198px;" class="in">
+					<div style="width: 136px;height: 147px;margin:5px;border-color:#ffffff;background-color:#ffffff;border-style: inset;border-width: 1px;">
+						<div style="width:136px;height:147px;border:1px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+									<ul id="myacccountTree" class="ztree"></ul>
+		    					 </div>
+					</div>
+					<div style="margin-left:5px;margin-top: 10px">
+						<input type="button" style="width: 44px;height: 20px;font-size: 12px" value="增加" onclick=" addMyacccount(); "/>
+						<input type="button" style="width: 44px;height: 20px;font-size: 12px" value="保存" onclick=" saveMyacccount(); "/>
+						<input type="button" style="width: 44px;height: 20px;font-size: 12px" value="删除" onclick=" deleteMyacccount(); "/>
+					</div>
+				</div>
+			</div>
+			<div style="float:left;width: 278px;height: 210px;margin-left: 10px;margin-top: 10px;">
+				<div class="out" style="width: 276px;height: 162px;">
+					<div style="width: 274px;height: 160px;" class="in">
+						<div style="margin-top: 8px;margin-left: 5px;height: 90px;">
+							<table>
+								<tr>
+									<td style="width: 30px;">月份</td>
+									<td>
+										<select name="" id="startMonth" style="width: 98px;">
+										</select>
+									</td>
+									<td>—</td>
+									<td>
+										<select name="" id="endMonth" style="width: 98px;">
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>科目</td>
+									<td><input type="text" id="startKm" style="height: 16px;width: 70px" /><img  src="../../../images/buttons/search.png" onclick="javascript:parent.openWindow('dsign_subjectsreference','gl_balances_blances_conditions');xaction='startKm';"/></td>
+									<td>—</td>
+									<td><input type="text" id="endKm" style="height: 16px;width: 70px" /><img src="../../../images/buttons/search.png" onclick="javascript:parent.openWindow('dsign_subjectsreference','gl_balances_blances_conditions');xaction='endKm';"/></td>
+								</tr>
+								<tr>
+									<td>级次</td>
+									<td colspan="2">
+										<div style="float:left;">
+											<div style="float:left;">
+												<input type="text" id="startJc" readonly="readonly" value = "1" style="width:15px;"/>
+											</div>
+											<div style="float:left;">
+												<div><input type="button" class="z_butt_09" value="" /></div>
+												<div><input type="button" class="z_butt_10" value="" /></div>
+											</div>
+										</div>
+										<div style="float:left;padding:5px;">—</div>
+										
+										<div style="float:left;">
+											<div style="float:left;">
+												<input type="text" id="endJc" readonly="readonly" value="1" style="width:15px;"/>
+											</div>
+											<div style="float:left;">
+												<div><input type="button" class="z_butt_09" value="" /></div>
+												<div><input type="button" class="z_butt_10" value="" /></div>
+											</div>
+										</div>
+									</td>
+									<td>
+										<input id="isMj" type="checkbox" />末级科目
+									</td>
+								</tr>
+								<tr>
+									<td>余额</td>
+									<td><input type="text" id="startYe" style="width:95px"/></td>
+									<td>—</td>
+									<td><input type="text" id="endYe" style="width:95px"/></td>
+								</tr>
+							</table>
+							<table>
+								<tr>
+									<td>科目类型</td>
+									<td>
+										<select name="" id="kmType" style="width: 70px;">
+											<option value=""></option>
+											<option value="资产">资产</option>
+											<option value="负债">负债</option>
+											<option value="共同">共同</option>
+											<option value="权益">权益</option>
+											<option value="成本">成本</option>
+											<option value="损益">损益</option>
+											
+										</select>
+										&nbsp;&nbsp;
+									</td>
+									<td>外币名称</td>
+									<td>
+										<select name="wbName" id="wbName" style="width: 70px;">
+											<option value="美元">美元</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div>
+					<table>
+						<tr>
+							<td>
+								<input type="checkbox" id="isWfs" value="0">本期无发生夫余额、累计有发生显示<br/>
+								<input type="checkbox" id="isWjz" value="0">包含未记账凭证
+								<input type="button" value="确定" style="height: 20px;" onclick="nextWindow();"/>&nbsp;
+								<input type="button" value="取消" style="height: 20px;" onclick="javascript:window.parent.closeWindow('gl_balances_blances_conditions');"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

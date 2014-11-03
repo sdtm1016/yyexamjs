@@ -1,0 +1,714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>总账系统</title>
+<link rel="stylesheet" href="css/otherpage.css" type="text/css"/>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript">
+/*
+$(document).ready(function() {
+	//current module image
+	var openedPages = window.parent.openedPages;
+	var exists = false;
+	//alert(openedPages.length);
+	for(var i=0;i<openedPages.length;i++){
+		if(openedPages[i].module=="GL" && openedPages[i].opened==true){
+			exists = true;
+			//document.getElementById("h1").innerHTML = "欢迎使用！";
+			break;
+		}
+		if((i+1)==openedPages.length){
+			
+		}
+	}
+	
+	if(!exists){
+		var page = {};
+		page.module = "GL";
+		page.opened = true;
+		window.parent.openedPages[window.parent.openedPages.length]=page;
+	}
+	
+	//alert(window.parent.openedPages.length);
+});
+*/
+</script>
+
+<style type="text/css">
+
+	
+</style>
+
+</head>
+<body>
+
+
+
+
+<!-- 窗体容器 开始 -->
+ <div>
+ 
+ 
+ 
+ <!-- 总账.设置开始 -->
+		
+		<div id="gl_set_option"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="582" height="440" title="选项"
+		src="../gl/set/option.html"></div>
+		
+		<div id="gl_set_initial"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="580" height="550" title="期初余额录入"
+		src="../gl/set/initial.html"></div>
+		
+		<div id="gl_set_shisuan"
+		style="margin-left: 170px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="460" height="240" title="期初试算平衡表"
+		src="../gl/set/shisuan.html"></div>
+	
+	
+		<div id="gl_set_midinitial"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="762" height="550" title="期初余额录入"
+		src="../gl/set/midinitial.html"></div>
+	
+		<div id="gl_set_midoperat"
+		style="margin-left: 90px;margin-top: 80px; padding: auto; display: none;"
+		type="window" width="630" height="410" title="期初辅助核算"
+		src="../gl/set/midoperat.html"></div>
+		<div id="gl_set_operat"
+		style="margin-left: 90px;margin-top: 80px; padding: auto; display: none;"
+		type="window" width="630" height="410" title="期初辅助核算"
+		src="../gl/set/operat.html"></div>
+		
+	 
+		
+		
+
+	
+	<div id=""
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="600" height="335" title="常用摘要"
+		src="../gl/dsign/bdigest/bdigestEdit.html"></div>
+		
+		<div id="gl_billquery"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="510" height="210" title="查询凭证"
+		src="../dsign/billquery.html"></div>
+	
+	<!-- 总账.设置结束 -->
+ 
+ 
+ 
+	<!-- 凭证页面dsign/index.html -->
+	<div id="dsign"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="填制凭证"
+		src="../dsign/index.html"></div>
+		
+	<!-- 凭证.会计期间选择dsign/kjqjxz.html -->
+	<div id="dsign_kjqjxz"
+		style="margin-left: 170px;margin-top: 80px; padding: auto; display: none;"
+		type="window" width="220" height="105" title="选择凭证期间"
+		src="../dsign/kjqjxz.html"></div>
+		
+		
+	<!-- 凭证审核页面dsign/indexAudit.html -->
+	<div id="dsignAudit"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="凭证审核"
+		src="../dsign/indexAudit.html"></div>
+		
+		
+	<!-- 成批取消审核结果表 -->
+	<div id="gl_dsign_cpqxshjgb"
+		style="margin-left: 170px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="450" height="99" title="成批取消审核结果表"
+		src="../dsign/cpqxshjgb.html"></div>
+		
+	<!-- 成批审核结果表 -->
+	<div id="gl_dsign_cpshjgb"
+		style="margin-left: 170px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="450" height="99" title="成批审核结果表"
+		src="../dsign/cpshjgb.html"></div>
+		                  
+		
+		
+		<!-- 成批取消签字结果表 -->
+	<div id="gl_dsign_cpqxqzjgb"
+		style="margin-left: 170px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="450" height="99" title="成批取消签字结果表"
+		src="../dsign/cpqxqzjgb.html"></div>
+		
+	<!-- 成批签字结果表 -->
+	<div id="gl_dsign_cpqzjgb"
+		style="margin-left: 170px;margin-top: 150px; padding: auto; display: none;"
+		type="window" width="450" height="99" title="成批签字结果表"
+		src="../dsign/cpqzjgb.html"></div>
+		
+		
+	<!-- 作废凭证表 -->
+	<div id="gl_dsign_zfpzb"
+		style="margin-left: 100px;margin-top: 80px; padding: auto; display: none;"
+		type="window" width="450" height="305" title="作废凭证表"
+		src="../dsign/zfpzb.html"></div>
+		
+		
+		
+		
+	<!-- 凭证审核页面dsign/indexAudit.html -->
+	<div id="dsignAudit"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="凭证审核"
+		src="../dsign/indexAudit.html"></div>
+		
+		
+		
+			<!-- 出纳签字页面dsign/indexAudit.html -->
+	<div id="dsignCashier"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="出纳签字"
+		src="../dsign/indexCashier.html"></div>
+	
+		
+		
+		
+		
+		<!-- 凭证查询页面dsign/indexS+how.html -->
+		
+	<div id="dsignShow"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="凭证查询"
+		src="../dsign/indexShow.html"></div>
+		
+		
+		
+		<!-- 月末转账凭证页面dsign/indexAudit.html -->
+	<div id="dsignBautotran"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="742" height="490" title="月末转账"
+		src="../dsign/indexBautotran.html"></div>
+	
+	
+	
+	<!-- 凭证页面.摘要参照 reference.html -->
+	<div id="dsign_reference"
+		style="margin-left: 110px;margin-top: 60px; padding: auto; display: none;"
+		type="window" width="500" height="355" title="参照"
+		src="../dsign/reference.html"></div>	
+	
+	
+	<!-- 凭证页面.参照栏目设置 referencesetting.html -->
+	<div id="dsign_referencesetting"
+		style="margin-left: 100px;margin-top: 55px; padding: auto; display: none;"
+		type="window" width="500" height="320" title="参照栏目设置"
+		src="../dsign/referencesetting.html"></div>	
+	
+	
+	<!-- 凭证页面.科目参照 subjectsreference.html -->
+	<div id="dsign_subjectsreference"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="340" title="科目参照"
+		src="../dsign/subjectsreference.html"></div>		
+	
+	
+	<!-- 凭证页面.凭证查询 billquery.html -->
+	<div id="dsign_billquery"
+		style="margin-left:130px;margin-top:100px; padding: auto; display: none;"
+		type="window" width="520" height="490" title="凭证查询"
+		src="../dsign/billquery.html"></div>		
+	 
+		
+	<!-- 凭证页面.凭证查询列表 showbill.html -->
+	<div id="dsign_query_showbill"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="600" height="374" title="查询凭证"
+		src="../dsign/showBill.html"></div>		
+	
+	
+	<!-- 凭证页面.自定义项 customentry.html -->
+	<div id="dsign_customentry"
+		style="margin-left: 150px;margin-top: 120px; padding: auto; display: none;"
+		type="window" width="475" height="300" title="自定义项"
+		src="../dsign/customentry.html"></div>		
+	
+	<!-- 凭证页面.辅助核算项 auxiliaryoptions.html -->
+	<div id="dsign_auxiliaryoptions"
+		style="margin-left: 150px;margin-top: 120px; padding: auto; display: none;"
+		type="window" width="410" height="220" title="辅助项"
+		src="../dsign/auxiliaryoptions.html" closeable="false"></div>
+		
+		
+	<!--项目档案 参照 -->
+	<div id="basic_comref_fitemref"
+		style="margin-left: 40px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="项目档案参照"
+		src="../basic/comref/fitemref.html"></div>
+	
+	
+	
+	<!-- 总账.总账查询条件 ledgermanage.html -->
+	<div id="gl_ledger_ledgermanage"
+		style="margin-left: 150px;margin-top: 120px; padding: auto; display: none;"
+		type="window" width="438" height="214" title="总账查询条件"
+		src="../gl/ledger/ledgermanage.html"></div>		
+	
+	
+	
+	<!-- 总账.总账 ledgerselect.html -->
+	<div id="gl_ledger_ledgerselect"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="800" height="600" title="总账"
+		src="../gl/ledger/ledgerselect.html"></div>		
+	
+	<!-- 总账.明细账 -->
+	<div id="gl_detailed_detailed"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="500" height="245" title="明细账"
+		src="../gl/detailed/detailed.html"></div>		
+	
+		<div id="gl_detailed_subsidiaryLedgers"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="800" height="600" title="明细账内容"
+		src="../gl/detailed/subsidiaryLedgers.html"></div>		
+	
+	
+	<!-- 余额表相关窗体 开始： -->
+	
+	<!-- 总账.余额表（发生金额查询条件） blances_conditions.html -->
+	<div id="gl_balances_blances_conditions"
+		style="margin-left: 50px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="488" height="244" title="发生金额查询条件"
+		src="../gl/balances/blances_conditions.html"></div>		
+	
+	<!-- 总账.发生金额及余额表 balances.html -->
+	<div id="gl_balances_balances"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="800" height="600" title="发生金额及余额表"
+		src="../gl/balances/balances.html"></div>
+		
+	<!-- 余额表相关窗体结束 -->
+	
+	<!-- 总账.出纳签字.凭证查询 billauditquery.html -->
+	<div id="gl_audit_billcashierquery"
+		style="margin-left:130px;margin-top:100px; padding: auto; display: none;"
+		type="window" width="520" height="205" title="出纳签字查询"
+		src="../gl/cashier/billcashierquery.html"></div>		
+	
+	<!-- 总账.出纳签字.凭证列表 auditbill.html -->
+	<div id="gl_audit_cashierbill"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="600" height="374" title="出纳签字"
+		src="../gl/cashier/cashierbill.html"></div>		
+	
+	
+	
+	
+	
+	<!-- 总账.审核凭证相关窗体 开始： -->
+	
+	<!-- 总账.审核凭证.凭证查询 billauditquery.html -->
+	<div id="gl_audit_billauditquery"
+		style="margin-left:130px;margin-top:100px; padding: auto; display: none;"
+		type="window" width="520" height="205" title="凭证审核查询"
+		src="../gl/audit/billauditquery.html"></div>		
+	
+	<!-- 总账.审核凭证.凭证列表 auditbill.html -->
+	<div id="gl_audit_auditbill"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="600" height="374" title="审核凭证"
+		src="../gl/audit/auditbill.html"></div>		
+	
+	<!-- 总账.审核凭证.对照式审核 compareaudit.html -->
+	<div id="gl_audit_compareaudit"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="600" height="350" title="对照式审核"
+		src="../gl/audit/compareaudit.html"></div>		
+	
+	<!-- 总账.审核凭证.审核检查对照表 comparegrid.html -->
+	<div id="gl_audit_comparegrid"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="600" height="370" title="审核检查对照表"
+		src="../gl/audit/comparegrid.html"></div>		
+	
+	<!-- 总账.审核凭证相关窗体 结束 -->
+	
+	
+	
+	
+	
+	
+	<!-- 总账.月末转账相关窗体 开始： -->
+	
+	<!-- 总账.月末转账.转账生成 create.html -->
+	<div id="gl_transfer_create"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="628" height="418" title="转账生成"
+		src="../gl/transfer/create.html"></div>		
+	
+	<!-- 总账.月末转账.自动转账设置 ats.html -->
+	<div id="gl_transfer_ats"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="750" height="365" title="自动转账设置"
+		src="../gl/transfer/ats.html"></div>		
+	
+	<!-- 总账.月末转账.对应转账设置 mts.html -->
+	<div id="gl_transfer_mts"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="714" height="400" title="对应转账设置"
+		src="../gl/transfer/mts.html"></div>		
+	
+	<!-- 总账.月末转账.销售成本结转设置 costs.html -->
+	<div id="gl_transfer_costs"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="539" height="346" title="销售成本结转设置"
+		src="../gl/transfer/costs.html"></div>		
+		
+		
+		
+	<!-- 总账.月末转账.销售成本结转列表costgrid.html -->
+	<div id="gl_transfer_costgrid"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="820" height="340" title="销售成本结转一览表"
+		src="../gl/transfer/costgrid.html"></div>		
+		
+	
+	<!-- 总账.月末转账.售价（计划价）销售成本结转 pacost.html -->
+	<div id="gl_transfer_pacost"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="421" height="455" title="售价（计划价）销售成本结转"
+		src="../gl/transfer/pacost.html"></div>		
+		
+		
+	<!-- 总账.月末转账.汇兑损益试算表egalgrid.html -->
+	<div id="gl_transfer_egalgrid"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="820" height="340" title="汇兑损益试算表"
+		src="../gl/transfer/egalgrid.html"></div>		
+		
+	
+	<!-- 总账.月末转账.汇兑损益结转设置 egals.html -->
+	<div id="gl_transfer_egals"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="480" height="327" title="汇兑损益结转设置"
+		src="../gl/transfer/egals.html"></div>		
+	
+	<!-- 总账.月末转账.期间损益结转设置 ppals.html -->
+	<div id="gl_transfer_ppals"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="602" height="354" title="期间损益结转设置"
+		src="../gl/transfer/ppals.html"></div>		
+	
+	<!-- 总账.月末转账.公式向导1 fw1.html.html -->
+	<div id="gl_transfer_fw1"
+		style="margin-left: 30px;margin-top: 20px; padding: auto; display: none;"
+		type="window" width="380" height="254" title="公式向导1"
+		src="../gl/transfer/fw1.html"></div>		
+	
+	<!-- 总账.月末转账.公式向导2 fw2.html -->
+	<div id="gl_transfer_fw2"
+		style="margin-left: 30px;margin-top: 20px; padding: auto; display: none;"
+		type="window" width="360" height="420" title="公式向导2"
+		src="../gl/transfer/fw2.html"></div>		
+	
+	<!-- 总账.月末转账相关窗体 结束 -->
+	
+	
+	
+	
+	
+	<!-- 总账.记账 开始 -->
+	
+	<!-- 总账.月末结账 checkout.html -->
+	<div id="gl_checkout_checkout"
+		style="margin-left: 10px;margin-top: 4px; padding: auto; display: none;"
+		type="window" width="620" height="360" title="月末结账"
+		src="../gl/checkout/checkout.html"></div>		
+	
+	<!-- 总账.月末结账 结束 -->
+	
+	
+	
+	
+	
+	
+	
+	<!-- 系列参照 开始 -->
+	
+	<!-- 外币设置 -->
+	<!-- 
+	<div id="basic_comref_exch"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="500" height="370" title="参照"
+		src="../basic/finance/foreignCurrency.html"></div>	
+	 -->
+	
+	<!-- 部门参照 -->
+	<div id="basic_comref_dptref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/dptref.html"></div>	
+	
+	<!-- 个人参照 -->
+	<div id="basic_comref_personref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/personref.html"></div>
+	
+	<!-- 客户参照 -->
+	<div id="basic_comref_cusref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/cusref.html"></div>
+	
+	<!-- 供应商参照 -->
+	<div id="basic_comref_supref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/supref.html"></div>			
+		
+		
+			<!-- 结算方式参照 -->
+	<div id="basic_comref_settlestyleGridRef"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="550" height="370" title="参照"
+		src="../basic/comref/settlestyleGridRef.html"></div>			
+		
+
+
+	<!-- 存货参照 -->
+	<div id="basic_comref_inventoryref"
+		style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+		type="window" width="750" height="370" title="参照"
+		src="../basic/comref/inventoryref.html"></div>			
+		
+		
+		
+		
+	<!-- 系列参照 结束 -->
+	
+	
+	
+	
+	
+	<!-- 总账.记账 tally.html -->
+	<div id="gl_tally_tally"
+		style="margin-left: 60px;margin-top: 100px; padding: auto; display: none;"
+		type="window" width="550" height="320" title="记账"
+		src="../gl/tally/tally.html"></div>
+	<!-- 总账.记账 结束 -->
+	
+	
+	<!-- 总账.不能汇总记账凭证 cannottally.html -->
+	<div id="gl_tally_cannottally"
+		style="margin-left: 60px;margin-top: 100px; padding: auto; display: none;"
+		type="window" width="390" height="330" title="不能汇总记账凭证"
+		src="../gl/tally/cannottally.html"></div>
+	<!-- 总账.记账 结束 -->
+	
+	
+	<!-- 总账.明细账 detailed.html -->
+	<div id="gl_detailed_detailed"
+		style="margin-left: 160px;margin-top: 60px; padding: auto; display: none;"
+		type="window" width="510" height="240" title="明细账查询条件"
+		src="../gl/detailed/detailed.html"></div>
+	<!-- 总账.明细账 -->
+	
+	
+	<!-- 总账.明细账 subsidiaryLedgers.html -->
+	<div id="gl_detailed_subsidiaryLedgers"
+		style="margin-left: 160px;margin-top: 60px; padding: auto; display: none;"
+		type="window" width="800" height="600" title="明细账"
+		src="../gl/detailed/subsidiaryLedgers.html"></div>
+	<!-- 总账.明细账 -->
+	
+	
+	
+	<!-- 总账.恢复记账前状态backtally.html -->
+	<div id="gl_tally_backtally"
+		style="margin-left: 60px;margin-top: 100px; padding: auto; display: none;"
+		type="window" width="366" height="295" title="恢复记账前状态"
+		src="../gl/tally/backtally.html"></div>
+	<!-- 总账.恢复记账前状态 结束 -->
+	
+	
+	
+	<!-- 计算器 -->
+	<div id="tools_calculator"
+		style="margin-left: 60px;margin-top: 100px; padding: auto; display: none;"
+		type="window" width="255" height="195" title="计算器"
+		src="../../js/calculator/calculator.html"></div>
+	
+	
+	
+	
+	<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+	<!-- alert和confirm 警告窗口  结束-->
+	
+</div>
+<!-- 窗体容器 结束 -->
+
+
+ <div class="topbar">
+ 
+ 	<span></span>
+ 	
+	<div onclick="javascript:window.parent.openWindow('finance_code','finance_code');">
+		<span></span>
+		会计科目
+	</div>
+	
+	<div onclick="window.parent.gl_pzlb_init_filter()">
+		<span></span>
+		凭证类别
+	</div>
+		
+	<div onclick="openWindow('gl_bdigest_bdigestEdit');">
+		<span></span>
+		常用摘要
+	</div>
+		
+	<div onclick="javascript:window.parent.openWindow('foreignCurrency');">
+		<span></span>
+		外币种类
+	</div>
+		
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ <div class="flowchart">
+ 
+ 	
+ 	<a style="margin-top:145px;margin-left:73px;" href="javascript:window.parent.gl_tzpz_filter();" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/GL_TZPZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/GL_TZPZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/GL_TZPZ.jpg'"
+ 		/><br/>
+ 		填制凭证
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:145px;margin-left:215px;" href="javascript:window.parent.gl_shpz_filter();" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/GL_SHPZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/GL_SHPZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/GL_SHPZ.jpg'"
+ 		/><br/>
+ 		审核凭证
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:145px;margin-left:360px;" href="javascript:window.parent.gl_jz_filter();" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/GL_JZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/GL_JZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/GL_JZ.jpg'"
+ 		/><br/>
+ 		记账
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:145px;margin-left:490px;" href="javascript:window.parent.gl_ymzz_filter();" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/GL_YMZZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/GL_YMZZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/GL_YMZZ.jpg'"
+ 		/><br/>
+ 		月末转账
+ 	</a>
+ 
+ 	
+ 	<a style="margin-top:145px;margin-left:620px;" href="javascript:openWindow('gl_checkout_checkout');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PBULICK_YMJZ.jpg'"
+ 		/><br/>
+ 		月末结账
+ 	</a>
+ 
+ 	
+ 	
+ 	
+ 	<div>
+ 		<img src="../../images/portal/CWork/ImageList1/GL1024.gif"/>
+ 	</div>
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ 
+ <div class="footpanel">
+ 
+	 <div class="actionList">
+	
+	
+		<div onclick="openWindow('');">
+			<div></div>
+			我的工作台
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			科目汇总
+		</div>
+		
+		<div onclick="openWindow('gl_ledger_ledgermanage');">
+			<div></div>
+			总账
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			序时账
+		</div>
+			
+		<div onclick="openWindow('gl_detailed_detailed');">
+			<div></div>
+			明细账
+		</div>
+		
+		<div onclick="openWindow('gl_balances_blances_conditions');">
+			<div></div>
+			余额表
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			日期账
+		</div>
+			
+		<div onclick="openWindow('');">
+			<div></div>
+			多栏账
+		</div>
+			
+			
+	 </div>
+ 
+ </div>
+ 
+
+
+
+
+
+
+
+ 
+</body>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+</html>

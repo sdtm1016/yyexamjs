@@ -1,0 +1,1011 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+	<title>供应商档案</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../css/base.css" />
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+  	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+  	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+  	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<!-- 增加树css js-->	
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<!-- 日历控件 -->
+	<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+		<!-- 调用编码规则js -->
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+<!-- 	<script type="text/javascript" src="js/vendor.js"></script> -->
+<!-- 	<script type="text/javascript" src="js/vendorClassTree.js"></script>	 -->
+	<style type="text/css">
+		.datatable{width:3000px;}
+		 #payConditionTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		 #datatableheader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		#include td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		
+		#vendorClassTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		#includeVendorClass td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		#vendorClassHeader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+	</style>
+	<script type="text/javascript">
+		function  tab(x){
+			for(i=1;i<5;i++){
+				document.getElementById("conbox"+i).style.display="none";
+				document.getElementById("connav_"+i).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat";
+				document.getElementById("connav_"+i).style.fontWeight="100";
+			}
+			document.getElementById("conbox"+x).style.display="block";
+			document.getElementById("connav_"+x).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat 0  -19px";
+			document.getElementById("connav_"+x).style.fontWeight="900";
+		}
+		//程序入口
+		$(document).ready(function(){
+			var gradeValue = grademarkValue('vendorclass'); 
+			//供应商分类编码原则
+			$("#bmgz").attr("gradeValue",gradeValue);
+			//判断是有允许分类(如果不允许则默认添加一条记录)
+			isCusCategory();
+			//加载供应商分类树
+			queryVendorClassTree(null);
+		});
+		/**
+		 * 是否允许供应商分类，允许返回true，否则返回false
+		 * @returns {Boolean}
+		 */
+		var isCusCategoryBz = true;
+		function isCusCategory() {
+			$.ajax({
+				url:"vendor!isSupCategory",
+				type:"post",
+				dataType:"json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				async:false,
+				success: function(data){
+					isCusCategoryBz = data.isCategory;
+				}
+			});
+		}
+		//树节点集合的全局变量
+		var zNodes = [];
+		//当前选中的树节点
+		var currentTreeNode=null;
+		//保存时状态的全局变量
+		var action = null;
+		//所有存货分类对象的集合
+		var vendorClassList=null;
+		//当前选中供应商档案
+		var currentClickedRow=null;
+		//当前弹窗动作目标
+		var xaction = null;
+		//查询存货分类树
+		function queryVendorClassTree(vendorClassCode){
+			//ztree配置
+			var setting = {
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: ZtreeClick,
+					onDblClick: ZtreeDblClick
+				}
+			};
+			//ztree加载树节点
+			$.ajax({
+				url:"vendorClass!queryVendorClass.action",
+				type:"post",
+				dataType:"json",
+				async : false,   
+				error: function () {
+		            jAlert('请求失败');   
+		        }, 
+				success:function(jsonData){
+					vendorClassList = jsonData.vendorClassList;
+					zNodes = getVendorClassListNodes(vendorClassList);
+					$.fn.zTree.init($("#vendorClassTree"), setting, zNodes);
+					//默认选中节点(根节点)
+					var zTree = $.fn.zTree.getZTreeObj("vendorClassTree");
+					if(vendorClassCode==null){
+						vendorClassCode = "SUPTYPE";
+						//获取第一个末级节点
+						for(var i=0;i<vendorClassList.length;i++){
+							var theVendorClass = vendorClassList[i];
+							if(theVendorClass.bvcend==1){
+								vendorClassCode = theVendorClass.cvccode;
+								break;
+							}
+						}
+					}
+					var selNode = zTree.getNodeByParam("id", vendorClassCode);
+	    			zTree.selectNode(selNode);
+	    			//显示供应商信息列表
+	    			showVendor(selNode);
+				}
+			});	
+		}
+		//获取供应商分类树节点的方法
+		function getVendorClassListNodes(vendorClassList){
+			zNodes = [];
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			if(gradeValue==""){
+				jAlert("编码规则不能为空!");
+				return;
+			}
+			var node = "";
+			var vendorClass;
+			var nodeObj;
+			//根节点
+			node = "{id:'SUPTYPE',name:'供应商分类',open:true}";
+			nodeObj =  eval('(' + node + ')') ;
+	    	zNodes.push(nodeObj);
+			for(var i=0;i<vendorClassList.length;i++){
+				vendorClass = vendorClassList[i];
+				//本级次
+				var ivcgrade = vendorClass.ivcgrade;
+				//供应商分类编码
+				var cvccode = vendorClass.cvccode;
+				//父节点id
+				var parentid ;
+				if(ivcgrade==1){
+					parentid = "SUPTYPE";
+				}else{
+					var rule = gradeValue.charAt(ivcgrade-1);
+					var endindex = cvccode.length-rule;
+					parentid = cvccode.substring(0,endindex);
+				}
+				node = "{" + "id:'" + cvccode + "'," + "pId:'" + parentid + "',"
+				+ "ivcgrade:'" + vendorClass.ivcgrade + "',"	
+				+ "vendorClassId:'" + vendorClass.id + "',"
+				+ "vendorClassName:'" + vendorClass.cvcname + "',"
+				+ "bvcend:'" + vendorClass.bvcend + "',"
+				+ "name:'(" +cvccode+")"+ vendorClass.cvcname + "'" + ",open:true" + "}";
+				
+				nodeObj =  eval('(' + node + ')') ;
+	        	zNodes.push(nodeObj);
+			}
+			return zNodes;
+		}
+		//ztree单击事件
+		function ZtreeClick(event, treeId, treeNode, clickFlag){
+			showVendor(treeNode);
+		}
+		//ztee双击事件
+		function ZtreeDblClick(event, treeId, treeNode){
+			
+		}
+		//展示供应商档案的方法
+		function showVendor(treeNode){
+			//设置当前选中的节点
+			currentTreeNode = treeNode;
+			var vendorData = {};
+			if(treeNode.id!="SUPTYPE"){
+				vendorData = {code:treeNode.id};
+			}
+			$.ajax({
+				url: "vendor!queryVendorByCvccode",
+				type: 'post',
+				data:vendorData,
+				dataType: "json",
+				async:false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var list=data.vendorList;
+					var strHtml="";
+					for(var i=0;i<list.length;i++){
+						strHtml+='<tr onclick="setTableClickedRowStyle(this);" ondblclick="doubleSelect(this);" id ="'+list[i].id+'" name="'+list[i].cvenname+'" bgcolor="#ffffff">'
+							//供应商编号	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvencode)+'</td>'
+							//供应商名称	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenname)+'</td>'
+							//供应商简称
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenabbname)+'</td>'
+							//助记码
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].cvenhelp)+'</td>'
+							//所属分类码
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvccode)+'</td>'
+							//所属地区码
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cdccode)+'</td>'
+							//所属行业
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ctrade)+'</td>'
+							//地址	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenaddress)+'</td>'
+							//邮政编码	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenpostcode)+'</td>'
+							//纳税人登记
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cvenregcode)+'</td>'
+							//开户银行	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenbank)+'</td>'
+							//银行账号
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenaccount)+'</td>'
+							//发展日期
+							+'<td onclick="selectTd(this)" >'+getStrDate(list[i].dvendevdate)+'</td>'
+							//法人
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].cvenlperson)+'</td>'
+							//Email地址
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenemail)+'</td>'
+							//联系人
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenperson)+'</td>'
+							//电话
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenphone)+'</td>'
+							//传真
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenfax)+'</td>'
+							//MSN	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenbp)+'</td>'
+							//手机
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cvenhand)+'</td>'
+							//专管业务员	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenpperson)+'</td>'
+							//扣率
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ivendisrate)+'</td>'
+							//信用等级
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ivencregrade)+'</td>'
+							//信用额度
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].ivencreline)+'</td>'
+							//付款条件
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenpaycond)+'</td>'
+							//到货地址
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cveniaddress)+'</td>'
+							//到货方式
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenitype)+'</td>'
+							//到货仓库
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvenwhcode)+'</td>'
+							//分管部门	
+							+'<td onclick="selectTd(this)" >'+getDepartmentById(list[i].cvendepart)+'</td>'
+							//应收余额
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iapmoney)+'</td>'
+							//最后交易日期
+							+'<td onclick="selectTd(this)" >'+getStrDate(list[i].dlastdate)+'</td>'
+							//最后交易金额
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ilastmoney)+'</td>'
+							//停用日期
+							+'<td onclick="selectTd(this)" >'+getStrDate(list[i].denddate)+'</td>'
+							//使用频度
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].ifrequency)+'</td>'
+							//自定义项1
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvendefine1)+'</td>'
+							//自定义项2
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvendefine2)+'</td>'
+							//自定义项3
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvendefine3)+'</td>'
+							+'</tr >';	
+					}
+					//清空选中的行
+					currentClickedRow = null;
+					//清空并且添加新的html
+					$("#include").empty().append(strHtml);
+					//默认选中第一行
+					setTableClickedRowStyle($("#include >tr:first")[0]);
+					//默认选中第一列
+					selectTd($("#include >tr:first >td:first")[0]);
+				  }
+			  });
+		}
+		//点击增加按钮弹出添加供应商档案的窗体
+		function showAddVendor(){
+			action = "add";
+			if(currentTreeNode.id=="SUPTYPE"||currentTreeNode.bvcend==0){
+				jAlert("非末级，不能增加供应商档案！");
+				return;
+			}
+			//设置分页按钮
+			setUsedState();
+			//TODO 清空表单各值
+			$("#saveVendor input").val("");
+			//供应商编码设置成可用
+			$("#cvencode").attr("readonly",false).css("background-color","#ffffff");
+			//设置选项卡中的值
+			$("#cvccodeCode").val(currentTreeNode.id);
+			$("#cvccodeId").val(currentTreeNode.vendorClassId);
+			$("#cvccodeName").val(currentTreeNode.vendorClassName);
+			
+			//获取当前日期
+			var currentDate=new Date().format("yyyy-MM-dd");
+			//发展日期设置成当前日期
+			$("#dvendevdate").val(currentDate);
+			//设置vendorForm默认显示第一个选项卡
+			tab(1);
+			openWindow('vendorForm');
+		}
+		//点击修改按钮弹出修改供应商档案的窗体
+		function showUpdateVendor(){
+			if(currentClickedRow!=null){
+				doubleSelect(currentClickedRow);
+			}else{
+				jAlert("请选择一行数据！");
+			}
+		}
+		//保存供应商分类(地区码存的是code,分管部门存的是id,所属分类码存的是编码)
+		function saveVendor(){
+			//检查数据是否可用
+			var flag = saveVendorCheck();
+			if(flag){
+				//组织数据
+				var vendor=$("#saveVendor input").serialize();
+				var bisfeeven=0;
+				if($("#bisfeeven").attr("checked")){
+					bisfeeven=1;
+				}
+				var vendor=vendor+"&vendor.bisfeeven="+bisfeeven;
+				//保存按钮设置成不可用
+				$("#savecurrentVendor").attr("disabled",true);
+				if(action=="add"){
+					//添加保存数据
+					$.ajax({
+						url: "vendor!create.action",
+						type: 'post',
+						data:vendor,
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showVendor(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentVendor").attr("disabled",false);
+						}
+					  });
+				}else if(action=="update"){
+					var id=$(currentClickedRow).attr("id");
+					$.ajax({
+						url:"vendor!update.action?vendor.id="+id,
+						type:"post",
+						data:vendor,
+						dataType:"json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showVendor(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentVendor").attr("disabled",false);
+						}
+					});
+				}
+				//保存完后清空数据添加数据
+				action="add";
+				//供应商编码设置成可用
+				$("#cvencode").attr("readonly",false).css("background-color","#ffffff");
+				var cvccodeCode = $("#cvccodeCode").val();
+				var cvccodeId  = $("#cvccodeId").val();
+				var cvccodeName = $("#cvccodeName").val();
+				//TODO 清空表单各值
+				$("#saveVendor input").val("");
+				$("#saveVendor input").attr("checked",false);
+				//设置选项卡中的值
+				$("#cvccodeCode").val(cvccodeCode);
+				$("#cvccodeId").val(cvccodeId);
+				$("#cvccodeName").val(cvccodeName);
+				
+				//获取当前日期
+				var currentDate=new Date().format("yyyy-MM-dd");
+				//发展日期设置成当前日期
+				$("#dvendevdate").val(currentDate);
+				//设置vendorForm默认显示第一个选项卡
+				tab(1);
+				setUsedState();
+				$("#cvencode").focus();
+			}
+		}
+		//保存供应商分类检测
+		function saveVendorCheck(){
+			var flag = true;
+			if($("#cvccodeCode").val()==""){
+				jAlert("供应商分类编码不能为空！","提示信息",function(){
+					$("#cvccodeCode").focus();
+				});
+				return false;
+			}
+			if($("#cvencode").val()==""){
+				jAlert("供应商编号不能为空！","提示信息",function(){
+					$("#cvencode").focus();
+				});
+				return false;
+			}
+			if($("#cvenname").val()==""){
+				jAlert("供应商名称不能为空！","提示信息",function(){
+					$("#cvenname").focus();
+				});
+				return false;
+			}
+			if($("#cvenabbname").val()==""){
+				jAlert("供应商简称不能为空！","提示信息",function(){
+					$("#cvenabbname").focus();
+				});
+				return false;
+			}
+			//邮政编码
+			if(!isnumber($("#cvenpostcode")[0])){
+				tab(2);
+				return false;
+			}
+			//银行账号不是数字校验
+			if(!isnumber($("#cvenaccount")[0])){
+				return false;
+			}
+			//邮箱格式校验
+			if(!isEmail($("#cvenemail")[0])){
+				tab(2);
+				return false;
+			}
+			
+			if(action=="add"){
+				var vendor = "vendor.cvencode="+$("#cvencode").val();
+				//判断编码是否唯一
+				$.ajax({
+					url: "vendor!isUniquenessVendorByCode.action",
+					type: 'post',
+					data:vendor,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该供应商编号已经被使用，请重新输入供应商编号!","提示信息",function(){
+								$("#cvencode").focus();
+							});
+							flag = false;
+						}
+					}
+				});
+				if(!flag){
+					return false;
+				}
+				vendor = "vendor.cvenabbname="+$("#cvenabbname").val();
+				$.ajax({
+					url: "vendor!isUniquenessVendorByCvenabbname.action",
+					type: 'post',
+					data:vendor,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该供应商简称已经被使用，请重新输入供应商简称!","提示信息",function(){
+								$("#cvenabbname").focus();
+							});
+							flag = false;
+						}
+					}
+				 });
+			}
+			return flag;
+		}
+		//添加或修改供应商，调用供应商分类窗体
+		function findVendorClass(){
+			window.parent.openWindow("basic_grid_supGridRef","vendor");
+			xaction="findVendorClass";
+		}
+		//添加或修改供应商,调用所属地区码
+		function findDirstrictClass(){
+			var param = 11;
+			window.parent.openWindow("basic_grid_dirstrictGridRef","vendor",param);
+			xaction="findDirstrictClass";
+		}
+		//添加部门时，调用部门窗体
+		function findDeptment(){
+			window.parent.openWindow("basic_grid_departmentGridRef","vendor");
+			xaction="findDeptment";
+		}
+		//删除供应商档案的方法
+		function deleteVendor(){
+			var vendorId = $(currentClickedRow).attr("id");
+			if(currentClickedRow==null){
+				jAlert("请选择档案!");
+				return;
+			}
+			var titleHtml = "真的要删除供应商档案---"+$(currentClickedRow).find("td").eq(1).text()+"吗？";
+			jConfirm(titleHtml, "确认对话框", function(confirmflag){
+				if(confirmflag){
+					//js判断
+					var sourceValue = 	vendorId;
+					var sourceTable = 	"VENDOR";
+					var sourceField = 	"ID";
+					var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+					if (isExits==true) {
+						jAlert("该供应商档案已经被使用，不能删除!");
+					    return false;			
+					}
+					//删除按钮不可用
+					$("#deleteVendor").attr("disabled",true);
+					$.ajax({
+						url: "vendor!delete.action?vendor.id="+vendorId,
+						type: 'post',
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							if(data.isdelete==true){
+								//重新加载本节点下的树
+								showVendor(currentTreeNode);
+							}else{
+								jAlert("该供应商档案已经被使用，不能删除!");
+								return false;
+							}
+							//删除按钮可用
+							$("#deleteVendor").attr("disabled",false);
+						}
+					  });
+				}
+			});
+		}
+		//编码失去焦点时自动获取助记码
+		function onTextblur(obj) {
+			if (isSpecialChar(obj)) {
+				var  codeName = $("#cvenname").val();
+				var helpCode = getHelpCode(codeName);
+				$("#cvenhelp").val(helpCode);
+			}
+		}
+		//选择当前列
+		function selectTd(td){
+			$(td).css("border","2px dashed #ccc").siblings().css("border","1px solid #000");
+			$(td).parent().siblings().children().css("border","1px solid #000");
+		}
+		//选中当前行
+		function setTableClickedRowStyle(row){
+			//当前行
+			currentClickedRow = row;
+			$(row).children().css("backgroundColor","blue").css("color","#fff");
+			$(row).siblings().children().css("backgroundColor","#fff").css("color","#000");
+		}
+		//双击在卡片中打开选中的记录
+		function doubleSelect(row){
+			action = "update";
+			//供应商编码设置成不可用
+			$("#cvencode").attr("readonly",true).css("background-color","#ccc");
+			//当前行
+			currentClickedRow = row;
+			editId =row.id;
+			$.ajax({
+				url: "vendor!queryVendorById.action?vendor.id="+editId,
+				type: 'post',
+				dataType: "json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var  vendorById=data.vendor;
+					$("#cvencode").val(vendorById.cvencode);
+					$("#cvenname").val(vendorById.cvenname);
+					$("#cvenabbname").val(vendorById.cvenabbname);
+					$("#cvenhelp").val(vendorById.cvenhelp);
+					var vendorClass = getVendorClassBycode(vendorById.cvccode);
+					if(vendorClass!=null){
+						//所属地区码
+						$("#cvccodeCode").val(vendorClass.cvccode);
+						//所属地区码id
+						$("#cvccodeId").val(vendorClass.id);
+						//所属地区码名称
+						$("#cvccodeName").val(vendorClass.cvcname);
+					}
+					//地区编码
+					var district = getDistrictByCode(vendorById.cdccode);
+					if(district!=null){
+						//所属地区码
+						$("#cdccode").val(vendorById.cdccode);
+						//所属地区码id
+						$("#cdccodeId").val(district.id);
+						//所属地区码名称
+						$("#cdccodeName").val(district.cdcname);
+					}
+					$("#ctrade").val(vendorById.ctrade);
+					$("#cvenaddress").val(vendorById.cvenaddress);
+					$("#cvenpostcode").val(vendorById.cvenpostcode);
+					$("#cvenregcode").val(vendorById.cvenregcode);
+					$("#cvenbank").val(vendorById.cvenbank);
+					$("#cvenaccount").val(vendorById.cvenaccount);
+					$("#dvendevdate").val(getStrDate(vendorById.dvendevdate));
+					$("#denddate").val(getStrDate(vendorById.denddate));
+					
+					$("#cvenlperson").val(vendorById.cvenlperson);
+					$("#cvenemail").val(vendorById.cvenemail);
+					$("#cvenperson").val(vendorById.cvenperson);
+					$("#cvenphone").val(vendorById.cvenphone);
+					$("#cvenfax").val(vendorById.cvenfax);
+					$("#cvenbp").val(vendorById.cvenbp);
+					$("#cvenhand").val(vendorById.cvenhand);
+					$("#cvenpperson").val(vendorById.cvenpperson);
+					$("#ivendisrate").val(vendorById.ivendisrate);
+					$("#ivencregrade").val(vendorById.ivencregrade);
+					$("#ivencreline").val(vendorById.ivencreline);
+					$("#cvenpaycond").val(vendorById.cvenpaycond);
+					$("#cveniaddress").val(vendorById.cveniaddress);
+					$("#cvenitype").val(vendorById.cvenitype);
+					$("#cvenwhcode").val(vendorById.cvenwhcode);
+					//部门显示
+					$("#cvendepart").val(getDepartmentById(vendorById.cvendepart));
+					//部门id
+					$("#cvendepartId").val(vendorById.cvendepart);
+					$("#iapmoney").val(vendorById.iapmoney);
+					$("#dlastdate").val(getStrDate(vendorById.dlastdate));
+					$("#ilastmoney").val(vendorById.ilastmoney);
+					$("#dlrdate").val(getStrDate(vendorById.dlrdate));
+					$("#ilrmoney").val(vendorById.ilrmoney);
+					$("#ifrequency").val(vendorById.ifrequency);
+					if(vendorById.bisfeeven==0){
+						$("#bisfeeven").attr("checked",false);
+					}
+					if(vendorById.bisfeeven==1){
+						$("#bisfeeven").attr("checked",true);
+					}
+				}
+			});
+			//设置vendorForm默认显示第一个选项卡
+			tab(1);
+			//如果有这个弹出框先关闭再打开
+			try{
+				closeWindow('vendorForm');
+			}catch(e){
+				
+			}
+			openWindow('vendorForm');
+			setUsedState();
+		}
+		//(注:所属分类存了编码和id  所属地区码只存了编码   分管部门只存了id)
+		//根据帐套号和部门id返回名称
+		function getDepartmentById(departmentId){
+			var departmentName = "";
+			if(departmentId!=null){
+				var pram="department.id="+departmentId;
+				$.ajax({
+					url:"department!queryOneDepartment",
+					type:"post",
+					datatype:"json",
+					data:pram,
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success:function(data,status){
+						departmentName = data.department.cdepname;
+					}
+				});
+				
+			}
+			return departmentName;
+		}
+		//根据地区id获得地区对象
+		function getDistrictByCode(Districtcode){
+			var district=null;
+			if(Districtcode!=null){
+			  	$.ajax({
+			  		url:"districtClass!queryDistrictClassByCode.action",
+			  		data:{code:Districtcode},
+			  		type:"post",
+			  		dataType:"json",
+			  		async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+			  		success:function(data){
+			  			district = data.districtClass
+			  		}
+			  	});	
+			}
+			return district;
+		}
+		//根据code获取供应商分类名称
+		function getVendorClassBycode(vendorClasscode){
+			var vendorClass=null;
+			if(vendorClasscode!=null){
+			  	$.ajax({
+			  		url:"vendorClass!queryVendorClassByCode.action",
+			  		data:{code:vendorClasscode},
+			  		type:"post",
+			  		dataType:"json",
+			  		async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+			  		success:function(data){
+			  			vendorClass = data.vendorClass;
+			  		}
+			  	});	
+			}
+			return vendorClass;
+		}
+		//"下张"按钮函数
+		function nextInfo(){
+			var thisrow = $(currentClickedRow).next()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"上张"按钮函数
+		function prevInfo(){
+			var thisrow = $(currentClickedRow).prev()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"首张"按钮函数
+		function firstInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:first")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"末张"按钮函数
+		function lastInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:last")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		/*设置首页上页下页末页按钮的可用状态*/
+		function setUsedState(){
+			if(currentClickedRow==null){
+				$("#nextVendor").attr("disabled",true);
+				$("#lastVendor").attr("disabled",true);
+				$("#firstVendor").attr("disabled",true);
+				$("#prevVendor").attr("disabled",true);
+				return;
+			}
+			if(typeof($(currentClickedRow).next()[0])=="undefined"){
+				$("#nextVendor").attr("disabled",true);
+				$("#lastVendor").attr("disabled",true);
+			}else{
+				$("#nextVendor").attr("disabled",false);
+				$("#lastVendor").attr("disabled",false);
+			}
+			if(typeof($(currentClickedRow).prev()[0])=="undefined"){
+				$("#firstVendor").attr("disabled",true);
+				$("#prevVendor").attr("disabled",true);
+			}else{
+				$("#firstVendor").attr("disabled",false);
+				$("#prevVendor").attr("disabled",false);
+			}
+		}
+	</script>
+  </head>
+  <body style="margin:0px 0px 0px 0px;padding:0px 0px 0px 5px;font-size:12px;background-color: #D4D0C8;" >
+	<div  id="vendorForm" style="margin-left: 180px;margin-top: 10px; padding: auto; display: none;" type="window" width="400" height="350" title="供应商档案卡片">
+		<!--增加供应商档案的div-->
+		<div class="wrap" id ="addVendor" style="z-index: 200;position:absolute;margin-left:0px;margin-top:0px;">
+					<div class="buttongroup" style="background:#f0f0f0;">
+				<div class="group">
+					<div><input type="button" id ="savecurrentVendor" value="保存"  style="background-image:url('../../../images/icon/save.gif');" onclick="saveVendor()"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="首张" id="firstVendor" onclick="firstInfo();" style="background-image:url('../../../images/icon/firstcard.gif');"/></div>
+					<div><input type="button" value="上张" id="prevVendor" onclick="prevInfo();" style="background-image:url('../../../images/icon/prevcard.gif');"/></div>
+					<div><input type="button" value="下张" id="nextVendor" onclick="nextInfo();" style="background-image:url('../../../images/icon/nextcard.gif');"/></div>
+					<div><input type="button" value="末张" id="lastVendor" onclick="lastInfo();" style="background-image:url('../../../images/icon/lastcard.gif');"/></div>
+				</div>
+				<div class="group">
+					<div>
+						<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="closeWindow('vendorForm');"/>
+					</div>
+				</div>
+			</div>
+			<div style="border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			<!-- 内容 start -->
+			<div class="z_content" >
+		    	<div class="z_content_nav">
+		        	<ul>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" style="background:url(../../../images/basic/z_connav_bg.png) no-repeat 0 -19px; color:#000; font-weight:900;"  onclick="tab(1)" id="connav_1">基本</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(2)" id="connav_2">联系</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(3)" id="connav_3">信用</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(4)" id="connav_4">其他</a></li>
+		            </ul>
+		        </div>
+		        <div class="z_content_box" id ="saveVendor">
+		        	<!-- 基本页面 ↓-->
+		            <div id="conbox1">
+						&emsp;供应商编号&emsp;<input id="cvencode" type="text" name="vendor.cvencode" size="40" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;供应商名称&emsp;<input id="cvenname" type="text" name="vendor.cvenname" size="40"  onblur= "onTextblur(this);" /><br/>
+						&emsp;供应商简称&emsp;<input id="cvenabbname" type="text" name="vendor.cvenabbname" size="40"/><br/>
+						&emsp;供应商助记码<input id="cvenhelp" type="text" name="vendor.cvenhelp" size="40" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;所属分类码&emsp;<input id="cvccodeCode" type="text"  size="15" name="vendor.cvccode" onfocus="dofocustoenter('VendorClass',this,'xaction','findVendorClass','','')" />
+						<input id="cvccodeId" type="hidden" />
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findVendorClass()"/>				
+						<input id="cvccodeName" type="text"  size="18" style="background-color:#ccc" disabled="disabled" /><br/>
+						&emsp;所属地区码&emsp;<input id="cdccode" name="vendor.cdccode" type="text" size="15" onfocus="dofocustoenter('DistrictClass',this,'xaction','findDirstrictClass','','')" />
+						<input id="cdccodeId" type="hidden" />
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findDirstrictClass()"/>				
+						<input id="cdccodeName" type="text"  size="18" readonly="readonly" /><br/>
+						&emsp;所属行业&emsp;&emsp;<input id="ctrade" type="text" name="vendor.ctrade" size="40"/><br/>
+						&emsp;税号&emsp;&emsp;&emsp;&emsp;<input id="cvenregcode" type="text" name="vendor.cvenregcode" size="14"/>
+						法人&emsp;&emsp;<input id="cvenlperson" type="text" name="vendor.cvenlperson" size="15"/><br/>
+						&emsp;开户银行&emsp;&emsp;<input id="cvenbank" type="text" name="vendor.cvenbank" size="14"/>
+						银行账号<input id="cvenaccount" type="text" name="vendor.cvenaccount" size="15" onblur="isnumber(this)"/><br/>
+		            </div>
+		            <!-- 联系页面 ↓-->
+		            <div id="conbox2">
+		            <table border="0" cellpadding="0">
+		            	<tr>
+		            		<td>地址</td>
+		            		<td colspan="3"><input id="cvenaddress" type="text" name="vendor.cvenaddress" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>邮政编码</td>
+		            		<td><input id="cvenpostcode" type="text" name="vendor.cvenpostcode" size="14" onblur="isnumber(this)"></td>
+		            		<td>联系人</td>
+		            		<td><input id="cvenperson" type="text" name="vendor.cvenperson" size="12"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>Email地址</td>
+		            		<td colspan="3"><input id="cvenemail" type="text" name="vendor.cvenemail" size="40" onblur="isEmail(this);"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>电话</td>
+		            		<td colspan="3"><input id="cvenphone" type="text" name="vendor.cvenphone" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>传真</td>
+		            		<td colspan="3"><input id="cvenfax" type="text" name="vendor.cvenfax" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>MSN</td>
+		            		<td colspan="3"><input id="cvenbp" type="text" name="vendor.cvenbp" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>手机</td>
+		            		<td colspan="3"><input id="cvenhand" type="text" name="vendor.cvenhand" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>到货地址</td>
+		            		<td colspan="3"><input id="cveniaddress" type="text" name="vendor.cveniaddress" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>到货方式</td>
+		            		<td><input id="cvenitype" type="text" name="vendor.cvenitype" size="12"></td>
+		            		<td>到货仓库</td>
+		            		<td><input id="cvenwhcode" type="text" name="vendor.cvenwhcode" size="12"></td>
+		            	</tr>
+		            </table>
+		            </div>
+		            <!-- 信用页面 ↓-->
+		            <div id="conbox3">
+						&emsp;应付余额&emsp;&emsp;<input id="iapmoney" type="text" name="vendor.iapmoney" size="40"><br/>
+						&emsp;扣率&emsp;&emsp;&emsp;&emsp;<input id="ivendisrate" type="text" name="vendor.ivendisrate" size="40"><br/>
+						&emsp;信用等级&emsp;&emsp;<input id="ivencregrade" type="text" name="vendor.ivencregrade" size="40"><br/>
+						&emsp;信用额度&emsp;&emsp;<input id="ivencreline" type="text" name="vendor.ivencreline" size="40"><br/>
+						&emsp;付款条件&emsp;&emsp;<input id="cvenpaycond" type="text" name="vendor.cvenpaycond" size="40"><br/>
+						&emsp;最后交易日期<input id="dlastdate" type="text" name="vendor.dlastdate" onClick="WdatePicker()" size="12">
+						&emsp;最后交易金额<input id="ilastmoney" type="text" name="vendor.ilastmoney" size="11"><br/>
+						&emsp;最后付款日期<input id="dlrdate" type="text" name="vendor.dlrdate" onClick="WdatePicker()" size="12">
+						&emsp;最后付款金额<input id="ilrmoney" type="text" name="vendor.ilrmoney" size="11">
+		            </div>
+		            <!-- 其他页面 ↓-->
+		            <div id="conbox4">
+		            	&emsp;分管部门<input id="cvendepart" type="text"  onfocus="dofocustoenter('Department',this,'xaction','findDeptment','','')" size="12">
+		            	<input id="cvendepartId" type="hidden" name="vendor.cvendepart"/>
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findDeptment()"/>				
+						&emsp;专营业务员<input id="cvenpperson" type="text" name="vendor.cvenpperson" size="12"><br/>
+		            	&emsp;发展日期<input id="dvendevdate" type="text" name="vendor.dvendevdate" onClick="WdatePicker()" size="12">
+		            	&emsp;&emsp;&emsp;停用日期&emsp;<input id="denddate" type="text" name="vendor.denddate" onClick="WdatePicker()" size="12"><br/>
+		            	&emsp;使用频度<input id="ifrequency" type="text" name="vendor.ifrequency" size="12">
+		            	&emsp;&emsp;&emsp;<input id="bisfeeven" type="checkbox" >是否费用供应商
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	<!--增加档案结束  -->
+	<div style="width:800px;height:300px;background-color:#D4D0C8;font-size: 12px;margin-top:5px;">
+		<div class="buttongroup">
+			<div class="group">
+				<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+				<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+				<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" id ="showAddVendor" value="增加" onclick="showAddVendor()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+				<div><input type="button" id ="showUpdateVendor" value="修改" onclick="showUpdateVendor()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+				<div><input type="button" id ="deleteVendor" value="删除" onclick="deleteVendor()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="过滤" disabled="disabled" style="background-image:url('../../../images/icon/screening.gif');"/></div>
+				<div><input type="button" value="定位" disabled="disabled" style="background-image:url('../../../images/icon/return.gif');"/></div>
+				<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="格式" disabled="disabled" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+				<div><input type="button" value="信用" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="并户" disabled="disabled" style="background-image:url('../../../images/icon/agent.gif');"/></div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button" value="帮助"  style="background-image:url('../../../images/icon/help.gif');" onclick="findDeptment()"/>
+				</div>
+				<div>
+					<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('vendor');"/>
+				</div>
+			</div>
+		</div>
+		<hr style="margin-top:2px;*margin-top:-3px;"/>
+		<div style="margin-top:5px;*margin-top:-4px;width:100%;">
+			<div style="margin-left:0px;width:150px;float:left;height:320px;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;overflow:auto;">
+				<ul id="vendorClassTree" class="ztree" style="margin-top:0px;width:150px;height:290px;margin-left:-20px;"></ul>
+			</div>
+			<div style="background-color: #D4D0C8;border:2px inset #ccc;overflow-x:scroll;height:320px;width:80%;float:right;">
+				<table class="datatable" id="payConditionTable" border="2" cellspacing="0">			
+					<tr id="datatableheader" bgcolor="#f0f0f0">
+						<td nowrap>供应商编号</td>
+						<td nowrap>供应商名称</td>
+						<td nowrap>供应商简称</td>
+						<td nowrap>助记码</td>
+						<td nowrap>所属分类码</td>
+						<td nowrap>所属地区码</td>
+						<td nowrap>所属行业</td>
+						<td nowrap>地址</td>
+						<td nowrap>邮政编码</td>
+						<td nowrap>纳税人登记</td>
+						<td nowrap>开户银行</td>
+						<td nowrap>银行账号</td>
+						<td nowrap>发展日期</td>
+						<td nowrap>法人</td>
+						<td nowrap>Email地址</td>
+						<td nowrap>联系人</td>
+						<td nowrap>电话</td>
+						<td nowrap>传真</td>
+						<td nowrap>MSN</td>
+						<td nowrap>手机</td>
+						<td nowrap>专管业务员</td>
+						<td nowrap>扣率</td>
+						<td nowrap>信用等级</td>
+						<td nowrap>信用额度</td>
+						<td nowrap>付款条件</td>
+						<td nowrap>到货地址</td>
+						<td nowrap>到货方式</td>
+						<td nowrap>到货仓库</td>
+						<td nowrap>分管部门</td>
+						<td nowrap>应收余额</td>
+						<td nowrap>最后交易日期</td>
+						<td nowrap>最后交易金额</td>
+						<td nowrap>停用日期</td>
+						<td nowrap>使用频度</td>
+						<td nowrap>自定义项1</td>
+						<td nowrap>自定义项2</td>
+						<td nowrap>自定义项3</td>
+					</tr>
+					<tbody id="include" style="background-color: #FFFFFF;font-size: 12px" >
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="bmgz">
+	<input type="hidden" id="vendorClassId">
+  </body>
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.window.js"></script>
+	<script type="text/javascript">
+		//子窗体反参回调函数
+		function deliverValue(valueObject){
+			switch(xaction){
+			//如果是供应商分类
+			case "findVendorClass":
+				$("#cvccodeId").val(valueObject.selId);
+				$("#cvccodeCode").val(valueObject.selCode);
+				$("#cvccodeName").val(valueObject.selName);
+				break;
+			//如果是查询地区分类
+			case "findDirstrictClass":
+				$("#cdccodeId").val(valueObject.selId);
+				$("#cdccode").val(valueObject.selCode);
+				$("#cdccodeName").val(valueObject.selName);
+				break;
+			//如果是查询部门分类
+			case "findDeptment":
+				$("#cvendepartId").val(valueObject.id);
+				//$("#cdccode").val(valueObject.selCode);
+				$("#cvendepart").val(valueObject.cname);
+				break;
+			}
+		};
+	</script>
+</html>

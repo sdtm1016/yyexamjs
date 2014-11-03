@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>明细账查询条件</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	
+	<!-- 引入公共js函数 -->
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<!-- 引入公共引用函数 -->
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+	<!-- 增加树 -->	
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	
+	<script type="text/javascript" src="js/detailed.js"></script>
+	<script type="text/javascript" src="js/myacccountMXBTree.js"></script>	
+	<SCRIPT type="text/javascript">
+		loadMyacccountMXBtree();  		
+	</SCRIPT>
+	<style type="text/css">
+		.tablecss {border-collapse: collapse;}
+		.tablecss tr {height:12px;}
+		.tablecss td {padding:0px;}
+	</style>
+</head>
+<body>
+	<div class="container" style="width:510px;height:220px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:496px;height:208px;margin-left:6px;margin-top:6px;">
+			
+			<div class="border_outside" style="height:204px;width:154px;float:left;">
+				<div class="border_inside" style="height:202px;width:152px;">
+					
+					<div style="width:140px;height:164px;border:2px inset #ccc;background-color:#fff;float:left;overflow-y:auto;margin-left:4px;margin-top:4px;">
+						<ul id="myacccountTree" class="ztree"></ul>
+   					 </div>
+					
+					<div style="margin-top:4px;margin-left:4px">
+						
+						<input type="button" value="增加" onclick="addMyacccount();"    style="width:42px;height:22px;padding:0px;text-align:center;"/>
+						<input type="button" value="保存" onclick="saveMyacccount();"   style="width:42px;height:22px;padding:0px;text-align:center;margin-left:3px;"/>
+						<input type="button" value="删除" onclick="deleteMyacccount();" style="width:42px;height:22px;padding:0px;text-align:center;margin-left:3px;" />
+					</div>
+				
+				
+				</div>
+			</div>
+			
+			<div style="width:330px;height:204px;margin-left:10px;float:left;">
+				
+				<div style="width:330px;height:152px;">
+					<div class="border_outside" style="height:152px;width:260px;float:left;">
+						<div class="border_inside" style="height:150px;width:258px;line-height:28px;">
+					
+					
+							<div style="margin-top:4px;margin-left:20px;" class="v_a_m">
+								<input type="radio" id="rd_1_1" name="rd_1" value="1" onclick="cdbs(this);" checked="checked"/><label for="rd_1_1">按科目范围查询</label><br/>
+								<input type="radio" id="rd_1_2" name="rd_1" value="0" onclick="cdbm(this);"/><label for="rd_1_2">月份综合明细账</label>
+								<select id="ccode" disabled="disabled" style="width:116px">
+									<option value="">1001   库存现金</option>
+								</select>
+								<table class="tablecss" cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="40">科目</td>
+										<td><input type="text" id="ccodestart" style="width:160px;"/><input  type="button" class="finder" onclick="window.parent.openWindow('dsign_subjectsreference','gl_detailed_detailed');target='ccodestart';"/></td>
+									</tr>
+									<tr>
+										<td>--</td>
+										<td><input type="text" id="ccodeend" style="width:160px;"/><input  type="button" class="finder" onclick="window.parent.openWindow('dsign_subjectsreference','gl_detailed_detailed');target='ccodeend';"/></td>
+									</tr>
+									<tr>
+										<td>月份</td>
+										<td>
+											<select id="monthstart" style="width:80px;">
+												<option value="2012.11">2012.11</option>
+											</select>
+											--
+											<select id="monthend" style="width:80px;">
+												<option value="2012.11">2012.11</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+					
+						</div>
+					</div>
+					<div style="width:46px;height:152px;margin-left:10px;float:left;">
+						<br/><br/>
+						<input type="button" value="确认" onclick="nextWindow();"/><br/><br/>
+						<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('gl_detailed_detailed');"/><br/>
+					</div>
+				</div>
+				<div style="line-height:24px;margin-top:4px;" class="v_a_m">
+					<input type="checkbox" id="cb_1" onclick="cdbo();" value="0" style="margin-left:14px;"/><label id="cb_1_l" for="cb_1">是否按对方科目展开</label>
+					<input type="radio" id="rd_2_1" name="rd_2" value="1" onclick="cdbo()" checked="checked" disabled="disabled" style="margin-left:14px;"/><label id="rd_2_1_l" for="rd_2_1" style="color:#888;">一级科目</label>
+					<input type="radio" id="rd_2_2" name="rd_2" value="2" onclick="cdbo()" disabled="disabled" style="margin-left:18px;"/><label id="rd_2_2_l" for="rd_2_2" style="color:#888;">末级科目</label>
+				
+				<input type="checkbox" id="cb_2" value="0" onclick="changeValue(this);" style="margin-left:14px;"/><label id="cb_2_l" for="cb_2">包含未记账凭证</label>
+				<input type="checkbox" id="cb_3" value="0" onclick="changeValue(this);" style="margin-left:40px;"/><label id="cb_3_l" for="cb_3">按科目排序</label>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+	
+	<div type="window" title="我的账薄" id="w_1" width="246" height="166" style="margin-top:15px;margin-left:126px;position:absolute;z-index:200;display:none;">
+		<div style="margin-top:10px;margin-left:20px;">
+		请输入账簿名称：<br/><br/>
+			<input type="text" style="width:200px;"/><br/><br/>
+			<input type="button" value="确定" onclick="add();" style="margin-left:110px;"/>
+			<input type="button" value="取消" onclick="javascript:document.getElementById('w_1').style.display='none';"/>
+		</div>
+	</div>
+	
+</body>
+</html>

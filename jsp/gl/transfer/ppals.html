@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>期间损益结转设置</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+	<script type="text/javascript" src="js/periodbautotranDomain.js"></script>
+	
+	<script type="text/javascript">
+	//实现取值窗体值函数（从子窗体传过来的）
+	function deliverValue(paramObject){
+		document.getElementById("yearlrcode").value=paramObject.selKemuCode;
+	}
+	</script>
+</head>
+<body>
+	<div class="container" id="container" style="width:600px;height:330px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:580px;height:310px;margin-left:10px;margin-top:8px;">
+			
+			<div style="width:460px;height:100%;float:left;margin-left:10px;margin-top:8px;">
+				
+			
+				<div style="width:100%;height:28px;">
+					凭证类别：
+				<select id = "signList">
+						<option value= "0">收 收款凭证</option>
+						<option value= "1">付 付款凭证</option>
+						<option value= "2">转 转账凭证</option>
+				</select>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					本年利润科目
+					<input type="text" id="yearlrcode"  onblur="yearlrcodeBlur(this)" style="width:140px;"/><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_ppals');" class="finder"/>
+				</div>
+			
+			
+			
+			
+				<div style="width:460px;height:270px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;">
+				
+					<table id="datatable" border=1 class="table_style" style="width:600px;">
+						<thead>
+							<tr>
+								<td style="width:100px;">损益科目编号</td>
+								<td style="width:100px;">损益科目名称</td>
+								<td style="width:100px;">损益科目账类</td>
+								<td style="width:100px;">利润科目编号</td>
+								<td style="width:100px;">利润科目名称</td>
+								<td style="width:100px;">利润科目账类</td>
+								
+							</tr>
+						</thead>
+						<tbody id="datatable_rows">
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				
+			
+				
+			</div>
+			
+			<div style="width:110px;height:100%;float:left;text-align:right;">
+				<input type="button" id="btnConfirm" value="确定" onclick= "savePeriodButtoTran()"><br/><br/>
+			<input type="button" value="取消" onclick="cancel();"><br/><br/>
+				<br/><br/>
+				<div class="border_outside" style="height:200px;width:100px;float:left;margin-left:8px;">
+					<div class="border_inside" style="height:198px;width:98px;text-align:left;">
+					
+					
+						每个损益科目的期末余额将结转到与其同一行的利润科目中.<br/>
+						若损益科目与之对应的利润科目都有辅助核算,那么两个科目的辅助账类必须相同.<br/>
+						利润科目为空的损益科目将不参与期间损益结转<br/>
+					
+					
+					</div>
+				</div>
+	
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="js/ppals.js"></script>
+
+<script type="text/javascript">
+   var paramObject = window.parent.valueMap.get("gl_transfer_ppals");
+   if (paramObject!=null) {
+   		queryPeriodBautotran(paramObject.year,paramObject.month,paramObject.type);
+   }
+    //菜单进入定义时取默认的会计期间
+   else {
+	   var curLoginPeriod = getLoginPeriod();
+	 	var curMonth =  curLoginPeriod.iid;
+		var curYear = curLoginPeriod.iyear;
+			
+  		queryPeriodBautotran(curYear,curMonth,"60");
+   }
+ </script>
+</html>

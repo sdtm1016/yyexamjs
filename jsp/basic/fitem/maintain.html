@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>维护</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+<script type="text/javascript" src="js/maintain.js"></script>
+<script type="text/javascript" src="js/maintain_control.js"></script>
+
+<style type="text/css">
+#datatable_1_header td{background-color:#cfcfcf;height:34px;}
+#datatable_1_bodyer td{height:20px;}
+</style>
+</head>
+<body>
+	<div class="container" style="float:left;width:570px;height:370px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;">
+			</div>
+			
+			<div class="buttongroup">
+				<div class="group">
+				</div>
+				<div class="group">
+					<div><input type="button" value="增加" onclick="add();" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<!-- <div><input type="button" value="保存" onclick="save();" style="background-image:url('../../../images/icon/add.gif');"/></div> -->
+					<div><input type="button" value="删除" onclick="del()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="退出" onclick="exitWindow()" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+			<div style="width:538px;height:306px;margin-top:6px;margin-left:14px;border:1px solid black;overflow-x:auto;overflow-y:auto;float:left;background-color:#808080;">
+				
+				<table id="datatable_1" border=1 class="table_style" style="width:538px;">
+					<thead id="datatable_header">
+					<!-- 
+						<tr id="datatable_1_header">
+							<td style="width:150px;">项目编号</td>
+							<td style="width:150px;" typemethod="文本">项目名称</td>
+							<td style="width:80px;">是否结算</td>
+							<td style="width:150px;">所属分类码</td>
+							<td style="width:150px;">方向</td>
+							<td style="width:80px;" typemethod="日期">日期</td>
+						</tr>
+						 -->
+					</thead>
+					<tbody id="datatable_1_bodyer">
+					</tbody>
+				</table>
+				
+				
+			</div>
+			
+			
+			
+			
+			
+		
+		
+	</div>
+</body>
+</html>

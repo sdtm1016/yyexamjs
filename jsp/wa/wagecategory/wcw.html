@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>工资类别向导(Wage category wizard)</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript">
+ var param=window.parent.valueMap.get("wa_wagecategory_wcw");
+ var flag=param.flag;// 判断是否建立工资类别
+
+$(document).ready(function(){
+	if(flag==0){//未建立工资类别
+		$("#rd_1_1").attr("checked",true);
+	}else{
+		$("#rd_1_2").attr("checked",true);
+	}
+	$.ajax({
+		url:"wageCategories!queryWageTypes.action",
+		type:"post",
+		success:function(data,status){
+			var list = data.wageList;
+			$("#datatable_1_bodyer").html("");//清空下拉列表
+			var str = "";
+			$.each(list,function(index,i){
+				str = '<tr><td width="60">'+i.cgzgradenum +
+					  '</td><td>' + i.cgzgradename +
+					  '</td></tr>';
+				$("#datatable_1_bodyer").append(str);
+			});
+			tableTools();
+		},
+		dataType:"json"
+	});
+});
+//确认 
+function btnConfirm(){
+	if(flag==0){//未建立工资类别时 是否存在部门
+		$.ajax({
+			url:"department!queryDepartmentfowa.action",
+			type:"post",
+			dataType:"json",
+			success:function(data){
+				var list=data.departmentList;
+				if(list.length==0){
+					jAlert("未建立部门,请先建立部门","提示",function(){
+						var parentWindowId = window.parent.openerMap.get('wa_wagecategory_wcw');
+						if(parentWindowId=="wa_wagecategory_wagewizard"){
+							window.parent.wa_hasWageType();//隐藏和显示相关菜单
+							window.parent.closeWindow("wa_wagecategory_wcw");
+						}else{
+							window.parent.parent.wa_hasWageType();//隐藏和显示相关菜单
+							window.parent.parent.closeWindow("wa_wagecategory_wcw");
+						}
+					});
+				}else{
+					var value = $('input:radio[name=rd_1]:checked').val();
+					if(value == '1'){
+						window.parent.openWindow("wa_wagecategory_cwc","wa_wagecategory_wcw");
+					}
+					else{
+						if(currentSeletedRow!=null){
+							//工资类别已打开
+							window.parent.wa_wageTypeId=1;
+							//取得当前选择的工资类别的ID和Name存放于全局变量wa_currentWaAccount
+							window.parent.wa_currentWaAccount={};
+							window.parent.wa_openedWageTypeShowMenu();//隐藏和显示相关菜单
+							window.parent.wa_currentWaAccount.cgzgradenum=currentSeletedRow.cells[0].innerHTML;
+							window.parent.wa_currentWaAccount.cgzgradename=currentSeletedRow.cells[1].innerHTML;
+							window.parent.toPage('WA','WA.html');
+							window.parent.closeWindow("wa_wagecategory_wcw");
+						}
+					}
+				}
+			}
+		});
+	}else{
+		var value = $('input:radio[name=rd_1]:checked').val();
+		if(value == '1'){
+			window.parent.openWindow("wa_wagecategory_cwc","wa_wagecategory_wcw");
+		}
+		else{
+			if(currentSeletedRow!=null){
+				//工资类别已打开
+				window.parent.wa_wageTypeId=1;
+				//取得当前选择的工资类别的ID和Name存放于全局变量wa_currentWaAccount
+				window.parent.wa_currentWaAccount={};
+				window.parent.wa_openedWageTypeShowMenu();//隐藏和显示相关菜单
+				window.parent.wa_currentWaAccount.cgzgradenum=currentSeletedRow.cells[0].innerHTML;
+				window.parent.wa_currentWaAccount.cgzgradename=currentSeletedRow.cells[1].innerHTML;
+				window.parent.toPage('WA','WA.html');
+				window.parent.closeWindow("wa_wagecategory_wcw");
+			}
+		}
+	}
+	
+
+}
+function cancel(){
+	window.parent.wa_wageTypeId=0;
+	window.parent.toPage('WA','WA.html');
+	//将工资类别置为空
+	window.parent.wa_currentWaAccount={};
+	window.parent.wa_currentWaAccount.cgzgradenum="";
+	window.parent.wa_currentWaAccount.cgzgradename="";
+	//判断工资类别丙显示隐藏相关菜单项
+	window.parent.wa_hasWageType();
+
+	window.parent.closeWindow('wa_wagecategory_wcw');
+}
+function onWindowClose(){
+	//window.parent.wa_wageTypeId=0;
+	window.parent.toPage('WA','WA.html');
+}
+
+
+</script>
+</head>
+<body>
+<form action="" id="form1">
+	<div class="container" style="float:left;width:320px;height:274px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:300px;height:254px;margin-top:10px;margin-left:10px;">
+			
+			
+			<fieldset style="width:270px;height:50px;">
+				<legend>新建工资类别</legend>
+				<div>
+					<img src="../../../images/wa/2012122620180001.gif" style="width:47px;height:41px;float:left;margin-left:10px;">
+					<div style="width:130px;height:41px;line-height:41px;float:left;margin-left:30px;" class="v_a_m">
+						<input type="radio" name="rd_1" id="rd_1_1" value="1"/><label for="rd_1_1">工资类别向导</label>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset style="width:270px;height:130px;margin-top:6px;">
+				<legend>打开工资类别</legend>
+				<div>
+					<div style="width:100%;height:41px;">
+						<img src="../../../images/wa/2012122620190002.gif" style="width:36px;height:34px;float:left;margin-left:20px;">
+						<div style="width:130px;height:41px;line-height:41px;float:left;margin-left:32px;" class="v_a_m">
+							<input type="radio" name="rd_1" id="rd_1_2"  value="2"/><label for="rd_1_2">已建工资类别</label>
+						</div>
+					</div>
+					<div>
+						<div style="width:246px;height:50px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;margin-left:8px;background-color:#808080;">
+							<table id="datatable_1" border=1 class="table_style" style="width:230px;">
+								<tbody id="datatable_1_bodyer">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			<div style="width:100%;height:20px;margin-top:10px;text-align:right;">
+				<input type="button" value="确定" onclick="btnConfirm();"/>&nbsp;
+				<input type="button" value="取消" onclick="cancel();"/>
+			</div>
+		</div>
+	</div>
+	</form>
+</body>
+<script type="text/javascript">
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+var datatable_1 = document.getElementById("datatable_1_bodyer");
+
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+function tableTools(){
+	
+	
+	for(var i=0;i<datatable_1.rows.length;i++){
+	
+		datatable_1.rows[i].onclick=function(e){
+			
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+			}
+		}
+	}
+	if(datatable_1.rows.length!=0){
+
+		currentSeletedRow = datatable_1.rows[0];
+		datatable_1.rows[0].style.backgroundColor="#00f";
+		datatable_1.rows[0].style.color="#fff";
+	}
+}
+
+/***** 选中行代码结束*******/
+
+
+</script>
+
+</html>

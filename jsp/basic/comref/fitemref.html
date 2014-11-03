@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>参照</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+
+#footer{width:100%;margin-left:4px;margin-top:4px;}
+#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+
+#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+	
+</style>
+   <!--项目档案参照页面，查询出项目大类下的项目分类、项目目录数据 -->
+    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+  
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+   
+	<script type="text/javascript" src="js/fitemref.js"></script>
+	<script type="text/javascript">
+	
+	//项目大类编码
+	var fitemClass="";
+	
+	//项目大类编码规则
+	var crule="";
+	
+	var fitemId=""; //项目大类id
+	
+	//返回被选中的数据对象
+	function returnSelected(tr){
+		var param={};
+		param.gradecode=tr.cells[0].innerHTML;
+		param.gradename=tr.cells[1].innerHTML;
+		param.citemId=tr.id;//项目id
+		param.citemClass=fitemId;//项目大类Id
+		window.parent.deliverValue("basic_comref_fitemref",param);
+		window.parent.closeWindow("basic_comref_fitemref");
+		// document.getElementById("selRecord").innerHTML = "已加载" + "1" + "条记录";
+	}
+	//parent parameter 取得来自父窗体传来的值
+	var pp = window.parent.valueMap.get("basic_comref_fitemref");
+	fitemClass=pp.cassItem;	//项目大类编码
+	
+	$(function(){
+		
+		if(fitemClass!=null&&fitemClass!=""){
+			findCrule();
+			loadDeptPersonZtree();
+		}
+	});
+	
+	/*获得项目大类编码规则*/
+	function findCrule(){
+		var param="fitemClass="+fitemClass;
+		$.ajax({
+			url:"fitem!findFitem.action",
+			type:"post",
+			data:param,
+			dataType:"json",
+			async:false,
+			success:function(data){
+				var fitem=data.fitem2;
+			    var	rule=fitem.crule;
+			     fitemId=fitem.id;
+				 for(var i=0;i<rule.length;i++){
+					 crule+=rule.substring(i,i+1)+"-";
+				  }
+				 crule=crule.substring(0,crule.length-1);  
+			}
+		});	
+	}
+	 
+</script>
+	<SCRIPT type="text/javascript">
+	
+
+	</SCRIPT>
+   
+
+</head>
+<body style="padding:0px;">
+
+<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+	
+	<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+	
+	<div style="width:100%;height:36px;">
+	
+		<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
+			
+			<div class="group" style="margin-top:2px;">
+				<div><input type="button" value="栏目" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+				<div><input type="button" value="编辑" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+				<div><input type="button" value="全载" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+				<div><input type="button" value="刷新" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				<div><input type="button" value="返回" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
+				<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_fitemref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+			</div>
+				
+		</div>
+		
+		
+		<div style="height:30px;width:286px;float:left;margin-top:4px;">
+			<div style="margin-top:10px;"><input type="checkbox" id="cb_1" class="v_a_m"/><label for="cb_1">显示已结算的项目</label></div>
+		</div>
+		<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+			<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+				<legend>模糊匹配定位：</legend>
+				<div style="height:20px;">
+					<input type="radio" value = "1" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+					<input type="radio" value = "2" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+					<input type="radio" value = "3" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+					<input type="radio" value = "4" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+				</div>
+			</fieldset>
+			<input type="text" id="inputvalue" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
+		</div>
+		
+	</div>
+	<div style="width:100%;height:274px;margin-left:4px;margin-top:4px;">
+		
+		<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;margin-top:0px\0;background-color:#fff;float:left;overflow-y:auto;">
+			<ul id="deptTree" class="ztree"></ul>
+		</div>
+		
+		
+		<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;margin-top:0px\0;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+				
+			<table id="datatable" border=1 class="table_style" style="width:700px;">
+				<thead id="datatable_header" >
+					
+						<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+						<!-- 
+						<tr >
+						<td style="width:150px;">项目分类编码</td>
+						<td style="width:150px;">分类名称</td>
+						<td style="width:80px;">编码级次</td>
+						<td style="width:150px;">是否末级</td>
+							</tr>
+						 -->
+				
+				</thead>
+				<tbody id="datatable_bodyer">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	
+	<!-- 底部状态栏容器 S -->
+	<div id="footer">
+		<div  style="margin-left:0px;">定位列名：</div>
+		<div id="selColumn" >是否结算</div>
+		<div id="loadRecord" > 已加载0条记录</div>
+		<div id = "selRecord" >已选中0条记录</div>
+	</div>
+	<!-- 底部状态栏容器 E -->
+	
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+
+</script>
+</html>

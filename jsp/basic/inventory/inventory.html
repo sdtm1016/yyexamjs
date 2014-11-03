@@ -1,0 +1,994 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+	<title>存货档案</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../css/base.css" />
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+  	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+  	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+  	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+  	<!-- 日期控件 -->
+  	<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	<!-- 增加树css js-->	
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<!-- 调用编码规则js -->
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+	<!-- 本页面的css样式 -->
+	<style type="text/css">
+		.datatable{width:3000px;}
+		 #payConditionTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		#datatableheader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		#include td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		
+		#inventoryClassTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		#includeInventoryClass td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		#inventoryClassHeader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+	</style>	
+	<script type="text/javascript">
+		//tab页切换函数
+		function tab(x){
+			for(i=1;i<5;i++){
+				document.getElementById("conbox"+i).style.display="none";
+				document.getElementById("connav_"+i).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat";
+				document.getElementById("connav_"+i).style.fontWeight="100";
+			}
+			document.getElementById("conbox"+x).style.display="block";
+			document.getElementById("connav_"+x).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat 0  -19px";
+			document.getElementById("connav_"+x).style.fontWeight="900";
+		}
+		//程序入口
+		$(document).ready(function(){
+			var gradeValue = grademarkValue('inventoryclass'); 
+			//存货分类编码原则
+			$("#bmgz").attr("gradeValue",gradeValue);
+			//判断是有允许分类(如果不允许则默认添加一条记录)
+			isInventoryCategory();
+			//加载存货分类树
+			queryInventoryClassTree(null);
+		});
+		/**
+		 * 是否允许存货分类，允许返回true，否则返回false
+		 * @returns {Boolean}
+		 */
+		var isCusCategoryBz = true;
+		function isInventoryCategory() {
+			$.ajax({
+				url:"inventory!isInventoryCategory",
+				type:"post",
+				dataType:"json",
+				async:false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					isCusCategoryBz = data.isCategory;
+				}
+			});
+		}
+		//树节点集合的全局变量
+		var zNodes = [];
+		//当前选中的树节点
+		var currentTreeNode=null;
+		//保存时状态的全局变量
+		var action = null;
+		//所有存货分类对象的集合
+		var inventoryClassList=null;
+		//当前选中存货档案
+		var currentClickedRow=null;
+		//查询存货分类树
+		function queryInventoryClassTree(inventoryClassCode){
+			//ztree配置
+			var setting = {
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: ZtreeClick,
+					onDblClick: ZtreeDblClick
+				}
+			};
+			//ztree加载树节点
+			$.ajax({
+				url:"inventoryClass!queryInventoryClass.action",
+				type:"post",
+				dataType:"json",
+				async : false,   
+				error: function () {
+		            jAlert('请求失败');   
+		        }, 
+				success:function(jsonData){
+					inventoryClassList = jsonData.inventoryClassList;
+					zNodes = getInventoryClassListNodes(inventoryClassList);
+					$.fn.zTree.init($("#inventoryClassTree"), setting, zNodes);
+					//默认选中节点(根节点)
+					var zTree = $.fn.zTree.getZTreeObj("inventoryClassTree");
+					if(inventoryClassCode==null){
+						inventoryClassCode = "CHTYPE";
+						//获取第一个末级节点
+						for(var i=0;i<inventoryClassList.length;i++){
+							var theInventoryClass = inventoryClassList[i];
+							if(theInventoryClass.binvcend==1){
+								inventoryClassCode = theInventoryClass.cinvccode;
+								break;
+							}
+						}
+					}
+					var selNode = zTree.getNodeByParam("id", inventoryClassCode);
+        			zTree.selectNode(selNode);
+        			//显示存货档案列表
+        			showInventory(selNode);
+				}
+			});	
+		}
+		//获取存货分类树节点的方法
+		function getInventoryClassListNodes(inventoryClassList){
+			zNodes = [];
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			if(gradeValue==""){
+				jAlert("编码规则不能为空!");
+				return;
+			}
+			var node = "";
+			var inventoryClass;
+			var nodeObj;
+			//根节点
+			node = "{id:'CHTYPE',name:'存货分类',open:true}";
+			nodeObj =  eval('(' + node + ')') ;
+        	zNodes.push(nodeObj);
+			for(var i=0;i<inventoryClassList.length;i++){
+				inventoryClass = inventoryClassList[i];
+				//本级次
+				var iinvcgrade = inventoryClass.iinvcgrade;
+				//存货分类编码
+				var cinvccode = inventoryClass.cinvccode;
+				//父节点id
+				var parentid ;
+				if(iinvcgrade==1){
+					parentid = "CHTYPE";
+				}else{
+					var rule = gradeValue.charAt(iinvcgrade-1);
+					var endindex = cinvccode.length-rule;
+					parentid = cinvccode.substring(0,endindex);
+				}
+				node = "{" + "id:'" + cinvccode + "'," + "pId:'" + parentid + "',"
+				+ "iinvcgrade:'" + inventoryClass.iinvcgrade + "',"	
+				+ "inventoryClassId:'" + inventoryClass.id + "',"
+				+ "inventoryClassName:'" + inventoryClass.cinvcname + "',"
+				+ "binvcend:'" + inventoryClass.binvcend + "',"
+				+ "name:'(" +cinvccode+")"+ inventoryClass.cinvcname + "'" + ",open:true" + "}";
+				
+				nodeObj =  eval('(' + node + ')') ;
+            	zNodes.push(nodeObj);
+			}
+			return zNodes;
+		}
+		//ztree单击事件
+		function ZtreeClick(event, treeId, treeNode, clickFlag){
+			showInventory(treeNode);
+		}
+		//ztee双击事件
+		function ZtreeDblClick(event, treeId, treeNode){
+			
+		}
+		//如果是0，则显示“否”，如果是1，则显示“是”(表格显示时)
+		function getYesOrNo(value){
+			if(value==0){
+				return "否";
+			}else if(value==1){
+				return "是";
+			}
+		}
+		//展示存货档案的方法
+		function showInventory(treeNode){
+			//设置当前选中的节点
+			currentTreeNode = treeNode;
+			var inventoryData = {};
+			if(treeNode.id!="CHTYPE"){
+				inventoryData = {code:treeNode.id};
+			}
+			$.ajax({
+				url: "inventory!queryInventoryByCiccode.action",
+				type: 'post',
+				data:inventoryData,
+				dataType: "json",
+				async:false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var list=data.inventoryList;
+					var strHtml="";
+					for(var i=0;i<list.length;i++){
+						strHtml+='<tr onclick="setTableClickedRowStyle(this);" ondblclick="doubleSelect(this);" id ="'+list[i].id+'" name="'+list[i].cinvname+'" bgcolor="#ffffff">'
+							//存货编码	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvcode)+'</td>'
+							//存货代码	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvaddcode)+'</td>'
+							//存货名称
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvname)+'</td>'
+							//规格型号
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvstd)+'</td>'
+							//所属分类码
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].ciccode)+'</td>'
+							//主要供货单位
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cvencode)+'</td>'
+							//主计量单位
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvmUnit)+'</td>'
+							//辅计量单位
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cinvaUnit)+'</td>'
+							//替换件
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].creplaceitem)+'</td>'
+							//货位
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cposition)+'</td>'
+							//是否销售
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bsale))+'</td>'
+							//是否外购
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bpurchase))+'</td>'
+							//是否自制
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bself))+'</td>'
+							//是否生产耗用
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bcomsume))+'</td>'
+							//是否在制
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bproducing))+'</td>'
+							//是否应税劳务
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].bservice))+'</td>'
+							//是否成套件
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].baccessary))+'</td>'
+							//换算率
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvexchrate)+'</td>'
+							//税率
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].itaxrate)+'</td>'
+							//单位重量
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvweight)+'</td>'
+							//单位体积
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ivolume)+'</td>'
+							//计划价/售价
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvrcost)+'</td>'
+							//参考成本
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvsprice)+'</td>'
+							//参考售价
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvscost)+'</td>'
+							//最低售价
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvlscost)+'</td>'
+							//最新成本
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvncost)+'</td>'
+							//最低批发价
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvbatch)+'</td>'
+							//安全库存
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].isafenum)+'</td>'
+							//最高库存
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].itopsum)+'</td>'
+							//最低库存
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ilowsum)+'</td>'
+							//呆滞积压标准
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ioverstock)+'</td>'
+							//是否保质期管理
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].binvquality))+'</td>'
+							//是否批次管理
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].binvbatch))+'</td>'
+							//启用日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].dsdate)+'</td>'
+							//停用日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].dedate)+'</td>'
+							//自由项1
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].bfree1)+'</td>'
+							//自由项2
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].bfree2)+'</td>'
+							//自定义项1
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cinvdefine1)+'</td>'
+							//自定义项2
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cinvdefine2)+'</td>'
+							//自定义项3
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cinvdefine3)+'</td>'
+							//最高进价
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iinvmpcost)+'</td>'
+							// 是否折扣
+							+'<td onclick="selectTd(this)"  >'+strNullProc(getYesOrNo(list[i].binvtype))+'</td>'
+							//质量要求
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cquality)+'</td>'
+							//助记码
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].cinvhelp)+'</td>'
+							+'</tr >';	
+					}
+					//清空选中的行
+					currentClickedRow = null;
+					//清空并且添加新的html
+					$("#include").empty().append(strHtml);
+					//默认选中第一行
+					setTableClickedRowStyle($("#include >tr:first")[0]);
+					//默认选中第一列
+					selectTd($("#include >tr:first >td:first")[0]);
+				  }
+			  });
+		}
+		//点击增加按钮弹出添加存货档案的窗体
+		function showAddInventory(){
+			action = "add";
+			if(currentTreeNode.id=="CHTYPE"||currentTreeNode.binvcend==0){
+				jAlert("非末级，不能增加存货档案！");
+				return;
+			}
+			//设置分页按钮
+			setUsedState();
+			//TODO 清空表单各值
+			$("#saveInventory input").val("");
+			$("#saveInventory input").attr("checked",false);
+			//设置选项卡中的值
+			$("#ciccodeCode").val(currentTreeNode.id);
+			$("#ciccodeId").val(currentTreeNode.inventoryClassId);
+			$("#ciccodeName").val(currentTreeNode.inventoryClassName);
+			//设置inventoryForm默认显示第一个选项卡
+			tab(1);
+			openWindow('inventoryForm');
+		}
+		//点击修改按钮弹出修改存货档案的窗体
+		function showUpdateInventory(){
+			if(currentClickedRow!=null){
+				doubleSelect(currentClickedRow);
+			}else{
+				jAlert("请选择一行数据！");
+			}
+		}
+		//保存存货分类
+		function saveInventory(){
+			//检查数据是否可用
+			var flag = saveInventoryCheck();
+			if(flag){
+				//组织数据
+				//是否成套件
+				var baccessary=0;
+				if($("#baccessary").attr("checked")){
+					baccessary=1;
+				}
+				//是否折扣
+				var binvtype=0;
+				if($("#binvtype").attr("checked")){
+					binvtype=1;
+				}
+				//是否销售
+				var bsale=0;
+				if($("#bsale").attr("checked")){
+					bsale=1;
+				}
+				//是否外购
+				var bpurchase=0;
+				if($("#bpurchase").attr("checked")){
+					bpurchase=1;
+				}
+				//是否生成耗用
+				var bcomsume=0;
+				if($("#bcomsume").attr("checked")){
+					bcomsume=1;
+				}
+				//是否自制
+				var bself=0;
+				if($("#bself").attr("checked")){
+					bself=1;
+				}
+				//是否在制
+				var bproducing=0;
+				if($("#bproducing").attr("checked")){
+					bproducing=1;
+				}
+				//是否劳务费用
+				var bservice=0;
+				if($("#bservice").attr("checked")){
+					bservice=1;
+				}
+				//是否批次管理
+				var binvbatch=0;
+				if($("#binvbatch").attr("checked")){
+					binvbatch=1;
+				}
+				//是否保质期管理
+				var binvquality=0;
+				if($("#binvquality").attr("checked")){
+					binvquality=1;
+				}
+				var inventoryTemp=$("#saveInventory input").serialize();
+				inventoryTemp+="&inventory.baccessary="+baccessary
+							+"&inventory.binvtype="+binvtype
+							+"&inventory.bsale="+bsale
+							+"&inventory.bpurchase="+bpurchase
+							+"&inventory.bcomsume="+bcomsume
+							+"&inventory.bself="+bself
+							+"&inventory.bproducing="+bproducing
+							+"&inventory.bservice="+bservice
+							+"&inventory.binvbatch="+binvbatch
+							+"&inventory.binvquality="+binvquality;
+				//保存按钮设置成不可用
+				$("#savecurrentInventory").attr("disabled",true);
+				if(action=="add"){
+					//添加保存数据
+					$.ajax({
+						url: "inventory!create.action",
+						type: 'post',
+						data:inventoryTemp,
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showInventory(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentInventory").attr("disabled",false);
+						}
+					  });
+				}else if(action=="update"){
+				    var id=$(currentClickedRow).attr("id");
+					$.ajax({
+						url:"inventory!update.action?inventory.id="+id,
+						type:"post",
+						data:inventoryTemp,
+						dataType:"json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showInventory(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentInventory").attr("disabled",false);
+						}
+					});
+				}
+				//保存完后清空数据添加数据
+				action="add";
+				var ciccodeCode = $("#ciccodeCode").val();
+				var ciccodeId  = $("#ciccodeId").val();
+				var ciccodeName = $("#ciccodeName").val();
+				//TODO 清空表单各值
+				$("#saveInventory input").val("");
+				$("#saveInventory input").attr("checked",false);
+				//设置选项卡中的值
+				$("#ciccodeCode").val(ciccodeCode);
+				$("#ciccodeId").val(ciccodeId);
+				$("#ciccodeName").val(ciccodeName);
+				//设置inventoryForm默认显示第一个选项卡
+				tab(1);
+				setUsedState();
+				$("#cinvcode").focus();
+			}
+		}
+		//保存存货分类检测
+		function saveInventoryCheck(){
+			var flag = true;
+			if($("#cinvcode").val()==""){
+				jAlert("存货编号不能为空！","提示信息",function(){
+					$("#cinvcode").focus();
+				});
+				return false;
+			}
+			if($("#cinvname").val()==""){
+				jAlert("存货名称不能为空！","提示信息",function(){
+					$("#cinvname").focus();
+				});
+				return false;
+			}
+			
+			if($("#cinvmUnit").val()==""){
+				jAlert("计量单位不能为空！","提示信息",function(){
+					$("#cinvmUnit").focus();
+				});
+				return false;
+			}
+			if($("#ciccodeCode").val()==""){
+				jAlert("存货分类编码不能为空！","提示信息",function(){
+					$("#ciccodeCode").focus();
+				});
+				return false;
+			}
+			if(action=="add"){
+				var inventory = "inventory.cinvcode="+$("#cinvcode").val();
+				//判断编码是否唯一
+				$.ajax({
+					url: "inventory!isUniquenessInventoryByCode.action",
+					type: 'post',
+					data:inventory,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该存货编号已经被使用，请重新输入存货编号!");
+							flag = false;
+						}
+					}
+				});
+				if(!flag){
+					return false;
+				}
+				inventory = "inventory.cinvname="+$("#cinvname").val();
+				$.ajax({
+					url: "inventory!isUniquenessInventoryByCinvname.action",
+					type: 'post',
+					data:inventory,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该存货名称已经被使用，请重新输入存货名称!");
+							flag = false;
+						}
+					}
+				 });
+			}
+			return flag;
+		}
+		//添加存货分类，调用存货分类窗体
+		function findInventoryClass(){
+			var param = 11;
+			window.parent.openWindow("basic_grid_inventoryGridRef","inventory",param);
+		}
+		//删除存货档案的方法
+		function deleteInventory(){
+			var inventoryId = $(currentClickedRow).attr("id");
+			if(currentClickedRow==null){
+				jAlert("请选择档案!");
+				return;
+			}
+			var titleHtml = "真的要删除存货档案---"+$(currentClickedRow).find("td").eq(2).text()+"吗？";
+			jConfirm(titleHtml, "确认对话框", function(confirmflag){
+				if(confirmflag){
+					//js判断
+					var sourceValue = 	inventoryId;
+					var sourceTable = 	"INVENTORY";
+					var sourceField = 	"cinvcode";
+					var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+					if (isExits==true) {
+						jAlert("该存货档案已经被使用，不能删除!");
+					    return false;			
+					}
+					//删除按钮不可用
+					$("#deleteInventory").attr("disabled",true);
+					$.ajax({
+						url: "inventory!delete.action?inventory.id="+inventoryId,
+						type: 'post',
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							if(data.isdelete==true){
+								//重新加载本节点下的树
+								showInventory(currentTreeNode);
+							}else{
+								jAlert("该存货档案已经被使用，不能删除!");
+								return false;
+							}
+							//删除按钮可用
+							$("#deleteInventory").attr("disabled",false);
+						}
+					  });
+				}
+			});
+		}
+		//编码失去焦点时自动获取助记码
+		function onTextblur(obj) {
+			if (isSpecialChar(obj)) {
+				var  codeName = $("#cinvname").val();
+				var helpCode = getHelpCode(codeName);
+				$("#cinvhelp").val(helpCode);
+			}
+		}
+		//选择当前列
+		function selectTd(td){
+			$(td).css("border","2px dashed #ccc").siblings().css("border","1px solid #000");
+			$(td).parent().siblings().children().css("border","1px solid #000");
+		}
+		//选中当前行
+		function setTableClickedRowStyle(row){
+			//当前行
+			currentClickedRow = row;
+			$(row).children().css("backgroundColor","blue").css("color","#fff");
+			$(row).siblings().children().css("backgroundColor","#fff").css("color","#000");
+		}
+		//双击在卡片中打开选中的记录
+		function doubleSelect(row){
+			action = "update";
+			//当前行
+			currentClickedRow = row;
+			editId =row.id;
+			$.ajax({
+				url: "inventory!queryInventoryById.action?inventory.id="+editId,
+				type: 'post',
+				dataType: "json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var  inventoryById=data.inventory;
+					$("#cinvcode").val(inventoryById.cinvcode);
+					$("#cinvaddcode").val(inventoryById.cinvaddcode);
+					//是否成套件
+					if(inventoryById.baccessary==0){
+						$("#baccessary").attr("checked",false);
+					}
+					if(inventoryById.baccessary==1){
+						$("#baccessary").attr("checked",true);
+					}
+					$("#cinvname").val(inventoryById.cinvname);
+					//是否折扣
+					if(inventoryById.binvtype==0){
+						$("#binvtype").attr("checked",false);
+					}
+					if(inventoryById.binvtype==1){
+						$("#binvtype").attr("checked",true);
+					}
+					$("#cinvhelp").val(inventoryById.cinvhelp);
+					$("#cinvstd").val(inventoryById.cinvstd);
+					$("#cinvmUnit").val(inventoryById.cinvmUnit);
+					$("#cinvaUnit").val(inventoryById.cinvaUnit);
+					$("#iinvexchrate").val(inventoryById.iinvexchrate);
+					var ciccodeCode = $(row).find("td").eq(4).text();
+					var ciccodeName = "";
+					var inventoryClassId = "";
+					for(var i=0;i<zNodes.length;i++){
+						if(ciccodeCode==zNodes[i].id){
+							ciccodeName = zNodes[i].inventoryClassName;
+							inventoryClassId = zNodes[i].inventoryClassId;
+						}
+					}
+					$("#ciccodeCode").val(ciccodeCode);
+					$("#ciccodeId").val(inventoryClassId);
+					$("#ciccodeName").val(ciccodeName);
+					$("#itaxrate").val(inventoryById.itaxrate);
+					//销售
+					if(inventoryById.bsale==0){
+						$("#bsale").attr("checked",false);
+					}
+					if(inventoryById.bsale==1){
+						$("#bsale").attr("checked",true);
+					}
+					//外购
+					if(inventoryById.bpurchase==0){
+						$("#bpurchase").attr("checked",false);
+					}
+					if(inventoryById.bpurchase==1){
+						$("#bpurchase").attr("checked",true);
+					}
+					//生产耗用
+					if(inventoryById.bcomsume==0){
+						$("#bcomsume").attr("checked",false);
+					}
+					if(inventoryById.bcomsume==1){
+						$("#bcomsume").attr("checked",true);
+					}
+					//自制
+					if(inventoryById.bself==0){
+						$("#bself").attr("checked",false);
+					}
+					if(inventoryById.bself==1){
+						$("bself").attr("checked",true);
+					}
+					//在制
+					if(inventoryById.bproducing==0){
+						$("#bproducing").attr("checked",false);
+					}
+					if(inventoryById.bproducing==1){
+						$("#bproducing").attr("checked",true);
+					}
+					//劳务费用
+					if(inventoryById.bservice==0){
+						$("#bservice").attr("checked",false);
+					}
+					if(inventoryById.bservice==1){
+						$("#bservice").attr("checked",true);
+					}
+					$("#iinvrcost").val(inventoryById.iinvrcost);
+					$("#iinvsprice").val(inventoryById.iinvsprice);
+					$("#iinvscost").val(inventoryById.iinvscost);
+					$("#iinvncost").val(inventoryById.iinvncost);
+					$("#iinvlscost").val(inventoryById.iinvlscost);
+					$("#iinvbatch").val(inventoryById.iinvbatch);
+					$("#iinvmpcost").val(inventoryById.iinvmpcost);
+					$("#cvenhand").val(inventoryById.cvenhand);
+					$("#itopsum").val(inventoryById.itopsum);
+					$("#isafenum").val(inventoryById.isafenum);
+					$("#ilowsum").val(inventoryById.ilowsum);
+					$("#cposition").val(inventoryById.cposition);
+					
+					//是否批次管理
+					if(inventoryById.binvbatch==0){
+						$("#binvbatch").attr("checked",false);
+					}
+					if(inventoryById.binvbatch==1){
+						$("#binvbatch").attr("checked",true);
+					}
+					//是否保质期管理
+					if(inventoryById.binvquality==0){
+						$("#binvquality").attr("checked",false);
+					}
+					if(inventoryById.binvquality==1){
+						$("#binvquality").attr("checked",true);
+					}
+					$("#ioverstock").val(inventoryById.ioverstock);
+					$("#iinvweight").val(inventoryById.iinvweight);
+					$("#ivolume").val(inventoryById.ivolume);
+					$("#dsdate").val(getStrDate(inventoryById.dsdate));
+					$("#dedate").val(getStrDate(inventoryById.dedate));
+					$("#cquality").val(inventoryById.cquality);
+				}
+			});
+			//设置inventoryForm默认显示第一个选项卡
+			tab(1);
+			//如果有这个弹出框先关闭再打开
+			try{
+				closeWindow('inventoryForm');
+			}catch(e){
+				
+			}
+			openWindow('inventoryForm');
+			setUsedState();
+		}
+		//"下张"按钮函数
+		function nextInfo(){
+			var thisrow = $(currentClickedRow).next()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"上张"按钮函数
+		function prevInfo(){
+			var thisrow = $(currentClickedRow).prev()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"首张"按钮函数
+		function firstInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:first")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"末张"按钮函数
+		function lastInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:last")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		/*设置首页上页下页末页按钮的可用状态*/
+		function setUsedState(){
+			if(currentClickedRow==null){
+				$("#nextInventory").attr("disabled",true);
+				$("#lastInventory").attr("disabled",true);
+				$("#firstInventory").attr("disabled",true);
+				$("#prevInventory").attr("disabled",true);
+				return;
+			}
+			if(typeof($(currentClickedRow).next()[0])=="undefined"){
+				$("#nextInventory").attr("disabled",true);
+				$("#lastInventory").attr("disabled",true);
+			}else{
+				$("#nextInventory").attr("disabled",false);
+				$("#lastInventory").attr("disabled",false);
+			}
+			if(typeof($(currentClickedRow).prev()[0])=="undefined"){
+				$("#firstInventory").attr("disabled",true);
+				$("#prevInventory").attr("disabled",true);
+			}else{
+				$("#firstInventory").attr("disabled",false);
+				$("#prevInventory").attr("disabled",false);
+			}
+		}
+	</script>
+  </head>
+  <body  style="margin:0px 0px 0px 0px;padding:0px 0px 0px 5px;font-size:12px;background-color: #D4D0C8;" >
+    <div  id="inventoryForm" style="margin-left: 180px;margin-top: 10px; padding: auto; display: none;" type="window" width="400" height="350" title="存货档案卡片">
+		<!--增加存货档案的div-->
+		<div class="wrap" id ="addInventory" style="z-index: 200;position:absolute;margin-left:0px;margin-top:0px;">
+
+			<div class="buttongroup" style="background:#f0f0f0;">
+				<div class="group">
+					<div><input type="button" id ="savecurrentInventory" value="保存"  style="background-image:url('../../../images/icon/save.gif');" onclick="saveInventory()"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="首张" id="firstInventory" onclick="firstInfo();" style="background-image:url('../../../images/icon/firstcard.gif');"/></div>
+					<div><input type="button" value="上张" id="prevInventory" onclick="prevInfo();" style="background-image:url('../../../images/icon/prevcard.gif');"/></div>
+					<div><input type="button" value="下张" id="nextInventory" onclick="nextInfo();" style="background-image:url('../../../images/icon/nextcard.gif');"/></div>
+					<div><input type="button" value="末张" id="lastInventory" onclick="lastInfo();" style="background-image:url('../../../images/icon/lastcard.gif');"/></div>
+				</div>
+				<div class="group">
+					<div>
+						<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="closeWindow('inventoryForm');"/>
+					</div>
+				</div>
+			</div>
+			<div style="border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+		    
+		    <!-- 内容 start -->
+		    <div class="z_content" >
+		    	<div class="z_content_nav">
+		        	<ul>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" style="background:url(../../../images/basic/z_connav_bg.png) no-repeat 0 -19px; color:#000; font-weight:900;"  onclick="tab(1)" id="connav_1">基本</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(2)" id="connav_2">联系</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(3)" id="connav_3">信用</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(4)" id="connav_4">其他</a></li>
+		            
+		            </ul>
+		        </div>
+		        <div class="z_content_box" id ="saveInventory">
+		        	<!-- 基本页面 ↓-->
+		            <div id="conbox1">
+						&emsp;存货编号&emsp;<input id="cinvcode" type="text" name="inventory.cinvcode" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;存货代码&emsp;<input id="cinvaddcode" type="text" name="inventory.cinvaddcode" onblur = "isSpecialChar(this)"/>
+						&emsp;&emsp;<input id="baccessary" type="checkbox" disabled="disabled" >是否成套件<br/>
+						&emsp;存货名称&emsp;<input id="cinvname" type="text" name="inventory.cinvname" size="" onblur= "onTextblur(this);"/>
+						&emsp;&emsp;<input id="binvtype" type="checkbox" >是否折扣<br/>
+						&emsp;助记码&emsp;&emsp;<input id="cinvhelp" type="text" name="inventory.cinvhelp" size="" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;规格型号&emsp;<input id="cinvstd" type="text" name="inventory.cinvstd" size=""/><br/>
+						&emsp;计量单位&emsp;<input id="cinvmUnit" type="text" name="inventory.cinvmUnit" size="7"/>
+						辅计量单位&emsp;<input id="cinvaUnit" type="text" disabled="disabled" name="inventory.cinvaUnit" size="7"/>
+						换算率&emsp;<input id="iinvexchrate" type="text" disabled="disabled" name="inventory.iinvexchrate" size="7"/><br/>
+						&emsp;
+						所属分类码&emsp;<input id="ciccodeCode" type="text" name="inventory.ciccode" size="8" onfocus="dofocustoenter('InventoryClass',this,'','','','')"/>
+						<input id="ciccodeId" type="hidden"  />
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findInventoryClass()"/>
+						<input id="ciccodeName" type="text"  disabled="disabled" size="8"/>
+						税率&emsp;<input id="itaxrate" type="text" name="inventory.itaxrate" size="8"><br/>
+						<!-- 存货分类table开始 -->
+						
+						<!--存货分类table结束  -->
+						&emsp;存货属性&emsp;<input id="bsale" type="checkbox" >销售&emsp;&emsp;&emsp;<input id="bpurchase" type="checkbox" >外购&emsp;&emsp;&emsp;<input id="bcomsume" type="checkbox" >生产耗用<br/>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<input id="bself" type="checkbox" >自制&emsp;&emsp;&emsp;<input id="bproducing" type="checkbox" >在制&emsp;&emsp;&emsp;<input id="bservice" type="checkbox" >劳务费用&emsp;&emsp;&emsp;
+		            </div>
+		            <!-- 成本页面 ↓-->
+		            <div id="conbox2">
+		            	&emsp;计划价/售价&emsp;<input id="iinvrcost" type="text" name="inventory.iinvrcost" size=""><br/>
+		            	&emsp;参考成本&emsp;<input id="iinvsprice" type="text" name="inventory.iinvsprice" size=""><br/>
+		            	&emsp;参考售价&emsp;<input id="iinvscost" type="text" name="inventory.iinvscost" size=""><br/>
+		            	&emsp;最新成本<input id="iinvncost" type="text" name="inventory.iinvncost" size=""><br/>
+		            	&emsp;最低售价&emsp;&emsp;<input id="iinvlscost" type="text" name="inventory.iinvlscost" size=""><br/>
+		            	&emsp;最低批发价：&emsp;&emsp;<input id="iinvbatch" type="text" name="inventory.iinvbatch" size=""><br/>
+		            	&emsp;最高进价：&emsp;&emsp;<input id="iinvmpcost" type="text" name="inventory.iinvmpcost" size=""><br/>
+		            	&emsp;主要供货单位&emsp;<input id="cvenhand" type="text" name="inventory.cvencode" size=""><br/>
+		            </div>
+		            <!-- 信用页面 ↓-->
+		            <div id="conbox3">
+						&emsp;最高库存&emsp;<input id="itopsum" type="text" name="inventory.itopsum" size="14">
+						&emsp;安全库存&emsp;<input id="isafenum" type="text" name="inventory.isafenum" size="14"><br/>
+						&emsp;最低库存&emsp;<input id="ilowsum" type="text" name="inventory.ilowsum" size="14">
+						&emsp;货位&emsp;&emsp;&emsp;<input id="cposition" type="text" name="inventory.cposition" size="14"><br/><br/>
+						&emsp;是否批次管理<input id="binvbatch" type="checkbox"  disabled="disabled">
+						&emsp;是否保质期管理<input id="binvquality" type="checkbox" disabled="disabled"><br/><br/><br/><br/>
+						&emsp;呆滞积压标准<input id="ioverstock" type="text" name="inventory.ioverstock" size=""><br/><br/><br/><br/><br/>
+		            </div>
+		            <!-- 其他页面 ↓-->
+		            <div id="conbox4">
+		            	&emsp;单位重量&emsp;<input id="iinvweight" type="text" name="inventory.iinvweight" size="14">
+		            	&emsp;单位体积&emsp;<input id="ivolume" type="text" name="inventory.ivolume" size="14"><br/>
+		            	&emsp;启用日期&emsp;<input id="dsdate" type="text" name="inventory.dsdate" onClick="WdatePicker()" size="14">
+		            	&emsp;停用日期&emsp;<input id="dedate" type="text" name="inventory.dedate" onClick="WdatePicker()" size="14"><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		            	&emsp;质量要求&emsp;<input id="cquality" type="text" name="inventory.cquality" size="42"><br/><br/>
+		            </div>
+					<p>卡片中：如有无法设置的项目，是受账套参数控制，请先到各子系统的业务范围中设置。存货如需自由项，请先到自定义项栏目中定义自由项。</p>
+		        </div>
+			</div>
+		</div>
+	</div>
+	<!--增加档案结束  -->
+	<div style="width:800px;height:300px;background-color:#D4D0C8;font-size: 12px;margin-top:5px;">
+		<div class="buttongroup">
+			<div class="group">
+				<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+				<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+				<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" id ="showAddInventory" value="增加" onclick="showAddInventory()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+				<div><input type="button" id ="showUpdateInventory" value="修改" onclick="showUpdateInventory()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+				<div><input type="button" id ="deleteInventory" value="删除" onclick="deleteInventory()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="过滤" disabled="disabled" style="background-image:url('../../../images/icon/screening.gif');"/></div>
+				<div><input type="button" value="定位" disabled="disabled" style="background-image:url('../../../images/icon/return.gif');"/></div>
+				<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="格式" disabled="disabled" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button" value="帮助" disabled="disabled" style="background-image:url('../../../images/icon/help.gif');"/>
+				</div>
+				<div>
+					<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('inventory');"/>
+				</div>
+			</div>
+		</div>
+<!-- 		<div  style="width:100%"> -->
+<!-- 			&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/add.jpg" onmouseout="this.src='../../../images/buttons/add.jpg'" onmousedown="this.src='../../../images/buttons/pushadd.jpg';" onmouseup="this.src='../../../images/buttons/add.jpg';" onclick="addInventory()"/> -->
+<!-- 			&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/del.jpg" onmouseout="this.src='../../../images/buttons/del.jpg'" onmousedown="this.src='../../../images/buttons/pushdel.jpg';" onmouseup="this.src='../../../images/buttons/del.jpg';" onclick="del()"/> -->
+<!-- 			&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/update.jpg" onmouseout="this.src='../../../images/buttons/update.jpg'" onmousedown="this.src='../../../images/buttons/pushupdate.jpg';" onmouseup="this.src='../../../images/buttons/update.jpg';" onclick="update()"/> -->
+<!-- 			&emsp;<input onfocus="this.blur();" type="image" src = "../../../images/buttons/exit.jpg" onmouseout="this.src='../../../images/buttons/exit.jpg'" onmousedown="this.src='../../../images/buttons/pushexit.jpg';" onmouseup="this.src='../../../images/buttons/exit.jpg';" onclick="window.parent.closeWindow('inventory');"/> -->
+<!-- 		</div> -->
+		<hr style="margin-top:2px;*margin-top:-3px;"/>
+		<div style="margin-top:5px;*margin-top:-4px;width:100%;">
+				<div style="margin-left:0px;width:150px;float:left;height:320px;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;overflow:auto;">
+						<ul id="inventoryClassTree" class="ztree" style="margin-top:0px;margin-left:-20px;width:150px;height:290px;"></ul>
+				</div>
+				<div style="background-color: #D4D0C8;border:2px inset #ccc;overflow-x:scroll;height:320px;width:80%;float:right;">
+				<table class="datatable" id="payConditionTable" border="2" cellspacing="0">			
+					<tr id="datatableheader" bgcolor="#f0f0f0">
+						<td nowrap>存货编码</td>
+						<td nowrap>存货代码</td>
+						<td nowrap>存货名称</td>
+						<td nowrap>规格型号</td>
+						<td nowrap>所属分类码</td>
+						<td nowrap>主要供货单位</td>
+						<td nowrap>主计量单位</td>
+						<td nowrap>辅计量单位</td>
+						<td nowrap>替换件</td>
+						<td nowrap>货位</td>
+						<td nowrap>是否销售</td>
+						<td nowrap>是否外购</td>
+						<td nowrap>是否自制</td>
+						<td nowrap>是否生产耗用</td>
+						<td nowrap>是否在制</td>
+						<td nowrap>是否应税劳务</td>
+						<td nowrap>是否成套件</td>
+						<td nowrap>换算率</td>
+						<td nowrap>税率</td>
+						<td nowrap>单位重量</td>
+						<td nowrap>单位体积</td>
+						<td nowrap>计划价/售价</td>
+						<td nowrap>参考成本</td>
+						<td nowrap>参考售价</td>
+						<td nowrap>最低售价</td>
+						<td nowrap>最新成本</td>
+						<td nowrap>最低批发价</td>
+						<td nowrap>安全库存</td>
+						<td nowrap>最高库存</td>
+						<td nowrap>最低库存</td>
+						<td nowrap>呆滞积压标准</td>
+						<td nowrap>是否保质期管理</td>
+						<td nowrap>是否批次管理</td>
+						<td nowrap>启用日期</td>
+						<td nowrap>停用日期</td>
+						<td nowrap>自由项1</td>
+						<td nowrap>自由项2</td>
+						<td nowrap>自定义项1</td>
+						<td nowrap>自定义项2</td>
+						<td nowrap>自定义项3</td>
+						<td nowrap>最高进价</td>
+						<td nowrap>是否折扣</td>
+						<td nowrap>质量要求</td>
+						<td nowrap>助记码</td>
+					</tr>
+					<tbody id="include" style="background-color: #FFFFFF;font-size: 12px" >
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="inventoryClassId">
+	<input type="hidden" id="bmgz">
+  </body>
+  <!-- 打开窗体的js -->
+  <script type="text/javascript" src="../../../js/winui/plugin/winui.window.js"></script>
+  	<script type="text/javascript">
+		/***
+		 * 说明：下面deliverValue()函数必须放到winui.window.js引入代码下面，
+		 * 因为winui.window.js里有deliverValue()的声明，如果不写在下面，会被winui.window.js覆盖。
+		 */
+		//子窗体反参回调函数  存货档案所属分类的回调函数
+		function deliverValue(valueObject){
+			$("#ciccodeId").val(valueObject.selId);
+			$("#ciccodeCode").val(valueObject.selCode);
+			$("#ciccodeName").val(valueObject.selName);
+		}
+	</script>
+</html>

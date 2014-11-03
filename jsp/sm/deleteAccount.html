@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>删除账套</title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript">
+	function dosubmit(){
+		jConfirm("删除账套后将无法做与该账套有关的任何操作，且数据无法恢复，你确定删除吗？","提示",function(flag){
+			if(flag){
+				
+				var accid=$("#uaacount").val();
+				if(accid==null||accid=="null"){
+					return;
+				}
+				$.ajax({
+				    url: "uaAccount!deleteAccount?accid="+accid,
+				    type: 'post',
+				    dataType: "json",
+				    cache:false,
+				    async:false,
+				    success: function(data){
+				    	jAlert("账套删除成功","提示窗口",function (){
+				    		$("#"+accid).remove();
+				    	});
+				    }
+				 });
+				
+			}
+		});
+		
+		
+	}
+	function init(){
+		$.ajax({
+		    url: "uaAccount!selectAccount",
+		    type: 'post',
+		    dataType: "json",
+		    cache:false,
+		    async:false,
+		    success: function(data){
+		    	var uaAccountList=data.uaAccountList;
+		    	if(uaAccountList!=null){
+		    		for(var i=0;i<uaAccountList.length;i++){
+		    			var temp=uaAccountList[i]
+			    		$("#uaacount").append("<option id='"+temp.id+"' value='"+temp.id+"'>["+temp.caccId+"]"+temp.caccName+"</option>");
+			    	}
+		    	}
+		    }
+		 });
+	}
+</script>
+</head>
+<body onload="init();">
+	<div>
+		<p>&nbsp;&nbsp;<label>选择要是删除的账套:</label>
+		<select id="uaacount" style="width:150px;">
+		</select >
+		</p>
+		<p>&nbsp;&nbsp;<input type="button" value="帮助" />&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" value="确认" onclick="dosubmit()"/>&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" value="放弃" onclick="window.parent.closeWindow('deleteAccount')"/>
+		</p>
+	</div>
+</body>	
+</html>

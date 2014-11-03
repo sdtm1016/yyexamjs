@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>新增科目</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+		.buttongroup {height:40px;background-color:#D4D0C8;cursor:default;}
+		.finder {width:20px;height:20px;background-image:url('../../../images/newbuttons/finder.jpg');}
+		.ivtalm{vertical-align:middle;margin-bottom:3px;}
+	</style>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="js/add_code.js"></script>
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+</head>
+<body>
+	<div class="container" id="container" style="width:440px;height:440px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+		<div style="width:420px;height:420px;margin-left:10px;margin-top:8px;">
+			
+			<div style="width:100%;">
+				<div style="width:258px;float:left;line-height:24px;">
+					
+				
+				<table>
+					<tbody>
+						<tr>
+							<td align="right">科目编码：</td>
+							<td><input type="text" id="ccode" onblur= "onCodeblur();" /></td>
+						</tr>
+						<tr>
+							<td align="right">科目中文名称：</td>
+							<td><input type="text" id="ccodeName" onblur= "onTextblur();"/></td>
+						</tr>
+						<tr>
+							<td align="right">科目英文名称：</td>
+							<td><input type="text" id="ccodeEngl"/></td>
+						</tr>
+						<tr>
+							<td align="right">
+								科目类型：
+							</td>
+							<td>
+								<select id="cclass" style="width:150px;">
+									<option value="ZC">资产</option>
+									<option value="FZ">负债</option>
+									<option value="GT">共同</option>
+									<option value="QY">权益</option>
+									<option value="CB">成本</option>
+									<option value="SY">损益</option>
+								</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td align="right">
+								账页格式：
+							</td>
+							<td>
+								<select id="cbookType" style="width:150px;">
+									<option value="JES">金额式</option>
+									<option value="WBJES">外币金额式</option>
+									<option value="SLJES">数量金额式</option>
+									<option value="SLWBS">数量外币式</option>
+								</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td align="right" valign="middle">助记码：</td>
+							<td><input id="chelp" type="text"/></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<fieldset style="width:90%;">
+					<legend><input type="checkbox" name="cb_1" id="foreignAccounting" class="ivtalm" onclick="showExchName(this);"><label for="foreignAccounting">外币核算</label></legend>
+					<div id="fieldset_1" style="margin-left:20px;">
+						币种&nbsp;&nbsp;
+						<select id="cexchName" style="width:120px;" disabled="disabled">
+							
+						</select>
+						<input type="button" id = "btnExch"; onclick="exchClick()" class="finder" disabled="disabled"   />
+					</div>
+				</fieldset>
+				<fieldset style="width:90%;margin-top:0px;">
+					<legend><input type="checkbox" name="cb_2" id="quantityAccounting" class="ivtalm" onclick="showMeasure(this);"><label for="quantityAccounting">数量核算</label></legend>
+					<div id="fieldset_2" style="margin-left:20px;">
+						计量单位&nbsp;&nbsp;
+						<input type="text" id="cmeasure" style="width:100px;" disabled="disabled"/>
+					</div>
+				</fieldset>
+				
+				
+				
+				</div>
+				<div style="width:156px;float:left;">
+					
+						
+					<input type="checkbox" name="cb_3" id="bclose" disabled="disabled" class="ivtalm" onclick="showcomponent(this);"><label id="cb_3_label" for="bclose" style="color:#888;">封存</label>
+					
+					<fieldset id='pro' style="width:90%;margin-top:4px;">
+						<legend >科目性质（余额方向）</legend>
+						<div id="fieldset_pro" style="margin-left:10px;" >
+							<input type="radio" name="bproperty" id="debit" class="ivtalm" checked="checked" value="1"/><label for="debit">借方</label>
+							<input type="radio" name="bproperty" id="credit" class="ivtalm" value="0"/><label for="credit">贷方</label>
+						</div>
+					</fieldset>
+					
+					
+					
+					<fieldset style="width:90%;margin:0px;">
+						<legend>辅助核算</legend>
+						<div id="fieldset_1">
+							<table>
+								<tbody>
+									<tr>
+										<td>
+											<input type="checkbox" id="bdept" class="ivtalm" onclick="showDept(this);"/>
+											<label for="bdept">部门核算</label>
+										</td>
+										<td>
+											<input type="button" id="btnDept" onclick="deptClick()" disabled="disabled" class="finder" style="float:right;"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<input type="checkbox" id="bperson" class="ivtalm" onclick="showPerson(this);"/>
+											<label for="bperson">个人往来</label>
+										</td>
+										<td>
+											<input type="button" id="btnPerson" onclick="personClick()" disabled="disabled" class="finder" style="float:right;"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<input type="checkbox" id="bcus" class="ivtalm" onclick="showCus(this);"/>
+											<label for="bcus">客户往来</label>
+								
+										</td>
+										<td>
+											<input type="button" id="btnCus" onclick="cusClick()" class="finder"  disabled="disabled" style="float:right;"/>
+							
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<input type="checkbox" id="bsup" class="ivtalm" onclick="showSup(this);"/>
+											<label for="bsup">供应商往来</label>&nbsp;&nbsp;&nbsp;
+										</td>
+										<td>
+											<input type="button" id="btnSup" onclick="supClick()" disabled="disabled"  class="finder" style="float:right;"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<input type="checkbox" id="bitem" class="ivtalm" onclick="showItem(this);"/>
+											<label for="bitem">项目核算</label>
+										</td>
+										<td>
+											<input type="button" id="btnItem" onclick="itemClick()" disabled="disabled"  class="finder" style="float:right;"/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+				
+							
+							
+						</div>
+					</fieldset>
+					
+					
+					
+					
+					<fieldset style="width:90%;">
+						<div>
+							
+							<input type="checkbox" class="ivtalm" id="br"/><label for="br">日记账</label><br/>
+							<input type="checkbox" class="ivtalm" id="be"/><label for="be">银行账</label>
+						</div>
+					</fieldset>
+					
+					
+					
+				
+					
+				</div>
+			</div>
+			
+			<div style="width:100%;">
+				<div style="width:220px;float:left;">
+				
+					<fieldset style="width:90%;">
+						<legend><input type="checkbox" name="cb_6" id="cgatherCheck" class="ivtalm" onclick="showPrint(this);"><label for="cgather">汇总打印</label></legend>
+						<div id="fieldset_1" style="margin-left:20px;">
+							汇总到&nbsp;&nbsp;
+							<select id="cgather" style="width:120px;" disabled="disabled">
+								<option value="null"></option>
+  								<option value="1">应收</option>
+							  	<option value="2">应付</option>
+								<option value="3">核算</option>
+							</select>
+						</div>
+					</fieldset>
+					
+				</div>
+				<div style="width:200px;float:left;margin-top:10px;">
+					
+					<fieldset style="width:90%;">
+						<div id="fieldset_1">
+							受控系统&nbsp;&nbsp;
+							<select id="cother" onchange="onCotherChange()" style="width:120px;">
+								<option value=""></option>
+								<option value="AR">应收</option>
+								<option value="AP">应付</option>
+								<option value="IA">核算</option>
+							</select>
+						</div>
+					</fieldset>
+					
+				</div>
+				
+			</div>
+			
+			<div style="float:none;clear:both;width:100%;height:30px;margin-top:10px;text-align:right;">
+				<input id="addBtn" type="button" value="确定" onClick="add()"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('basic_finance_addcode');"/>
+			</div>
+			
+			<div style="width:100%;height:40px;color:blue;">
+				提示：辅助核算一般只针对末级科目，如果上级科目也想设置辅助核算，下级科目必须也设辅助核算，客户往来和供应商往来不能同时设置。
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>

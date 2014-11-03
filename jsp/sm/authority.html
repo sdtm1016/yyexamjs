@@ -1,0 +1,623 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>权限管理</title>
+<style type="text/css">
+	.buttongroup {height:40px;background-color:#D4D0C8;cursor:default;}
+	.buttongroup .group {padding-right:10px;float:left;margin:3px auto 3px 0px;}
+	.buttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+	.buttongroup .group div input {width:31px;height:35px;padding-top:15px;padding-left:1px;font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;}
+	.auth tr td{
+		border-top:0px outset #ffffff;
+		border-right:1px outset #d4d0c8;
+		border-bottom:1px outset #d4d0c8;
+		border-left:0px outset #ffffff;
+	}
+	.out{
+		border-top:1px solid #808080;
+		border-right:1px solid #FFFFFF;
+		border-bottom:1px solid #FFFFFF;
+		border-left:1px solid #808080;
+	}
+	.in{
+		border-top:1px solid #FFFFFF;
+		border-right:1px solid #808080;
+		border-bottom:1px solid #808080;
+		border-left:1px solid #FFFFFF;
+	}
+	#user_ tr td{
+		border-top:0px solid #000000;
+		border-right:1px solid #000000;
+		border-bottom:1px solid #000000;
+		border-left:0px solid #000000;
+	}
+</style>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script src="../../js/publicFunction.js"></script>
+<script>
+//变色函数-----开始
+var highlightcolor='#0a246a';
+var recoveryColor='#ffffff';
+var clickcolor='#0a246a';
+var tempColor='#ffffff';
+
+//操作员选择行
+var hasSelect = null;
+function selectRow(event){
+	$(event).attr("bgcolor",clickcolor);
+	$(event).css("color","#ffffff");
+	if(hasSelect!=event){
+		$(hasSelect).attr("bgcolor",recoveryColor);
+		$(hasSelect).css("color","#000000");
+		hasSelect = event;
+		queryAuth();
+	}
+}
+
+function doselectRow(event){
+	if($(event).attr("bgcolor")==recoveryColor){
+		$(event).attr("bgcolor","#0000ff");
+		$(event).css("color","#ffffff");
+	}
+	if(havsle!=null){
+		if(havsle!=event){
+			if($(havsle).attr("bgcolor")=="#0000ff"){
+				$(havsle).attr("bgcolor",recoveryColor);
+				$(havsle).css("color","#000000");
+			}
+			havsle = event;
+		}
+	}else{
+		havsle = event;
+	}
+}
+
+//权限表格选择行(通用于权限列表选择行)
+function selectAuths(event){
+	if($(event).attr("bgcolor")==clickcolor){
+		$(event).attr("bgcolor",recoveryColor);
+		$(event).css("color","#000000");
+	}else{
+		$(event).attr("bgcolor",clickcolor);
+		$(event).css("color","#ffffff");
+	}
+}
+function dbselectAuths(event){
+	if($(event).children().first().attr("bgcolor")==clickcolor){
+		$(event).children().first().attr("bgcolor",recoveryColor);
+		$(event).children().first().css("color","#000000");
+	}else{
+		$(event).children().first().attr("bgcolor",clickcolor);
+		$(event).children().first().css("color","#ffffff");
+	}
+}
+//选择行，同时移动滚动条到指定位置
+var havsle=null;
+function doselect(event){
+	var detail=$("#detail");
+	var allength=$("#includeAuths").children("tr").length;
+	var address=$($("#includeAuths").children("tr[name='"+$(event).attr("id")+"']")[0]).attr("mark");
+	var high=detail[0].scrollHeight;
+	detail.scrollTop((high*((address)/(allength))));
+	if($(event).attr("bgcolor")==recoveryColor){
+		$(event).attr("bgcolor","#0000ff");
+		$(event).css("color","#ffffff");
+	}
+	if(havsle!=null){
+		if(havsle!=event){
+			if($(havsle).attr("bgcolor")=="#0000ff"){
+				$(havsle).attr("bgcolor",recoveryColor);
+				$(havsle).css("color","#000000");
+			}
+			havsle = event;
+		}
+	}else{
+		havsle = event;
+	}
+}
+
+//上级权限双击事件
+function doubleSys(event){
+	var detail=$("#detail");
+	var allength=$("#includeAuths").children("tr").length;
+	var address=$($("#includeAuths").children("tr[name='"+$(event).attr("id")+"']")[0]).attr("mark");
+	var high=detail[0].scrollHeight;
+	detail.scrollTop((high*((address)/(allength))));
+	if($(event).children().first().attr("bgcolor")==clickcolor){
+		$(event).children().first().attr("bgcolor",recoveryColor);
+		$(event).children().first().css("color","#000000");
+		$("#includeAuths").children("tr[name='"+$(event).attr("id")+"']").each(function(index,element){
+			$(this).children().first().attr("bgcolor",recoveryColor);
+			$(this).children().first().css("color","#000000");
+		});
+	}else{
+		$(event).children().first().attr("bgcolor",clickcolor);
+		$(event).children().first().css("color","#ffffff");
+		$("#includeAuths").children("tr[name='"+$(event).attr("id")+"']").each(function(index,element){
+			$(this).children().first().attr("bgcolor",clickcolor);
+			$(this).children().first().css("color","#ffffff");
+		});
+	}	
+}
+
+//权限表格选择行(单击)
+function selectSys(event){
+		
+}
+
+//删除权限
+function del(){
+	if($("#includeAuth").children().length==0){
+		return false;
+	}
+	var pram = "";
+	$("#includeAuth").children("tr[bgcolor='"+clickcolor+"']").each(function(index,element){
+		pram = pram+"ids="+$(this).attr("id")+"&";
+			});
+	if(pram==""){
+		
+		
+		
+		jConfirm("删除操作员：["+$(hasSelect).children().first().html()+"]所有权限吗？","确认信息",function(flag){
+			if(flag==true){
+				var pram = 'uaUser.id='+$(hasSelect).attr("id")+'&uaAccount.id='+$("#includeAccount").val()+'&year='+$("#includeYear").val();
+				$.ajax({
+				    url: "authority!delAuths",
+				    type: 'post',
+				    dataType: "json",
+					data:pram,
+				    success: function(data){
+				    	jAlert("删除成功！");
+				    	queryAuth();
+				    }
+				  });
+			}
+		});
+		
+		
+		
+	}else{
+		if(!confirm("删除选中的所有权限吗？")){
+			return false;
+		}else{
+			$.ajax({
+			    url: "authority!delAuths",
+			    type: 'post',
+			    dataType: "json",
+				data:pram,
+			    success: function(data){
+			    	jAlert("删除成功！");
+			    	queryAuth();
+			    }
+			  });
+		}
+	}
+	
+}
+
+//添加权限
+function add(){
+	var pram = 'uaUser.id='+$(hasSelect).attr("id")+'&uaAccount.id='+$("#includeAccount").val()+'&year='+$("#includeYear").val();
+	var length = $("#includeAuths").children().children("td[mark='0'][bgcolor='"+clickcolor+"']").length;
+	if(length==0){
+		jAlert("请至少选择一条权限！");
+		return;
+	}
+	
+	$.each($('#includeSubsys td[bgcolor=#0a246a]'),function(i,n){
+		if($(n).next().text()=='MR'){
+			window.parent.updateScore(3,0);
+		}
+		if($(n).next().text()=='WA'){
+			window.parent.updateScore(3,1);
+		}
+	});
+	
+	$("#includeAuths").children().children("td[mark='0'][bgcolor='"+clickcolor+"']").each(function(){
+		pram = pram+"&ids="+$(this).parent().attr("id");
+			});
+	$("#alertDialog").css("display","none");
+	$.ajax({
+	    url: "data/addAuths.json",
+	    type: 'post',
+	    dataType: "json",
+		data:pram,
+	    success: function(data){
+	    	jAlert("添加成功！");
+	    	queryAuth();
+	    }
+	  });
+}
+
+
+//查询所有用户
+function queryAllUser(){
+	$("#includeUser").html("");
+	$.ajax({
+	    url: "data/queryValidUaUserList.json",
+	    type: 'post',
+	    dataType: "json",
+	    cache:false,
+	    async:false,
+	    success: function(data){
+	    	var listUsers = data.uaUsers;
+	    	var listAccounts = data.uaAccounts;
+	    	var listYears = data.uaAccountYears;
+	    	var listUaHoldauths = data.uaHoldauths;
+	    	for(var i = 0;i<listUsers.length;i++){
+	    		if(listUsers[i].cuserId!="admin"){
+	    			$("#includeUser").append('<tr id ="'+listUsers[i].id+'" bgcolor="#FFFFFF"' 
+		    				+'onclick = "selectRow(this)">'
+		    				+'<td>'+listUsers[i].cuserId+'</td>'
+		    				+'<td>'+listUsers[i].cuserName+'</td>'
+		    				+'</tr >');
+	    		}
+	    	}
+	    	hasSelect = $("#includeUser").children().eq(0);
+			selectRow(hasSelect);
+			for(var i = 0;i<listAccounts.length;i++){
+	    		$("#includeAccount").append('<option value="'+listAccounts[i].id+'">'+'['+listAccounts[i].caccId+']'+listAccounts[i].caccName+'</option>');
+	    	}
+	    	for(var i = 0;i<listYears.length;i++){
+	    		$("#includeYear").append('<option value="'+listYears[i].caccYear+'">'+listYears[i].caccYear+'</option>');
+	    	}
+			if(listUaHoldauths!=null&&listUaHoldauths.length!=0){
+		    	for(var i = 0;i<listUaHoldauths.length;i++){
+		    		$("#includeAuth").append('<tr id ="'+listUaHoldauths[i].id+'" bgcolor="#ffffff"' 
+		    				+'onclick = "selectAuths(this)">'
+							+'<td style="width:60px;" id="'+listUaHoldauths[i].authid.id+'">'+listUaHoldauths[i].authid.cauthId+'</td>'
+		    				+'<td style="width:130px;">'+listUaHoldauths[i].authid.cauthName+'</td>'
+		    				+'<td style="width:110px;">'+listUaHoldauths[i].authid.subsysName+'</td>'
+		    				+'</tr >');
+		    	}
+				if(listUaHoldauths[0].authid.cauthId=="admin"){
+					$("#addOp").attr("disabled",true);
+					$("#addOp").attr("src","../../images/buttons/disadd.jpg");
+					$("#delOp").attr("disabled",true);
+					$("#delOp").attr("src","../../images/buttons/disdel.jpg");
+					$("#competent").attr("checked",true);
+				}
+			}
+	    }
+	  });
+}
+
+//账套修改事件查询账套年度列表
+function changeAccount(){
+	$("#includeYear").html("");
+	var id = $("#includeAccount").val();
+	$.ajax({
+	    url: "authority!queryUaAccountYearList?uaAccount.id="+id,
+	    type: 'post',
+	    dataType: "json",
+	    cache:false,
+	    success: function(data){
+	    	var listYears = data.uaAccountYears;
+	    	for(var i = 0;i<listYears.length;i++){
+	    		$("#includeYear").append('<option value="'+listYears[i].caccYear+'">'+listYears[i].caccYear+'</option>');
+	    	}
+	    	queryAuth();
+	    }
+	  });
+}
+
+//查询用户对应账套的权限
+function queryAuth(){
+	var parm = 'uaUser.id='+$(hasSelect).attr("id")+'&uaAccount.id='+$("#includeAccount").val()+'&year='+$("#includeYear").val();
+	$("#includeAuth").html("");
+	$("#addOp").attr("disabled",false);
+	$("#addOp").attr("src","../../images/buttons/add.jpg");
+	$("#delOp").attr("disabled",false);
+	$("#delOp").attr("src","../../images/buttons/del.jpg");
+	$("#competent").attr("checked",false);
+	$.ajax({
+	    url: "data/queryUaAuthList.json",
+	    type: 'post',
+		data:parm,
+	    dataType: "json",
+	    cache:false,
+	    success: function(data){
+	    	var listUaHoldauths = data.uaHoldauths;
+			if(listUaHoldauths!=null&&listUaHoldauths.length!=0){
+	    	for(var i = 0;i<listUaHoldauths.length;i++){
+	    		$("#includeAuth").append('<tr id ="'+listUaHoldauths[i].id+'" bgcolor="#FFFFFF"' 
+	    				+'onclick = "selectAuths(this)">'
+						+'<td style="width:60px;" id="'+listUaHoldauths[i].authid.id+'">'+listUaHoldauths[i].authid.cauthId+'</td>'
+	    				+'<td style="width:130px;">'+listUaHoldauths[i].authid.cauthName+'</td>'
+	    				+'<td style="width:120px;">'+listUaHoldauths[i].authid.subsysName+'</td>'
+	    				+'</tr >');
+	    	}
+			if(listUaHoldauths[0].authid.cauthId=="admin"){
+				$("#addOp").attr("disabled",true);
+				$("#addOp").attr("src","../../images/buttons/disadd.jpg");
+				$("#delOp").attr("disabled",true);
+				$("#delOp").attr("src","../../images/buttons/disdel.jpg");
+				$("#competent").attr("checked",true);
+			}
+			}
+	    }
+	  });
+}
+
+function addAuth(){
+	loadSubsysAuth();
+	$("#alertDialog").css("display","");
+}
+
+//是否账套主管
+function competent(){
+	var userid = $(hasSelect).children().eq(0).html();
+	var parm = 'uaUser.id='+$(hasSelect).attr("id")+'&uaAccount.id='+$("#includeAccount").val()+'&year='+$("#includeYear").val();
+	var urlUaHoldauth = "";
+	var check = null;
+	if($("#competent").attr("checked")){
+		
+			
+		
+		/*原代码 
+			if(!confirm("设置操作员:["+userid+"]账套主管权限吗?")){
+				$("#competent").attr("checked",false);
+				return;
+			}
+			urlUaHoldauth = "authority!addAdminUaHoldauth";
+			var check = false;
+		*/ 
+			
+			
+			
+			
+			
+			jConfirm("设置操作员:["+userid+"]账套主管权限吗?","确认信息",function(flag){
+				if(flag==false){
+					$("#competent").attr("checked",false);
+				}else{
+					urlUaHoldauth = "authority!addAdminUaHoldauth";
+					var check = false;
+
+					$.ajax({
+					    url: urlUaHoldauth,
+					    type:'post',
+						data:parm,
+					    dataType: "json",
+						error:function(data){
+					    	$("#competent").attr("checked",check);
+							queryAuth();
+					    },
+					    success: function(data){
+					    	//jAlert("添加成功！");
+							queryAuth();
+					    }
+					  });
+					
+				}
+			});
+			
+			
+			
+			
+	}else{
+		/*
+			if(!confirm("取消操作员:["+userid+"]账套主管权限吗?")){
+				$("#competent").attr("checked",true);
+				return;
+			}
+			urlUaHoldauth = "authority!delAdminUaHoldauth";
+			var check = true;
+			
+			*/
+			
+			
+
+			
+			jConfirm("取消操作员:["+userid+"]账套主管权限吗?","确认信息",function(flag){
+				if(flag==false){
+					$("#competent").attr("checked",true);
+				}else{
+					urlUaHoldauth = "authority!delAdminUaHoldauth";
+					var check = true;
+
+					$.ajax({
+					    url: urlUaHoldauth,
+					    type:'post',
+						data:parm,
+					    dataType: "json",
+						error:function(data){
+					    	$("#competent").attr("checked",check);
+							queryAuth();
+					    },
+					    success: function(data){
+					    	//jAlert("添加成功！");
+							queryAuth();
+					    }
+					  });
+				}
+			});
+			
+			
+			
+			
+	}
+	
+	
+}
+//退出调用 陈建宇页面方法
+function exitWindow(){
+	window.parent.closeWindow('authority');
+}
+
+function exitAuth(){
+	 $("#alertDialog").css("display","none");
+}
+
+//初始化增加权限页面的权限分类列表
+function loadSubsysAuth(){
+	//var parm = 'uaUser.id='+$(hasSelect).attr("id")+'&uaAccount.id='+$("#includeAccount").val()+'&year='+$("#includeYear").val();
+	var authids="";
+	$("#includeAuth").children().each(function(){
+		authids=authids+$(this).children().eq(0).attr("id")+",";
+	});
+	if(authids==""){
+		var parm="authids="+authids+"";
+	}else{
+		authids=authids.substring(0,authids.length-1);
+		var parm="authids='"+authids+"'";
+	}
+	$("#includeSubsys").html("");
+	$("#includeAuths").html("");
+	$.ajax({
+	    url: "data/querySubsysAuth.json",
+	    type:'post',
+	    dataType: "json",
+	    data:parm,
+	    async:false,
+	    cache:false,
+	    success: function(data){
+			var subsysList = data.uaSubsysAuth.subsysList;
+			var authList = data.uaSubsysAuth.authList;
+			for(var i = 0;i<subsysList.length;i++){
+				$("#includeSubsys").append('<tr id ="'+subsysList[i].id+'" bgcolor="#FFFFFF"' 
+	    				+'ondblclick="doubleSys(this)" '
+	    				+'onclick="doselect(this)" >'
+	    				+'<td></td>'
+	    				+'<td>'+subsysList[i].csubId+'</td>'
+	    				+'<td>'+subsysList[i].csubName+'</td>'
+	    				+'</tr >');//
+			}
+			
+			for(var i = 0;i<authList.length;i++){
+				$("#includeAuths").append('<tr mark="'+i+'" id ="'+authList[i].id+'" name ="'+authList[i].subsysId+'"  bgcolor="#FFFFFF"' 
+	    				+'ondblclick="dbselectAuths(this)" '
+	    				+'onclick="doselectRow(this)" >'
+	    				+'<td mark="0"></td>'
+	    				+'<td>'+authList[i].cauthId+'</td>'
+	    				+'<td>'+authList[i].cauthName+'</td>'
+	    				+'</tr >');
+			}
+	    	 
+	    }
+	  });
+}
+$(function() {
+	var userCode=getCookie("userCode");
+	queryAllUser();
+	if(userCode!="admin"){
+		var yearName=getCookie("yearName");
+		var accid=getCookie("accid");
+		$("#competent").attr("disabled","disabled");
+		$("#includeAccount").attr("disabled","disabled");
+		$("#includeYear").attr("disabled","disabled");
+		$("#includeAccount").val(accid);
+		changeAccount();
+		$("#includeYear").val(yearName);
+	}
+	//如果没有建账套则任何权限都不能加(lichunhui)
+	var len = $("#includeAccount >option").length;
+	if(len==0){
+		$("#addOp").attr("disabled",true);
+		$("#delOp").attr("disabled",true);
+		$("#shuchu").attr("disabled",true);
+		$("#help").attr("disabled",true);
+		$("#competent").attr("disabled",true);
+	}
+});
+</script>
+</head>
+<body bgcolor="#D4D0C8"  style="background-color: #d4d0c8;">
+	<div id="alertDialog" style="clear:both;border:1px #000000 solid;display: none;
+		width:500px;height:200px;position: absolute;margin:0px 0px;background-color: #D4D0C8;font-size: 12px;">
+		<div style="background-color: #213d74;width: 100%;height:15px;color: #ffffff;font-size: 14px;margin: 1 1 0 0;text-align: left" id="mar_title">增加权限</div>
+    	<div style=" width:190px; float:left;">产品分类选择:
+	        <div style=" width:auto; height:120px;OVERFLOW-y:auto;font-size:14px;">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1"  bgcolor="#808080">
+					<tr bgcolor="#D4D0C8" >
+						<td nowrap="nowrap">授权</td>
+						<td nowrap="nowrap">ID</td>
+						<td nowrap="nowrap">系统名</td>
+					</tr>
+					<tbody id="includeSubsys">
+					</tbody>
+				</table>
+			  </div>
+	  	</div>
+		<div style="width:290px; float:right;">
+			明细权限选择:
+	        <div id="detail" style="width:auto; height:120px; OVERFLOW-y:auto;font-size:14px;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1"  bgcolor="#808080">
+				<tr bgcolor="#D4D0C8" >
+					<td nowrap="nowrap">授权</td>
+					<td nowrap="nowrap">ID</td>
+					<td nowrap="nowrap">权限名称</td>
+				</tr>
+				<tbody id="includeAuths">
+				</tbody>
+			</table>
+	        </div>
+		</div>
+	    <div align="center" style="clear:both;">
+	    	<br>
+	    	<input type="button" value="确定" onClick="add()"/>&nbsp;&nbsp;
+	        <input type="button" value="取消" onClick="exitAuth()"/>
+	    </div>
+    </div>
+	<div class="buttongroup" style="*margin-top:-10px;">
+		<div class="group">
+			<div>
+				<input id="addOp" type="button" value="增加" onclick="addAuth()" onfocus="this.blur();" style="background-image:url('../../images/icon/add.gif');"/>
+			</div>
+			<div>
+				<input id="delOp" type="button" value="删除" onclick="del()" onfocus="this.blur();" style="background-image:url('../../images/icon/delete.gif');"/>
+			</div>
+			<div>
+				<input type="button" id="shuchu" value="输出" onclick="changeOperator()" onfocus="this.blur();" style="background-image:url('../../images/icon/insertrow.gif');"/>
+			</div>
+		</div>
+		<div class="group">
+			<div>
+				<input type="button" id="help" value="帮助" onfocus="this.blur();" style="background-image:url('../../images/icon/help.gif');"/>
+			</div>
+			<div>
+				<input type="button" value="退出" onclick="exitWindow()" onfocus="this.blur();" style="background-image:url('../../images/icon/exit.gif');"/>
+			</div>
+		</div>
+		<div class="group">
+			<input id="competent" type="checkbox" name="checkbox" onClick="competent()"/>账套主管
+		    <select id="includeAccount" style="width:180px" onChange="changeAccount()"></select>
+		    <select id="includeYear" style="width:auto" onChange="queryAuth()"></select>
+		</div>
+	</div>
+	<div class="out" style="background-color:#d4d0c8;width:480x;height:200px;">
+		<div class="in" style="background-color:#d4d0c8;width:478x;height:198px;">
+			<div style="float:left;margin:3px;width:145px;height:185px;border-color:#ffffff;
+						background-color:#d4d0c8;border-style: inset;overflow:auto;">
+				<table id="user_" style="font-size:12px;text-align: center" cellpadding="0" cellspacing="0">
+					<tr bgcolor="#d4d0c8" >
+						<td>操作员ID</td>
+						<td>操作员全名</td>
+					</tr>
+					<tbody id="includeUser">
+					</tbody>
+				</table>
+	 		</div>
+	 		<div style="float:left;margin-left:10px;margin-top:2px;width:350px;background-color:#d4d0c8;height: 196px;">
+				<table class="auth" cellpadding="0px" cellspacing="0px" 
+					style="border-top:1px outset #d4d0c8;
+						border-left:1px outset #d4d0c8;
+						font-size:12px;text-align:center;width:310px">
+					<tr>
+				        <td style="width:60px;font-size:12px;background-color: #d4d0c8">权限</td>
+						<td style="width:130px;;font-size:12px;background-color: #d4d0c8">权限名称</td>
+						<td style="width:120px;font-size:12x;background-color: #d4d0c8">隶属系统</td>
+					</tr>
+				</table>
+				<div style="overflow-y: auto;height: 170px;margin: 0px">
+					<table class="auth"  cellpadding="0px" cellspacing="0px" style="font-size:12px;text-align:center;width:310px">
+						<tbody id="includeAuth">
+						</tbody>
+					</table>
+				</div>	
+			</div>
+		</div>
+	</div>
+</body>
+</html>

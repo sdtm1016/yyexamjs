@@ -1,0 +1,612 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+	<title>部门档案</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<!-- 增加树css -->	
+	<style type="text/css">
+		.tbox input{width:220px;}
+	</style>
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<!-- 公共js -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<!-- 增加树js -->	
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+	<script type="text/javascript">
+	
+	var cgzgradenum="" ;
+	var wa_isWageSets = window.parent.wa_isWageSets;//单工资类别 （0：未建立；1：单个 ；2：多个）	
+	var wa_wageTypeId=window.parent.wa_wageTypeId;//工资模块是否打开(1:已登录)
+	if(wa_wageTypeId==1){
+		cgzgradenum= window.parent.wa_currentWaAccount.cgzgradenum;//工资类别编号
+		if(wa_isWageSets==1){
+			cgzgradenum="001";
+		}
+		if(wa_isWageSets==2){
+			cgzgradenum="";
+		}
+	}else if(wa_wageTypeId==0){//未登录
+		if(wa_isWageSets==0){
+			cgzgradenum="000";
+		}
+	}
+		//程序入口
+		$(document).ready(function(){
+			var departmentStar = grademark('department');
+			var gradeValue = grademarkValue('department');
+			$("#bmgz").val(departmentStar).attr("gradeValue",gradeValue);
+			//查询部门树
+			queryDepartmentTree(null);
+		});
+		//树节点集合的全局变量
+		var zNodes = [];
+		//当前选中的树节点
+		var currentTreeNode=null;
+		//保存时状态的全局变量
+		var action = null;
+		//所有部门对象的集合
+		var departmentList=null;
+		//查询部门树
+		function queryDepartmentTree(departmentCode){
+			//ztree配置
+			var setting = {
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: ZtreeClick,
+					onDblClick: ZtreeDblClick
+				}
+			};
+			//ztree加载树节点
+			$.ajax({
+				url:"department!queryDepartment.action",
+				type:"post",
+				dataType:"json",
+				async : false,   
+				error: function () {
+		            jAlert('请求失败');   
+		        }, 
+				success:function(jsonData){
+					departmentList = jsonData.departmentList;
+					zNodes = getdepartmentNodes(departmentList);
+					$.fn.zTree.init($("#deptTree"), setting, zNodes);
+					//默认选中节点(根节点)
+					var zTree = $.fn.zTree.getZTreeObj("deptTree");
+					if(departmentCode==null){
+						departmentCode = "DEPTCZ";
+					}
+					var selNode = zTree.getNodeByParam("id", departmentCode);
+        			zTree.selectNode(selNode);
+        			//显示详细信息
+        			showNodeInformation(selNode);
+        			//如果执行的是添加方法时清空内容
+        			if(action=="add"){
+        				addDepartment();
+        			}
+				}
+			});	
+		}
+		//获取部门树节点的方法
+		function getdepartmentNodes(departmentList){
+			zNodes = [];
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			if(gradeValue==""){
+				jAlert("编码规则不能为空!");
+				return;
+			}
+			var node = "";
+			var department;
+			var nodeObj;
+			//根节点
+			node = "{id:'DEPTCZ',name:'部门列表',open:true}";
+			nodeObj =  eval('(' + node + ')') ;
+        	zNodes.push(nodeObj);
+			for(var i=0;i<departmentList.length;i++){
+				department = departmentList[i];
+				//本级次
+				var idepgrade = department.idepgrade;
+				//部门编码
+				var cdepcode = department.cdepcode;
+				//父节点id
+				var parentid ;
+				if(idepgrade==1){
+					parentid = "DEPTCZ";
+				}else{
+					var rule = gradeValue.charAt(idepgrade-1);
+					var endindex = cdepcode.length-rule;
+					parentid = cdepcode.substring(0,endindex);
+				}
+				node = "{" + "id:'" + cdepcode + "'," + "pId:'" + parentid + "',"
+				+ "departmentId:'" + department.id + "',"
+				+ "departmentName:'" + department.cdepname + "',"
+				+ "idepgrade:'" + department.idepgrade + "',"
+				+ "bdepend:'" + department.bdepend + "',"
+				+ "cdepperson:'" + department.cdepperson + "',"
+				+ "cdepprop:'" + department.cdepprop + "',"
+				+ "cdepphone:'" + department.cdepphone + "',"
+				+ "cdepaddress:'" + department.cdepaddress + "',"
+				+ "cdepmemo:'" + department.cdepmemo + "',"
+				+ "cdephelp:'" + department.cdephelp + "',"
+				+ "name:'(" +cdepcode+")"+ department.cdepname + "'" + ",open:true" + "}";
+				
+				nodeObj =  eval('(' + node + ')') ;
+            	zNodes.push(nodeObj);
+			}
+			return zNodes;
+		}
+		//ztree单击事件
+		function ZtreeClick(event, treeId, treeNode, clickFlag){
+			showNodeInformation(treeNode);
+		}
+		//ztee双击事件
+		function ZtreeDblClick(event, treeId, treeNode){
+			
+		}
+		//在数的右侧展示树节点的信息
+		function showNodeInformation(treeNode){
+			currentTreeNode = treeNode;
+			if(treeNode.id=="DEPTCZ"){
+				//$("#form1").find("input:text").val("");
+				//部门编码
+				$("#cdepcode").val("").attr("readonly",true).css("background-color","#ccc");
+				//部门名称
+				$("#cdepname").val("").attr("readonly",true).css("background-color","#ccc");
+				//编码级次
+				$("#idepgrade").val("").attr("readonly",true).css("background-color","#ccc");
+				//末级节点的标志
+				$("#bdepend").val("").attr("readonly",true).css("background-color","#ccc");
+				//助记码
+				$("#cdephelp").val("").attr("readonly",true).css("background-color","#ccc");
+				//负责人
+				$("#cdeppersonId").val("").attr("readonly",true).css("background-color","#ccc");
+				$("#cdeppersonName").val("").attr("readonly",true).css("background-color","#ccc");
+				
+				//部门属性
+				$("#cdepprop").val("").attr("readonly",true).css("background-color","#ccc");
+				//电话
+				$("#cdepphone").val("").attr("readonly",true).css("background-color","#ccc");
+				//地址
+				$("#cdepaddress").val("").attr("readonly",true).css("background-color","#ccc");
+				//备注
+				$("#cdepmemo").val("").attr("readonly",true).css("background-color","#ccc");
+			}else{
+				//部门编码
+				$("#cdepcode").val(strNullProc(treeNode.id)).attr("readonly",true).css("background-color","#ccc");
+				//部门名称
+				$("#cdepname").val(strNullProc(treeNode.departmentName)).attr("readonly",true).css("background-color","#ccc");
+				//编码级次
+				$("#idepgrade").val(strNullProc(treeNode.idepgrade)).attr("readonly",true).css("background-color","#ccc");
+				//末级节点的标志
+				$("#bdepend").val(strNullProc(treeNode.bdepend)).attr("readonly",true).css("background-color","#ccc");
+				//助记码
+				$("#cdephelp").val(strNullProc(treeNode.cdephelp)).attr("readonly",true).css("background-color","#ccc");
+				//负责人
+				$("#cdeppersonId").val(strNullProc(treeNode.cdepperson)).attr("readonly",true).css("background-color","#ccc");
+				$("#cdeppersonName").val(getPersonName(treeNode.cdepperson)).attr("readonly",true).css("background-color","#ccc");
+				//部门属性
+				$("#cdepprop").val(strNullProc(treeNode.cdepprop)).attr("readonly",true).css("background-color","#ccc");
+				//电话
+				$("#cdepphone").val(strNullProc(treeNode.cdepphone)).attr("readonly",true).css("background-color","#ccc");
+				//地址
+				$("#cdepaddress").val(strNullProc(treeNode.cdepaddress)).attr("readonly",true).css("background-color","#ccc");
+				//备注
+				$("#cdepmemo").val(strNullProc(treeNode.cdepmemo)).attr("readonly",true).css("background-color","#ccc");
+			}
+			//人员参照按钮置灰
+			$("#finder").attr("disabled",true);
+			//设置成不可编辑状态
+			setEditorState(false);
+		}
+		//根据人员编号获得负责人名称
+		function getPersonName(personCode){
+			var personName = "";
+			if(personCode!=null&&personCode!=""&&personCode!="null"){
+				var parm = "department.cdepperson="+personCode;
+				$.ajax({
+			  		url:"department!findPersonNameByCode.action",
+			  		type:"post",
+			  		data:parm,
+			  		dataType:"json",
+			  		async : false,
+			  		error:function(){
+			  			jAlert("请求失败!");
+			  		},
+			  		success:function(data){
+			  			personName = data.person.cpersonname;
+			  		}
+				})
+			}
+			return personName;
+		}
+		//设置按钮的编辑状态 state:true 可编辑,state:false 不可编辑
+		function setEditorState(state){
+			if(state){
+	  			//放弃,保存按钮设置成可用
+	  			$("#giveupDepartment").attr("disabled",false);
+	  			$("#saveDepartment").attr("disabled",false);
+	  			//增加,修改,删除,按钮设置成不可用
+	  			$("#addDepartment").attr("disabled",true);
+	  			$("#updateDepartment").attr("disabled",true);
+	  			$("#deleteDepartment").attr("disabled",true);
+			}else{
+	  			//放弃,保存按钮设置成不可用
+	  			$("#giveupDepartment").attr("disabled",true);
+	  			$("#saveDepartment").attr("disabled",true);
+	  			//增加,修改,删除,按钮设置成可用
+	  			$("#addDepartment").attr("disabled",false);
+	  			$("#updateDepartment").attr("disabled",false);
+	  			$("#deleteDepartment").attr("disabled",false);
+			}
+		}
+		//部门编码失去焦点时自动获取助记码
+		function onTextblur(obj) {
+			if (isSpecialChar(obj)) {
+				var codeName = $("#cdepname").val();
+				var helpCode = getHelpCode(codeName);
+				$("#cdephelp").val(helpCode);
+			}
+		}
+		// 接收弹窗返回的值
+		function deliverValue(valueObject) {
+			$("#cdeppersonId").val(valueObject.ccode);
+			$("#cdeppersonName").val(valueObject.cname);
+		}
+		//点击按钮点击事件
+		function addDepartment(){
+			if(currentTreeNode!=null){
+				action="add";
+				$("#cdepcode").attr("readonly",false).css("background-color","#ffffff").focus();
+				$("#cdepname").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdephelp").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdeppersonId").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdeppersonName").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepprop").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepphone").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepaddress").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepmemo").val("").attr("readonly",false).css("background-color","#ffffff");
+				//人员参照按钮设置成可用
+				$("#finder").attr("disabled",false);
+				//设置成可修改
+				setEditorState(true);
+			}
+		}
+		//修改按钮点击事件
+		function updateDepartment(){
+			if(currentTreeNode!=null){
+				if(currentTreeNode.id=="DEPTCZ"){
+					jAlert("请选择要修改的部门!");
+					return;
+				}
+				action = "update";
+				//修改时编码不允许修改
+				$("#cdepcode").attr("readonly",true).css("background-color","#ccc");
+				$("#cdepname").attr("readonly",false).css("background-color","#ffffff").focus();
+				$("#cdephelp").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdeppersonId").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdeppersonName").val("").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepprop").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepphone").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepaddress").attr("readonly",false).css("background-color","#ffffff");
+				$("#cdepmemo").attr("readonly",false).css("background-color","#ffffff");
+				//人员参照按钮设置成可用
+				$("#finder").attr("disabled",false);
+				//设置成可修改
+				setEditorState(true);
+			}
+		}
+		//删除按钮点击事件
+		function deleteDepartment(){
+			if(currentTreeNode!=null){
+				action = "delete";
+				if(currentTreeNode.id=="DEPTCZ"){
+					jAlert("请选择要删除的部门!");
+					return;
+				}
+				jConfirm('确定要删除选中的部门吗?', '确认对话框', function(confirmflag){
+					if(confirmflag){
+						if(currentTreeNode.bdepend==0){
+							jAlert("不能删除存在下级部门的部门!");
+							return;
+						}
+						var id = currentTreeNode.departmentId;
+						// js判断
+						var sourceValue = id;
+						var sourceTable = "DEPARTMENT";
+						var sourceField = "ID";
+						//jAlert("sourceValue:" + sourceValue);
+						var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+						//部门编码编码
+						var departmentCode = currentTreeNode.id;
+						// js判断
+						sourceValue = departmentCode;
+						sourceTable = "FA_DEPARTMENTS";
+						sourceField = "SNUM";
+						var isExits1 = isExitsTableRef(sourceValue, sourceTable, sourceField);
+						//部门是否被工资里的人员档案使用(lyl)
+						sourceValue = departmentCode;
+						sourceTable = "DEPARTMENT";
+						sourceField = "CDEPCODE";
+						var isExits2 = isExitsTableRef(sourceValue, sourceTable, sourceField);
+						
+						if (isExits == true||isExits1==true||isExits2==true) {
+							jAlert("该部门已经被使用，不能删除!");
+							return;
+						}
+						
+						//是否修改父节点的bssend字段
+						var updateflag = true;
+						//判读当前节点的父节点是否有其他子节点
+						for(var i=0;i<zNodes.length;i++){
+							var department = zNodes[i];
+							if(department.pId==currentTreeNode.pId&&department.departmentId!=id){
+								updateflag=false;
+							}
+						}
+						//删除请求后台
+						$.ajax({
+							url: "department!deleteDepartment.action?department.id="+id,
+							type: 'post',
+							data:{parentCode:currentTreeNode.pId,updateflag:updateflag},
+							dataType: "json",
+							async : false,
+							error:function(){
+								jAlert("请求失败!");
+							},
+							success: function(data){
+								if(data.isdelete==true){
+									queryDepartmentTree(currentTreeNode.pId);
+								}else{
+									jAlert("该部门已经被使用，不能删除!");
+							   }
+							}
+						});
+					}
+				});
+			}
+		}
+		//放弃按钮点击事件
+		function giveupDepartment(){
+			showNodeInformation(currentTreeNode);
+		}
+		//保存按钮点击事件
+		function saveDepartment(){
+			var flag = saveDepartmentCheck();
+			if(!flag){
+				return;
+			}else{
+				//组织数据
+				var depart = "";
+				//请求地址
+				var url="";
+				if(action=="add"){
+					//设置是否为末级节点
+					$("#bdepend").val(1);
+					depart = $("#form1").serialize();
+					depart+="&parentCode="+$("#bdepend").attr("parentcode");
+					url="department!addDepartment.action?wa_isWageSets="+wa_isWageSets+"&cgzgradenum="+cgzgradenum;
+				}else if(action=="update"){
+					depart = $("#form1").serialize();
+					depart+="&department.id="+currentTreeNode.departmentId;
+					url="department!updateDepartment.action";
+				}
+				//保存按钮设置成不可用
+				$("#saveDepartment").attr("disabled",true);
+				$.ajax({
+					url: url,
+					type: 'post',
+					data:depart,
+					dataType: "json",
+					async : false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						//重新查询树
+						queryDepartmentTree($("#cdepcode").val());
+					}
+				  });
+			}
+		}
+		//保存部门时检查方法
+		function saveDepartmentCheck(){
+			var flag = true;
+			var cdepcode = $("#cdepcode").val();
+			if (cdepcode=="") {
+				jAlert("部门编码不允许为空！","提示信息",function(){
+					$("#cdepcode").focus();
+				});
+				return false;
+			}else if(cdepcode=="DEPTCZ"){
+				jAlert("部门编码不符合要求！","提示信息",function(){
+					$("#cdepcode").focus();
+				});
+				return false;
+			}
+			if ($("#cdepname").val()=="") {
+				jAlert("部门名称不允许为空！","提示信息",function(){
+					$("#cdepname").focus();
+				});
+				return false;
+			}
+			//传到后台数据
+			var department="department.cdepcode="+cdepcode;
+			//添加时判断编码是否唯一
+			if(action=="add"){
+				$.ajax({
+					url: "department!isUniquenessDeptCode.action",
+					type: 'post',
+					data:department,
+					dataType: "json",
+					async : false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该部门编码已经被使用，请重新输入部门编码!","提示信息",function(){
+								$("#cdepcode").focus();
+							});
+							flag = false;
+						}
+					}
+				  });
+				if(!flag){
+					return false;
+				}
+				//编码规则
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				//每一级的编码规则
+				var gradeValueList = gradeValue.split("");
+				//编码的长度
+				var len = cdepcode.length;
+				//查看是否符合规则的标志
+				var fitflag =false;
+				//判断是否符合编码规则
+				var currentrule= null;
+				for(var i=0;i<gradeValueList.length;i++){
+					if(i==0){
+						currentrule=gradeValueList[i];
+					}else{
+						currentrule=currentrule*1+gradeValueList[i]*1;
+					}
+					//判断是否符合编码规则
+					if(len==currentrule){
+						fitflag = true;
+						//设置编码级次
+						var idepgrade = i+1;
+						$("#idepgrade").val(idepgrade);
+						break;
+					}
+				}
+				if(!fitflag){
+					jAlert("此编码不符合部门编码原则,请重新编码!","提示信息",function(){
+						$("#cdepcode").focus();
+					});
+					return false;
+				}
+				//编码级次
+				var idepgrade = $("#idepgrade").val();
+				if(idepgrade!=1){
+					var rule = gradeValue.charAt(idepgrade-1);
+					var endindex = cdepcode.length-rule;
+					var parentid = cdepcode.substring(0,endindex);
+					//存储父节点的编码
+					$("#bdepend").attr("parentcode",parentid);
+					//设置标志
+					fitflag = false;
+					//判读是否有上级编码
+					for(var i=0;i<departmentList.length;i++){
+						var department = departmentList[i];
+						//部门编码
+						var cdepcode = department.cdepcode;
+						if(parentid==cdepcode){
+							fitflag = true;
+						}
+					}
+					if(!fitflag){
+						jAlert("不存在此部门的上级部门,请重新输入!","提示信息",function(){
+							$("#cdepcode").focus();
+						});
+						flag = false;
+					}
+	
+				}
+			}
+			return flag;
+		}
+	</script>
+	</head>
+	<body style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; font-size: 12px;background-color: #D4D0C8;" topmargin="" style="z-index: 0;" >
+		<div style="width: 530px; height: 300px; background-color: #D4D0C8; font-size: 12px; margin-top: 5px;margin-left:14px;">
+			<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="设置" disabled = "disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+					<div><input type="button" value="打印" disabled = "disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled = "disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" disabled = "disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="增加" id="addDepartment" onclick="addDepartment()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="删除" id="deleteDepartment" onclick="deleteDepartment()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+					<div><input type="button" value="修改" id="updateDepartment" onclick="updateDepartment()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="恢复" id="giveupDepartment" onclick="giveupDepartment()" disabled="disabled" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+					<div><input type="button" value="保存" id="saveDepartment" onclick="saveDepartment()"  style="background-image:url('../../../images/icon/save.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="刷新" disabled = "disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" disabled = "disabled" style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('department');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+			<hr />
+			<div style="margin-top: 5px;">
+				<div style="width:134px;height:300px;border:1px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow:auto;">
+					<ul id="deptTree" class="ztree"></ul>
+				</div>
+				<div id="departmentOne" style="margin-left: 10px; width: 70%; float: left; height: 300px;">
+					<form id="form1">
+						<table class="tbox" style="font-size:12px;">
+							<tr>
+								<td>部门编码：</td>
+								<td><input id="cdepcode" type="text" size="30" name="department.cdepcode" readonly="readonly" onblur = "isSpecialChar(this)"/><br /></td>
+							</tr>
+							<tr>
+								<td>部门名称：</td>
+								<td>
+									<input id="cdepname" type="text" size="30" name="department.cdepname" size="26" readonly="readonly" onblur= "onTextblur(this);" /><br />
+									<input id="idepgrade" type="hidden"  name="department.idepgrade"  readonly="readonly" />
+									<input id="bdepend" type="hidden"  name="department.bdepend"  readonly="readonly" />
+								</td>
+							</tr>
+							<tr>
+								<td>助记码：</td>
+								<td><input id="cdephelp" type="text" size="32" name="department.cdephelp" size="26" readonly="readonly" onblur = "isSpecialChar(this)"  /><br /></td>
+							</tr>
+							<tr>
+								<td>负责人：</td>
+								<td>
+									<input id="cdeppersonId" type="hidden" name="department.cdepperson"/>	
+									<input id="cdeppersonName" type="text" size="24" onfocus="dofocustoenter('Person',this,'','','','')"/>
+									<input id='finder' type="button" class="finder" style="width:20px;" onclick="window.parent.openWindow('basic_comref_personref','department');" /><br />
+								</td>
+							</tr>
+							<tr>
+								<td>部门属性：</td>
+								<td><input id="cdepprop" type="text" size="32"  maxlength="20"  name="department.cdepprop" readonly="readonly" onblur = "isSpecialChar(this)" /><br /></td>
+							</tr>
+							<tr>
+								<td>电话：</td>
+								<td><input id="cdepphone" type="text" name="department.cdepphone" size="32" readonly="readonly" onblur = "isSpecialChar(this)" /><br /></td>
+							</tr>
+							<tr>
+								<td>地址：</td>
+								<td><input id="cdepaddress" type="text" name="department.cdepaddress" size="32" readonly="readonly" onblur = "isSpecialChar(this)"  /><br /></td>
+							</tr>
+							<tr>
+								<td>备注：</td>
+								<td><input id="cdepmemo" type="text" name="department.cdepmemo" size="32" readonly="readonly" /><br /><br /></td>
+							</tr>
+						</table>
+						<div>
+							编码原则：<input id="bmgz" type="text"  name="" readonly="readonly" style="border: 0; background: transparent;" />
+						</div>
+						<br /> &emsp;
+						<p style="color: blue">提示：部门编码和部门名称为必录项。</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

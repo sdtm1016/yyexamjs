@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>建立工资账套</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<style type="text/css">
+
+.stepslabel {float:none;clear:both;height:45px;line-height:45px;}
+.stepslabel .div1 {margin-left:6px;float:left;color:red;font-size:12px;font-family:verdana;}
+.stepslabel .div2 {margin-left:4px;float:left;color:blue;font-size:20px;font-weight:bold;}
+.stepslabel .div3 {margin-left:10px;float:left;}
+
+.gradually {background-color:#D4D0C8;}
+.gradually .textbox {width:20px;height:14px;line-height:12px;padding:0px;}
+.gradually .incbtn{width:14px;height:8px;padding:0px;margin:0px;font-size:10px;font-family:黑体;font-weight:bold;}
+
+</style>
+
+<script type="text/javascript">
+
+//当前步骤面板
+var currentPanelIndex=1;
+
+//上一步
+function prevPanel(){
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex--;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+//下一步
+function nextPanel(){
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="none";
+	currentPanelIndex++;
+	document.getElementById("steps_panel_"+currentPanelIndex).style.display="block";
+	setFace(currentPanelIndex);
+}
+
+//完成
+function finish(){
+	var data = $("#form1").serialize();
+	yearMonth = $("#yearMonth").val();
+	day = $("#day").val();
+	data = data + "&waAccount.dstartTime=" + yearMonth + '-' + day;
+	$.ajax({
+		url:'wageCategories!createWageSets.action',
+		type:'post',
+		data:data,
+		async:false,
+		dataType:'json',
+		success:function(data){
+			if($("#rd_1_1").attr("checked")=="checked"){
+				//工资类别已打开
+				window.parent.wa_currentWaAccount={};
+				window.parent.wa_wageTypeId=1;//是否已打开
+				window.parent.wa_isWageSets=1;//单工资
+				window.parent.wa_currentWaAccount.cgzgradenum="001";
+				window.parent.wa_currentWaAccount.cgzgradename=data.accountName;
+				window.parent.toPage('WA','WA.html');
+				window.parent.closeWindow('wa_wagecategory_wagewizard');
+			}else {
+				$.ajax({
+					url:'wageCategories!queryWageTypes.action',
+					type:'post',
+					dataType:'json',
+					async:false,
+					success:function(data){
+						var list=data.wageList;
+						var flag=0;
+						if(list.length==0){
+							jAlert("未建立工资类别!","提示",function(){
+								window.parent.parent.wa_hasWageType();//隐藏和显示相关菜单
+								flag=0;//是否有工资类别
+							});
+						}else{
+							flag=1;
+						}
+						var param={};
+						param.flag=flag;
+						window.parent.openWindow("wa_wagecategory_wcw","wa_wagecategory_wagewizard",param);
+						window.parent.closeWindow('wa_wagecategory_wagewizard');
+					}
+				});
+			}
+
+			
+		}
+	});
+}
+
+//显示“√”控制
+function showHook(panelIndex){
+	
+	for(var i=1;i<=panelIndex;i++){
+		document.getElementById("steps_flag_"+i).innerHTML="√";
+	}
+	for(var i=panelIndex;i<=4;i++){
+		
+		document.getElementById("steps_flag_"+i).innerHTML="&nbsp;";
+	}
+}
+
+//根据当前面板显示或隐藏底部按钮
+function setFace(panelIndex){
+
+	var btn_prev_div = document.getElementById("btn_prev");
+	var btn_next_div = document.getElementById("btn_next");
+	var btn_finish_div = document.getElementById("btn_finish");
+	var btn_cancel_div = document.getElementById("btn_cancel");
+
+	var btn_next = btn_next_div.getElementsByTagName("input")[0];
+	var btn_prev = btn_prev_div.getElementsByTagName("input")[0];
+	
+	//如果是第一个面板
+	if(panelIndex==1){
+		btn_next_div.style.display="block";
+		btn_finish_div.style.display="none";
+		btn_prev.disabled=true;
+	}
+	//如果是第二个面板
+	if(panelIndex==2){
+		btn_next_div.style.display="block";
+		btn_finish_div.style.display="none";
+		btn_prev.disabled=false;
+	}
+
+	//如果是第三个面板
+	if(panelIndex==3){
+		btn_next_div.style.display="block";
+		btn_finish_div.style.display="none";
+		btn_prev.disabled=false;
+	}
+	
+	//如果是第四个面板
+	if(panelIndex==4){
+		
+		btn_next_div.style.display="none";
+		btn_finish_div.style.display="block";
+		btn_prev.disabled=false;
+		$.ajax({
+			url:'wageCategories!queryDate.action',
+			type:'post',
+			dataType:'json',
+			success:function(data){
+				var ymd = data.signInDate.split("-");
+				$("#yearMonth").html("");
+				$("#day").val(ymd[2]);
+				var str="";
+				var k=ymd[1];
+				for(var i =1 ; i < 13; i++){
+					var yearMonth = ymd[0]+'-'+i;
+					if(i<10){
+						yearMonth = ymd[0]+'-0'+i;
+					}
+					str = '<option value="'+yearMonth+'">' +yearMonth+'</option>';
+					$("#yearMonth").append(str);
+				}
+				$("#yearMonth").val(ymd[0]+'-'+ymd[1]);
+			}
+		});
+	}
+	
+	showHook(panelIndex);
+}
+
+//点击复选框禁启用元素
+function setChildDisabled(cb,id){
+	var child = document.getElementById(id).childNodes;
+	if(cb.checked==true){
+		for(var i=0;i<child.length;i++){ 
+			if(child[i].nodeType==1){
+				child[i].childNodes[0].disabled=false;
+				child[i].childNodes[1].disabled=false;
+				child[i].style.color="#000000";
+			}
+		}
+	}else{
+		for(var i=0;i<child.length;i++){
+			if(child[i].nodeType==1){
+				child[i].childNodes[0].disabled=true;
+				child[i].childNodes[1].disabled=true;
+				child[i].style.color="#808080";
+			}
+		}
+	}
+}
+
+//递计算框递增函数
+function increasing(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	if (input.value<10) {
+		input.value = parseInt(input.value)+1;	
+	}
+}
+
+//递计算框递减函数
+function decline(btn){
+	var input = btn.parentNode.parentNode.parentNode.getElementsByTagName('input')[0];
+	input.value = parseInt(input.value)-1;
+}
+</script>
+</head>
+<body>
+<form id="form1">
+	<div class="container" style="float:left;width:490px;height:290px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:470px;height:210px;margin-top:28px;margin-left:10px;">
+			<div style="width:100%;height:210px;">
+				<div class="border_outside" style="height:198px;width:108px;float:left;">
+					<div class="border_inside" style="height:196px;width:106px;line-height:18px;">
+						<div class="stepslabel">
+							<div class="div1" id="steps_flag_1">&nbsp;</div>
+							<div class="div2">1</div>
+							<div class="div3">参数设置</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_flag_2">&nbsp;</div>
+							<div class="div2">2</div>
+							<div class="div3">扣税设置</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_flag_3">&nbsp;</div>
+							<div class="div2">3</div>
+							<div class="div3">扣零设置</div>
+						</div>
+						<div class="stepslabel">
+							<div class="div1" id="steps_flag_4">&nbsp;</div>
+							<div class="div2">4</div>
+							<div class="div3">人员编码</div>
+						</div>
+					</div>
+				</div>
+				<div class="border_outside" style="height:198px;width:344px;float:left;margin-left:10px;">
+					<div class="border_inside" style="height:196px;width:342px;line-height:18px;">
+						<!-- 步骤面板1 开始 -->
+						<div id="steps_panel_1" style="width:100%;height:100%;">
+							<div style="margin-left:20px;margin-top:20px;">
+								请选择本账套所需处理的工资类别个数：
+							</div>
+							<div style="text-align:center;margin-top:20px;" class="v_a_m">
+								<input type="radio" name="waAccount.bonlygzgrade" checked="checked" id="rd_1_1" value="0"/><label for="rd_1_1">单个</label>
+								<input type="radio" name="waAccount.bonlygzgrade" id="rd_1_2" style="margin-left:60px;" value="1"/><label for="rd_1_2">多个</label>
+							</div>
+							<div style="margin-top:20px;width:100%;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+							<div style="margin-left:20px;margin-top:10px;">
+								请选择币别名称：
+							</div>
+							<div style="text-align:center;margin-top:20px;">
+								币别：<select name="waAccount.cmoney">
+										<option value="人民币 RMB">人民币 RMB</option>
+									</select>
+							</div>
+						</div>
+						<!-- 步骤面板1 结束 -->
+					
+					
+						<!-- 步骤面板2 开始 -->
+						<div id="steps_panel_2" style="width:100%;height:100%;display:none;">
+						
+							<div style="margin-top:30px;margin-left:30px;" class="v_a_m">
+								<input type="checkbox" name="waAccount.bminusTax" id="cb_1"/><label for="cb_1">是否从工资中代扣个人所得税</label>
+							</div>
+							<fieldset style="margin-left:20px;margin-top:20px;width:280px;height:80px;">
+								<legend>说明</legend>
+								<div>
+									*代扣个人所得税：是否从工资中扣除个人所得税。
+								</div>
+							</fieldset>
+						</div>
+						<!-- 步骤面板2 结束 -->
+						<!-- 步骤面板3 开始 -->
+						<div id="steps_panel_3" style="width:100%;height:100%;display:none;">
+							<div style="width:330px;height:30px;margin-left:8px;margin-top:20px;">
+								请选择是否进行扣零处理，扣零处理是将每月工资零头扣下，积累取整，并于下次发工资时补上。
+							</div>
+							<fieldset class="v_a_m" style="margin-left:8px;margin-top:20px;width:310px;height:90px;">
+								<legend><input type="checkbox" name="waAccount.binteger" id="cb_2" onclick="setChildDisabled(this,'panel_3_flt');"/><label for="cb_2">扣零</label></legend>
+								<div id="panel_3_flt">
+									<div style="height:24px;line-height:24px;color:#808080;"><input type="radio" name="waAccount.iintegerDw" id="rd_2_1" value="1" disabled="disabled"/><label for="rd_2_1">扣零至元：即工资发放时不发10元以下的元，角，分。</label></div>
+									<div style="height:24px;line-height:24px;color:#808080;"><input type="radio" name="waAccount.iintegerDw" id="rd_2_2" value="2" disabled="disabled" checked="checked"/><label for="rd_2_2">扣零至角：即工资发放时不发1元以下的角，分。</label></div>
+									<div style="height:24px;line-height:24px;color:#808080;"><input type="radio" name="waAccount.iintegerDw" id="rd_2_3" value="3" disabled="disabled"/><label for="rd_2_3">扣零至角：即工资发放时不发1角以下的分。</label></div>
+								</div>
+							</fieldset>
+						</div>
+						<!-- 步骤面板3 结束 -->
+					
+						<!-- 步骤面板4 开始 -->
+						<div id="steps_panel_4" style="width:100%;height:100%;display:none;">
+							<div style="width:280px;height:30px;margin-left:20px;margin-top:20px;">
+								本系统要求您对员工进行统一编号，请设置人员编码的长度。
+							</div>
+							<div style="margin-left:70px;width:200px;height:20px;">
+								<div style="float:left;">人员编码长度：</div>
+							<div class="gradually">
+								<div style="float:left;"><input class="textbox" name="waAccount.ipsnLen" maxlength="2" type="text" value="10"/></div>
+								<div style="float:left;">
+									<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="increasing(this);"/></div>
+									<div><input type="button" onfocus="this.blur();" class="incbtn" onclick="decline(this);"/></div>
+								</div>
+							</div>
+							</div>
+							<fieldset class="v_a_m" style="margin-left:20px;margin-top:2px;width:280px;height:40px;">
+								<legend>说明</legend>
+								<div>
+									人员编码可自由定义位长，但总长不能超过10位。
+								</div>
+							</fieldset>
+							<div style="margin-top:6px;width:100%;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+							<div style="margin-left:20px;margin-top:2px;">
+								本账套的启用日期为：
+							</div>
+							<div style="text-align:center;margin-top:6px;">
+								<select id="yearMonth">
+								</select>
+								-
+								<input type="text" id="day" value="26" style="width:24px;"/>
+							</div>
+						</div>
+						<!-- 步骤面板4 结束 -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="width:100%;height:36px;">
+			<div style="width:100%;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+			<div style="width:100%;height:24px;padding-top:5px;">
+				<div id="btn_prev" style="float:left;margin-left:260px;"><input type="button" value="上一步" onclick="prevPanel();" disabled="disabled"/></div>
+				<div id="btn_next" style="float:left;margin-left:10px;"><input type="button" value="下一步" onclick="nextPanel();"/></div>
+				<div id="btn_finish" style="float:left;margin-left:10px;display:none;"><input type="button" value="完　成" onclick="finish();"/></div>
+				<div id="btn_cancel" style="float:left;margin-left:10px;"><input type="button" value="取消" onclick="window.parent.closeWindow('wa_wagecategory_wagewizard');"/></div>
+			</div>
+		</div>
+	</div>
+</form>
+</body>
+</html>

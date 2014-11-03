@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> 付款条件 </title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+  
+	<script type="text/javascript" src="js/payCondition.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+ </head>
+
+ <body style="background-color: #D4D0C8;">
+ <div style="width:1000px;height:340px;background-color: #D4D0C8;font-size: 12px">
+	<div class="buttongroup" style="float:none;clear:both;">
+		<div class="group">
+			<div><input type="button" value="设置" disabled = "disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+			<div><input type="button" value="打印" disabled = "disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+			<div><input type="button" value="预览" disabled = "disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+			<div><input type="button" value="输出" disabled = "disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" id ="addPayCondition" value="增加" onclick="add()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+			<div><input type="button" id ="deletePayCondition" value="删除" onclick="del()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+			<div><input type="button" id ="updatePayCondition" value="修改" onclick="update()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" id ="giveupPayCondition" disabled = "disabled" value="放弃" onclick="giveup()" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+			<div><input type="button" id ="savePayCondition" value="保存" onclick="save()" style="background-image:url('../../../images/icon/save.gif');"/></div>
+		</div>
+		
+		<div class="group">
+			<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+		</div>
+		<div class="group">
+			<div><input type="button" value="帮助" disabled = "disabled" style="background-image:url('../../../images/icon/help.gif');"/></div>
+			<div><input type="button" value="退出"  onClick="exitWindow()" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+		</div>
+	</div>
+	<hr/>
+	
+	<div style="background-color: #D4D0C8;width:520px;overflow:auto;height:300px;border:2px inset #ccc;">
+		<table id="payConditionTable" border="1" cellspacing="0" style="width:1000px;background-color:#D4D0C8;">
+			<tr bgcolor="#f0f0f0">
+				<td >付款条件编码</td>
+				<td >付款条件表示</td>
+				<td >信用天数</td>
+				<td >优惠天数1</td>
+				<td >优惠率1</td>
+				<td >优惠天数2</td>
+				<td >优惠率2</td>
+				<td >优惠天数3</td>
+				<td >优惠率3</td>
+				<td >优惠天数4</td>
+				<td >优惠率4</td>
+			</tr>
+			<tbody id="include" style="background-color: #FFFFFF">
+			</tbody>
+			<tr id="addPayConditionContent" height="18px" style="display:none;background-color:#FFFFFF;">
+			</tr>
+		</table>
+	</div>
+  </div>
+ </body>
+</html>

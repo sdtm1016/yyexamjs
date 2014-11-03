@@ -1,0 +1,11 @@
+http://localhost/yyexamjs/jsp/mr/eSReport/general/hPagebreak.gif
+POST http://localhost/yyexamjs/jsp/sm/login!computerName.action 404 (Not Found) jquery-1.7.2.js:3
+POST http://localhost/yyexamjs/jsp/sm/login!computerName.action 404 (Not Found) jquery-1.7.2.js:3
+GET http://localhost/yyexamjs/images/icon/add.gif 404 (Not Found) operator.html:1
+GET http://localhost/yyexamjs/images/icon/update.gif 404 (Not Found) operator.html:1
+GET http://localhost/yyexamjs/images/icon/delete.gif 404 (Not Found) operator.html:1
+POST http://localhost/yyexamjs/jsp/sm/uaUser!queryList 404 (Not Found) jquery-1.7.2.js:3
+GET http://localhost/yyexamjs/images/icon/add.gif 404 (Not Found) authority.html:1
+GET http://localhost/yyexamjs/images/icon/delete.gif 404 (Not Found) authority.html:1
+GET http://localhost/yyexamjs/images/icon/insertrow.gif 404 (Not Found) authority.html:1
+POST http://localhost/yyexamjs/jsp/sm/authority!queryValidUaUserList 404 (Not Found) 

@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>月末结账</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+		.lpc{height:60px;line-height:60px;margin-left:10px;}
+		.lpcspan1{color:blue;font-size:24px;font-weight:bold;font-style:oblique;}
+		.panel{width:100%;height:100%;display:none;}
+		#datatable_2_bodyer tr{height:20px;}
+		.check_result{width:14px;height:14px;line-height:14px;color:red;float:left;}
+		#bt tr{height:20px;border-bottom:1px solid #ccc;}
+		#bt tr td{border:none;}
+		
+	</style>
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	
+	<!-- 引入公共js函数 -->
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<!-- 引入公共引用函数 -->
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<script type="text/javascript" src="js/checkout.js"></script>
+	<script type="text/javascript" src="js/pagecontrol.js"></script>
+	<script type="text/javascript">
+	
+	
+	
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:620px;height:310px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:600px;height:288px;margin-left:10px;margin-top:10px;">
+			
+			<div style="width:596px;height:240px;">
+				<div style="width:150px;height:100%;float:left;">
+					<div class="border_outside" style="height:240px;width:130px;float:left;">
+						<div class="border_inside" style="height:238px;width:128px;">
+							<div class="lpc">
+								<span id="steps_1" class="lpcspan1" style="color:red;">1.</span><span>开始结账</span>
+							</div>
+							<div class="lpc">
+								<span id="steps_2" class="lpcspan1">2.</span><span>核对账簿</span>
+							</div>
+							<div class="lpc">
+								<span id="steps_3" class="lpcspan1">3.</span><span>月度工作报告</span>
+							</div>
+							<div class="lpc">
+								<span id="steps_4" class="lpcspan1">4.</span><span>完成结账</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<div style="width:446px;height:100%;float:left;">
+					
+					<div id="panel_1" class="panel" style="display:block;">
+						
+						<div style="width:158px;height:100%;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;float:left;background-color:#fff;">
+				
+							<table id="datatable" border=1 class="table_style" style="width:140px;">
+								<thead>
+									<tr id="datatable_header">
+										<td style="width:70px;">月份</td>
+										<td style="width:70px;">是否结账</td>
+									</tr>
+								</thead>
+								<tbody id="datatable_bodyer">
+									
+								</tbody>
+							</table>
+							
+							
+						</div>
+						
+						<div class="border_outside" style="border-left:none;height:242px;width:283px;float:left;">
+							<div class="border_inside" style="border-left:none;height:240px;width:282px;line-height:18px;">
+								<div style="width:280px;height:20px;margin-top:10px;border-bottom:1px solid #fff;color:#119;"><span>待结账月份：</span><span id="jzrq"></span></div>
+								<div style="line-height:40px;border-top:1px solid #bbb;">
+									&nbsp;注：<br/>
+									（1）已经结账的月份不能再填制凭证。<br/>
+									（2）还有未记账的月份不能结账。<br/>
+									（3）每月对账正确后才能结账。<br/>
+									（4）年底结账时先进行数据备份后再结账。<br/>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					
+					<div id="panel_2" class="panel" style="display:none;">
+						<div style="width:374px;height:180px;margin-left:20px;">
+							<fieldset style="width:352px;height:166px;">
+								<legend style="color:#119;">核对&nbsp;<span id="date_2">2013年01月</span>&nbsp;账簿</legend>
+								<div style="margin-left:50px;">
+									<div id="panel_2_step_1" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与明细账</span></div>
+									<div id="panel_2_step_2" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与部门账</span></div>
+									<div id="panel_2_step_3" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与客户往来账</span></div>
+									<div id="panel_2_step_4" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与供应商往来账</span></div>
+									<div id="panel_2_step_5" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与个人往来账</span></div>
+									<div id="panel_2_step_6" style="height:20px;"><div class="check_result"></div>&nbsp;<span>核对总账与项目账</span></div>
+								</div>
+							</fieldset>
+						</div>
+						<div id="panel_2_step_info" style="width:374px;height:42px;margin-left:20px;margin-top:12px;border:2px inset #ccc;background-color:#fff;">
+							
+						</div>
+					</div>
+					
+					<div id="panel_3" class="panel" style="display:none;border:2px inset #ccc;overflow:hidden;float:left;background-color:#fff;">
+						
+						<table id="datatable_2" border=1 class="table_style" style="width:432px;">
+								<thead>
+									<tr id="datatable_2_header">
+										<td style="width:42px;"></td>
+										<td style="width:390px;"><span id="date_3">2013年01月</span>工作报告</td>
+									</tr>
+								</thead>
+								<tbody id="datatable_2_bodyer">
+									<tr>
+										<td>1.</td>
+										<td style="text-align:left;border-bottom:1px solid #ccc;">本月账面试算平衡</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td rowspan="9" valign="top">
+										
+											<div style="width:100%;height:79px;color:#000000;">
+												
+												<div style="margin-top:-1px;width:100%;">
+													<table id="lt" class="shisuantable" style="width:192px;float:left;">
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+													</table>
+													
+													<table id="rt" class="shisuantable" style="width:192px;float:left;">
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+														<tr style="border-bottom:1px solid #ccc;">
+															<td width="34" style="border:none;"></td>
+															<td width="26" style="border:none;"></td>
+															<td width="14" style="border:none;"></td>
+															<td width="110" style="border:none;"></td>
+														</tr>
+													</table>
+													
+												</div>
+												
+											</div>
+											
+											<div style="width:100%;border-top:1px dashed #aaa;">
+													<table id="bt" style="float:left;">
+														<tr>
+															<td width="30">合计</td>
+															<td width="26">=</td>
+															<td width="14"></td>
+															<td width="128"></td>
+															<td width="30">合计</td>
+															<td width="26">=</td>
+															<td width="14"></td>
+															<td width="120"></td>
+														</tr>
+														<tr>
+															<td id="shisuanjieguo" colspan="8"></td>
+														</tr>
+													</table>
+													
+											</div>
+											
+										
+										
+										
+										
+										</td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+									<tr>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+							
+							
+						
+						
+					</div>
+					
+					<div id="panel_4" class="panel" style="color:blue;text-align:center;">
+						<div><img id="statusimage" src=""/></div>
+						<br>
+						<span id="date_4"></span><span id="resultcontent"></span>
+					</div>
+					
+					
+				</div>
+			</div>
+			
+			<div style="width:550px;height:20px;text-align:right;margin:20px;float:none;clear:both;">
+			
+			
+			
+				<input type="button" id="btn_stop" value="停止"      style="margin:4px;display:none;" onclick=""/>
+				<input type="button" id="btn_prev" value="上一步"    style="margin:4px;display:none;"  onclick="prev();"/>
+				<input type="button" id="btn_next" value="下一步"    style="margin:4px;"               onclick="next();"/>
+				<input type="button" id="btn_check" value="对账"      style="margin:4px;display:none;"  onclick="virtualSuccess();"/>
+				<input type="button" id="btn_over" value="结账"      style="margin:4px;display:none;"  onclick="closeAccount();"/>
+				<input type="button" id="btn_cancel" value="取消"      style="margin:4px;"               onclick="javascript:window.parent.closeWindow('gl_checkout_checkout');"/>
+				
+				
+			</div>
+			
+			<div style="font-size:12px;color:blue;">
+				提示：对于误操作造成的结账，可以在本窗口中选择要取消结账的月份后，按Ctrl + Shift + F6，即可取消结账。
+			</div>
+			
+		</div>
+	</div>
+</body>
+
+
+
+<script type="text/javascript">
+/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+var currentSelectedMonth = null;
+function rowSelection(){
+	
+	var datatable_1 = document.getElementById("datatable_bodyer");
+	for(var i=0;i<datatable_1.rows.length;i++){
+		
+		datatable_1.rows[i].onclick=function(e){
+			var evt=(window.event || e);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			if(currentSeletedRow!=null && evtsrc.tagName=="TD"){
+				currentSeletedRow.style.backgroundColor="#fff";
+				currentSeletedRow.style.color="#000";
+			}
+			if(evtsrc.tagName=="TD"){
+				evtsrc.parentNode.style.backgroundColor="#00f";
+				evtsrc.parentNode.style.color="#fff";
+				currentSeletedRow=evtsrc.parentNode;
+				currentSelectedMonth = evtsrc.parentNode.cells[0].innerHTML.split(".")[1];
+				selectTd(evtsrc.parentNode.cells[1]);
+			}
+		}
+	}
+
+}
+/***** 选中行代码结束*******/
+
+</script>
+</html>

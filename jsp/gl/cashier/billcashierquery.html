@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>出纳签字查询条件</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+	html,body{padding:0px 0px 0px 0px;font-family:宋体;font-size:12px;background-color: #D4D0C8;}
+	.line_div_1{height:24px;vertical-align:middle; margin-bottom:3px;padding-left:6px;padding-top:3px;}
+	.line_div_1 input{vertical-align:middle; margin-bottom:3px;}
+	
+	
+	.line_div_2{height:15px;vertical-align:middle; margin-bottom:3px;padding-left:6px;padding-top:3px;}
+	.line_div_2 input{vertical-align:middle; margin-bottom:3px;}
+	
+	.border_outside{border-top:1px solid #808080;border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF;border-left:1px solid #808080;}
+	.border_inside{border-top:1px solid #FFFFFF;border-right:1px solid #808080;border-bottom:1px solid #808080;border-left:1px solid #FFFFFF;}
+</style>
+<!-- 引入jquery组件 -->
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	
+<script type="text/javascript" src="js/billcashierquery.js"></script>
+
+<script type="text/javascript">
+initAuditBillQuery();
+</SCRIPT>
+<script type="text/javascript">
+
+
+/**
+ * 月份、日期组控件二选一控制函数
+ */
+function monthordate(radio){
+	
+	//如果“月份”单选按钮被选中
+	if(radio.id=="r_2_1"){
+		//设置月份下拉列表可编辑
+		document.getElementById("monthselector").disabled=false;
+
+		//禁用“日期”相关控件
+		document.getElementById("wdp1").disabled=true;
+		document.getElementById("wdpb1").src="../../../images/newbuttons/dateselector_disable.jpg";
+		document.getElementById("wdpb1").onmousedown=null;
+		document.getElementById("wdpb1").onmouseup=null;
+		document.getElementById("wdpb1").onmouseout=null;
+
+		document.getElementById("wdp2").disabled=true;
+		document.getElementById("wdpb2").src="../../../images/newbuttons/dateselector_disable.jpg";
+		document.getElementById("wdpb2").onmousedown=null;
+		document.getElementById("wdpb2").onmouseup=null;
+		document.getElementById("wdpb2").onmouseout=null;
+	}
+	//否则如果“日期”单选按钮被选中
+	else{
+		//禁用月份下拉列表
+		document.getElementById("monthselector").disabled=true;
+
+		//启用“日期”相关控件
+		document.getElementById("wdp1").disabled=false;
+		document.getElementById("wdpb1").src="../../../images/newbuttons/dateselector_outset.jpg";
+		document.getElementById("wdpb1").onmousedown=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_inset.jpg";
+		};
+		document.getElementById("wdpb1").onmouseup=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_outset.jpg";
+		};
+		document.getElementById("wdpb1").onmouseout=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_outset.jpg";
+		};
+
+		document.getElementById("wdp2").disabled=false;
+		document.getElementById("wdpb2").src="../../../images/newbuttons/dateselector_outset.jpg";
+		document.getElementById("wdpb2").onmousedown=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_inset.jpg";
+		};
+		document.getElementById("wdpb2").onmouseup=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_outset.jpg";
+		};
+		document.getElementById("wdpb2").onmouseout=function(){
+			var evt=(window.event || event);//获得事件
+			var evtsrc = (evt.srcElement || evt.target);
+			evtsrc.src="../../../images/newbuttons/dateselector_outset.jpg";
+		};
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+</head>
+<body style="background-color: #D4D0C8;">
+
+
+<div id="container" style="width:520px;height:185px;position:absolute;left:0px;top:0px;background-color:#D4D0C8;">
+	
+	<div style="float:left;width:420px;height:450px;margin-top:10px;margin-left:10px;">
+	
+		
+		<div class="border_outside" style="height:160px;width:418px;">
+			<div class="border_inside" style="height:158px;width:416px;">
+				<div class="line_div_1" style="margin-top:3px;">
+					凭证类别
+					<select id ="dsignItem"  style="width:150px;">
+					</select>
+					<input name="radiogruop1" value="1"   type="radio" id="r_1_1" checked="checked"/><label for="r_1_1">全部</label>
+					<input name="radiogruop1"  value="2"  type="radio" id="r_1_2"/><label for="r_1_2">作废凭证</label>
+					<input name="radiogruop1"  value="3"  type="radio" id="r_1_3"/><label for="r_1_3">有错凭证</label>
+				</div>
+				<div class="line_div_1">
+					<input name="radiogruop2" value="month" type="radio" id="r_2_1" onclick="monthordate(this);" checked="checked"/><label for="r_2_1">月份</label>
+					<select id="monthselector" style="width:80px;">
+					</select>
+					凭证号<input type="text" id = "firstNum" style="width:40px;"/>-<input type="text" id = "lastNum" style="width:40px;"/>
+					制单人
+					<select id ="bill" style="width:80px;">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+				</div>
+				<div class="line_div_1">
+					<input name="radiogruop2" value="day" type="radio" id="r_2_2" onclick="monthordate(this);"/><label for="r_2_2">日期</label>
+					<input type="text" style="width:70px;" id="wdp1" disabled="disabled"/><input id="wdpb1" type="image" src="../../../images/newbuttons/dateselector_disable.jpg" 
+							onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;" 
+							onclick="WdatePicker({el:'wdp1'})"/>-<input type="text" id="wdp2" style="width:70px;" disabled="disabled"/><input id="wdpb2" type="image" src="../../../images/newbuttons/dateselector_disable.jpg" 
+							onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;" 
+							onclick="WdatePicker({el:'wdp2'})"/>
+					
+					审核人
+					<select id ="check" style="width:100px;">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+				</div>
+				<div class="line_div_1">
+					<input type="checkbox" id="c_1_1" onclick="javascript:if(this.checked){document.getElementById('dataSource').disabled='';}else{document.getElementById('dataSource').disabled='disabled';}"/><label for="c_1_1">来源</label>
+					<select id="dataSource" style="width:200px;" disabled="disabled">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+					出纳人
+					<select id = "cashier" style="width:100px;">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+				</div>
+				<div class="line_div_1">
+					<input type="checkbox" id="codeBcash" onclick=""/><label for="c_2_1">现金流科目</label>
+				</div>
+			</div>
+		</div>
+		
+		<div id="added" class="border_outside" style="height:270px;width:418px;margin-top:10px;display:none;">
+			<div class="border_inside" style="height:268px;width:416px;">
+				<div class="line_div_2" style="margin-top:3px;">
+					摘&nbsp;&nbsp;&nbsp;&nbsp;要&nbsp;
+					<input id = "cdigest" codeid="1001"  type="text" style="width:310px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;" 
+					onclick="digestClick()"
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					科&nbsp;&nbsp;&nbsp;&nbsp;目&nbsp;
+					<input id = "ccode"  codeid="1002" type="text" style="width:112px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="codeClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方向&nbsp;
+					<select id = "fangxiang" style="width:100px;">
+						<option  value= "" >借方</option>
+						<option  value= "" >贷方</option>
+					</select>
+				</div>
+				
+				<div class="line_div_2">
+					金&nbsp;&nbsp;&nbsp;&nbsp;额&nbsp;
+					<input id="minMoney" type="text" style="width:140px;"/>&nbsp;-----&nbsp;<input type="text"  id="maxMoney" style="width:140px;"/>
+				</div>
+				<div class="line_div_2">
+					外币名称&nbsp;
+					<select id="cexchName" style="width:140px;">
+						<option  value= "" ></option>
+						<option  value= "" ></option>
+						<option  value= "" ></option>
+					</select>
+				</div>
+				<div class="line_div_2">
+					外&nbsp;&nbsp;&nbsp;&nbsp;币&nbsp;
+					<input type="text" id="minBzMoney" style="width:140px;"/>&nbsp;-----&nbsp;<input id="maxBzMoney" type="text" style="width:140px;"/>
+				</div>
+				<div class="line_div_2">
+					数&nbsp;&nbsp;&nbsp;&nbsp;量&nbsp;
+					<input type="text" id="minNumber" style="width:140px;"/>&nbsp;-----&nbsp;<input type="text" id="maxNumber" style="width:140px;"/>
+				</div>
+				<div class="line_div_2">
+					客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;
+					<input id="ccusId" codeid="1003" type="text" style="width:310px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+						onclick="cusClick()"
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					供&nbsp;应&nbsp;商&nbsp;
+					<input id="csupId"  codeid="1004" type="text" style="width:310px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="supClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					部&nbsp;&nbsp;&nbsp;&nbsp;门&nbsp;
+					<input  id="cdeptId"  codeid="1005" type="text" style="width:112px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="deptClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+					&nbsp;&nbsp;个&nbsp;&nbsp;人
+					<input  id="cpersonId"  codeid="1006" type="text" style="width:112px;"/><input type="image" src="../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="personClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					项目大类&nbsp;
+					<select  id="citemClass"  style="width:138px;">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+					&nbsp;&nbsp;项&nbsp;&nbsp;目
+					<input  id="citemId"  codeid="1007"  type="text" style="width:112px;" disabled="disabled"/><input type="image" src="../../../images/newbuttons/finder_disable.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="itemClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					结算方式&nbsp;
+					<select  id="csettleid"  style="width:138px;">
+						<option value= "" ></option>
+						<option value= "" ></option>
+						<option value= "" ></option>
+					</select>
+					&nbsp;&nbsp;业务员
+					<input id="cname"   codeid="1008" type="text" style="width:112px;"/><input type="image" src="../../../../images/newbuttons/finder_outset.jpg" 
+					onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;"
+					onclick="nameClick()" 
+					onmousedown="this.src='../../../images/newbuttons/finder_inset.jpg'" 
+					onmouseup="this.src='../../../images/newbuttons/finder_outset.jpg'" 
+					onmouseout="this.src='../../../images/newbuttons/finder_outset.jpg'"/>
+				</div>
+				<div class="line_div_2">
+					票据日期&nbsp;
+					<input type="text"  id="cDate"   style="width:112px;" id="wdp3"/><input type="image" src="../../../../images/newbuttons/dateselector_outset.jpg" 
+							onfocus="this.blur();" style="width:20px;height:20px;margin-left:0px;" 
+							onmousedown="this.src='../../../images/newbuttons/dateselector_inset.jpg'" 
+							onmouseup="this.src='../../../images/newbuttons/dateselector_outset.jpg'" 
+							onmouseout="this.src='../../../images/newbuttons/dateselector_outset.jpg'" 
+							onclick="WdatePicker({el:'wdp3'})"/>
+					&nbsp;&nbsp;票&nbsp;&nbsp;号
+					<input type="text"  id="minCnId"  style="width:50px;"/>-<input type="text"  id="maxCnId"  style="width:50px;"/>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+	
+	<div style="float:left;width:80px;margin-top:10px;padding-left:5px;line-height:10px;">
+		<input type="button" value="  确认   " onclick="nextQzWindow();" /><br/><br/>
+		<input type="button" value="  取消   " onclick="javascript:window.parent.closeWindow('gl_audit_billcashierquery');"/><br/><br/>
+	</div>
+	
+</div>
+
+</body>
+<script type="text/javascript">
+
+</script>
+</html>

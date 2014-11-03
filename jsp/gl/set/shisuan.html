@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>期初试算平衡表</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<style type="text/css">
+tr{height:26px;line-height:26px;}
+td {text-align:left;}
+*{font-family:宋体;}
+</style>
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+
+<script type="text/javascript">
+var d_type="0";//存储试算状况！//d_type=0为 正常状态，=1为记账时候的试算
+var resu="";//存储试算结果
+$(function(){
+	var t_param=window.parent.valueMap.get("gl_set_shisuan");
+	var mar=t_param.method;
+	d_type=t_param.dtype;
+	var method="";
+	if(mar=="0"){
+		method="queryme";
+	}else if(mar=="1"){
+		method="querymb";
+	}
+	$.ajax({
+		url: "glInitial!"+method,
+		type: 'post',
+		dataType: "json",
+		success: function(data){
+			//008
+			var ssphList = data.ssphList;
+
+			var lt = document.getElementById("lt");//左边表
+			var rt = document.getElementById("rt");//右边表
+			
+			var la = ssphList[0];//left array
+			var ra = ssphList[1];//right array
+
+			if(la.length>3){
+				la.splice(3,la.length-3);
+			}
+			if(ra.length>3){
+				ra.splice(3,ra.length-3);
+			}
+			
+			var ls = 0;
+			var rs = 0;
+
+			//填充左表内容
+			for(var i=0;i<la.length;i++){
+				lt.rows[i].cells[0].innerHTML=la[i].className;
+				lt.rows[i].cells[1].innerHTML="=";
+				if(la[i].sumYe==0.0){
+					lt.rows[i].cells[2].innerHTML="平";
+				}else{
+					lt.rows[i].cells[2].innerHTML="借";
+					lt.rows[i].cells[3].innerHTML=la[i].sumYe;
+				}
+				ls += parseFloat(la[i].sumYe);
+			}
+			
+			//填充右表内容
+			for(var i=0;i<ra.length;i++){
+				
+				rt.rows[i].cells[0].innerHTML=ra[i].className;
+				rt.rows[i].cells[1].innerHTML="=";
+				if(ra[i].sumYe==0.0){
+					rt.rows[i].cells[2].innerHTML="平";
+				}else{
+					rt.rows[i].cells[2].innerHTML="贷";
+					rt.rows[i].cells[3].innerHTML=Math.abs(ra[i].sumYe);//取绝对值
+				}
+				rs += parseFloat(ra[i].sumYe);
+			}
+			
+			
+			//填充底部内容
+			var bt = document.getElementById("bt");//底部表格
+			if(ls == 0){
+				bt.rows[0].cells[2].innerHTML="平";
+			}else{
+				bt.rows[0].cells[2].innerHTML="借";
+				bt.rows[0].cells[3].innerHTML=ls;
+			}
+			
+			if(rs == 0){
+				bt.rows[0].cells[6].innerHTML="平";
+			}else{
+				bt.rows[0].cells[6].innerHTML="贷";
+				bt.rows[0].cells[7].innerHTML=Math.abs(rs);
+			}
+			
+			//设置试算结果
+			if(ls != Math.abs(rs)){
+				$("#shisuanjieguo").css("color","red");
+				$("#shisuanjieguo").html("试算结果不平衡");
+				resu="0";
+			}else{
+				$("#shisuanjieguo").css("color","blue");
+				$("#shisuanjieguo").html("试算结果平衡");
+				resu="1";
+			}
+			
+			
+		}
+	  });
+	
+});
+function onWindowClose(){
+	if(d_type=="1"){
+		if(resu=="0"){
+			window.parent.getParentWindow('gl_set_shisuan').exit();
+		}else if(resu=="1"){
+			window.parent.getParentWindow('gl_set_shisuan').tallyData();
+		}
+	}
+}
+
+</script>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:460px;height:220px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:436px;height:196px;margin-top:12px;margin-left:12px;">
+			
+			
+			
+			<div class="border_outside" style="width:436px;height:160px;">
+				<div class="border_inside" style="width:434px;height:158px;">
+					
+					<div style="width:100%;height:90px;color:#000080;">
+						
+						<div>
+							<table id="lt" style="margin-left:6px;float:left;">
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+							</table>
+							
+							
+							<table id="rt" style="margin-left:6px;float:left;">
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+								<tr>
+									<td width="30"></td>
+									<td width="26"></td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+							</table>
+						</div>
+						
+					</div>
+					
+					<div style="width:100%;height:62px;">
+						<div style="width:96%;height:0px;margin-left:8px;border-top:1px solid #fff;border-bottom:1px solid #808080;"></div>
+						<div style="width:100%;height:40px;color:#000080;">
+							
+							
+							<table id="bt" style="margin-left:6px;float:left;">
+								<tr>
+									<td width="30">合计</td>
+									<td width="26">=</td>
+									<td width="14"></td>
+									<td width="128"></td>
+									<td width="30">合计</td>
+									<td width="26">=</td>
+									<td width="14"></td>
+									<td width="120"></td>
+								</tr>
+							</table>
+							
+						</div>
+						<div id="shisuanjieguo" style="width:100%;height:20px;text-align:center;color:blue;">
+							
+						</div>
+						
+					</div>
+					
+				</div>
+			</div>
+			
+			<div style="width:100%;height:24px;margin-top:12px;text-align:right;">
+				<input type="button" value="打印" onclick=""/>
+				<input type="button" value="确认" onclick="window.parent.closeWindow('gl_set_shisuan')" style="margin-right:14px;"/>
+			</div>
+			
+		
+		</div>
+	</div>
+</body>
+</html>

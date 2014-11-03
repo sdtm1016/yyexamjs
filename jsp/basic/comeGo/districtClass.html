@@ -1,0 +1,446 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title> 地区分类 </title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<!-- 增加树css js-->	
+		<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>	
+		<script type="text/javascript">
+		//程序入口
+		$(document).ready(function(){
+			var districtClassStar=grademark('districtclass');
+			var gradeValue = grademarkValue('districtclass'); 
+			$("#bmgz").val(districtClassStar).attr("gradeValue",gradeValue);
+			//加载地区树
+			queryDistrictTree(null);
+		});
+		//树节点集合的全局变量
+		var zNodes = [];
+		//当前选中的树节点
+		var currentTreeNode=null;
+		//保存时状态的全局变量
+		var action = null;
+		//所有地区对象的集合
+		var districtList=null;
+		//查询地区树
+		function queryDistrictTree(districtCode){
+			//ztree配置
+			var setting = {
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: ZtreeClick,
+					onDblClick: ZtreeDblClick
+				}
+			};
+			//ztree加载树节点
+			$.ajax({
+				url:"districtClass!query.action",
+				type:"post",
+				dataType:"json",
+				async : false,   
+				error: function () {
+		            jAlert('请求失败');   
+		        }, 
+				success:function(jsonData){
+					districtList = jsonData.districtClassList;
+					zNodes = getdistrictNodes(districtList);
+					$.fn.zTree.init($("#districtClassTree"), setting, zNodes);
+					//默认选中节点(根节点)
+					var zTree = $.fn.zTree.getZTreeObj("districtClassTree");
+					if(districtCode==null){
+						districtCode = "DISTRICTTYPE";
+					}
+					var selNode = zTree.getNodeByParam("id", districtCode);
+        			zTree.selectNode(selNode);
+        			//显示详细信息
+        			showNodeInformation(selNode);
+				}
+			});	
+		}
+		//获取地区树节点的方法
+		function getdistrictNodes(districtList){
+			zNodes = [];
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			if(gradeValue==""){
+				jAlert("编码规则不能为空!");
+				return;
+			}
+			var node = "";
+			var district;
+			var nodeObj;
+			//根节点
+			node = "{id:'DISTRICTTYPE',name:'地区分类',open:true}";
+			nodeObj =  eval('(' + node + ')') ;
+        	zNodes.push(nodeObj);
+			for(var i=0;i<districtList.length;i++){
+				district = districtList[i];
+				//本级次
+				var idcgrade = district.idcgrade;
+				//地区编码
+				var cdccode = district.cdccode;
+				//父节点id
+				var parentid ;
+				if(idcgrade==1){
+					parentid = "DISTRICTTYPE";
+				}else{
+					var rule = gradeValue.charAt(idcgrade-1);
+					var endindex = cdccode.length-rule;
+					parentid = cdccode.substring(0,endindex);
+				}
+				node = "{" + "id:'" + cdccode + "'," + "pId:'" + parentid + "',"
+				+ "districtId:'" + district.id + "',"
+				+ "districtName:'" + district.cdcname + "',"
+				+ "idcgrade:'" + district.idcgrade + "',"
+				+ "bdcend:'" + district.bdcend + "',"
+				+ "name:'(" +cdccode+")"+ district.cdcname + "'" + ",open:true" + "}";
+				
+				nodeObj =  eval('(' + node + ')') ;
+            	zNodes.push(nodeObj);
+			}
+			return zNodes;
+		}
+		//ztree单击事件
+		function ZtreeClick(event, treeId, treeNode, clickFlag){
+			showNodeInformation(treeNode);
+		}
+		//ztee双击事件
+		function ZtreeDblClick(event, treeId, treeNode){
+			
+		}
+		//在数的右侧展示树节点的信息
+		function showNodeInformation(treeNode){
+			currentTreeNode = treeNode;
+			if(treeNode.id=="DISTRICTTYPE"){
+				//地区编码
+				$("#cdccode").val("").attr("readonly", true).css("background-color","#ccc");;
+				//地区名称
+				$("#cdcname").val("").attr("readonly", true).css("background-color","#ccc");;
+			}else{
+				//地区编码
+				$("#cdccode").val(strNullProc(treeNode.id)).attr("readonly", true).css("background-color","#ccc");;
+				//地区名称
+				$("#cdcname").val(strNullProc(treeNode.districtName)).attr("readonly", true).css("background-color","#ccc");;
+			}
+			//设置成不可编辑状态
+			setEditorState(false);
+		}
+		//设置按钮的编辑状态 state:true 可编辑,state:false 不可编辑
+		function setEditorState(state){
+			if(state){
+	  			//放弃,保存按钮设置成可用
+	  			$("#giveupDistrict").attr("disabled",false);
+	  			$("#saveDistrict").attr("disabled",false);
+	  			//增加,修改,删除,按钮设置成不可用
+	  			$("#addDistrict").attr("disabled",true);
+	  			$("#updateDistrict").attr("disabled",true);
+	  			$("#deleteDistrict").attr("disabled",true);
+			}else{
+	  			//放弃,保存按钮设置成不可用
+	  			$("#giveupDistrict").attr("disabled",true);
+	  			$("#saveDistrict").attr("disabled",true);
+	  			//增加,修改,删除,按钮设置成可用
+	  			$("#addDistrict").attr("disabled",false);
+	  			$("#updateDistrict").attr("disabled",false);
+	  			$("#deleteDistrict").attr("disabled",false);
+			}
+		}
+		//点击按钮点击事件
+		function addDistrict(){
+			if(currentTreeNode!=null){
+				action="add";
+				$("#cdccode").attr("readonly", false).css("background-color","#ffffff").focus();
+				$("#cdcname").val("").attr("readonly", false).css("background-color","#ffffff");
+				//设置成可修改
+				setEditorState(true);
+			}
+		}
+		//修改按钮点击事件
+		function updateDistrict(){
+			if(currentTreeNode!=null){
+				if(currentTreeNode.id=="DISTRICTTYPE"){
+					jAlert("请选择要修改的地区!");
+					return;
+				}
+				action = "update";
+				//修改时编码不允许修改
+				$("#cdccode").attr("readonly", true).css("background-color","#ccc");
+				$("#cdcname").attr("readonly", false).css("background-color","#ffffff").focus();
+				//设置成可修改
+				setEditorState(true);
+			}
+		}
+		//删除按钮点击事件
+		function deleteDistrict(){
+			if(currentTreeNode!=null){
+				if(currentTreeNode.id=="DISTRICTTYPE"){
+					jAlert("请选择要删除的地区!");
+					return;
+				}
+				jConfirm("确定要删除选中的地区吗?", '确认对话框', function(confirmflag){
+					if(confirmflag){
+						if(currentTreeNode.bdcend==0){
+							jAlert("不能删除存在下级地区的地区!");
+							return;
+						}
+						var id = currentTreeNode.districtId;
+						//js判断
+						var sourceValue = 	id;
+						var sourceTable = 	"DISTRICTCLASS";
+						var sourceField = 	"cdccode";
+						var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+						if (isExits==true) {
+							jAlert("该地区分类已经被使用，不能删除!");
+						    return false;			
+						}
+						//是否修改父节点的bssend字段
+						var updateflag = true;
+						//判读当前节点的父节点是否有其他子节点
+						for(var i=0;i<zNodes.length;i++){
+							var district = zNodes[i];
+							if(district.pId==currentTreeNode.pId&&district.districtId!=id){
+								updateflag=false;
+							}
+						}
+						//删除请求后台
+						$.ajax({
+							url: "districtClass!delete.action?districtClass.id="+id,
+							type: 'post',
+							data:{parentCode:currentTreeNode.pId,updateflag:updateflag},
+							dataType: "json",
+							async : false,
+							error:function(){
+								jAlert("请求失败!");
+							},
+							success: function(data){
+								if(data.isdelete==true){
+									queryDistrictTree(currentTreeNode.pId);
+								}else{
+									jAlert("该地区已经被使用，不能删除!");
+							   }
+							}
+						});
+					}
+				});
+			}
+		}
+		//放弃按钮点击事件
+		function giveupDistrict(){
+			showNodeInformation(currentTreeNode);
+		}
+		//保存按钮点击事件
+		function saveDistrict(){
+			var flag = saveDistrictCheck();
+			if(!flag){
+				return;
+			}else{
+				//组织数据
+				var district = "";
+				//请求地址
+				var url="";
+				district+="districtClass.cdccode="+$("#cdccode").val();
+				district+="&districtClass.cdcname="+$("#cdcname").val();
+				if(action=="add"){
+					//是末级节点
+					district+="&districtClass.bdcend="+1;
+					//编码级次
+					district+="&districtClass.idcgrade="+$("#idcgrade").val();
+					district+="&parentCode="+$("#bdcend").attr("parentcode");
+					url="districtClass!create.action";
+				}else if(action=="update"){
+					//是末级节点
+					district+="&districtClass.bdcend="+currentTreeNode.bdcend;
+					//编码级次
+					district+="&districtClass.idcgrade="+currentTreeNode.idcgrade;
+					district+="&districtClass.id="+currentTreeNode.districtId;
+					url="districtClass!update.action";
+				}
+				//保存按钮设置成不可用
+				$("#saveDistrict").attr("disabled",true);
+				$.ajax({
+					url: url,
+					type: 'post',
+					data:district,
+					dataType: "json",
+					async : false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						//重新查询树
+						queryDistrictTree($("#cdccode").val());
+					}
+				  });
+			}
+		}
+		//保存地区时检查方法
+		function saveDistrictCheck(){
+			var flag = true;
+			var cdccode = $("#cdccode").val();
+			if (cdccode=="") {
+				jAlert("地区编码不允许为空！","提示信息",function(){
+					$("#cdccode").focus();
+				});
+				return false;
+			}else if(cdccode=="DISTRICTTYPE"){
+				jAlert("地区编码不符合要求！","提示信息",function(){
+					$("#cdccode").focus();
+				});
+				return false;
+			}
+			if ($("#cdcname").val()=="") {
+				jAlert("地区名称不允许为空！","提示信息",function(){
+					$("#cdcname").focus();
+				});
+				return false;
+			}
+			//传到后台数据
+			var district="districtClass.cdccode="+cdccode;
+			//添加时判断编码是否唯一
+			if(action=="add"){
+				$.ajax({
+					url: "districtClass!isUniquenessDistrictClassCode.action",
+					type: 'post',
+					data:district,
+					dataType: "json",
+					async : false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该地区编码已经被使用，请重新输入地区编码!","提示信息",function(){
+								$("#cdccode").focus();
+							});
+							flag = false;
+						}
+					}
+				  });
+				if(!flag){
+					return false;
+				}
+				//编码规则
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				//每一级的编码规则
+				var gradeValueList = gradeValue.split("");
+				//编码的长度
+				var len = cdccode.length;
+				//查看是否符合规则的标志
+				var fitflag =false;
+				//判断是否符合编码规则
+				var currentrule= null;
+				for(var i=0;i<gradeValueList.length;i++){
+					if(i==0){
+						currentrule=gradeValueList[i];
+					}else{
+						currentrule=currentrule*1+gradeValueList[i]*1;
+					}
+					//判断是否符合编码规则
+					if(len==currentrule){
+						fitflag = true;
+						//设置编码级次
+						var idcgrade = i+1;
+						$("#idcgrade").val(idcgrade);
+						break;
+					}
+				}
+				if(!fitflag){
+					jAlert("此编码不符合地区编码原则,请重新编码!","提示信息",function(){
+						$("#cdccode").focus();
+					});
+					return false;
+				}
+				//编码级次
+				var idcgrade = $("#idcgrade").val();
+				if(idcgrade!=1){
+					var rule = gradeValue.charAt(idcgrade-1);
+					var endindex = cdccode.length-rule;
+					var parentid = cdccode.substring(0,endindex);
+					//存储父节点的编码
+					$("#bdcend").attr("parentcode",parentid);
+					//设置标志
+					fitflag = false;
+					//判读是否有上级编码
+					for(var i=0;i<districtList.length;i++){
+						var district = districtList[i];
+						//地区编码
+						var cdccode = district.cdccode;
+						if(parentid==cdccode){
+							fitflag = true;
+						}
+					}
+					if(!fitflag){
+						jAlert("不存在此地区的上级地区,请重新输入!","提示信息",function(){
+							$("#cdccode").focus();
+						});
+						flag = false;
+					}
+	
+				}
+			}
+			return flag;
+		}
+		</script>
+	</head>
+	<body style="font-size:12px;background-color: #D4D0C8;">
+		<div style="width:530px;height:300px;background-color:#D4D0C8;font-size: 12px">
+					<div class="buttongroup">
+				<div class="group">
+					<div><input type="button" value="设置" disabled = "disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+					<div><input type="button" value="打印" disabled = "disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled = "disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" value="输出" disabled = "disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="增加" id="addDistrict" onclick="addDistrict()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="删除" id="deleteDistrict" onclick="deleteDistrict()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+					<div><input type="button" value="修改" id="updateDistrict" onclick="updateDistrict()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="放弃" id="giveupDistrict" onclick="giveupDistrict()" disabled="disabled" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+					<div><input type="button" value="保存" id="saveDistrict" onclick="saveDistrict()"  style="background-image:url('../../../images/icon/save.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="刷新" disabled = "disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="帮助" disabled = "disabled" style="background-image:url('../../../images/icon/help.gif');"/></div>
+					<div><input type="button" value="退出" onclick="window.parent.closeWindow('districtClass');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+				</div>
+			</div>
+			<hr />
+<!-- 			<div> -->
+<!-- 				&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/add.jpg" onmousedown="this.src='../../../images/buttons/pushadd.jpg';" onmouseup="this.src='../../../images/buttons/add.jpg';" onmouseout="this.src='../../../images/buttons/add.jpg';" onclick="add()"/> -->
+<!-- 				&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/save.jpg" onmousedown="this.src='../../../images/buttons/pushsave.jpg';" onmouseup="this.src='../../../images/buttons/save.jpg';" onmouseout="this.src='../../../images/buttons/save.jpg';" onclick="save()"/> -->
+<!-- 				&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/del.jpg" onmousedown="this.src='../../../images/buttons/pushdel.jpg';" onmouseup="this.src='../../../images/buttons/del.jpg';" onmouseout="this.src='../../../images/buttons/del.jpg';" onclick="del()"/> -->
+<!-- 				&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/update.jpg" onmousedown="this.src='../../../images/buttons/pushupdate.jpg';" onmouseup="this.src='../../../images/buttons/update.jpg';" onmouseout="this.src='../../../images/buttons/update.jpg';" onclick="update()"/> -->
+<!-- 				&emsp;<input type="image" onfocus="this.blur();" src = "../../../images/buttons/exit.jpg" onmousedown="this.src='../../../images/buttons/pushexit.jpg';" onmouseup="this.src='../../../images/buttons/exit.jpg';" onmouseout="this.src='../../../images/buttons/exit.jpg';" onclick="window.parent.closeWindow('districtClass');"/> -->
+<!-- 				<hr/> -->
+<!-- 			</div> -->
+			<div style="margin-top:5px;">
+				<div style="width:164px;height:280px;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow:auto;">
+					<ul id="districtClassTree" class="ztree" style="margin-left:-20px;"></ul>
+				</div>
+				<div style="margin-left:10px;width:55%;float:left;height:300px;border:1px;solid blue;">
+					<div id="form1">
+						类别编码：<input id="cdccode" type="text" name="districtClass.cdccode" size="26"  readonly="readonly" onblur = "isSpecialChar(this)"/><br/><br/>
+						类别名称：<input id="cdcname" type="text" name="districtClass.cdcname" size="26"  readonly="readonly" onblur = "isSpecialChar(this)"/><br/>
+						<input id="idcgrade" type="hidden" name="districtClass.idcgrade"  readonly="readonly"/>
+						<input id="bdcend" type="hidden" name="districtClass.bdcend" size="26"  readonly="readonly"/>
+						&emsp;<div>编码原则：<input id="bmgz" type="text" name="" readonly="readonly" style="border:0;background:transparent;" /></div><br/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

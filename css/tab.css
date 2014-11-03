@@ -1,0 +1,21 @@
+
+.t_h_c{cursor:default;margin-left:2px;}
+	
+/**tab header item default tab选项卡头部选项默认样式**/
+.t_h_i_d{float:left;}
+/**tab header item active tab选项卡头部选项当前显示项样式**/
+.t_h_i_a{float:left;margin-top:-2px;}
+
+/** active item style**/
+.t_h_i_d_l{width:2px;height:20px;background-color:#D4D0C8;background-image:url('../images/winui/tab/tab_header_left_border.bmp');background-repeat:no-repeat;float:left;}
+.t_h_i_d_m{background-color:#D4D0C8;height:20px;border-top:1px solid #fff;float:left;padding-left:3px;padding-right:3px;/*padding-top:2px;*/line-height:17px;}
+.t_h_i_d_r{width:2px;height:20px;background-color:#D4D0C8;background-image:url('../images/winui/tab/tab_header_right_border.bmp');background-repeat:no-repeat;float:left;}
+
+/** active item style**/
+.t_h_i_a_l{width:2px;height:20px;background-color:#D4D0C8;background-image:url('../images/winui/tab/tab_header_left_border.bmp');background-repeat:no-repeat;float:left;position:absolute;z-index:600;height:20px;margin-left:-2px;}
+.t_h_i_a_m{background-color:#D4D0C8;height:20px;border-top:1px solid #fff;float:left;padding-left:5px;padding-right:5px;padding-top:2px;position:absolute;z-index:600;height:18px;margin-left:0px;}
+.t_h_i_a_r{width:2px;height:20px;background-color:#D4D0C8;background-image:url('../images/winui/tab/tab_header_right_border.bmp');background-repeat:no-repeat;float:left;position:absolute;z-index:600;height:20px;}
+/**tab content container out border tab选项卡内容区容器样式样式**/
+.t_c_c_b_o{position:absolute;margin-top:17px;*margin-top:-6px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;float:none;clear:both;background-color:#D4D0C8;}
+.t_c_c_b_i{width:298px;height:198px;border-top:1px solid #D4D0C8;border-left:1px solid #D4D0C8;border-right:1px solid #808080;border-bottom:1px solid #808080;}
+	

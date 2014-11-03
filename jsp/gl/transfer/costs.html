@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>销售成本结转设置</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	
+		.lefttable {border-collapse: collapse;cursor:default;position:absolute;margin-top:0px;margin-left:0px;width:150px;}
+		.lefttable thead tr{height:24px;}
+		.lefttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.lefttable tbody tr {background-color:#ffffff;}
+		.lefttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+		
+		
+		.righttable {border-collapse: collapse;cursor:default;width:515px;margin-left:150px;}
+		.righttable thead tr{height:24px;}
+		.righttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.righttable tbody tr {background-color:#ffffff;}
+		.righttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+		
+		
+		
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+    
+	
+	<script type="text/javascript">
+	
+	function showcomponent(radio){
+		if(radio.checked == true){
+			if(radio.id=="rg_1_1"){
+				document.getElementById("sup").style.color="#888";
+				document.getElementById("cb_1").disabled=true;
+			}else{
+				document.getElementById("sup").style.color="#000";
+				document.getElementById("cb_1").disabled=false;
+			}
+		}
+	}
+	
+	
+	
+	
+	/***
+	 *此变量用于为三个弹出科目的文本框取值赋值提供目标
+	 */
+	var targetId="";
+	
+	//实现取值窗体值函数（从子窗体传过来的）
+	function deliverValue(paramObject){
+		document.getElementById(targetId).value=paramObject.selKemuCode;
+		
+		
+	}
+	
+	
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:560px;height:320px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:540px;height:300px;margin-left:10px;margin-top:10px;">
+			
+			<div style="width:100%;height:28px;">
+				凭证类别
+				<select id = "TranList">
+						<option value= "0">收 收款凭证</option>
+						<option value= "1">付 付款凭证</option>
+						<option value= "2">转 转账凭证</option>
+				</select>
+			</div>
+			
+			
+			<div style="width:100%;height:292px;">
+			
+				<div class="border_outside" style="height:262px;width:450px;float:left;">
+					<div class="border_inside" style="height:260px;width:448px;line-height:18px;">
+						
+						
+						<div style="width:100%;">
+							<table>
+								<tbody>
+									<tr>
+										<td>库存商品科目</td>
+										<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="text" id="kccode" style="width:140px;"/></td>
+										<td><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_costs');targetId='kccode';" class="finder"/></td>
+										
+									</tr>
+									<tr>
+										<td>商品销售收入科目</td>
+										<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="text" id="srcode" style="width:140px;"/></td>
+										<td><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_costs');targetId='srcode';" class="finder"/></td>
+										
+									</tr>
+									<tr>
+										<td>商品销售成本科目</td>
+										<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="text" id="cbcode" style="width:140px;"/></td>
+										<td><input type="button" onclick="javascript:window.parent.openWindow('dsign_subjectsreference','gl_transfer_costs');targetId='cbcode';" class="finder"/></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+						
+						<div style="width:100%;">
+						
+							当商品销售数量&nbsp;&gt;&nbsp;库存商品数量时：
+						</div>
+						
+						
+						<div style="width:96%;margin-left:20px;">
+						
+							<input type="radio" name="rg_1" value="1" id="rg_1_1" style="vertical-align:middle;margin-bottom:3px;" checked="checked" onclick="showcomponent(this);"><label for="rg_1_1">按商品销售（贷方）数量结转（结转金额=商品销售贷方数量合计*库存单价）</label>
+							
+							
+							
+							<fieldset style="width:90%;">
+								<legend style="margin-left:-15px;"><input type="radio" name="rg_1" value="0" id="rg_1_2" style="vertical-align:middle;margin-bottom:3px;" onclick="showcomponent(this);"><label for="rg_1_2">按库存商品数量（金额）结转（结转金额=库存商品金余额）</label></legend>
+								<div id="sup" style="margin-left:20px;color:#888;">
+									当某商品的库存数量 &lt;=0&nbsp;时：<br/>
+									<input type="checkbox" disabled="disabled" id="cb_1" style="margin-left:20px;vertical-align:middle;margin-bottom:3px;"/><label for="cb_1">结转此商品的库存金额余额</label>
+								</div>
+							</fieldset>
+							
+						</div>
+						
+						
+						<div style="width:90%;font-style:oblique;margin-left:10px;color:blue;">
+							注：库存商品科目，商品销售收入科目，商品销售成本科目的下级科目的结构必须相同，并且都不能带往来辅助核算，如果想对带往来辅助核算的科目结转成本，请到[自定义转账]中定义
+						</div>
+						
+						
+					</div>
+				</div>
+				
+				<div style="width:80px;height:292px;float:left;text-align:center;">
+					<input type="button" value="确定" onclick= "saveSaleButtoTran()"/><br/><br/>
+					<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('gl_transfer_costs');"/>
+				</div>
+				
+			</div>
+			
+			
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="js/costs.js"></script>
+
+<script type="text/javascript">
+   var paramObject = window.parent.valueMap.get("gl_transfer_costs");
+   if (paramObject!=null) {
+   		querySaleBautotran(paramObject.year,paramObject.month,paramObject.type);
+   }
+   else {
+	   var curLoginPeriod = getLoginPeriod();
+	 	var curMonth =  curLoginPeriod.iid;
+		var curYear = curLoginPeriod.iyear;
+			
+ 		querySaleBautotran(curYear,curMonth,"30");
+   }
+ </script>
+	
+
+</html>

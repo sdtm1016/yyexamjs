@@ -1,0 +1,1015 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+	<title>客户档案</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="../css/base.css" />
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+  	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+  	<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+  	<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	<!-- 增加树css js-->	
+	<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+	<!-- 日期控件 -->
+	<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	<!-- 调用编码规则js -->
+	<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+	<style type="text/css">
+		.datatable{width:3000px;}
+		 #payConditionTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		 #datatableheader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		#include td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		
+		#customerClassTable {border:1px solid #000;border-collapse: collapse;cursor:default;}
+		#includeCustomerClass td{border:1px solid #000;background-color:#fff;padding-left:5px;}
+		#customerClassHeader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+	</style>
+	<script type="text/javascript">
+		//tab页切换函数
+		function  tab(x){
+			for(i=1;i<5;i++){
+				document.getElementById("conbox"+i).style.display="none";
+				document.getElementById("connav_"+i).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat";
+				document.getElementById("connav_"+i).style.fontWeight="100";
+			}
+			document.getElementById("conbox"+x).style.display="block";
+			document.getElementById("connav_"+x).style.background="url(../../../images/basic/z_connav_bg.png) no-repeat 0  -19px";
+			document.getElementById("connav_"+x).style.fontWeight="900";
+		}
+		//程序入口
+		$(document).ready(function(){
+			var gradeValue = grademarkValue('customerclass'); 
+			//客户分类编码原则
+			$("#bmgz").attr("gradeValue",gradeValue);
+			//判断是有允许分类(如果不允许则默认添加一条记录)
+			isCusCategory();
+			//加载客户分类树
+			queryCustomerClassTree(null);
+		});
+		/**
+		 * 是否允许客户分类，允许返回true，否则返回false
+		 * @returns {Boolean}
+		 */
+		var isCusCategoryBz = true;
+		function isCusCategory() {
+			$.ajax({
+				url:"customer!isCusCategory",
+				type:"post",
+				dataType:"json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				async:false,
+				success: function(data){
+					isCusCategoryBz = data.isCategory;
+				}
+			});
+		}
+		//树节点集合的全局变量
+		var zNodes = [];
+		//当前选中的树节点
+		var currentTreeNode=null;
+		//保存时状态的全局变量
+		var action = null;
+		//所有存货分类对象的集合
+		var customerClassList=null;
+		//当前选中客户档案
+		var currentClickedRow=null;
+		//当前弹窗动作目标
+		var xaction = null;
+		//查询存货分类树
+		function queryCustomerClassTree(customerClassCode){
+			//ztree配置
+			var setting = {
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					onClick: ZtreeClick,
+					onDblClick: ZtreeDblClick
+				}
+			};
+			//ztree加载树节点
+			$.ajax({
+				url:"customerClass!queryCustomerClass.action",
+				type:"post",
+				dataType:"json",
+				async : false,   
+				error: function () {
+		            jAlert('请求失败');   
+		        }, 
+				success:function(jsonData){
+					customerClassList = jsonData.customerClassList;
+					zNodes = getCustomerClassListNodes(customerClassList);
+					$.fn.zTree.init($("#cusClassTree"), setting, zNodes);
+					//默认选中节点(根节点)
+					var zTree = $.fn.zTree.getZTreeObj("cusClassTree");
+					if(customerClassCode==null){
+						customerClassCode = "CUSTYPE";
+						//获取第一个末级节点
+						for(var i=0;i<customerClassList.length;i++){
+							var theCustomerClass = customerClassList[i];
+							if(theCustomerClass.bccend==1){
+								customerClassCode = theCustomerClass.ccccode;
+								break;
+							}
+						}
+					}
+					var selNode = zTree.getNodeByParam("id", customerClassCode);
+	    			zTree.selectNode(selNode);
+	    			//显示客户信息列表
+	    			showCustomer(selNode);
+				}
+			});	
+		}
+		//获取存货分类树节点的方法
+		function getCustomerClassListNodes(customerClassList){
+			zNodes = [];
+			var gradeValue= $("#bmgz").attr("gradeValue");
+			if(gradeValue==""){
+				jAlert("编码规则不能为空!");
+				return;
+			}
+			var node = "";
+			var customerClass;
+			var nodeObj;
+			//根节点
+			node = "{id:'CUSTYPE',name:'客户分类',open:true}";
+			nodeObj =  eval('(' + node + ')') ;
+	    	zNodes.push(nodeObj);
+			for(var i=0;i<customerClassList.length;i++){
+				customerClass = customerClassList[i];
+				//本级次
+				var iccgrade = customerClass.iccgrade;
+				//存货分类编码
+				var ccccode = customerClass.ccccode;
+				//父节点id
+				var parentid ;
+				if(iccgrade==1){
+					parentid = "CUSTYPE";
+				}else{
+					var rule = gradeValue.charAt(iccgrade-1);
+					var endindex = ccccode.length-rule;
+					parentid = ccccode.substring(0,endindex);
+				}
+				node = "{" + "id:'" + ccccode + "'," + "pId:'" + parentid + "',"
+				+ "iccgrade:'" + customerClass.iccgrade + "',"	
+				+ "customerClassId:'" + customerClass.id + "',"
+				+ "customerClassName:'" + customerClass.cccname + "',"
+				+ "bccend:'" + customerClass.bccend + "',"
+				+ "name:'(" +ccccode+")"+ customerClass.cccname + "'" + ",open:true" + "}";
+				
+				nodeObj =  eval('(' + node + ')') ;
+	        	zNodes.push(nodeObj);
+			}
+			return zNodes;
+		}
+		//ztree单击事件
+		function ZtreeClick(event, treeId, treeNode, clickFlag){
+			showCustomer(treeNode);
+		}
+		//ztee双击事件
+		function ZtreeDblClick(event, treeId, treeNode){
+			
+		}
+		//展示客户档案的方法
+		function showCustomer(treeNode){
+			//设置当前选中的节点
+			currentTreeNode = treeNode;
+			var customerData = {};
+			if(treeNode.id!="CUSTYPE"){
+				customerData = {code:treeNode.id};
+			}
+			$.ajax({
+				url: "customer!queryCustomerByCusClassCode",
+				type: 'post',
+				data:customerData,
+				dataType: "json",
+				async:false,
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var list=data.customerList;
+					var strHtml="";
+					for(var i=0;i<list.length;i++){
+						strHtml+='<tr onclick="setTableClickedRowStyle(this);" ondblclick="doubleSelect(this);" id ="'+list[i].id+'" name="'+list[i].ccusname+'" bgcolor="#ffffff">'
+							//客户编码	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccuscode)+'</td>'
+							//客户名称
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccusname)+'</td>'
+							//客户简称
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccusabbname)+'</td>'
+							//助记码
+							+'<td onclick="selectTd(this)">'+strNullProc(list[i].ccushelp)+'</td>'
+							//客户所属分类编码	
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccusclcode)+'</td>'
+							//所属地区码
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].cdccode)+'</td>'
+							//所属行业
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ctrade)+'</td>'
+							//地址
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccusaddress)+'</td>'
+							//邮政编码
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccuspostcode)+'</td>'
+							//纳税人登记号
+							+'<td onclick="selectTd(this)" >'+strNullProc(list[i].ccusregcode)+'</td>'
+							//开户银行
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusbank)+'</td>'
+							//银行账号
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusaccount)+'</td>'
+							//发展日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].dcusdevdate)+'</td>'
+							//法人
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccuslperson)+'</td>'
+							//Email地址
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusemail)+'</td>'
+							//联系人
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusperson)+'</td>'
+							//电话
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusphone)+'</td>'
+							//传真
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusfax)+'</td>'
+							//MSN
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusbp)+'</td>'
+							//手机
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccushand)+'</td>'
+							//专管业务员
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccuspperson)+'</td>'
+							//扣率
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].icusdisrate)+'</td>'
+							//信用等级
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccuscregrade)+'</td>'
+							//信用额度
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].icuscreline)+'</td>'
+							//付款条件编码
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccuspaycond)+'</td>'
+							//发货地址
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusoaddress)+'</td>'
+							//发货方式
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusotype)+'</td>'
+							//发货仓库
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccuswhcode)+'</td>'
+							//分管部门(存在影响效率问题)
+							+'<td onclick="selectTd(this)"  >'+getDepartmentById(list[i].ccusdepart)+'</td>'
+							//应收余额
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].iarmoney)+'</td>'
+							//最后交易日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].dlastdate)+'</td>'
+							//最后交易金额
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ilastmoney)+'</td>'
+							//最后收款日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].dlrdate)+'</td>'
+							//最后收款金额
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ilrmoney)+'</td>'
+							//停用日期
+							+'<td onclick="selectTd(this)"  >'+getStrDate(list[i].denddate)+'</td>'
+							//使用频度
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ifrequency)+'</td>'
+							//自定义项1
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusdefine1)+'</td>'
+							//自定义项2
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusdefine2)+'</td>'
+							//自定义项3
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].ccusdefine3)+'</td>'
+							//价格级别
+							+'<td onclick="selectTd(this)"  >'+strNullProc(list[i].icostgrade)+'</td>'
+							+'</tr >';	
+					}
+					//清空选中的行
+					currentClickedRow = null;
+					//清空并且添加新的html
+					$("#include").empty().append(strHtml);
+					//默认选中第一行
+					setTableClickedRowStyle($("#include >tr:first")[0]);
+					//默认选中第一列
+					selectTd($("#include >tr:first >td:first")[0]);
+				  }
+			  });
+		}
+		//点击增加按钮弹出添加客户档案的窗体
+		function showAddCustomer(){
+			action = "add";
+			if(currentTreeNode.id=="CUSTYPE"||currentTreeNode.bccend==0){
+				jAlert("非末级，不能增加客户档案！");
+				return;
+			}
+			//设置分页按钮
+			setUsedState();
+			//TODO 清空表单各值
+			$("#saveCustomer input").val("");
+			//客户编码设置成可用
+			$("#ccuscode").attr("readonly",false).css("background-color","#ffffff");
+			//设置选项卡中的值
+			$("#ccusclcode").val(currentTreeNode.id);
+			$("#ccusclId").val(currentTreeNode.customerClassId);
+			$("#ccusclName").val(currentTreeNode.customerClassName);
+			//设置customerForm默认显示第一个选项卡
+			tab(1);
+			openWindow('customerForm');
+		}
+		//点击修改按钮弹出修改客户档案的窗体
+		function showUpdateCustomer(){
+			if(currentClickedRow!=null){
+				doubleSelect(currentClickedRow);
+			}else{
+				jAlert("请选择一行数据！");
+			}
+		}
+		//保存客户分类(注:所属分类存了编码和id  所属地区码只存了编码   分管部门只存了id)   ?
+		function saveCustomer(){
+			//检查数据是否可用
+			var flag = saveCustomerCheck();
+			if(flag){
+				//组织数据
+				var customer=$("#saveCustomer input").serialize();
+				//保存按钮设置成不可用
+				$("#savecurrentCustomer").attr("disabled",true);
+				if(action=="add"){
+					//添加保存数据
+					$.ajax({
+						url: "customer!create.action",
+						type: 'post',
+						data:customer,
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showCustomer(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentCustomer").attr("disabled",false);
+						}
+					  });
+				}else if(action=="update"){
+					$.ajax({
+						url:"customer!update.action",
+						type:"post",
+						data:customer,
+						dataType:"json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							//重新加载本节点下的树
+							showCustomer(currentTreeNode);
+							//保存按钮设置成可用
+							$("#savecurrentCustomer").attr("disabled",false);
+						}
+					});
+				}
+				//保存完后清空数据添加数据
+				action="add";
+				//客户编码设置成可用
+				$("#ccuscode").attr("readonly",false).css("background-color","#ffffff");
+				var ccusclcode = $("#ccusclcode").val();
+				var ccusclId  = $("#ccusclId").val();
+				var ccusclName = $("#ccusclName").val();
+				//TODO 清空表单各值
+				$("#saveCustomer input").val("");
+				$("#saveCustomer input").attr("checked",false);
+				//设置选项卡中的值
+				$("#ccusclcode").val(ccusclcode);
+				$("#ccusclId").val(ccusclId);
+				$("#ccusclName").val(ccusclName);
+				//设置customerForm默认显示第一个选项卡
+				tab(1);
+				setUsedState();
+				$("#ccuscode").focus();
+			}
+		}
+		//保存客户分类检测
+		function saveCustomerCheck(){
+			var flag = true;
+			if($("#ccusclcode").val()==""){
+				jAlert("客户分类编码不能为空！","提示信息",function(){
+					$("#ccusclcode").focus();
+				});
+				return false;
+			}
+			if($("#ccuscode").val()==""){
+				jAlert("客户编号不能为空！","提示信息",function(){
+					$("#ccuscode").focus();
+				});
+				return false;
+			}
+			if($("#ccusname").val()==""){
+				jAlert("客户名称不能为空！","提示信息",function(){
+					$("#ccusname").focus();
+				});
+				return false;
+			}
+			if($("#ccusabbname").val()==""){
+				jAlert("客户简称不能为空！","提示信息",function(){
+					$("#ccusabbname").focus();
+				});
+				return false;
+			}
+			//邮政编码校验
+			if(!isnumber($("#ccuspostcode")[0])){
+				tab(2);
+				return false;
+			}
+			//银行账号不是数字校验
+			if(!isnumber($("#ccusaccount")[0])){
+				return false;
+			}
+			//邮箱格式校验
+			if(!isEmail($("#ccusemail")[0])){
+				tab(2);
+				return false;
+			}
+			if(action=="add"){
+				var customer = "customer.ccuscode="+$("#ccuscode").val();
+				//判断编码是否唯一
+				$.ajax({
+					url: "customer!isUniquenessCusClassCode.action",
+					type: 'post',
+					data:customer,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该客户编号已经被使用，请重新输入客户编号!","提示信息",function(){
+								$("#ccusclcode").focus();
+							});
+							flag = false;
+						}
+					}
+				});
+				if(!flag){
+					return false;
+				}
+				customer = "customer.ccusabbname="+$("#ccusabbname").val();
+				$.ajax({
+					url: "customer!isUniquenessCusClassCcusabbname.action",
+					type: 'post',
+					data:customer,
+					dataType: "json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						if(data.isuniqueness==false){
+							jAlert("该客户简称已经被使用，请重新输入客户简称!","提示信息",function(){
+								$("#ccusabbname").focus();
+							});
+							flag = false;
+						}
+					}
+				 });
+			}
+			return flag;
+		}
+		//添加或修改客户，调用客户分类窗体
+		function findCustomerClass(){
+			var param = 11;
+			window.parent.openWindow("basic_grid_customerClassGridRef","customer",param);
+			xaction="findCustomerClass";
+		}
+		//添加或修改客户,调用所属地区码
+		function findDirstrictClass(){
+			var param = 11;
+			window.parent.openWindow("basic_grid_dirstrictGridRef","customer",param);
+			xaction="findDirstrictClass";
+		}
+		//添加部门时，调用部门窗体
+		function findDeptment(){
+			var param = 11;
+			window.parent.openWindow("basic_grid_departmentGridRef","customer");
+			xaction="findDeptment";
+		}
+		//删除客户档案的方法
+		function deleteCustomer(){
+			var customerId = $(currentClickedRow).attr("id");
+			if(currentClickedRow==null){
+				jAlert("请选择档案!");
+				return;
+			}
+			var titleHtml = "真的要删除客户档案---"+$(currentClickedRow).find("td").eq(2).text()+"吗？";
+			jConfirm(titleHtml, "确认对话框", function(confirmflag){
+				if(confirmflag){
+					//js判断
+					var sourceValue = 	customerId;
+					var sourceTable = 	"CUSTOMER";
+					var sourceField = 	"ID";
+					var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+					if (isExits==true) {
+						jAlert("该客户档案已经被使用，不能删除!");
+					    return false;			
+					}
+					//删除按钮不可用
+					$("#deleteCustomer").attr("disabled",true);
+					$.ajax({
+						url: "customer!delete.action?customer.id="+customerId,
+						type: 'post',
+						dataType: "json",
+						async:false,
+						error:function(){
+							jAlert("请求失败!");
+						},
+						success: function(data){
+							if(data.isdelete==true){
+								//重新加载本节点下的树
+								showCustomer(currentTreeNode);
+							}else{
+								jAlert("该客户档案已经被使用，不能删除!");
+								return false;
+							}
+							//删除按钮可用
+							$("#deleteCustomer").attr("disabled",false);
+						}
+					  });
+				}
+			});
+		}
+		//编码失去焦点时自动获取助记码
+		function onTextblur(obj) {
+			if (isSpecialChar(obj)) {
+				var  codeName = $("#ccusabbname").val();
+				var helpCode = getHelpCode(codeName);
+				$("#ccushelp").val(helpCode);
+			}
+		}
+		//选择当前列
+		function selectTd(td){
+			$(td).css("border","2px dashed #ccc").siblings().css("border","1px solid #000");
+			$(td).parent().siblings().children().css("border","1px solid #000");
+		}
+		//选中当前行
+		function setTableClickedRowStyle(row){
+			//当前行
+			currentClickedRow = row;
+			$(row).children().css("backgroundColor","blue").css("color","#fff");
+			$(row).siblings().children().css("backgroundColor","#fff").css("color","#000");
+		}
+		//双击在卡片中打开选中的记录
+		function doubleSelect(row){
+			action = "update";
+			//客户编码设置成不可用
+			$("#ccuscode").attr("readonly",true).css("background-color","#ccc");
+			//当前行
+			currentClickedRow = row;
+			editId =row.id;
+			$.ajax({
+				url: "customer!queryOneCustomerById.action?customer.id="+editId,
+				type: 'post',
+				dataType: "json",
+				error:function(){
+					jAlert("请求失败!");
+				},
+				success: function(data){
+					var  customerById=data.customer;
+					$("#customerId").val(customerById.id);
+					$("#ccuscode").val(customerById.ccuscode);
+					$("#ccusname").val(customerById.ccusname);
+					$("#ccusabbname").val(customerById.ccusabbname);
+					$("#ccushelp").val(customerById.ccushelp);
+					//客户分类码
+					$("#ccusclcode").val(customerById.ccusclcode);
+					//客户分类id
+					$("#ccusclId").val(customerById.icusclid);
+					//客户分类名称
+					$("#ccusclName").val(getCustomerNameById(customerById.icusclid));
+					var district = getDistrictByCode(customerById.cdccode);
+					if(district!=null){
+						//所属地区码
+						$("#cdccode").val(customerById.cdccode);
+						//所属地区码id
+						$("#cdccodeId").val(district.id);
+						//所属地区码名称
+						$("#cdccodeName").val(district.cdcname);
+					}
+					
+					$("#ctrade").val(customerById.ctrade);
+					$("#ccusaddress").val(customerById.ccusaddress);
+					$("#ccuspostcode").val(customerById.ccuspostcode);
+					$("#ccusregcode").val(customerById.ccusregcode);
+					$("#ccusbank").val(customerById.ccusbank);
+					$("#ccusaccount").val(customerById.ccusaccount);
+					$("#ccuslperson").val(customerById.ccuslperson);
+					$("#ccusemail").val(customerById.ccusemail);
+					$("#ccusperson").val(customerById.ccusperson);
+					$("#ccusphone").val(customerById.ccusphone);
+					$("#ccusfax").val(customerById.ccusfax);
+					$("#ccusbp").val(customerById.ccusbp);
+					$("#ccushand").val(customerById.ccushand);
+					$("#ccuspperson").val(customerById.ccuspperson);
+					$("#icusdisrate").val(customerById.icusdisrate);
+					$("#ccuscregrade").val(customerById.ccuscregrade);
+					$("#icuscreline").val(customerById.icuscreline);
+					$("#ccuspaycond").val(customerById.ccuspaycond);
+					$("#ccusoaddress").val(customerById.ccusoaddress);
+					$("#ccusotype").val(customerById.ccusotype);
+					$("#ccuswhcode").val(customerById.ccuswhcode);
+					//分管部门
+					$("#ccusdepart").val(getDepartmentById(customerById.ccusdepart));
+					$("#ccusdepartId").val(strNullProc(customerById.ccusdepart));
+					$("#iarmoney").val(customerById.iarmoney);
+					//发展日期
+					$("#dcusdevdate").val(getStrDate(customerById.dcusdevdate));
+					//停用日期
+					$("#denddate").val(getStrDate(customerById.denddate));
+					//最后交易日期
+					$("#dlastdate").val(getStrDate(customerById.dlastdate));
+					$("#ilastmoney").val(customerById.ilastmoney);
+					//最后收款日期
+					$("#dlrdate").val(getStrDate(customerById.dlrdate));
+					$("#ifrequency").val(customerById.ifrequency);
+				}
+			});
+			//设置customerForm默认显示第一个选项卡
+			tab(1);
+			//如果有这个弹出框先关闭再打开
+			try{
+				closeWindow('customerForm');
+			}catch(e){
+				
+			}
+			openWindow('customerForm');
+			setUsedState();
+		}
+		//(注:所属分类存了编码和id  所属地区码只存了编码   分管部门只存了id)
+		//根据帐套号和部门id返回名称
+		function getDepartmentById(departmentId){
+			var departmentName = "";
+			if(departmentId!=null){
+				var pram="department.id="+departmentId;
+				$.ajax({
+					url:"department!queryOneDepartment",
+					type:"post",
+					datatype:"json",
+					data:pram,
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success:function(data,status){
+						departmentName = data.department.cdepname;
+					}
+				});
+				
+			}
+			return departmentName;
+		}
+		//根据部门编号获得地区对象
+		function getDistrictByCode(Districtcode){
+			var district=null;
+			if(Districtcode!=null){
+			  	$.ajax({
+			  		url:"districtClass!queryDistrictClassByCode.action",
+			  		data:{code:Districtcode},
+			  		type:"post",
+			  		dataType:"json",
+			  		async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+			  		success:function(data){
+			  			district = data.districtClass
+			  		}
+			  	});	
+			}
+			return district;
+		}
+		//根据id获取客户分类名称
+		function getCustomerNameById(customerClassId){
+			var customerName="";
+			if(customerClassId!=null){
+			  	$.ajax({
+			  		url:"customerClass!queryCustomerClassById.action",
+			  		data:{id:customerClassId},
+			  		type:"post",
+			  		dataType:"json",
+			  		async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+			  		success:function(data){
+			  			customerName = data.customerClass.cccname;
+			  		}
+			  	});	
+			}
+			return customerName;
+		}
+		//"下张"按钮函数
+		function nextInfo(){
+			var thisrow = $(currentClickedRow).next()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"上张"按钮函数
+		function prevInfo(){
+			var thisrow = $(currentClickedRow).prev()[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"首张"按钮函数
+		function firstInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:first")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		//"末张"按钮函数
+		function lastInfo(){
+			var thisrow = $(currentClickedRow).parent().find("tr:last")[0];
+			setTableClickedRowStyle(thisrow);
+			doubleSelect(thisrow);
+		}
+		/*设置首页上页下页末页按钮的可用状态*/
+		function setUsedState(){
+			if(currentClickedRow==null){
+				$("#nextCustomer").attr("disabled",true);
+				$("#lastCustomer").attr("disabled",true);
+				$("#firstCustomer").attr("disabled",true);
+				$("#prevCustomer").attr("disabled",true);
+				return;
+			}
+			if(typeof($(currentClickedRow).next()[0])=="undefined"){
+				$("#nextCustomer").attr("disabled",true);
+				$("#lastCustomer").attr("disabled",true);
+			}else{
+				$("#nextCustomer").attr("disabled",false);
+				$("#lastCustomer").attr("disabled",false);
+			}
+			if(typeof($(currentClickedRow).prev()[0])=="undefined"){
+				$("#firstCustomer").attr("disabled",true);
+				$("#prevCustomer").attr("disabled",true);
+			}else{
+				$("#firstCustomer").attr("disabled",false);
+				$("#prevCustomer").attr("disabled",false);
+			}
+		}
+	</script>
+  </head>
+  <body  style="margin:0px 0px 0px 0px;padding:0px 0px 0px 5px;font-size:12px;background-color: #D4D0C8;" >
+	<div  id="customerForm" style="margin-left: 180px;margin-top: 10px; padding: auto; display: none;" type="window" width="400" height="350" title="客户档案卡片">
+		<!--增加客户档案的div-->
+		<div class="wrap" id ="addCustomer" style="z-index: 200;position:absolute;margin-left:0px;margin-top:0px;">
+			<div class="buttongroup" style="background:#f0f0f0;">
+				<div class="group">
+					<div><input type="button" id ="savecurrentCustomer" value="保存"  style="background-image:url('../../../images/icon/save.gif');" onclick="saveCustomer()"/></div>
+				</div>
+				<div class="group">
+					<div><input type="button" value="首张" id="firstCustomer" onclick="firstInfo();" style="background-image:url('../../../images/icon/firstcard.gif');"/></div>
+					<div><input type="button" value="上张" id="prevCustomer" onclick="prevInfo();" style="background-image:url('../../../images/icon/prevcard.gif');"/></div>
+					<div><input type="button" value="下张" id="nextCustomer" onclick="nextInfo();" style="background-image:url('../../../images/icon/nextcard.gif');"/></div>
+					<div><input type="button" value="末张" id="lastCustomer" onclick="lastInfo();" style="background-image:url('../../../images/icon/lastcard.gif');"/></div>
+				</div>
+				<div class="group">
+					<div>
+						<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="closeWindow('customerForm');"/>
+					</div>
+				</div>
+			</div>
+			<div style="border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+		    <!-- 内容 start -->
+			<div class="z_content" >
+		    	<div class="z_content_nav">
+		        	<ul>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" style="background:url(../../../images/basic/z_connav_bg.png) no-repeat 0 -19px; color:#000; font-weight:900;"  onclick="tab(1)" id="connav_1">基本</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(2)" id="connav_2">联系</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(3)" id="connav_3">信用</a></li>
+		                <li><a href="javascript:void(0);" onfocus="this.blur();" onclick="tab(4)" id="connav_4">其他</a></li>
+		            </ul>
+		        </div>
+		        <div class="z_content_box" id ="saveCustomer">
+		        	<!-- 基本页面 ↓-->
+		            <div id="conbox1">
+						&emsp;客户编号&emsp;<input id="ccuscode" type="text" name="customer.ccuscode" size="40" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;客户名称&emsp;<input id="ccusname" type="text" name="customer.ccusname" size="40"  onblur = "isSpecialChar(this)"/><br/>
+						&emsp;客户简称&emsp;<input id="ccusabbname" type="text" name="customer.ccusabbname" size="40" onblur= "onTextblur(this);"/><br/>
+						&emsp;客户助记码<input id="ccushelp" type="text" name="customer.ccushelp" size="40" onblur = "isSpecialChar(this)"/><br/>
+						&emsp;所属分类码<input id="ccusclcode" type="text" name="customer.ccusclcode" size="15" onfocus="dofocustoenter('CustomerClass',this,'xaction','findCustomerClass','','')"/>
+						<input id="ccusclId" type="hidden" name="customer.icusclid" />
+						<input id="customerId" type="hidden" name="customer.id" />
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findCustomerClass()"/>				
+						<input id="ccusclName" type="text"  size="18" style="background-color:#ccc" readonly="readonly" disabled="disabled"/><br/>
+						&emsp;所属地区码<input id="cdccode" name="customer.cdccode" type="text" size="15" onfocus="dofocustoenter('DistrictClass',this,'xaction','findDirstrictClass','','')"/>
+						<input id="cdccodeId" type="hidden" />
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findDirstrictClass()"/>				
+						<input id="cdccodeName" type="text"  size="18"  readonly="readonly" /><br/>
+						&emsp;所属行业&emsp;<input id="ctrade" type="text" name="customer.ctrade" size="40"/><br/>
+						&emsp;税号&emsp;&emsp;&emsp;<input id="ccusregcode" type="text" name="customer.ccusregcode" size="14"/>
+						&emsp;法人&emsp;&emsp;<input id="ccuslperson" type="text" name="customer.ccuslperson" size="13"/><br/>
+						&emsp;开户银行&emsp;<input id="ccusbank" type="text" name="customer.ccusbank" size="14"/>
+						&emsp;银行账号<input id="ccusaccount" type="text" name="customer.ccusaccount" size="13" onblur="isnumber(this)"/><br/>
+		            </div>
+		            <!-- 联系页面 ↓-->
+		            <div id="conbox2">
+		               <table border="0" cellpadding="0">
+		            	<tr>
+		            		<td>地址</td>
+		            		<td colspan="3"><input id="ccusaddress" type="text" name="customer.ccusaddress" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>邮政编码</td>
+		            		<td><input id="ccuspostcode" type="text" name="customer.ccuspostcode" size="14" onblur="isnumber(this)"></td>
+		            		<td>联系人</td>
+		            		<td><input id="ccusperson" type="text" name="customer.ccusperson" size="12"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>Email地址</td>
+		            		<td colspan="3"><input id="ccusemail" type="text" name="customer.ccusemail" size="40" onblur="isEmail(this);"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>电话</td>
+		            		<td colspan="3"><input id="ccusphone" type="text" name="customer.ccusphone" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>传真</td>
+		            		<td colspan="3"><input id="ccusfax" type="text" name="customer.ccusfax" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>MSN</td>
+		            		<td colspan="3"><input id="ccusbp" type="text" name="customer.ccusbp" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>手机</td>
+		            		<td colspan="3"><input id="ccushand" type="text" name="customer.ccushand" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>到货地址</td>
+		            		<td colspan="3"><input id="ccusoaddress" type="text" name="customer.ccusoaddress" size="40"></td>
+		            	</tr>
+		            	<tr>
+		            		<td>到货方式</td>
+		            		<td><input id="ccusotype" type="text" name="customer.ccusotype" size="12"></td>
+		            		<td>到货仓库</td>
+		            		<td><input id="ccuswhcode" type="text" name="customer.ccuswhcode" size="12"></td>
+		            	</tr>
+		            </table>
+		            <!-- 
+		            	&emsp;地址&emsp;&emsp;<input id="ccusaddress" type="text" name="customer.ccusaddress" size="40"><br/>
+		            	&emsp;邮政编码<input id="ccuspostcode" type="text" name="customer.ccuspostcode" size="14">
+		            	&emsp;联系人&emsp;<input id="ccusperson" type="text" name="customer.ccusperson" size="15"><br/>
+		            	&emsp;Email地址<input id="ccusemail" type="text" name="customer.ccusemail" size="15"><br/>
+		            	&emsp;电话&emsp;&emsp;<input id="ccusphone" type="text" name="customer.ccusphone" size=""><br/>
+		            	&emsp;传真&emsp;&emsp;<input id="ccusfax" type="text" name="customer.ccusfax" size=""><br/>
+		            	&emsp;MSN&emsp;&emsp;<input id="ccusbp" type="text" name="customer.ccusbp" size=""><br/>
+		            	&emsp;手机&emsp;&emsp;<input id="ccushand" type="text" name="customer.ccushand" size=""><br/>
+		            	&emsp;发货地址<input id="ccusoaddress" type="text" name="customer.ccusoaddress" size="40"><br/>
+		            	&emsp;发货方式<input id="ccusotype" type="text" name="customer.ccusotype" size="12">
+		            	&emsp;发货仓库<input id="ccuswhcode" type="text" name="customer.ccuswhcode" size="12">
+		            -->
+		            </div>
+		            <!-- 信用页面 ↓-->
+		            <div id="conbox3">
+						&emsp;应收余额&emsp;&emsp;<input id="iarmoney" type="text" name="customer.iarmoney" size="40"><br/>
+						&emsp;扣率&emsp;&emsp;&emsp;&emsp;<input id="icusdisrate" type="text" name="customer.icusdisrate" size="40"><br/>
+						&emsp;信用等级&emsp;&emsp;<input id="ccuscregrade" type="text" name="customer.ccuscregrade" size="40"><br/>
+						&emsp;信用额度&emsp;&emsp;<input id="icuscreline" type="text" name="customer.icuscreline" size="40"><br/>
+						&emsp;付款条件&emsp;&emsp;<input id="ccuspaycond" type="text" name="customer.ccuspaycond" size="40"><br/>
+						&emsp;最后交易日期<input id="dlastdate" type="text" name="customer.dlastdate" onClick="WdatePicker()" size="12">
+						&emsp;最后交易金额<input id="ilastmoney" type="text" name="customer.ilastmoney" size="11"><br/>
+						&emsp;最后收款日期<input id="dlrdate" type="text" name="customer.dlrdate" onClick="WdatePicker()" size="12">
+						&emsp;最后收款金额<input id="ilrmoney" type="text" name="customer.ilrmoney" size="11">
+		            </div>
+		            <!-- 其他页面 ↓-->
+		            <div id="conbox4">
+		            	&emsp;分管部门<input id="ccusdepart" type="text"  size="12" onfocus="dofocustoenter('Department',this,'xaction','findDeptment','','')">
+		            	<input id="ccusdepartId" type="hidden" name="customer.ccusdepart"/>
+						<input type="image" src = "../../../images/basic/select.jpg" onclick="findDeptment()"/>				
+						
+		            	&emsp;专营业务员<input id="ccuspperson" type="text" name="customer.ccuspperson" size="12"><br/>
+		            	&emsp;发展日期<input id="dcusdevdate" type="text" name="customer.dcusdevdate" onClick="WdatePicker()" size="12">
+		            	&emsp;&emsp;&emsp;停用日期&emsp;<input id="denddate" type="text" name="customer.denddate" onClick="WdatePicker()" size="12"><br/>
+		            	&emsp;使用频度<input id="ifrequency" type="text" name="customer.ifrequency" size="12">
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+	<!--增加档案结束  -->
+	<div style="width:800px;height:300px;background-color:#D4D0C8;font-size: 12px;margin-top:5px;">
+		<div class="buttongroup">
+			<div class="group">
+				<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+				<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+				<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" id ="showAddCustomer" value="增加" onclick="showAddCustomer()" style="background-image:url('../../../images/icon/add.gif');"/></div>
+				<div><input type="button" id ="showUpdateCustomer" value="修改" onclick="showUpdateCustomer()" style="background-image:url('../../../images/icon/update.gif');"/></div>
+				<div><input type="button" id ="deleteCustomer" value="删除" onclick="deleteCustomer()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="过滤" disabled="disabled" style="background-image:url('../../../images/icon/screening.gif');"/></div>
+				<div><input type="button" value="定位" disabled="disabled" style="background-image:url('../../../images/icon/return.gif');"/></div>
+				<div><input type="button" value="刷新" disabled="disabled" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="格式" disabled="disabled" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+				<div><input type="button" value="信用" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="并户" disabled="disabled" style="background-image:url('../../../images/icon/agent.gif');"/></div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button" value="帮助"  style="background-image:url('../../../images/icon/help.gif');" onclick="findDeptment()"/>
+				</div>
+				<div>
+					<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('customer');"/>
+				</div>
+			</div>
+		</div>
+		<hr style="margin-top:2px;*margin-top:-3px;"/>
+		<div style="margin-top:5px;*margin-top:-4px;width:100%;">
+			<div style="margin-left:0px;width:150px;float:left;height:320px;background-color:#ffffff;border-style:inset;border-color:#eee;border-width:2px;float:left;overflow:auto;">
+				<ul id="cusClassTree" class="ztree" style="margin-top:0px;margin-left:-20px;width:150px;height:220px;"></ul>
+			</div>
+			<div style="background-color: #D4D0C8;border:2px inset #ccc;overflow-x:scroll;height:320px;width:80%;float:right;">
+				<table class="datatable" id="payConditionTable" border="2" cellspacing="0">			
+					<tr id="datatableheader" bgcolor="#f0f0f0">
+						<td nowrap>客户编号</td>
+						<td nowrap>客户名称</td>
+						<td nowrap>客户简称</td>
+						<td nowrap>助记码</td>
+						<td nowrap>所属分类码</td>
+						<td nowrap>所属地区码</td>
+						<td nowrap>所属行业</td>
+						<td nowrap>地址</td>
+						<td nowrap>邮政编码</td>
+						<td nowrap>纳税人登记</td>
+						<td nowrap>开户银行</td>
+						<td nowrap>银行账号</td>
+						<td nowrap>发展日期</td>
+						<td nowrap>法人</td>
+						<td nowrap>Email地址</td>
+						<td nowrap>联系人</td>
+						<td nowrap>电话</td>
+						<td nowrap>传真</td>
+						<td nowrap>MSN</td>
+						<td nowrap>手机</td>
+						<td nowrap>专管业务员</td>
+						<td nowrap>扣率</td>
+						<td nowrap>信用等级</td>
+						<td nowrap>信用额度</td>
+						<td nowrap>付款条件</td>
+						<td nowrap>发货地址</td>
+						<td nowrap>发货方式</td>
+						<td nowrap>发货仓库</td>
+						<td nowrap>分管部门</td>
+						<td nowrap>应收余额</td>
+						<td nowrap>最后交易日期</td>
+						<td nowrap>最后交易金额</td>
+						<td nowrap>最后收款日期</td>
+						<td nowrap>最后收款金额</td>
+						<td nowrap>停用日期</td>
+						<td nowrap>停用频度</td>
+						<td nowrap>自定义项1</td>
+						<td nowrap>自定义项2</td>
+						<td nowrap>自定义项3</td>
+						<td nowrap>价格等级</td>
+					</tr>
+					<tbody id="include" style="background-color: #FFFFFF;font-size: 12px" >
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="bmgz">
+	</body>
+	<script type="text/javascript" src="../../../js/winui/plugin/winui.window.js"></script>
+	<script type="text/javascript">
+		/***
+		 * 说明：下面deliverValue()函数必须放到winui.window.js引入代码下面，
+		 * 因为winui.window.js里有deliverValue()的声明，如果不写在下面，会被winui.window.js覆盖。
+		 */
+		//子窗体反参回调函数
+		function deliverValue(valueObject){
+			//winui.window.js deliverValue 函数的重写，此代码是必须的，请不要删除！并且，位置必须保持在winui.window.js引入之后
+			switch(xaction){
+				//如果是查询客户分类
+				case "findCustomerClass":
+					$("#ccusclId").val(valueObject.selId);
+					$("#ccusclcode").val(valueObject.selCode);
+					$("#ccusclName").val(valueObject.selName);
+					break;
+				//如果是查询地区分类
+				case "findDirstrictClass":
+					$("#cdccodeId").val(valueObject.selId);
+					$("#cdccode").val(valueObject.selCode);
+					$("#cdccodeName").val(valueObject.selName);
+					break;
+				//如果是查询部门分类
+				case "findDeptment":
+					$("#ccusdepartId").val(valueObject.id);
+					//$("#cdccode").val(valueObject.selCode);
+					$("#ccusdepart").val(valueObject.cname);
+					break;
+			}
+		}
+	</script>
+</html>

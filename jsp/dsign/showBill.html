@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>凭证查询列表</title>
+	<link rel="stylesheet" type="text/css" href="../../css/public.css">
+	<style type="text/css">
+	
+		.lefttable {border-collapse: collapse;cursor:default;margin-left:0px;width:150px;}
+		.lefttable thead tr{height:24px;}
+		.lefttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.lefttable tbody tr {background-color:#ffffff;}
+		.lefttable tbody tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+		
+		
+		.righttable {border-collapse: collapse;cursor:default;width:595px;margin-left:150px;}
+		.righttable thead tr{height:24px;}
+		.righttable thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		.righttable tbody tr {background-color:#ffffff;}
+		.righttable tbody tr td{overflow-x:hidden;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;text-align:center;}
+		
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../js/publicFunction.js"></script>
+  
+	<script type="text/javascript" src="js/showbill.js"></script>
+	<script type="text/javascript" src="js/accvouchKeyDomain.js"></script>
+	
+	<script type="text/javascript">
+	var valueObject = window.parent.valueMap.get("dsign_query_showbill");
+	queryShowBill();
+
+	function tableScroll(c){
+		document.getElementById("lefttable").style.marginTop="-"+parseInt(c.scrollTop)+"px";
+	}
+	</SCRIPT>
+</head>
+<body>
+	<div class="container" id="container" style="width:600px;height:354px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:574px;height:340px;margin-left:10px;margin-top:8px;">
+			
+			<div style="height:18px;">
+				<div id="billcount" style="width:100px;height:100%;float:left;">
+					凭证共0张
+				</div>
+				<div style="width:120px;height:100%;float:left;">
+					<div>
+						<div style="width:20px;height:12px;border:1px solid #000000;background-color:#80ffff;float:left;"></div><div id="audited">已审核0张</div>
+					</div>
+				</div>
+				<div style="width:120px;height:100%;float:left;">
+					<div>
+						<div style="width:20px;height:12px;border:1px solid #000000;background-color:#ffffff;float:left;"></div><div id="waitaudit">未审核0张</div>
+					</div>
+				</div>
+			</div>
+			
+			<div onscroll="tableScroll(this);" style="height:280px;width:100%;border:1px solid #000000;overflow-x:scroll;overflow-y:auto;background-color:#808080;">
+				<div style="position:absolute;z-index:200;height:264px;overflow:hidden;float:left;">
+					<table id="lefttable" border=1 class="lefttable">
+						<thead>
+							<tr>
+								<td width="70">制单日期</td><td width="80">凭证编号</td>
+							</tr>
+						</thead>
+						<tbody id="left_table_datarows">
+						</tbody>
+					</table>
+				</div>
+				<div style="position:relative;z-index:100;float:left;">
+					<table border=1 class="righttable">
+						<thead>
+							<tr>
+								<td width="115">摘要</td><td width="90">借方金额合计</td><td width="90">贷方金额合计</td><td width="60" style="">制单人</td><td width="60">审核人</td><td width="70">系统名</td><td width="80">备注</td>
+							</tr>
+						</thead>
+						<tbody id="right_table_datarows">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div style="height:40px;text-align:right;">
+				<div style="margin-right:0px;margin-top:20px;">
+					<input type="button" value="确定" onclick = "beginQuery()" />&nbsp;
+					<input type="button" value="退出" onclick="javascript:window.parent.closeWindow('dsign_query_showbill');"/>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+var rtd = document.getElementById("right_table_datarows");
+
+//当前被点击选中的行全局变量
+var currentSeletedRow=null;
+for(var i=0;i<rtd.rows.length;i++){
+	rtd.rows[i].onclick=function(){
+		var evt=(window.event || event);//获得事件
+		var evtsrc = (evt.srcElement || evt.target);
+		if(currentSeletedRow!=null){
+			currentSeletedRow.style.backgroundColor="#fff";
+			currentSeletedRow.style.color="#000";
+		}
+		evtsrc.parentNode.style.backgroundColor="#00f";
+		evtsrc.parentNode.style.color="#fff";
+		currentSeletedRow=evtsrc.parentNode;
+	}
+}
+
+
+
+
+</script>
+</html>

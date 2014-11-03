@@ -1,0 +1,641 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title> 凭证类别 </title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<script type="text/javascript" src="../../../js/tableRef.js"></script>
+	
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<style type="text/css">
+			#dsignConditionTable {width:390px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+			#dsignConditionTable td{height:16px;line-height:16px;border:1px solid #ccc;border-style:outset;}
+			#dsignConditionTableheader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+		</style>
+		<script type="text/javascript">
+		//程序入口
+		$(document).ready(function(){
+			queryAllDsigns();
+		});
+		//查询所有凭证类别
+		function queryAllDsigns(){
+			$("#include").html("");
+			var strHtml = "";
+			$.ajax({
+				url:"dsignCategory!queryList",
+				type:"post",
+				datatype:"json",
+				async:false,
+				success:function(data){
+					var dsignList=data.dsigns;
+					for(var i=0;i<dsignList.length;i++){
+						var flag=getTypeName(dsignList[i].itype);
+						var strCodes = getDsignCodes(dsignList[i].csign);
+						strHtml+="<tr id="+dsignList[i].id+" check='false' csign ="+dsignList[i].csign+" name ="+dsignList[i].isignseq+" bgcolor='#ffffff' >";
+						strHtml+="	<td>"+dsignList[i].csign+"</td>";
+						strHtml+="	<td>"+dsignList[i].ctext+"</td>";
+						strHtml+="	<td selectValue="+dsignList[i].itype+">"+flag+"</td>";
+						strHtml+="	<td>"+ strNullProc(strCodes) + "</td>";
+						strHtml+="</tr>";
+					}
+					$("#include").append(strHtml);
+					$("#addDsign").empty();
+					//绑定事件
+					initializeEven();
+					if($("#include tr").length>0){
+						//选中第一行
+						$("#include >tr:first")[0].click();
+					}
+					//保存按钮不可用
+					$("#saveDsign").attr("disabled",true);
+				}
+			});
+		}
+		//绑定事件
+		function initializeEven(){
+			//给行绑定选中事件
+	    	$("#include >tr").unbind("click").bind("click",function(){
+	    		if($(this).attr("check")=="false"){
+	    			var flag = checkDsgin();
+	    			if(flag){
+	    	    		$(this).attr("check",true).css("backgroundColor","#51b2f6").siblings().css("backgroundColor","#ffffff").attr("check",false);
+	    	    		
+	    	    		var sourceValue = $(this).attr("id");
+	    	    		var sourceTable = 	"DSIGN";
+	    	    		var sourceField = 	"CSIGN";
+	    	    		if (sourceValue != "addDsign"){
+	    	    			var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+		    	    		if (isExits==true) {
+		    	    			$(this).attr("ifUsed",true);
+		    	    			document.getElementById("used").style.display = "block";	
+		    	    		}
+		    	    		else {
+		    	    			$(this).attr("ifUsed",false);
+		    	    			document.getElementById("used").style.display = "none";	
+		    	    		}
+	    	    		}else{
+	    	    			$(this).attr("ifUsed",false);
+	    	    			document.getElementById("used").style.display = "none";    	    			
+	    	    		}
+	    	    		
+	    			}
+	    		}
+	    	});
+	    	//给行绑定鼠标移上事件
+	    	$("#include >tr").unbind("mousemove").bind("mousemove",function(){
+	    		if($(this).attr("check")=="false"){
+		    		$(this).css("backgroundColor","#d5f4fe");
+	    		}
+	    	});
+	    	//给行绑定鼠标移出事件
+	    	$("#include >tr").unbind("mouseout").bind("mouseout",function(){
+	    		if($(this).attr("check")=="false"){
+	    			$(this).css("backgroundColor","#ffffff");
+	    		}
+	    	});
+	    	//为单元格添加双击事件
+			$("#include").find("td").each(function(index){
+				var cellIndex= index%4;
+				//绑定双击事件
+				$(this).unbind("dblclick").bind("dblclick",function(){
+					//如果没有被使用则不能修改
+					if($(this).parent().attr("ifUsed")=="false"){
+						editorDsign(this,cellIndex);	
+					}
+				});				
+	    	});
+		}
+		//检查凭证
+		function checkDsgin(){
+			var flag = true;
+			var tdflag = true;
+			$("#include >tr").each(function(){
+	    		//检查当前选中的行的“限制科目”列是否有input标记，有的话将值赋给外层TD
+	    		if($(this).attr("check")=="true"){
+	    			var td1 = $(this).find("td").eq(0);
+	    			var td2 = $(this).find("td").eq(1);
+	    			if(td1.text()==""){
+	    				jAlert("类别字不能为空!","提示信息",function(){
+		    				editorDsign(td1[0],0);
+	    				});
+	    				tdflag =  false;
+	    			}else if(td2.text()==""){
+	    				jAlert("类别名称不能为空!","提示信息",function(){
+		    				editorDsign(td2[0],1);
+	    				});
+	    				tdflag =  false;
+	    			}
+	    			if(!tdflag){
+	    				return false;
+	    			}
+		    		var td3 = $(this).find("td").eq(2);
+		    		var td4 = $(this).find("td").eq(3);
+		    		if(td4.find("input").length>0){
+		    			td4.html(td4.find("input").eq(0).val());
+		    		}
+		    		if(td3.attr("selectValue")>0&&td4.text()==""){
+		    			jAlert("凭证类别有限制,必须输入限制科目!");
+		    			flag = false;
+		    		}else if(td3.attr("selectValue")==0&&td4.text()!=""){
+		    			jAlert("凭证类别无限制,不能输入限制科目!");
+		    			flag = false;
+		    		}else if(td4.text()!=""){
+		    			var indexflag = td4.text().indexOf("，");
+		    			if(indexflag!=-1||td4.text().lastIndexOf(",")==(td4.text().length-1)){
+		    				jAlert("科目编码有误!");
+		    				flag = false;
+		    			}else{
+		    				$.ajax({
+							    url: "code!isCodesExist.action",
+							    type: 'post',
+							    data:{listcodes:td4.text()},
+							    dataType:"json",
+							    async:false,
+							    success:function(jsondata){
+							    	if(!jsondata.existFlag){
+							    		jAlert("科目编码有误!");
+							    		flag = false;
+							    	}
+							    }
+		    				});
+		    			}
+		    		}
+		    		if(!flag){
+			    		//设置编辑状态
+			    		editorDsign(td4[0],3);
+			    		td4.find("input").eq(0).focus();
+		    		}
+	    		}
+			});
+			if(!tdflag){
+				flag=false;
+			}
+			return flag;
+		}
+		//当双击单元格时启用编辑状态:type=0或者type=1 文本框编辑状态,type=2 下拉列表框编辑状态,type=3 参照编辑状态
+		function editorDsign(currentCell,type){
+			//编辑状态
+			$("#saveDsign").removeAttr("disabled",true);
+			var strHtml = "";
+			var Col = $(currentCell).prevAll().length; //列号从0开始编码
+			Col = Number(Col)+1; 
+			var signid = $(currentCell).parent().attr("id");
+			
+			if(type==0||type==1){
+				strHtml = "<input type='text' style='width:99%;height:12px;border:none;sfont-size:14px;' value='"+$(currentCell).text()+"'/>";
+				$(currentCell).empty().append(strHtml);
+				$(currentCell).find("input").focus().unbind("blur").bind("blur",function(){
+					var currentValue=$(this).val();
+					var flag =false;
+					if (Col==1 && signid != "addDsign"){
+						if(currentValue==""){
+							if(type==0){
+								jAlert("类别字不能为空!");
+							}else{
+								jAlert("类别名称不能为空!");
+							}
+							flag = true;
+						}
+						else {
+						   currentValue = $.trim(currentValue);
+						}	
+					}					
+					//判断时候有重复的类别字和类别名称
+					$(currentCell).parent().siblings().each(function(){
+						//兄弟元素的类别字或者类别名称
+						var cdsign = $(this).find("td").eq(type).text();
+						if(currentValue==cdsign){
+							if(type==0){
+								jAlert("类别字不能重复!");
+							}else{
+								jAlert("类别名称不能重复!");
+							}
+							$(currentCell).find("input").val("");
+							flag = true;
+						}
+						
+					});
+					
+					//检查凭证字是否被引用	
+					
+					if (Col==1){
+						if (signid !="addDsign"){
+							if (currentValue != $(currentCell).parent().attr("csign")){
+								
+								if (isExitsTableRef(signid, "dsign", "csign") == true){
+									jAlert("类别字已经使用，不能编辑！");
+									$(currentCell).text($(currentCell).parent().attr("csign"));
+								}
+							}
+						}
+					}
+					
+					
+					if(flag){
+						$(currentCell).find("input").eq(0).focus();
+						return false;
+					}
+					changeTableState(this,type);
+				});
+			}else if(type==2){
+				strHtml+='<select name="select" style="width:99%;height:18px;">';
+				strHtml+='	<option value="0">无限制</option>';
+				strHtml+='	<option value="1">借方必有</option>';
+				strHtml+='	<option value="2">贷方必有</option>';
+				strHtml+='	<option value="3">凭证必无</option>';
+				strHtml+='	<option value="4">凭证必有</option>';
+				strHtml+='	<option value="5">借方必无</option>';
+				strHtml+='	<option value="6">贷方必无</option>';
+				strHtml+='</select>';
+				$(currentCell).empty().append(strHtml);
+				
+				$(currentCell).find("select").val($(currentCell).attr("selectValue")).focus().unbind("blur").bind("blur",function(){changeTableState(this,type)});
+			}else if(type==3){
+				strHtml = "<input type='text' id='codeSelect' value='"+$(currentCell).text()+"' style='border:none;height:14px;width:114px;' /><input type='button' class='finder' onclick=\"window.parent.openWindow('dsign_subjectsreference','finance_dsign');\"/>";
+				$(currentCell).empty().append(strHtml);
+				$(currentCell).find("input").eq(0).focus();
+				//.unbind("blur").bind("blur",function(){changeTableState(this,type)});
+			}else{
+				jAlert("参数错误!");
+			}
+		}
+		//表格编辑状态变回表格状态obj:编辑控件 type:0,1,3 文本框  2选中框
+		function changeTableState(obj,type){
+			switch(type){
+			case 0:
+				$(obj).parent().html($(obj).val());
+				break;
+			case 1:
+				$(obj).parent().html($(obj).val());
+				break;
+			case 2:
+				var value = $(obj).find('option:selected').val();
+				var text = $(obj).find('option:selected').text();
+				$(obj).parent().attr("selectValue",value).html(text);
+				break;
+			case 3:
+				$(obj).parent().html($(obj).val());
+				break;
+			}
+		}
+		//将数据库中存储的限制类型转换成限制类型的名称
+		function getTypeName(typeValue){
+			typeValue = typeValue*1;
+			var typeName = "";
+			switch(typeValue){
+				case 0:
+					typeName ="无限制";
+					break;
+				case 1:
+					typeName ="借方必有";
+					break;
+				case 2:
+					typeName ="贷方必有";
+					break;
+				case 3:
+					typeName ="凭证必无";
+					break;
+				case 4:
+					typeName ="凭证必有";
+					break;
+				case 5:
+					typeName ="借方必无";
+					break;
+				case 6:
+					typeName ="贷方必无";
+					break;
+			}
+			return typeName;
+		}
+		/**
+		 * 得到受控科目
+		 * @param accid 账套id
+		 * @param csign 凭证类别
+		 */
+		function getDsignCodes(csign) {
+			var strCodes = "";
+			var param = "dsigns.csign=" + csign;
+			$.ajax({
+				url:"dsignsCode!queryList",
+				type:"post",
+				datatype:"json",
+				data:param,
+				async:false,
+				success:function(data){
+					var dsignsList = data.dsignsList;
+					var length = dsignsList.length;
+					if (length==0) {
+						strCodes = "";
+					}
+					else if (length==1) {
+						strCodes =  dsignsList[0].ccode;
+					}
+					else  {
+						for (var i = 0; i<length-1; i++) {
+							strCodes = strCodes + dsignsList[i].ccode + ",";
+						}
+						strCodes = strCodes + dsignsList[length-1].ccode;
+					}
+				}
+				});
+			return strCodes;
+			
+		}
+		//点击退出按钮关闭凭证类别窗体
+		function exitWindow(){
+			window.parent.closeWindow('finance_dsign');
+		}
+		//删除选中行
+		function delDsign(){
+			var flag = false;
+			$("#include >tr").each(function(index){
+				if($(this).attr("check")=="true"){
+					flag=true;
+				}
+			})
+			if(!flag){
+				jAlert("请选择行!");
+				return false;
+			}
+			jConfirm("确定删除吗?", "确认对话框", function(confirmflag){
+				if(confirmflag){
+					$("#include >tr").each(function(index){
+						if($(this).attr("id")!="addDsign"&&$(this).attr("check")=="true"){
+							//js判断
+							var sourceValue = 	$(this).attr("id");
+							var sourceTable = 	"DSIGN";
+							var sourceField = 	"CSIGN";
+							var csign =$(this).attr("csign");
+							var param = "&dsign.csign=" + csign;
+							var isExits = isExitsTableRef(sourceValue, sourceTable, sourceField);
+							if (isExits==true) {
+								jAlert("该凭证类别已经被使用，不能删除!");
+							    return false;			
+							}else {
+								//删除按钮不可用
+								$("#deleteDsign").attr("disabled",true);
+								$.ajax({
+								    url: "dsignCategory!delete.action?dsign.id="+sourceValue,
+								    type: 'post',
+								    dataType: "json",
+								    data:param,
+								    async:false,
+								    success: function(data){
+								    	if(data.isdelete==true){
+											jAlert("删除成功！");
+										}else{
+											jAlert("该凭证类别已经被使用，不能删除!");
+											return false;
+										}
+								    	queryAllDsigns();
+								    	//删除按钮不可用
+										$("#deleteDsign").attr("disabled",false);
+								    }
+								 });
+							}
+						}else if($(this).attr("id")=="addDsign"){
+							//刷新
+							queryAllDsigns()
+						}
+					})
+				}
+			});
+		}
+		//保存凭证类别
+		function saveDsignCategory(){
+			//检查保存是否符合条件
+			var ckeckflag = checkDsgin();
+			if(ckeckflag){
+				//保存按钮不可用
+				$("#saveDsign").attr("disabled",true);
+				var len = $("#addDsign >td").length;
+				var flag = false;
+				if(len>0){
+					var csign =$("#addDsign >td").eq(0).text();
+					var ctext =$("#addDsign >td").eq(1).text();         
+					var itype =$("#addDsign >td").eq(2).attr("selectValue");
+					var codes =$("#addDsign >td").eq(3).text();
+					$("#include >tr").each(function(){
+						var updateCtext = $(this).find("td").eq(1).text();
+						if(updateCtext==""){
+							flag=true;
+						}
+					});
+					if(ctext==""||flag){
+						jAlert("类别名称不能为空!");
+						return false;
+					}
+					var strPram = "&dsign.csign="+csign
+					+"&dsign.ctext="+ctext
+					+"&dsign.itype="+itype
+					+"&codes="+codes;
+					$("#include >tr").each(function(index){
+						if($(this).attr("id")!="addDsign"){
+							csign =$(this).find("td").eq(0).text();
+							ctext =$(this).find("td").eq(1).text();         
+							itype =$(this).find("td").eq(2).attr("selectValue");
+							codes =$(this).find("td").eq(3).text();
+							id = $(this).attr("id");
+							strPram +="&dsigns["+index+"].csign="+csign
+							+"&dsigns["+index+"].id="+id
+							+"&dsigns["+index+"].ctext="+ctext
+							+"&dsigns["+index+"].itype="+itype
+							+"&dsigns["+index+"].isignseq="+index
+							+"&listCode["+index+"]="+codes;
+						}
+					});
+					if(strPram==""){
+						return false;
+					}
+					strPram = strPram.substr(1);
+					$.ajax({
+						url:"dsignCategory!saveOrUpdate.action",
+						type:"post",
+						datatype:"json",
+						data:strPram,
+						async:false,
+						success:function(data,status){
+							jAlert("保存成功！");
+						}
+					});
+				}else{
+					var len = $("#include >tr").length;
+					if(len>0){
+						$("#include >tr").each(function(){
+							var updateCtext = $(this).find("td").eq(1).text();
+							var updateCsign=$(this).find("td").eq(0).text();
+							if(updateCtext==""||updateCsign==""){
+								flag=true;
+							}
+						});
+						if(flag){
+							jAlert("类别字或类别名称不能为空!");
+							return false;
+						}
+						var strPram = "";
+						$("#include >tr").each(function(index){
+							if($(this).attr("id")!="addDsign"){
+								csign =$(this).find("td").eq(0).text();
+								ctext =$(this).find("td").eq(1).text();         
+								itype =$(this).find("td").eq(2).attr("selectValue");
+								codes =$(this).find("td").eq(3).text();
+								id = $(this).attr("id");
+								strPram +="&dsigns["+index+"].csign="+csign
+								+"&dsigns["+index+"].id="+id
+								+"&dsigns["+index+"].ctext="+ctext
+								+"&dsigns["+index+"].itype="+itype
+								+"&dsigns["+index+"].isignseq="+index
+								+"&listCode["+index+"]="+codes;
+							}
+						});
+						if(strPram==""){
+							return false;
+						}
+						strPram = strPram.substr(1);
+						$.ajax({
+							url:"dsignCategory!saveOrUpdate.action",
+							type:"post",
+							datatype:"json",
+							data:strPram,
+							async:false,
+							success:function(data,status){
+							}
+						});
+					}
+				}
+				queryAllDsigns();
+				return true;
+			}else{
+				return false;
+			}
+		}
+		//增加一行编辑数据
+		function addDsignCategory(){
+			if($("#addDsign").length==0){
+				var strHtml = "";
+				strHtml+="<tr id='addDsign' check='false' height='18px' style='background-color:#FFFFFF;'>";
+				strHtml+="	<td></td>";
+				strHtml+="	<td></td>";
+				strHtml+="	<td selectValue='0'>无限制</td>";
+				strHtml+="	<td></td>";
+				strHtml+="</tr>";
+				$("#include").append(strHtml);
+				//绑定事件
+				initializeEven();
+				//
+				editorDsign($("#addDsign >td:first")[0],0);
+				var e = jQuery.Event("click");
+				$("#addDsign").trigger(e);
+			}
+
+		}
+		//选中行向上移动
+		function upward(){
+			$("#include >tr").each(function(index){
+				if($(this).attr("check")=="true"){
+					if(index>0){
+						//编辑状态
+						$("#saveDsign").removeAttr("disabled",true);
+						$(this).insertBefore($("#include >tr").eq(index-1));
+					}
+				}
+			});
+		}
+		//选中行向下移动
+		function downward(){
+			var len = $("#include >tr").length-1;
+			$("#include >tr").each(function(index){
+				if($(this).attr("check")=="true"){
+					if(index<len){
+						//编辑状态
+						$("#saveDsign").removeAttr("disabled",true);
+						$(this).insertAfter($("#include >tr").eq(index+1));
+					}
+				}
+			});
+		}
+		/**
+		 * 实现窗体传值接收处理函数
+		 */
+		function deliverValue(valueObject){
+			var codes = $("#codeSelect").val();
+			if(codes==""){
+				$("#codeSelect").val(valueObject.selKemuCode);
+			}else{
+				$("#codeSelect").val(codes+","+valueObject.selKemuCode);
+			}
+		}
+		
+		
+		//点击叉时关闭窗体
+		function onWindowClose(){
+			var ckeckflag = checkDsgin();
+			if(ckeckflag){
+				var editerState = $("#saveDsign").attr("disabled");
+				if(typeof(editerState)=="undefined"){
+					var flag = saveDsignCategory();
+					if(flag){
+						window.parent.closeWindow('finance_dsign');
+					}
+				}
+				return true;
+			}else{
+				return false;
+			}
+		}
+		</script>
+	</head>
+	<body style="font-size:12px;font-family:宋体;padding:0px;background-color: #D4D0C8;">
+		<div class="buttongroup">
+			<div class="group">
+				<div>
+					<input type="button" value="增加" onclick="addDsignCategory()" style="background-image:url('../../../images/icon/add.gif');"/>
+				</div>
+				<div>
+					<input type="button" id="saveDsign" value="保存" onclick="saveDsignCategory()" style="background-image:url('../../../images/icon/save.gif');"/>
+				</div>
+				<div>
+					<input type="button" id="deleteDsign" value="删除" onclick="delDsign()" style="background-image:url('../../../images/icon/delete.gif');"/>
+				</div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button" value="退出" onClick="exitWindow()" style="background-image:url('../../../images/icon/exit.gif');"/>
+				</div>
+			</div>
+			
+			<div id="used" style="position:absolute;display:none;margin-top:6px;margin-left:330px;"><img src="../../../images/icon/used.jpg" style="width:67px;height:30px;"/></div>
+    
+			
+		</div>
+		<div style="height:210px;width:460px;border-top:1px solid #808080;border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF;border-left:1px solid #808080;">
+			<div style="height:208px;width:458px;border-top:1px solid #FFFFFF;border-right:1px solid #808080;border-bottom:1px solid #808080;border-left:1px solid #FFFFFF;">
+				<div style="height:197px;width:420px;margin-top:3px;margin-left:3px;border:2px inset #eee;background-color:#707070;float:left;">
+					<table id="dsignConditionTable" border="1" cellspacing="0">
+						<tr id="dsignConditionTableheader">
+							<td width="40">类别字</td>
+							<td width="50">类别名称</td>
+							<td width="50">限制类型</td>
+							<td width="80">限制科目</td>
+						</tr>
+						<tbody id="include" style="background-color:#FFFFFF;">
+						</tbody>
+					</table>
+				</div>
+				<div style="float:left;height:197px;width:28px;text-align:center;">
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<input type="button" value="上" style="width:20px;padding:0px;" onclick="upward()"/>
+					<br/>
+					<br/>
+					<input type="button" value="下" style="width:20px;padding:0px;" onclick="downward()"/>
+				</div>
+			</div>
+		</div>
+		<span style="height:20px;line-height:20px;"><b>注意：凭证类别的排列顺序将影响到账簿查询中凭证类别的排列顺序</b></span>
+	</body>
+</html>

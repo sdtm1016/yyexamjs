@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	
+<script type="text/javascript" src="js/subsidiaryLedgers.js"></script>
+<title>明细账发生额</title>
+<style type="text/css">
+	.codeHide{display:none};
+</style>
+</head>
+<body style="margin:0px;background-color:#fff;">
+<div style="margin:0px;">
+		<div style="background-color: #d4d0c8;height:40px;">
+			<div style="float: left;height: 36px;border: 0;">
+				&nbsp;<input type="button" style="border:0px;background-image: url('../../../images/buttons/set.png');width: 32px;height: 36px"/>
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/presee.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/print.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/outp.png');width: 32px;height: 36px" />
+				&nbsp;&nbsp;
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/selc.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/locate.png');width: 31px;height: 35px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/detail.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/filter.png');width: 32px;height: 36px" />
+				&nbsp;&nbsp;
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/transform.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/reset.png');width: 32px;height: 36px" />
+				&nbsp;&nbsp;
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/special.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/grandTotal.png');width: 32px;height: 36px" />
+				&nbsp;&nbsp;
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/hel.png');width: 32px;height: 36px" />
+				<input type="button" style="border:0px;background-image: url('../../../images/buttons/exit.jpg');width: 32px;height: 36px" onclick="javascript:window.parent.closeWindow('gl_detailed_subsidiaryLedgers');"/>
+				
+			</div>
+			<div style="float: left;height: 36px;border: 0;margin-top: 7px">
+				&nbsp;&nbsp;&nbsp;
+				<select id="model" onchange="changeModel(this);">
+					<option value="1">金额式</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<table width="100%">
+		<tr>
+			<td colspan="7" align="center" height="50px">
+				<label id='title' style="color: #003366;text-decoration: underline;font-weight: bold;">XXX明细账</label>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="7">
+			<div style="float:left">
+				<label style="font-size: 14px;color: #003366">&nbsp;&nbsp;科目</label>
+				<select id="code" style="width: 200px">
+					
+				</select>
+			</div>
+            <div style="font-size: 14px;color: #003366;margin-right:50px;float:right;margin-top:10px;" >&nbsp;&nbsp;月份：<span id="month">2010-01</span></div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="7">
+				<table width="100%"  border="1" cellpadding="0" cellspacing="0" style="text-align: center;font-size: 15px">
+					<thead id="subsidaryHead">
+						<tr bgcolor="#CCCCFF" bordercolor="#000000">
+							<td colspan="2" width="6%">年</td>
+							<td rowspan="2" width="12%">凭证号</td>
+							<td rowspan="2" id='headCode' width="12%">科目编码</td>
+							<td rowspan="2" id="headCodeName" width="12%">科目名称</td>
+							<td rowspan="2" width="20%">摘要</td>
+							<td rowspan="2" width="20%">单价</td>
+							<td colspan="2" width="10%">借方</td>
+							<td colspan="2" width="10%">贷方</td>
+							<td rowspan="2" width="3%">方向</td>
+							<td colspan="3" width="10%">余额</td>
+						</tr>
+					</thead>
+					<tbody id="subsidary">
+						<tr bgcolor="#CCCCFF" bordercolor="#000000">
+							<td>月</td>
+							<td>日</td>
+							<td>数量</td>
+							<td>金额</td>
+							<td>数量</td>
+							<td>金额</td>
+							<td>数量</td>
+							<td>单价</td>
+							<td>金额</td>
+						</tr>
+					</tbody>
+					
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

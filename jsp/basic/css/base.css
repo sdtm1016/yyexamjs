@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+*{ margin:0; padding:0; font-size:12px;font-family:宋体;cursor:default;}
+li{ list-style:none}
+a{ text-decoration:none}
+
+img{ vertical-align:middle}
+
+.wrap{ height:325px; width:398px; background:#f0f0f0; margin:50px;}
+
+.nav{height:40px; padding:3px; border-bottom:1px solid #797A7C;cursor:default;}
+.nav li{ float:left; height:40px; width:31px; background:url(../../../images/basic/z_nav_bg.png) no-repeat;position:relative}
+.nav li a{ display:block; height:18px; width:30px; color:#000; padding-top:22px; text-align:center}
+.nav li span{ display:block; height:16px; width:16px; position:absolute; left:8px; top:4px; cursor:pointer}
+.nav li .nav_img_01{background:url(../../../images/basic/z_nav_butt.png) no-repeat;}
+.nav li .nav_img_02{background:url(../../../images/basic/z_nav_butt.png) no-repeat 0 -16px;}
+.nav li .nav_img_03{background:url(../../../images/basic/z_nav_butt.png) no-repeat 0 -32px;}
+.nav li .nav_img_04{background:url(../../../images/basic/z_nav_butt.png) no-repeat 0 -48px;}
+.nav li .nav_img_05{background:url(../../../images/basic/z_nav_butt.png) no-repeat 0 -64px;}
+.nav li .nav_img_06{background:url(../../../images/basic/z_nav_butt.png) no-repeat 0 -80px;}
+
+/* 内容 */
+.z_content{margin-top:5px;}
+.z_content_nav{width:394px; height:19px; margin:0 auto; position:relative; z-index:2}
+.z_content_nav li{float:left;}
+.z_content_nav a{background:url(../../../images/basic/z_connav_bg.png) no-repeat; display:block; width:65px; height:19px; line-height:18px; text-align:center; color:#000000;}
+
+.z_content_box{ margin:-1px auto 0 auto;height:254px; width:392px; border:1px solid #797A7C;position:relative; z-index:1;}
+#conbox1,#conbox2,#conbox3,#conbox4{width:380px; min-height:200px; height:auto; border:1px solid #9B9B9B; margin:6px auto;padding-top:5px;}
+#conbox2,#conbox3,#conbox4{display:none;}
+.z_con_text_01{ height:14px; width:140px;}
+.z_con_text_02{ height:14px; width:274px;}
+.z_con_text_03{ height:18px; width:92px;}
+.z_con_text_04{ height:14px; width:164px;}
+.z_con_text_05{ height:14px; width:102px;}
+.z_con_text_06{ height:14px; width:290px;}
+.z_con_text_07{ height:14px; width:120px;}
+.z_con_text_08{ height:18px; width:106px;}
+.z_con_text_09{ height:18px; width:124px;}
+.z_con_text_10{ height:14px; width:174px; background-color:#f0f0f0; border-right:1px solid #E2E2E2;border-bottom:1px solid #E2E2E2;}
+.z_con_text_11{ height:14px; width:174px;}
+.z_con_text_12{ height:18px; width:178px;}
+.z_con_text_13{ height:14px; width:96px;}

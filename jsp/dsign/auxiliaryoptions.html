@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>辅助项</title>
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<!-- 引入jquery组件 -->
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+
+<!-- 引入公共js函数 -->
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../js/tableRef.js"></script>
+
+<style type="text/css">
+tr {height:16px;padding:0px;display:none;}
+td {padding:0px;height:16px;}
+</style>
+
+</head>
+<body>
+	<div class="container" style="float:left;width:410px;height:260px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:390px;height:240px;margin-top:4px;margin-left:10px;">
+			
+			<div style="width:330px;height:100%;float:left;line-height:16px;">
+				
+				<table id="formTable">
+					<tr id="subjectProjectTr">
+					
+						<!-- 
+							说明：
+								项目无法实现手动输入编码或名称自动查询出对象的功能
+								因为查询项目需要项目大类和项目分类两个参数
+								当前账套仅能得到项目大类，无法获取项目分类
+								后台如果只根据项目大类查询项目，那么存在数据错误风险
+								因为同一个项目大类下可能会存在多条同样值的记录，它们仅以项目分类来区分
+								比如：项目大类A下有两个项目分类：1、2
+								1下有名称为aaa且id为222的项目，2下也有名称为aaa且id为222的项目
+								如果根据项目大类查询，将查询出着两条数据，那么到底哪个才是正确的？
+								数据传到前台是无法分辨的，因为两条数据一模一样
+						
+						 -->
+					
+					
+						<td align="right">项目</td><td>
+						<input readonly="readonly" id="subjectProject" type="text" style="width:196px;height:14px;"/>
+						<input type="button" class="finder" onclick="openFitemref();"/></td>
+					</tr>
+					<tr id="subjectDeptTr">
+						<td align="right">部门</td>
+						<td>
+						
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){ target='subjectDept';conversioncode('Department',this,false);}" 
+							onblur="target='subjectDept';conversioncode('Department',this,false);" 
+								
+							id="subjectDept" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_dptref','dsign_auxiliaryoptions');target='subjectDept';"/>
+							
+						</td>
+					</tr>
+					<tr id="subjectPersonTr">
+						<td align="right">个人</td>
+						<td>
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){target='subjectPerson';conversioncode('Person',this,false);}" 
+							onblur="target='subjectPerson';conversioncode('Person',this,false);" 
+							
+							id="subjectPerson" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_personref','dsign_auxiliaryoptions');target='subjectPerson';"/>
+						
+						</td>
+					</tr>
+					<tr id="subjectCustomerTr">
+						<td align="right">客户</td>
+						<td>
+						
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){target='subjectCustomer';conversioncode('Customer',this,false);}" 
+							onblur="target='subjectCustomer';conversioncode('Customer',this,false);" 
+							
+							id="subjectCustomer" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_cusref','dsign_auxiliaryoptions');target='subjectCustomer';"/>
+							
+						</td>
+					</tr>
+					<tr id="subjectSupTr">
+						<td align="right">供应商</td>
+						<td>
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){target='subjectSup';conversioncode('Vendor',this,false);}" 
+							onblur="target='subjectSup';conversioncode('Vendor',this,false);" 
+							
+							id="subjectSup" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_supref','dsign_auxiliaryoptions');target='subjectSup';"/>
+							
+						</td>
+					</tr>
+					
+					<tr id="subjectBusinessTr">
+						<td align="right">业务员</td>
+						<td>
+						
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){target='subjectBusiness';conversioncode('Person',this,false);}" 
+							onblur="target='subjectBusiness';conversioncode('Person',this,false);" 
+							
+							id="subjectBusiness" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_personref','dsign_auxiliaryoptions');target='subjectBusiness';"/>
+							
+						</td>
+					</tr>
+					
+					<tr id="subjectJsfsTr">
+						<td align="right">结算方式</td>
+						<td>
+							<input 
+							
+							onkeyup="if(window.event.keyCode==13){target='subjectJsfs';conversioncode('Settlestyle',this,false);}" 
+							onblur="target='subjectJsfs';conversioncode('Settlestyle',this,false);" 
+							
+							id="subjectJsfs" 
+							type="text" 
+							style="width:196px;height:14px;"/>
+							
+							<input type="button" class="finder" 
+							onclick="window.parent.openWindow('basic_comref_settlestyleGridRef','dsign_auxiliaryoptions');target='subjectJsfs';"/>
+							
+						</td>
+					</tr>
+					
+					<tr id="ticketNumberTr">
+						<td align="right">票号</td><td><input id="ticketNumber" type="text" style="width:218px;height:14px;"/><br></td>
+					</tr>
+					<tr id="subjectDateTr">
+						<td align="right">发生日期</td><td><input id="subjectDate" type="text" style="width:196px;height:14px;" onclick="WdatePicker({el:'subjectDate'})"/><input type="button" class="picker" onclick="WdatePicker({el:'subjectDate'})"/></td>
+					</tr>
+					
+					<tr id="subjectPriceTr">
+						<td align="right">单价</td><td><input id="subjectPrice" type="text" style="width:218px;height:14px;" onblur="isnumber(this)"/></td>
+					</tr>
+					<tr id="subjectNumberTr">
+						<td align="right">数量</td><td><input id="subjectNumber" type="text" style="width:218px;height:14px;" onblur="isnumber(this)"/><span id="jldw"></span></td>
+					</tr>
+				</table>
+				
+				
+				
+			</div>
+			
+			<div style="width:60px;height:100%;float:left;text-align:center;">
+				<BR><BR>
+				<input type="button" value="确认" onclick="btnConfirm();"/><br><br>
+				<input type="button" value="取消" onclick="cancel();"/>
+			</div>
+		
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript" src="js/auxiliaryoptions.js"></script>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>客户参照</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<style type="text/css">
+			#footer{width:100%;margin-left:4px;}
+			#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+			#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+			#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+		</style>
+	    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<!-- 增加树css -->	
+		<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+		<!-- 规则表 -->
+		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+		<script type="text/javascript">
+			//返回被选中的数据对象
+			function returnSelected(tr){
+				var param={};
+				param.ccode=tr.cells[0].innerHTML;
+				param.cname=tr.cells[1].innerHTML;
+				param.id=$(tr).attr("id");
+				//客户地址
+				param.khdz = $(tr).attr("khdz");
+				//客户开户银行
+				param.khyh = $(tr).attr("khyh");
+				//客户开户银行账户
+				param.yhzh = $(tr).attr("yhzh");
+				
+				param.ccusabbname=tr.cells[2].innerHTML;
+				window.parent.deliverValue("basic_comref_cusref",param);
+				window.parent.closeWindow("basic_comref_cusref");
+			}
+			//单击表格时选中此行数据
+			function selectCurrentRow(obj){
+				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+			}
+			//程序入口
+			$(document).ready(function(){
+				//加载编码原则显示和编码级次
+				var gradeValue = grademarkValue('customerclass'); 
+				$("#bmgz").attr("gradeValue",gradeValue);
+				//判断是有允许分类(如果不允许则默认添加一条记录)
+				isCusCategory();
+				//装载树节点
+				queryCustomerClassTree(null);
+			});
+			/**
+			 * 是否允许客户分类，允许返回true，否则返回false
+			 * @returns {Boolean}
+			 */
+			var isCusCategoryBz = true;
+			function isCusCategory() {
+				$.ajax({
+					url:"customer!isCusCategory",
+					type:"post",
+					dataType:"json",
+					error:function(){
+						jAlert("请求失败!");
+					},
+					async:false,
+					success: function(data){
+						isCusCategoryBz = data.isCategory;
+					}
+				});
+			}
+			//树节点集合的全局变量
+			var zNodes = [];
+			//当前选中的树节点
+			var currentTreeNode=null;
+			//保存时状态的全局变量
+			var action = null;
+			//所有客户分类对象的集合
+			var customerClassList=null;
+			//查询存货分类树
+			function queryCustomerClassTree(customerClassCode){
+				//ztree配置
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						onClick: ZtreeClick,
+						onDblClick: ZtreeDblClick
+					}
+				};
+				//ztree加载树节点
+				$.ajax({
+					url:"customerClass!queryCustomerClass.action",
+					type:"post",
+					dataType:"json",
+					async : false,   
+					error: function () {
+			            jAlert('请求失败');   
+			        }, 
+					success:function(jsonData){
+						customerClassList = jsonData.customerClassList;
+						zNodes = getCustomerClassListNodes(customerClassList);
+						$.fn.zTree.init($("#cusClassTree"), setting, zNodes);
+						//默认选中节点(根节点)
+						var zTree = $.fn.zTree.getZTreeObj("cusClassTree");
+						if(customerClassCode==null){
+							customerClassCode = "CUSTYPE";
+						}
+						var selNode = zTree.getNodeByParam("id",customerClassCode);
+		    			zTree.selectNode(selNode);
+		    			//显示详细信息
+		    			showCustomerInformation(selNode);
+					}
+				});	
+			}
+			//获取存货分类树节点的方法
+			function getCustomerClassListNodes(customerClassList){
+				zNodes = [];
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				if(gradeValue==""){
+					jAlert("编码规则不能为空!");
+					return;
+				}
+				var node = "";
+				var customerClass;
+				var nodeObj;
+				//根节点
+				node = "{id:'CUSTYPE',name:'客户分类',open:true}";
+				nodeObj =  eval('(' + node + ')') ;
+		    	zNodes.push(nodeObj);
+				for(var i=0;i<customerClassList.length;i++){
+					customerClass = customerClassList[i];
+					//本级次
+					var iccgrade = customerClass.iccgrade;
+					//存货分类编码
+					var ccccode = customerClass.ccccode;
+					//父节点id
+					var parentid ;
+					if(iccgrade==1){
+						parentid = "CUSTYPE";
+					}else{
+						var rule = gradeValue.charAt(iccgrade-1);
+						var endindex = ccccode.length-rule;
+						parentid = ccccode.substring(0,endindex);
+					}
+					node = "{" + "id:'" + ccccode + "'," + "pId:'" + parentid + "',"
+					+ "iccgrade:'" + customerClass.iccgrade + "',"	
+					+ "customerClassId:'" + customerClass.id + "',"
+					+ "customerClassName:'" + customerClass.cccname + "',"
+					+ "bccend:'" + customerClass.bccend + "',"
+					+ "name:'(" +ccccode+")"+ customerClass.cccname + "'" + ",open:true" + "}";
+					
+					nodeObj =  eval('(' + node + ')') ;
+		        	zNodes.push(nodeObj);
+				}
+				return zNodes;
+			}
+			//ztree单击事件
+			function ZtreeClick(event, treeId, treeNode, clickFlag){
+				showCustomerInformation(treeNode);
+			}
+			//ztee双击事件
+			function ZtreeDblClick(event, treeId, treeNode){
+				
+			}
+			//根据客户类别编码查询客户档案
+			function showCustomerInformation(treeNode){
+				var customerCode={};
+				if(treeNode.id!="CUSTYPE"){
+					customerCode={code:treeNode.id};
+				}
+				$.ajax({
+					url:"customer!queryCustomerByCusClassCode",
+					data:customerCode,
+					type:"post",
+					datatype:"json",
+					async : false,   
+					error: function () {
+				           jAlert('请求失败');   
+					},
+					success:function(data){
+						var customerList = data.customerList;
+						var length = customerList.length;
+						var strHtml = "";
+						for (var i = 0; i<length; i++){
+							//客户地址
+						    var khdz = strNullProc(customerList[i].ccusaddress);
+							//开户银行
+						    var khyh = strNullProc(customerList[i].ccusbank);
+							//银行账户
+						    var yhzh = strNullProc(customerList[i].ccusaccount);
+							
+							strHtml +="<tr id='"+customerList[i].id
+							+"' deptcode='" + customerList[i].ccuscode
+							+"' khdz='" + khdz
+							+"' khyh='" + khyh
+							+"' yhzh='" + yhzh
+							
+							+"'  deptname='" + customerList[i].ccusname + "' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccuscode) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusname) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusabbname) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccushelp) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].icusclid) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].dcusdevdate) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusphone) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccuspperson) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].icuscreline) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccuspaycond) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusoaddress) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusotype) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].ccusdepart) + "</td>";
+							strHtml +="<td >"+ strNullProc(customerList[i].denddate) + "</td>";
+							strHtml+="</tr>";
+						}
+						$("#datatable_bodyer").empty().append(strHtml);
+						//选中第一行数据
+						if(length>0){
+							selectCurrentRow($("#datatable_bodyer >tr")[0]);
+						}
+						document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
+					}
+				});
+			}
+		</script>
+	</head>
+	<body style="padding:0px;">
+		<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+			<div style="width:100%;height:36px;">
+					<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
+						<div class="group" style="margin-top:2px;">
+							<div><input type="button" value="栏目" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+							<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+							<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+							<div><input type="button" value="刷新" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+							<div><input type="button" value="返回" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
+							<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_cusref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+						</div>
+					</div>
+					<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
+						<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
+							<div style="margin-top:3px;">
+								查询：<select disabled="disabled">
+									<option>部门助记码</option>
+									<option>AAAAAAAA</option>
+									<option>BBBBBBBBB</option>
+								</select><input disabled="disabled" type="text" style="width:110px;"/><input disabled="disabled" type="button" class="finder"/>
+							</div>
+						</div>
+					</div>
+					<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+						<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+							<legend>模糊匹配定位：</legend>
+							<div style="height:20px;">
+								<input type="radio" disabled="disabled" value = "1" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+								<input type="radio" disabled="disabled" value = "2" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+								<input type="radio" disabled="disabled" value = "3" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+								<input type="radio" disabled="disabled" value = "4" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+							</div>
+						</fieldset>
+						<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
+					</div>
+			</div>
+			<div style="width:100%;height:274px;margin-left:4px;">
+				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+					<ul id="cusClassTree" class="ztree"></ul>
+				</div>
+				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+					<table id="datatable" border=1 class="table_style" style="width:1000px;">
+						<thead>
+							<tr id="datatable_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:150px;">客户编码</td>
+								<td style="width:500px;">客户名称</td>
+								<td style="width:200px;">客户简称</td>								
+								<td style="width:80px;">客户助记码</td>
+								<td style="width:260px;">客户分类编码</td>
+								<td style="width:180px;">发展日期</td>
+								<td style="width:150px;">电话</td>
+								<td style="width:200px;">专营业务员</td>
+								<td style="width:150px;">信用额度</td>
+								<td style="width:300px;">付款条件编码</td>
+								<td style="width:150px;">发货地址</td>
+								<td style="width:150px;">发货方式</td>
+								<td style="width:150px;">分管部门</td>
+								<td style="width:150px;">停用日期</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_bodyer">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- 底部状态栏容器 S -->
+			<div id="footer">
+				<div  style="margin-left:0px;">定位列名：</div>
+				<div id="selColumn" >常用摘要正文</div>
+				<div id="loadRecord" > 已加载n条记录</div>
+				<div id = "selRecord" >已选中n条记录</div>
+			</div>
+			<!-- 底部状态栏容器 E -->
+		</div>
+		<input id="bmgz" type="hidden"/>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	
+<script type="text/javascript" src="js/balances.js"></script>
+<title>发生额及余额表</title>
+</head>
+<body style="margin:0px;background-color:#d4d0c8;">
+<div style="margin:0px;">
+		<div style="background-color: #d4d0c8;height:40px;">
+		
+		
+		
+<div class="buttongroup" style="float:left;">
+	<div class="group">
+		<div><input type="button" value="设置" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+		<div><input type="button" value="打印" style="background-image:url('../../../images/icon/print.gif');"/></div>
+		<div><input type="button" value="预览" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+		<div><input type="button" value="输出" style="background-image:url('../../../images/icon/output.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" value="查询" style="background-image:url('../../../images/icon/find.gif');"/></div>
+		<div><input type="button" value="定位" style="background-image:url('../../../images/icon/return.gif');"/></div>
+		<div><input type="button" value="明细" style="background-image:url('../../../images/icon/detail.gif');"/></div>
+		<div><input type="button" value="过滤" style="background-image:url('../../../images/icon/screening.gif');"/></div>
+		
+	</div>
+	<div class="group">
+		<div><input type="button" value="转换" style="background-image:url('../../../images/icon/convert.gif');"/></div>
+		<div><input type="button" value="还原" style="background-image:url('../../../images/icon/reduction.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" value="专项" style="background-image:url('../../../images/icon/cjorej2t3jl.gif');"/></div>
+		<div><input type="button" value="累计" style="background-image:url('../../../images/icon/gather.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" value="帮助" style="background-image:url('../../../images/icon/help.gif');"/></div>
+		<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="javascript:window.parent.closeWindow('gl_balances_balances');"/></div>
+	</div>
+</div>
+		
+		
+			<div style="float: left;height: 36px;border: 0;margin-top: 7px">
+				&nbsp;&nbsp;&nbsp;
+				<select id="model" onchange="changeModel(this);">
+					<option value="1">金额式</option>
+					<option value="2">外币金额式</option>
+					<option value="3">数量金额式</option>
+					<option value="4">数量外币式</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div style="width:794px;height:530px;padding:0;margin-left:1px;border:1px solid #000;background-color:#ffffff;">
+		<table width="100%">
+			<tr>
+				<td colspan="7" align="center" height="40px">
+					<div  style="color:#111166;text-decoration: underline;font-weight: bold;font-size:18px;">发生额及余额表</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="7" align="right" height="14px">
+					<div  style="width:130px;margin-right:100px;">月份：<span id="month">2010-01-2010.01</span></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="7">
+					<table width="100%" id="balance" border="1" cellpadding="0" cellspacing="0" style="text-align: center;font-size: 15px">
+						
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

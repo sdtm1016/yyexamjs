@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>标题</title>
+<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../../js/winui/plugin/winui.menubar.xhtml1.0.js"></script>
+<script type="text/javascript" src="../../../js/helpCode.js"></script>
+<script type="text/javascript" src="../../../js/tableRef.js"></script>
+
+<!-- 增加树js -->	
+<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript" src="js/fitemTree.js"></script>
+
+<script type="text/javascript" src="js/item.js"></script>
+
+ 		
+<style type="text/css">
+
+#fitemss thead tr{height:30px;}
+#fitemss thead tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+#fitemss tbody tr td{border-right:1px solid #000;border-bottom:1px solid #000;text-align:center;}
+
+
+</style>
+</head>
+<body>
+
+
+
+	<div class="container" style="float:left;width:604px;height:390px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		<div type="menubar" style="display:none;">
+			<div>
+				<div>文件(F)</div>
+				<div>
+					<div>预览 </div>
+					<div>打印</div>
+					<div>输出</div>
+					<hr/>
+					<div onclick="window.parent.closeWindow('basic_fitem_item');">退出</div>
+				</div>
+			</div>
+			<div>
+				<div>编辑(E)</div>
+				<div>
+					<div onclick="">增加</div>
+					<div  onclick="">删除</div>
+					<div onclick="">修改</div>
+				</div>
+			</div>
+			<div>
+				<div>工具(T)</div>
+				<div>
+					<div onclick="">计算器</div>
+					<div onclick="">会计日历</div>
+				</div>
+			</div>
+		</div>
+		
+	
+	
+		<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+		<div class="buttongroup">
+			<div class="group">
+				<div><input type="button" value="打印" style="background-image:url('../../../images/icon/print.gif');"/></div>
+				<div><input type="button" value="预览" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+				<div><input type="button" value="输出" style="background-image:url('../../../images/icon/output.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="增加" onclick="window.parent.openWindow('basic_fitem_add','basic_fitem_item');" style="background-image:url('../../../images/icon/add.gif');"/></div>
+				<div><input type="button" value="删除" id='delFitem' style="background-image:url('../../../images/icon/delete.gif');"/></div>
+				<div><input type="button" value="修改" onclick="updateAction('button');" style="background-image:url('../../../images/icon/update.gif');"/></div>
+			</div>
+			<div class="group">
+				<div><input type="button" value="帮助" style="background-image:url('../../../images/icon/help.gif');"/></div>
+				<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_fitem_item');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+			</div>
+		</div>
+		
+		
+		
+		
+		<div style="width:590px;height:304px;margin-top:10px;margin-left:6px;">
+			
+			
+			
+	
+			<div class="border_outside" style="width:130px;height:302px;float:left;">
+				<div class="border_inside" style="width:128px;height:300px;">
+					
+					
+					<table style="margin-left:4px;" class="v_a_m">
+						<tr><td height="65" valign="middle"><input type="radio" id="rd_1_1" name="rd_1" onclick="tab(1)" checked="checked"/><label for="rd_1_1">核算科目</label></td></tr>
+						<tr><td height="65" valign="middle"><input type="radio" id="rd_1_2" name="rd_1" onclick="tab(2)"/><label for="rd_1_2">项目结构</label></td></tr>
+						<tr><td height="65" valign="middle"><input type="radio" id="rd_1_3" name="rd_1" onclick="tab(3)"/><label for="rd_1_3">项目分类定义</label></td></tr>
+						<tr><td height="65" valign="middle"><input type="radio" id="rd_1_4" name="rd_1" onclick="tab(4)"/><label for="rd_1_4">项目目录</label></td></tr>
+					</table>
+					
+					
+				</div>
+			</div>
+			
+			
+			
+			<div style="width:446px;height:302px;margin-left:8px;float:left;">
+			
+				<div style="width:100%;height:20px;">&nbsp;&nbsp;项目大类&nbsp;&nbsp;<select id="itemBigClass" onchange="changeItemBigClass(this.value)" style="width:370px"></select></div>
+				
+				<div style="width:100%;height:276px;margin-top:4px;">
+				
+					
+					<fieldset id="step1" style="width:422px;height:264px;">
+						<legend disabled="disabled">核算科目</legend>
+						<div>
+							<table>
+								<tr>
+									<td valign="top" width="120">待选科目</td>
+									<td><select ondblclick='moveDown();' style="height:96px; width:296px;" size="20" id="waitSelectCode">
+									
+									</select></td>
+									<td valign="top"><input type="button" id="bitemOk" value="确定"/></td>
+								</tr>
+								<tr>
+									<td>已选科目</td>
+									<td align="center" height="40">
+			                        	<input type="button" value="↓"   style="width:24px;height:24px;padding:0;" onclick="moveDown();"/>
+			                        	<input type="button" value="↓↓"  style="width:24px;height:24px;padding:0;margin-left:10px;"  onclick="allMoveDown();"/>
+			                        	<input type="button" value="↑"   style="width:24px;height:24px;padding:0;margin-left:10px;"  onclick="moveUp();"/>
+			                        	<input type="button" value="↑↑"  style="width:24px;height:24px;padding:0;margin-left:10px;"  onclick="allMoveUp();"/>
+                        			</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td><select ondblclick="moveUp();" style="height:96px; width:296px;" size="20" id="selectedCode">
+									
+									</select></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</fieldset>
+							
+					
+					
+					
+					<fieldset id="step2" style="width:422px;height:264px;display:none;">
+						<legend disabled="disabled">项目结构</legend>
+						<div>
+		                    <div style="width:368px;height:250px;border:2px inset #ccc;background-color:#808080;overflow-y:auto;float:left;">
+		                    	<table id="itemStructureTable" cellpadding="3" cellspacing="1" border="0" bgcolor="#000000" >
+		                        	<thead>
+		                        	
+			                        	<tr bgcolor="#D6CFC7" align="center">
+			                            	<td width="140">标题</td>
+			                                <td>类型</td>
+			                                <td>总长度</td>
+			                                <td>列示</td>
+			                                <td>汇总</td>
+			                                <td>是否参照</td>
+			                            </tr>
+		                            </thead>
+		                            <tbody id="itemStructureTableRows">
+		                            
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                	<div style="float:left;">&nbsp;<input type="button" value="修改"/></div>
+						</div>
+					</fieldset>
+							
+				
+					
+					<fieldset id="step3" style="width:422px;height:264px;display:none;">
+						<legend disabled="disabled">项目分类定义</legend>
+						<div>
+						
+							<div style="width:210px;height:244px;border:2px inset #ccc;background-color:#fff;float:left;overflow-y:auto;overflow-x:none;">
+								<ul id="fitemTree" class="ztree" style="width:100%;height:100%;background-color:#fff;"></ul>
+							</div>
+						
+							<div style="width:202px;height:244px;margin-left:4px;float:left;">
+								<br><br><br><br>
+								项目编码规则：<span id='crule'>1</span>
+								<br><br><br><br>
+								分类编码：<input type="text" value="" id="gradecode"/>
+								<br><br>
+								分类名称：<input type="text" value="" id="gradename"/>
+								<input id = "iitemgrade" type="hidden"/>
+								<br><br><br>
+								<div style="text-align:center;">
+									<input type="button" id="addFitemGradeCode" value="增加" onclick="addfitem();"/>
+									<input type="button" id="delFitemGradeCode" value="删除" onclick="delFitemGradeCode();"/>
+									<input type="button" id="okFitemGradeCode" value="确定" onclick="savefitem();"/>
+								</div>
+								
+							</div>
+						
+						</div>
+					</fieldset>
+							
+				
+					
+					<fieldset id="step4" style="width:422px;height:264px;display:none;">
+						<legend disabled="disabled">项目目录</legend>
+						<div style="margin-left:-4px;width:430px;">
+							<div style="width:410px;height:230px;border:2px inset #ccc;background-color:#808080;overflow-y:auto;margin-left:6px;">
+			                    <table id="fitemss" cellpadding="0" cellspacing="0" border="0"  >
+				                	<thead >
+				                	</thead>
+				                	<tbody align="center">
+				                	</tbody>
+			                    </table>
+		                    </div>
+<input type="button" value="维护" style='float:right;' onclick="toMaintain();"/>
+						</div>
+					</fieldset>
+							
+				</div>
+			
+			</div>
+			
+			
+		</div>
+		
+		
+		
+		
+		
+		
+	</div>
+	
+     <input type="hidden" id="coderule"/>
+<script type="text/javascript" src="js/fitemStruDomain.js"></script>
+</body>
+</html>

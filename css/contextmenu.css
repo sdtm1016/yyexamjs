@@ -1,0 +1,31 @@
+.winui_contextmenu {
+position:absolute;
+display:none;
+z-index:70000;
+overflow:hidden;
+width:150px;
+background-color:buttonface;
+border:2px outset #ccc!important;
+border:buttonhighlight menu menu buttonhighlight 2px outset;
+padding:1px !important;
+padding:1px 1px 1px 0px;
+font-size:12px;
+}
+.winui_contextmenu ul {
+margin:3px;
+border-bottom:buttonhighlight 1px solid;
+border-top:buttonshadow 1px solid;
+}
+.winui_contextmenu a {
+display:block;
+width:100%;
+padding:1px 2px 2px 17px;
+padding-top:4px;
+cursor:default;
+text-decoration:none;
+color:#000000;
+}
+.winui_contextmenu a:hover {
+background:highlight;
+color:#ffffff;
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>自动转账设置</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+		
+.selfbuttongroup {width:100%;height:40px;background-color:#D4D0C8;cursor:default;}
+.selfbuttongroup .group {padding-right:10px;float:left;margin:2px auto 3px 0px;}
+.selfbuttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+.selfbuttongroup .group div input {font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;outline:none;background-color:#D4D0C8;}
+
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	
+	<script type="text/javascript" src="js/bautotranDomain.js"></script>
+	
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:750px;height:340px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+
+
+<div class="buttongroup">
+	<div class="group">
+		<div><input type="button" onclick="addUserButtoTran();" value="增加" style="background-image:url('../../../images/icon/add.gif');"/></div>
+		<div><input type="button" onclick="saveUserButtoTran();" value="保存" style="background-image:url('../../../images/icon/save.gif');"/></div>
+		<div><input type="button" onclick="updateUserButtoTran();" value="修改" style="background-image:url('../../../images/icon/update.gif');"/></div>
+		<div><input type="button" onclick="deleteUserButtoTran();" value="删除" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+		<div><input type="button" onclick="abortUserButtoTran();" value="放弃" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" onclick="firstUser();" value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"/></div>
+		<div><input type="button" onclick="upUser();" value="上张" style="background-image:url('../../../images/icon/prevcard.gif');"/></div>
+		<div><input type="button" onclick="downUser();" value="下张" style="background-image:url('../../../images/icon/nextcard.gif');"/></div>
+		<div><input type="button" onclick="lastUser();" value="末张" style="background-image:url('../../../images/icon/lastcard.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" value="复制" disabled="disabled" style="background-image:url('../../../images/icon/insertrow.gif');"/></div>
+		<div><input type="button" value="插入" disabled="disabled" style="background-image:url('../../../images/icon/insertrow.gif');"/></div>
+		<div><input type="button" onclick="addRow();" value="增行" style="background-image:url('../../../images/icon/increaserow.gif');"/></div>
+		<div><input type="button" onclick="delRow();" value="删行" style="background-image:url('../../../images/icon/deleterow.gif');"/></div>
+	</div>
+	<div class="group">
+		<div><input type="button" onclick="window.parent.closeWindow('gl_transfer_ats');" value="退出" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+	</div>
+</div>
+
+
+
+
+
+		
+
+		
+		
+		<div style="width:730px;height:280px;margin-left:10px;margin-top:8px;">
+			
+			<div style="width:100%;height:28px;">
+				转账序号
+				<select id ="TranList" onchange="changeTran(this.value)">
+					
+				</select>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				转账说明
+				<select  id ="TextList"  onchange="changeText(this.value)" style="width:200px;">
+					
+				</select>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				凭证类别
+				<span  id = "csign" style="color: blue"></span>
+			</div>
+			
+			<div>
+			
+			
+			
+				<div style="width:720px;height:240px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;">
+				
+					<table id="datatable" border=1 class="table_style" style="width:1330px;">
+						<thead>
+							<tr id="datatable_header">
+								<td style="width:150px;">摘要</td>
+								<td style="width:100px;">科目编码</td>
+								<td style="width:80px;">部门</td>
+								<td style="width:80px;">个人</td>
+								<td style="width:80px;">客户</td>
+								<td style="width:80px;">供应商</td>
+								<td style="width:80px;">项目</td>
+								<td style="width:80px;">方向</td>
+								<td style="width:200px;">金额公式</td>
+								<td style="width:200px;">外币公式</td>
+								<td style="width:200px;">数量公式</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_rows">
+							<tr>
+								<td>&nbsp;</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			
+			
+			</div>
+			
+		</div>
+	
+	
+	
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 增加 按钮  转账目录 窗体代码 -->
+	<div id="zzml"
+		style="margin-left: 100px;margin-top: 55px; padding: auto;position:absolute:z-index:4300;display:none;"
+		type="window" width="380" height="130" title="转账目录">
+			<div style="width:364px;height:114px;margin-left:6px;margin-top:6px;">
+				
+				<div class="border_outside" style="height:92px;width:280px;float:left;">
+					<div class="border_inside" style="height:90px;width:278px;line-height:18px;">
+					
+					
+						<table style="margin-top:6px;">
+							<tbody>
+								<tr>
+									<td>转账序号</td>
+									<td><input id = "tb_tranid" type="text"/></td>
+								</tr>
+								<tr>
+									<td>转账说明</td>
+									<td><input type="text" id="tb_zzsm" style="width:190px;"/><input type="button" class="finder" onclick="javascript:window.parent.openWindow('dsign_reference','gl_transfer_ats');xaction='tb_zzsm';"/></td>
+								</tr>
+								<tr>
+									<td>凭证类别</td>
+									<td>
+										<select id = "signList">
+											
+										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					
+					
+					</div>
+				</div>
+				<div style="width:80px;text-align:center;float:left;">
+					<input type="button" value="确定"  onclick= "saveBautotran();" /><br/><br/>
+					<input type="button" value="取消" onclick="closeWindow('zzml');selopbz = '';"/>
+				</div>
+				
+			</div>
+		</div>	
+	
+	
+
+	
+	
+	
+<!-- 说明：IE中，当本页面被嵌入到frame或iframe里时本页面head中的JS无法正常执行，须放到body内才能正常显示，所以特将js文件的引入代码放置于此 -->
+<script type="text/javascript" src="../../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../../js/winui/plugin/winui.window.js"></script>	
+</body>
+
+	<script type="text/javascript" src="js/ats.js"></script>
+	<script type="text/javascript" src="js/atsTable.js"></script>
+	<script type="text/javascript">
+	    var paramObject = window.parent.valueMap.get("gl_transfer_ats");
+	    
+	    
+	    if (paramObject==null) {
+	    	
+	    	paramObject=new Object();
+	    	var operDate = getCookie("operDate");
+	    	paramObject.year=operDate.substr(0,4);
+	    	paramObject.month=operDate.substr(5,2);
+	    	paramObject.type="10";
+	    	paramObject.ctranid="";
+	    	paramObject.csign="";
+	    	$.ajax({
+	    		url:"glBautotran!queryUserTranGrid.action?year=" + paramObject.year + "&period=" + paramObject.month + "&type=" + paramObject.type,		
+	    		type:"post",
+	    		async:false,
+	    		datatype:"json",
+	    		success:function(data,status){
+	    			var gridList = data.gridList;
+	    			
+	    			
+	    			
+	    			if(gridList.length>0){
+		    			var rowValueList = gridList[0];
+		    			//var ctranid = rowValueList[0];
+		    			
+		    			paramObject.ctranid=rowValueList[0];
+		    			paramObject.csign=rowValueList[2];
+		    			
+		    			
+	    			}
+	    			
+	    		}
+	    	});
+	    	
+	    }
+	    if(paramObject!=null){
+	    	
+	    	var year = paramObject.year;
+	    	var month = paramObject.month;
+	    	var type = paramObject.type;
+	    	var csign = paramObject.csign;
+	    	var ctranid = paramObject.ctranid;
+	    	
+			queryUserTran(year,month,type,csign, ctranid);
+	    }
+	    
+	    
+	</script>
+	
+
+
+</html>

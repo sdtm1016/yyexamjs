@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+	<title>登录页面</title>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+*{font-family:宋体;font-size:12px;}
+td{text-align:left;height:20px;}
+
+.input{width:170px;height:16px;line-height:16px;}
+.select{width:176px;height:22px;line-height:22px;}
+.button{width:76px;height:20px;line-height:12px;}
+
+</style>
+<script type="text/javascript">
+	function tdoblur(){
+		$("#password").focus();
+	}
+</script>
+</head>
+<body style="font-size:12px;padding:0;background-color: #fff;">
+
+	
+	
+	
+		<div id="mainWindow" style="margin-left: 8px; margin-top: 8px; padding: auto;" type="window" width="504" height="403" title="注册〖控制台〗" drawable="false" onclose="window.location.href='../exam/index.html';">
+	
+	
+	
+	
+	
+	
+	
+	<div style="position:absolute;margin-top:1px;margin-left:1px;"><img src="../../images/sm/UFLogin.jpg" style="width:500px;height:378px;"/></div>
+	<div id="win" style="position:absolute;margin-top:1px;margin-left:1px;width:500px">
+ 	 <form  name="form1" method="post" id="form1">
+		<table align="center" style="margin-top:140px;" border="0">
+			<tr>
+				<td>服务器(S):</td>
+				<td><input type="text" class="input" id="computer" disabled="disabled"/></td>
+			</tr>
+
+			<tr>
+				<td>用户名(U):</td>
+				<td><input type="text" class="input" name="uaUser.cuserId" id="loginName"/></td>
+			</tr>
+			<tr>
+				<td>密码(P):</td>
+				<td><input type="password" class="input" onblur="queryAccount();" name="uaUser.cpassword" id="password"/></td>
+			</tr>
+
+			<tr id="account">
+				<td>账套(A):</td>
+				<td>
+					<select id="accountName" class="select" onchange="findAccountYear()" >
+						<option value="-1"></option>
+					</select>
+				</td>
+			</tr>
+			<tr id="year">
+				<td>会计年度(Y):</td>
+				<td>
+					<select id="accountYear" class="select">
+						<option value="-1"></option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+			    <td>操作日期(D):</td>
+				<td>
+					<input  class="input" id="operDate" type="text" onclick="WdatePicker()"/>
+				</td>
+			</tr>
+			<tr>
+			    <td colspan="2" style="text-align:center;padding-top:10px;">
+			      <input type="button" class="button"  value="修改密码" onclick="updatepass()"/>
+			      
+				  <input type="button" class="button"  value="确定(O)" onclick="doSubmit()"/>
+				  
+				  <input type="button" class="button"  value="取消" onclick="closeOpen()"/>
+				</td>
+			</tr>
+
+		</table>
+	 </form>
+	</div>
+	
+	
+	
+	
+	
+	</div>
+	
+	<div>
+		<!-- 重新注册 department.html -->
+		<div id="updatePass"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="502" height="402" title="设置操作员口令"
+		src="updatePass.html"></div>
+			
+	</div>
+	
+<!-- 说明：IE中，当本页面被嵌入到frame或iframe里时本页面head中的JS无法正常执行，须放到body内才能正常显示，所以特将js文件的引入代码放置于此 -->
+<script type="text/javascript" src="../../js/winui/winui.js"></script>
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+<script type="text/javascript" src="js/rule.js"></script>
+<script type="text/javascript" src="js/poratllogin.js"></script>
+<script type="text/javascript">
+	function updatepass(){
+		var passname=$("#loginName").val();
+		if(passname!=null&&passname!=""){
+			openWindow('updatePass','',passname);	
+		}
+	}
+</script>
+</body>
+
+</html>

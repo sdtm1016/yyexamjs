@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+  
+<script type="text/javascript" src="js/columnDic.js"></script>
+
+<title>参照栏目设置</title>
+	<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<style type="text/css">
+	html,body{padding:0px;margin:0px;background-color:#D4D0C8;font-size:12px;font-family:宋体;}
+	#dsignConditionTable {width:400px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+	#dsignConditionTable td{height:16px;line-height:16px;border:1px solid #ccc;border-style:outset;}
+	#dsignConditionTableheader td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;background-color:#D4D0C8;text-align:center;}
+	
+	input {font-family:verdana;}
+	
+</style>
+   
+
+</head>
+<body>
+
+<div style="width:500px;height:310px;">
+
+	<div style="height:260px;width:500px;border-top:1px solid #808080;border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF;border-left:1px solid #808080;">
+		<div style="height:258px;width:498px;border-top:1px solid #FFFFFF;border-right:1px solid #808080;border-bottom:1px solid #808080;border-left:1px solid #FFFFFF;">
+			
+			<div style="height:248px;width:425px;margin-top:3px;margin-left:3px;border:2px inset #eee;background-color:#ffffff;float:left;">
+				<table id="dsignConditionTable" border="1" cellspacing="0">
+				
+					<tr id="dsignConditionTableheader">
+						<td>显示</td>
+						<td width="50">固定列</td>
+						<td width="100">栏目名称</td>
+						<td>列宽</td>
+						<td width="60">对齐方式</td>
+						<td width="60">排序</td>
+					</tr>
+					<tbody id="include" style="background-color:#FFFFFF;">
+					</tbody>
+					<!-- 
+					<tr>
+						<td>Y</td>
+						<td></td>
+						<td>常用摘要编码</td>
+						<td align="right">1000</td>
+						<td>左对齐</td>
+						<td>升序</td>
+					</tr>
+					<tr>
+						<td>Y</td>
+						<td></td>
+						<td>常用摘要正文</td>
+						<td align="right">1000</td>
+						<td>左对齐</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Y</td>
+						<td></td>
+						<td>相关科目编码</td>
+						<td align="right">1000</td>
+						<td>左对齐</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Y</td>
+						<td></td>
+						<td>常用摘要助记码</td>
+						<td align="right">1000</td>
+						<td>中间对齐</td>
+						<td></td>
+					</tr>
+					 -->
+				</table>
+			</div>
+			<div style="float:left;height:50px;width:64px;text-align:center;">
+				<br/>
+				<input type="button" value="∧上移"/>
+				<br/>
+				<input type="button" value="∨下移"/>
+				<br/>
+				<br/>
+				<input type="button" value="√全选"/>
+				<br/>
+				<input type="button" value="×全消"/>
+				<br/>
+				<br/>
+				<input type="button" value="√确认"/>
+				<br/>
+				<input type="button" value="×取消"/>
+			</div>
+			
+		</div>
+	</div>
+
+	<input type="button" value="系统默认" style="float:right;margin-bottom:0px;margin-top:5px;"/>
+</div>
+
+</body>
+</html>

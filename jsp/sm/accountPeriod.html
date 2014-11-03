@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+	<head>
+		<title>会计期间</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript">
+			
+		</script>
+	
+		<style type="text/css">
+			table{border:0;font-size:12px;cursor:default;}
+			th{border:1px;border-style:outset;border-color:#eee;font-weight:normal;}
+			td{border:1px;border-style:outset;border-color:#eee;background-color:#D4D0C8;text-align:center;}
+		</style>
+	</head>
+	<body style="background-color:#D4D0C8;padding-top:0px;padding-left:0px;font-size:12px;font-family:宋体;">
+		
+		<input type="hidden" id="tempDate"/>
+		
+		<div>
+			<!-- 年份月份选择框 -->
+			<div>
+				<div style="float:left;vertical-align:middle;">
+					<span style="height:18px;line-height:18px;">启用年度：</span><input type="text" id="year" style="width:50px;height:12px;line-height:12px;" onChange="refresh();"/>
+				</div>
+				<div style="padding-top:2;margin:0;font-size:5px;float:left;width:16px;">
+					<input type="button" style="width:16px;height:8px;font-weight:bold;padding:0;margin:0;font-size:5px;text-align:center;cursor:default;" value="∧" onClick="yearIncrease();"/>
+					<input type="button" style="width:16px;height:8px;font-weight:bold;padding:0;margin:0;font-size:5px;text-align:center;cursor:default;" value="∨" onClick="yearDecrease();"/>
+				</div>
+				<div style="float:left;margin-left:10px;">
+					<span style="height:18px;line-height:18px;">月度：</span><input type="text" id="month" style="width:40px;height:12px;line-height:12px;" onChange="refresh();"/>
+				</div>
+				<div style="padding-top:2;margin:0;font-size:5px;float:left;width:16px;">
+					<input type="button" style="width:16px;height:8px;font-weight:bold;padding:0;margin:0;font-size:5px;text-align:center;cursor:default;" value="∧" onClick="monthIncrease();"/>
+					<input type="button" style="width:16px;height:8px;font-weight:bold;padding:0;margin:0;font-size:5px;text-align:center;cursor:default;" value="∨" onClick="monthDecrease();"/>
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+
+			<!-- 日期表格 -->
+			<div style="margin-top:5px;border:2px;border-style:inset;border-color:#eee;width:235px;">
+				<table cellspacing="0" id="dateTable">
+					<tr><th>&nbsp;&nbsp;期间&nbsp;&nbsp;</th><th>&nbsp;&nbsp;&nbsp;起始日期&nbsp;&nbsp;&nbsp;</th><th>&nbsp;&nbsp;&nbsp;结束日期&nbsp;&nbsp;&nbsp;&nbsp;</th></tr>
+					<!-- <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr> -->
+				</table>
+			</div>
+			<div style="padding-right:8px;text-align:right;margin-top:5px;">
+				<input type="button" value=" 确定 " onClick="submitPeriod();"/>&nbsp;
+				<input type="button" value=" 放弃 " onClick="window.parent.closeWindow('accountPeriod')"/>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/accountPeriod.js"></script>
+        <script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../js/My97DatePicker/WdatePicker.js"></script>
+	</body>
+</html>

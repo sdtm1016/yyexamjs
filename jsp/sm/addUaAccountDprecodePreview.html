@@ -1,0 +1,539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>科目预览</title>
+	<link rel="stylesheet" type="text/css" href="../../css/public.css">
+	<script type="text/javascript" src="../../js/winui/winui.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/tab.css">
+	<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+	
+	<style type="text/css">
+		body{background-color:#D4D0C8;font-family:宋体;padding:5px;margin:0;}
+		table{border:0;font-size:12px;cursor:default;}
+		th{border:1px;border-style:outset;border-color:#eee;font-weight:normal;background-color:#D4D0C8;text-align:center;}
+		td{border:1px;border-style:outset;border-color:#eee;text-align:left;}
+		
+		/*** tab content container ***/
+		.tcc{border:2px inset #ccc;margin-top:4px;margin-left:4px;display:none;width:498px;height:296px;background-color:#808080;}
+		
+		.tableheader{border-collapse:collapse;cursor:default;position:absolute;margin-top:0px;margin-left:0px;width:382px;height:16px;}
+		.tableheader tr th{background-color:#D4D0C8;border-top:1px solid #fff;border-left:1px solid #fff;border-bottom:1px solid #000;border-right:1px solid #000;}
+		.content{width:100%;height:296px;overflow-y:auto;}
+		.content table {border-collapse:collapse;cursor:default;margin-top:16px;margin-left:0px;width:382px;}
+		.content table tr td{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #ccc;border-bottom:1px solid #ccc;background-color:#fff;}
+		
+	</style>
+	
+	
+<script type="text/javascript">
+
+	
+
+	//tab选项卡切换函数
+	function winui_tab_showTab(item){
+		
+		//取得tab组建
+		var tab = item.parentNode.parentNode;
+		//取得tab下级节点
+		var tc = winui.getChildren(tab);
+		//取得tab头部选项容器
+		var thc = tc[0];
+		//取得tab内容项容器
+		var tcc = tc[1].getElementsByTagName("div")[0];
+		
+		//取得被点击的tab项的下标
+		var tabIndex = winui.getIndex(item);
+		
+		//取得之前选中项的下标
+		var bai = tab.getAttribute("active");//before active index
+		
+		//如果被点击的选项卡不是当前活动的选项卡
+		if(tabIndex!=bai){
+
+			//根据下标取得内容容器下前一次选中的内容项
+			var tcbi = winui.getChild(tcc,bai);
+			//根据下标取得内容容器下本次要选中的内容项
+			var tcwi = winui.getChild(tcc,tabIndex);
+			
+			//改变之前选中项样式
+			var before = winui.getChild(thc,bai);
+			before.style.width="auto";
+			before.style.height="20px";
+			before.className="t_h_i_d";
+			var ic = winui.getChildren(before);//ic=item components
+			ic[0].className="t_h_i_d_l";
+			ic[1].className="t_h_i_d_m";
+			ic[2].className="t_h_i_d_r";
+			ic[2].style.marginLeft="auto";
+			tcbi.style.display="none";
+			
+			//设置当前选中项样式
+			var cc = winui.getChildren(item);//cc=content components
+			
+			item.style.width=(cc[1].innerHTML.length*12+10)+"px";
+			item.style.height="20px";
+			item.className="t_h_i_a";
+			cc[0].className="t_h_i_a_l";
+			cc[1].className="t_h_i_a_m";
+			cc[2].className="t_h_i_a_r";
+			cc[2].style.marginLeft=(cc[1].innerHTML.length*12+10)+"px";
+			tcwi.style.display="block";
+			
+			//更新全局变量WINUI_TAB_CATI的值
+			
+			tab.setAttribute("active",tabIndex);
+			
+			
+			
+			//alert(ic[2].className);
+		}
+	}
+
+	
+	
+	
+	
+	$(document).ready(function() {
+		
+		
+		var ctradekind = null;
+		
+		//1.获得弹出本窗体窗体的行业性质名称
+		try{
+			ctradekind = window.parent.document.getElementById("addAccount").getElementsByTagName("iframe")[0].contentWindow.ctradekind;
+		}catch(e){
+			jAlert("程序执行时产生错误。");
+		}
+		
+
+		
+		//2.根据SysManagerId、行业性质名称查询科目信息
+		$.ajax({
+			url:"glDprecode!findBySysManagerIdAndCtradeName.action",
+			data:"glDprecode.ctradeName="+ctradekind,
+			type:"post",
+			success:function(data,status){
+				//alert(data.glDprecodeList.length);
+				var gdl = data.glDprecodeList;
+				
+				// adt = allDataTable “全部”选项卡
+				var adt = document.getElementById("全部").getElementsByTagName("table")[1];
+				
+				//4.将数据填充到相应的tab表里
+				for(var i=0;i<gdl.length;i++){
+					
+					//得到当前科目数据的科目类别名
+					var cclass = gdl[i].cclass;
+					
+					//设置页签显示
+					document.getElementById(cclass+"签").style.display="block";
+					
+					var tab = document.getElementById(cclass);
+					table = tab.getElementsByTagName("table")[1];
+					
+					//动态向表格填充行：
+					var row = table.insertRow(table.rows.length);
+					var adt_row = adt.insertRow(adt.rows.length);
+					
+					//“级次”列
+					var igrade = row.insertCell(0);
+					var adt_igrade = adt_row.insertCell(0);
+					
+					//“科目编码”列
+					var ccode = row.insertCell(1);
+					var adt_ccode = adt_row.insertCell(1);
+					
+					//“科目名称”列
+					var ccodeName = row.insertCell(2);
+					var adt_ccodeName = adt_row.insertCell(2);
+					
+					
+					//初始化设置“级次”列
+					igrade.style.backgroundColor="#D4D0C8";
+					igrade.style.border="1px";
+					igrade.style.borderTop="1px solid #fff";
+					igrade.style.borderLeft="1px solid #fff";
+					igrade.style.borderRight="1px solid #000";
+					igrade.style.borderBottom="1px solid #000";
+					igrade.style.textAlign="center";
+					igrade.innerHTML=gdl[i].igrade;
+					igrade.style.width="52px";
+					
+
+					
+
+					adt_igrade.style.backgroundColor="#D4D0C8";
+					adt_igrade.style.border="1px";
+					adt_igrade.style.borderTop="1px solid #fff";
+					adt_igrade.style.borderLeft="1px solid #fff";
+					adt_igrade.style.borderRight="1px solid #000";
+					adt_igrade.style.borderBottom="1px solid #000";
+					adt_igrade.style.textAlign="center";
+					adt_igrade.innerHTML=gdl[i].igrade;
+					adt_igrade.style.width="52px";
+					
+					
+					//初始化设置“科目编码”列
+					ccode.innerHTML=gdl[i].ccode;
+					ccode.style.width="100px";
+					adt_ccode.innerHTML=gdl[i].ccode;
+					adt_ccode.style.width="100px";
+					
+					//初始化设置“科目名称”列
+					ccodeName.innerHTML=gdl[i].ccodeName;
+					ccodeName.style.width="130px";
+					adt_ccodeName.innerHTML=gdl[i].ccodeName;
+					adt_ccodeName.style.width="130px";
+					
+					
+				}
+
+				
+			},
+			error:function(data,status){
+				jAlert(data.message);
+			},
+			dataType:"json"
+		});
+		 
+	});
+	
+</script>
+</head>
+<body style="background-color: #d4d0c8;">
+
+
+
+
+
+
+
+
+<div type="tab" active="0" style="float:left;">
+
+		<div class="t_h_c">
+			
+			<div class="t_h_i_a" onclick="winui_tab_showTab(this);" id="全部签" style="width:34px;height:20px;">
+				<div class="t_h_i_a_l"></div>
+				<div class="t_h_i_a_m">全部</div>
+				<div class="t_h_i_a_r" style="margin-left:34px;"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="资产签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">资产</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="负债签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">负债</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="共同签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">共同</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="权益签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">权益</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="成本签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">成本</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="损益签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">损益</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="无分类签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">无分类</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="地勘类签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">地勘类</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="收入费用签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">收入费用</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="净资产签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">净资产</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="表外科目签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">表外科目</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="占用签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">占用</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="来源签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">来源</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="收入签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">收入</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="支出签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">支出</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+			<div class="t_h_i_d" onclick="winui_tab_showTab(this);" id="基金签" style="display:none;">
+				<div class="t_h_i_d_l"></div>
+				<div class="t_h_i_d_m">基金</div>
+				<div class="t_h_i_d_r"></div>
+			</div>
+		</div>
+		
+		<div style="width:514px;height:312px;" class="t_c_c_b_o">
+			<div class="t_c_c_b_i" style="width:512px;height:310px;">
+				
+				
+				<div class="tcc" style="display:block;" id="全部">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+				
+			
+			
+			
+				<div class="tcc" id="资产">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+			
+			
+			
+			
+				<div class="tcc" id="负债">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+			
+			
+			
+			
+				<div class="tcc" id="共同">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+			
+			
+			
+				<div class="tcc" id="权益">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+			
+			
+				
+				<div class="tcc" id="成本">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+			
+				
+				
+				<div class="tcc" id="损益">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+				
+				
+			
+				
+				<div class="tcc" id="无分类">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+				
+			
+				
+				<div class="tcc" id="地勘类">
+					<table class="tableheader" cellspacing="0">
+						<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+					</table>
+					<div class="content">
+						<table cellspacing="0">
+						</table>
+					</div>
+				</div>
+					
+				
+				
+					
+		
+		<div class="tcc" id="收入费用">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="净资产">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="表外科目">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="占用">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="来源">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="收入">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+				
+		<div class="tcc" id="支出">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+				
+					
+		<div class="tcc" id="基金">
+			<table class="tableheader" cellspacing="0">
+				<tr><th style="width:52px;">级次</th><th style="width:100px;">科目编码</th><th style="width:130px;">科目名称</th></tr>
+			</table>
+			<div class="content">
+				<table cellspacing="0">
+				</table>
+			</div>
+		</div>
+		
+				
+			</div>
+		</div>
+	
+</div>
+
+
+
+
+
+
+
+
+</body>
+</html>

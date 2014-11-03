@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>对应转账设置</title>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+	<style type="text/css">
+	.selfbuttongroup {width:100%;height:40px;background-color:#D4D0C8;cursor:default;}
+	.selfbuttongroup .group {padding-right:10px;float:left;margin:2px auto 3px 0px;}
+	.selfbuttongroup .group div {margin:0px;margin-left:0px;width:31px;height:35px;float:left;}
+	.selfbuttongroup .group div input {font-size:12px;background-position:top center;background-repeat:no-repeat;text-align:center;outline:none;background-color:#D4D0C8;}
+	#datatable_rows tr {height:20px}
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../../../js/publicFunction.js"></script>
+    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+    
+	
+	<script type="text/javascript" src="js/cspbautotranDomain.js"></script>
+	
+	<script type="text/javascript">
+		
+	
+	
+	function keyupQueryCode(){
+		var evt = (window.event || event);// 获得事件
+		
+		if (evt.keyCode == "13") {
+			var ele = (evt.srcElement || evt.target);//事件源
+			
+			queryCode(ele);
+		}
+		
+		
+		
+	}
+	
+	
+	//根据科目名称或编码查询科目对象
+	function queryCode(inputBox) {
+		var v = inputBox.value;
+		if(v=="") return false;
+		var codeObj = getCurCodeObjByCodeOrName(v);
+		
+		if(codeObj.ccode==null || codeObj.ccodeName==null){
+			jAlert("科目录入错误！");
+			inputBox.value="";
+		}else{
+			inputBox.value=codeObj.ccode;
+			$("#zccodeName").val(codeObj.ccodeName);
+		}
+		
+		
+		
+	}
+
+	
+	
+
+	</script>
+</head>
+<body>
+	<div class="container" id="container" style="width:710px;height:400px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		
+		
+						
+				<div class="buttongroup">
+				
+					<div class="group">
+						
+						<div><input type="button" value="保存" onclick="saveCspButtoTran()" style="background-image:url('../../../images/icon/save.gif');"/></div>
+						
+						<div><input type="button" value="删除" onclick="deleteCspButtoTran()" style="background-image:url('../../../images/icon/delete.gif');"/></div>
+						
+						<div><input type="button" value="放弃" onclick="abortCspButtoTran()" style="background-image:url('../../../images/icon/giveup.gif');"/></div>
+						
+						<div><input type="button" value="增加" onclick="addCspButtoTran()" style="background-image:url('../../../images/icon/add.gif');"/></div>						
+					</div>
+					
+					
+					<div class="group">
+					
+						<div><input type="button" value="首张" onclick="firstCsp()" style="background-image:url('../../../images/icon/firstcard.gif');"/></div>
+						
+						<div><input type="button" value="上张" onclick="upCsp()" style="background-image:url('../../../images/icon/prevcard.gif');"/></div>
+						
+						<div><input type="button" value="下张" onclick="downCsp()" style="background-image:url('../../../images/icon/nextcard.gif');"/></div>
+						
+						<div><input type="button" value="末张" onclick="lastCsp()" style="background-image:url('../../../images/icon/lastcard.gif');"/></div>
+						
+					</div>
+					
+					
+	<div class="group">
+	
+						<div><input type="button" value="增行" onclick="addRow()" style="background-image:url('../../../images/icon/insertrow.gif');"/></div>
+						
+						<div><input type="button" value="删行" onclick="delRow()" style="background-image:url('../../../images/icon/deleterow.gif');"/></div>
+						
+		
+	</div>
+	
+					
+					<div class="group">
+					
+						<div><input type="button" value="退出" onclick="javascript:window.parent.closeWindow('gl_transfer_mts')" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+						
+					</div>
+					
+					
+				</div>
+		
+		
+		
+				<div class="border_outside" style="height:310px;width:690px;float:left;margin-left:10px;">
+					<div class="border_inside" style="height:308px;width:688px;line-height:18px;">
+					
+					
+					
+		<div style="width:730px;height:280px;margin-left:10px;margin-top:2px;">
+			
+			<div style="width:100%;margin-left:6px;">
+				
+				<table>
+					<tbody>
+						<tr>
+							<td align="right" valign="middle">编号：</td>
+							<td valign="middle"><input id = "tb_tranid"  type="text" style="width:130px;height:14px;"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">凭证类别：</td>
+							<td valign="middle">
+								<select id ="signList" style="width:134px;">
+											<option value= "0">收 收款凭证</option>
+											<option value= "1">付 付款凭证</option>
+											<option value= "2">转 转账凭证</option>
+								</select>
+								
+							</td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">摘要：</td>
+							<td valign="middle"><input id="cdigest" type="text" style="height:14px;"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">转出科目编码：</td>
+							<td valign="middle"><input type="text" id="zccode"   onkeyup="keyupQueryCode()" onblur="queryCode(this)" style="height:14px;"/><input type="button" onclick="openZccoderef()" class="finder"/>&nbsp;&nbsp;&nbsp;&nbsp;转出科目名称：<input  id="zccodeName" type="text" style="height:14px;"/></td>
+						</tr>
+						<tr>
+							<td align="right" valign="middle">转出辅助项：</td>
+							<td valign="middle"><input type="text"  id="zcfzx" style="height:14px;" /><input type="button" onclick="openAddInfoWindow()" class="finder"/></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div>
+			
+			
+			
+				<div style="width:654px;height:160px;border:2px inset #ccc;overflow-x:auto;overflow-y:auto;background-color:#808080;">
+				
+					<table id="datatable" border=1 class="table_style" style="width:510px;">
+						<thead>
+							<tr id="datatable_header">
+								<td style="width:150px;">转入科目编码</td>
+								<td style="width:150px;">转入科目名称</td>
+								<td style="width:150px;">转入辅助项</td>
+								<td style="width:60px;">结转系数</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_rows">
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			
+			
+			</div>
+			
+		</div>
+		
+		
+		
+					</div>
+				</div>
+		
+		
+		<div style="color:blue;margin-left:10px;float:none;clear:both;">
+			提示：转入科目可定义多个，如转出科目定义辅助项，则转入科目辅助项不能为空，本功能只结转期末余额。
+		
+		</div>
+		
+		
+	</div>
+</body>
+
+<script type="text/javascript" src="js/mts.js"></script>
+<script type="text/javascript" src="js/mtsTable.js"></script>
+
+<script type="text/javascript">
+   var paramObject = window.parent.valueMap.get("gl_transfer_mts");
+ </script>
+	
+
+</html>
