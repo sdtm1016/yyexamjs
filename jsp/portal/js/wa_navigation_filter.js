@@ -16,21 +16,13 @@
 
 //“工资”模块相关导航过滤器
 function wa_navigation_filter(){
-	
 	var flag = true;
-	/*$.ajax({
-		url:'wageCategories!queryWageSets.action',
+	$.ajax({
+		url:'data/queryWageSets.json',
 		type:'post',
 		dataType:'json',
 		async:false,
 		success:function(data){
-			
-			var dWAStartDate=data.dWAStartDate.split("-");
-			var operdate=getCookie("operDate").split("-");
-			if(dWAStartDate[0]!=operdate[0]||(operdate[1]-0)<(dWAStartDate[1]-0)){
-				jAlert("还没有到工资模块启用日期");
-				return false;
-			}
 			
 			wa_isWageSets = data.isWageSets;
 			wa_wageTypeId = (wa_wageTypeId == null?loginedModule.get("WA"):wa_wageTypeId);
@@ -72,7 +64,7 @@ function wa_navigation_filter(){
 
 				
 				$.ajax({
-					url:'wageCategories!queryWageTypes.action',
+					url:'data/queryWageTypes.json',
 					type:'post',
 					dataType:'json',
 					async:false,
@@ -110,7 +102,7 @@ function wa_navigation_filter(){
 				wa_wageTypeId = 0;
 			}
 		}
-	});*/
+	});
 	
 	return flag;
 	

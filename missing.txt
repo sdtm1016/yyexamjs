@@ -1,11 +1,10 @@
-http://localhost/yyexamjs/jsp/mr/eSReport/general/hPagebreak.gif
-POST http://localhost/yyexamjs/jsp/sm/login!computerName.action 404 (Not Found) jquery-1.7.2.js:3
-POST http://localhost/yyexamjs/jsp/sm/login!computerName.action 404 (Not Found) jquery-1.7.2.js:3
-GET http://localhost/yyexamjs/images/icon/add.gif 404 (Not Found) operator.html:1
-GET http://localhost/yyexamjs/images/icon/update.gif 404 (Not Found) operator.html:1
-GET http://localhost/yyexamjs/images/icon/delete.gif 404 (Not Found) operator.html:1
-POST http://localhost/yyexamjs/jsp/sm/uaUser!queryList 404 (Not Found) jquery-1.7.2.js:3
-GET http://localhost/yyexamjs/images/icon/add.gif 404 (Not Found) authority.html:1
-GET http://localhost/yyexamjs/images/icon/delete.gif 404 (Not Found) authority.html:1
-GET http://localhost/yyexamjs/images/icon/insertrow.gif 404 (Not Found) authority.html:1
-POST http://localhost/yyexamjs/jsp/sm/authority!queryValidUaUserList 404 (Not Found) 
+GET http://localhost/yyexamjs/images/portal/CTree/sysButton/WADown.jpg 404 (Not Found) WADown.jpg:1
+GET http://localhost/yyexamjs/images/portal/CWork/imgList/WA_GZFT-m.jpg 404 (Not Found) 
+http://t3online.chanjet.com/yyexamjs/js/ztree3.4/css/zTreeStyle/img/zTreeStandard.png
+http://localhost/yyexamjs/images/portal/CTree/sysButton/WADown.jpg
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/images/portal/CWork/imgList/WA_KJGRSDS-m.jpg
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/images/icon/reselect.gif
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/jsp/wa/wageallocation/wagesSharing!queryWagesSharing.action
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/jsp/wa/wageallocation/wagesSharing!querySharingPz.action
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/images/icon/find.gif
+Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost/yyexamjs/images/icon/batch.gif

@@ -33,8 +33,10 @@
 </style>
 
 <script type="text/javascript">
-	var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
-	var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+	//var cgzgradenum = window.parent.parent.wa_currentWaAccount.cgzgradenum;
+	//var cgzgradename = window.parent.parent.wa_currentWaAccount.cgzgradename;
+	var cgzgradenum=201;
+	var cgzgradename="test";
 	$(document)
 			.ready(
 					function() {
@@ -45,13 +47,13 @@
 	
 	function initData(){
 		$.ajax({
-			url : 'wagesSharing!queryWagesSharingIndex.action',
+			url : 'data/queryWagesSharingIndex.json',
 			type : 'post',
 			data : 'cgzgradenum=' + cgzgradenum,
 			dataType : 'json',
 			async : false,
 			success : function(data) {
-				ftNameList = (data.list)[0];
+				ftNameList = data.list;
 				if(ftNameList.length==0)return;
 				var str = "";
 				$("#datatable_1_bodyer").html("");
@@ -147,7 +149,7 @@
 	var zNodes = [];
 	function queryTree(cgzgradename) {
 		$.ajax({
-			url : 'ztree!loadWaDeptTree.action',
+			url : 'data/loadWaDeptTree.json',
 			type : 'post',
 			data : 'cgzgradename=' + cgzgradename,
 			dataType : 'json',
@@ -155,12 +157,12 @@
 			success : function(data) {
 				$("#dpt_tree").html("");
 				treeNodes = data.listTree;
-				for ( var i = 0; i < treeNodes.length; i++) {
+				/*for ( var i = 0; i < treeNodes.length; i++) {
 					
 					var nodeObj = eval('(' + treeNodes[i] + ')');
 					zNodes.push(nodeObj);
-				}
-				$.fn.zTree.init($("#dpt_tree"), setting, zNodes);
+				}*/
+				$.fn.zTree.init($("#dpt_tree"), setting, treeNodes);
 			}
 		});
 		/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/

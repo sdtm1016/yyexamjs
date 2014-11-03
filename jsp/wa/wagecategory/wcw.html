@@ -17,7 +17,7 @@ $(document).ready(function(){
 		$("#rd_1_2").attr("checked",true);
 	}
 	$.ajax({
-		url:"wageCategories!queryWageTypes.action",
+		url:"../../portal/data/queryWageTypes.json",
 		type:"post",
 		success:function(data,status){
 			var list = data.wageList;
