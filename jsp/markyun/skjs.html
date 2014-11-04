@@ -19,13 +19,33 @@
 		   .titles h1{
 			   display:inline-block;
 			   width:130px;
-			   font-size:30px;
+			   height:20px;
+			   line-height:20px;
+			   font-size:25px;
+			   padding-left:30px;
 		   }
-	   </style>
+		  #form1, .titles {
+			   font-size:12px;
+			   color:#03C;
+			   font-weight:400;
+		  }
+		#form1 > span{
+			   display:inline-block;
+			  width:55px;
+			  line-height:25px;
+			  text-align:right;
+			   font-weight:500;
+			  }
+			#form1 > input{
+				border-left:2px solid #999;
+					border-top:2px solid #ccc;
+				}   
+		</style>
  </head> 
  <body> 
-  <div> 
-   <div class="buttongroup" style="float:none;clear:both;"> 
+ </div>
+ <div> 
+ 				<div class="buttongroup" style="float:none;clear:both;"> 
     <div class="group"> 
      <div> 
       <input type="button" value="设置" disabled="disabled" style="background-image:url('../../images/icon/setting.gif');" /> 
@@ -77,32 +97,186 @@
 	<div class="titles">
 	<h1>收款单</h1>
 	客户： 
-    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
+    <input id="csscode" type="text" name="settleStyle.csscode" size="25" onblur="isSpecialChar(this)"  /> 
 	预约合计： 
-    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
+    <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
 	</div>
     <hr /> 
 
-   <div id="form1">  
-     类别编码： 
-    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
+   <div id="form1">   
+     <span>订 单 号</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+    <br />  
+	 <span> 结算账号</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span> 日&nbsp;&nbsp;&nbsp;&nbsp;期 </span> <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>  结算方式</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   />  
     <br /> 
-    <br /> 类别名称： 
-    <input id="cssname" type="text" name="settleStyle.cssname" size="26" onblur="isSpecialChar(this)" readonly /> 
+	 <span> 结算科目</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span> 币&nbsp;&nbsp;&nbsp;&nbsp;种 </span> <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>  汇&nbsp;&nbsp;&nbsp;&nbsp;率</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   />  
     <br /> 
-    <br /> 票据管理方式： 
-    <input type="checkbox" id="bssflag" class="ivtalm" /> 
+	 <span> 金&nbsp;&nbsp;&nbsp;&nbsp;额</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>票 据 号</span> <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>银行账号</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   />  
     <br /> 
+	 <span>部&nbsp;&nbsp;&nbsp;&nbsp;门</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>业 务 员</span> <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   /> 
+	  <span>项&nbsp;&nbsp;&nbsp;&nbsp;目</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   />  
     <br /> 
-    <input id="igrade" type="hidden" name="settleStyle.issgrade" /> 
-    <input id="bend" type="hidden" name="settleStyle.bssend" size="26" /> 
-    <div>
-     编码原则： 
-     <input id="bmgz" type="text" name="" readonly style="border:0;background:transparent;" /> 
-    </div> 
+	  <span>摘&nbsp;&nbsp;&nbsp;&nbsp;要</span>  <input id="csscode" type="text" name="settleStyle.csscode" size="16" onblur="isSpecialChar(this)"   />  
     <br /> 
-    <br /> 
+	
+	
+	
+	
+  <div> 
+   <div style="width:590px;height:210px;border:1px inset #ccc;float:left;overflow-x:auto;overflow-y:auto"> 
+    <table id="datatable" border="1" class="table_style" style="width:570px;"> 
+     <thead> 
+      <tr> 
+       <td style="width:130px;">单据类型</td> 
+       <td style="width:135px;">单据编号</td> 
+       <td style="width:130px;">部门</td> 
+       <td style="width:130px;">业务员</td> 
+	          <td style="width:130px;">摘要</td> 
+
+       <td style="width:130px;">单据日期</td> 
+
+      </tr> 
+     </thead> 
+     <tbody id="datatable_rows"> 
+      <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	   <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	   <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>会计;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	   <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+	    <tr> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+	   <td>&nbsp;</td> 
+       <td>&nbsp;</td> 
+      </tr> 
+     </tbody> 
+    </table> 
    </div> 
+   
+  </div>
   </div>  
  </body>
 </html>
