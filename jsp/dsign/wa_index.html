@@ -29,7 +29,15 @@
 .buttongroup ul {position:relative;margin-left:0px;margin-top:35px;width:80px;border:2px outset #ccc;background-color:#D4D0C8;padding:0px;cursor:default;}
 .buttongroup li {list-style:none;height:18px;line-height:18px;padding-left:10px;}
 .buttongroup li:hover {background-color:#0a246a;color:#fff;}
-
+.z_tab_04 .z_tab_04_td_r {
+	border-right: 1px solid red;
+}
+.z_tab_04 .z_tab_04_td_g{
+	border-right: 1px solid blue;
+	}
+	.z_tab_01_span01,.z_tab_01 .z_tab_01_span02{
+		border:none!important;
+		}
 </style>
 	
 <script type="text/javascript">
@@ -162,7 +170,7 @@ var pageWindowId="wa_operate_dsign";
         	<tr>
             	<td colspan="2" rowspan="2" class="z_tab_01_title">
             	<h1>
-            	<span id="dsignName" ></span>
+            	<span id="dsignName" >记账凭证	</span>
             	</h1></td>
                 <td height="18"><input type="text" onfocus="return checkProducerDate()"  id="addInfo1" onkeydown="return addInfo1KeyDown(this);"  class="z_tab_01_text01" /></td>
             </tr>
@@ -174,9 +182,10 @@ var pageWindowId="wa_operate_dsign";
                 <td width="180" height="20">
                  
                 <span class="z_tab_01_span01" id="dsignType" onDblClick = "changeDsignType(event);" ></span>
-                <span>&nbsp;字</span>
+                <span>&nbsp;记字</span>
                 <div class="z_tab_01_span02" id="dsignNumber" style="float:left;height:14px;margin-top:4px;" ></div></td>
-                <td width="280"><span>制单日期：</span><input type="text" class="z_tab_01_span03" id="producerDate" style="float:left;" onclick="showDateFinder();"/><input id='finder_pdf' type="button" onclick="WdatePicker({el:'producerDate',onpicking:function(dp){$('#finder_pdf').hide();$dp.hide();}})" class="finder" style="display:none;"/></td>
+                <td width="280"><span>制单日期：</span>2010-01-31
+                				<input id='finder_pdf' type="button" onclick="WdatePicker({el:'producerDate',onpicking:function(dp){$('#finder_pdf').hide();$dp.hide();}})" class="finder" /></td>
                 <td width="110"><span>附单据数：</span><span><input type="text"  onfocus="return checkProducerDate()" id="addNumber"  class="z_tab_01_text02" /></span></td>
             </tr>
         </table>
@@ -199,10 +208,10 @@ var pageWindowId="wa_operate_dsign";
         	</div>
          <table id="gridtable" cellpadding="0" cellspacing="0" border="0" align="center" class="z_tab_03">
         	<tr bgcolor="#FFFFFF" row="1"  onclick="dataRowClickBiz(this)">
-              	<td class="z_tab_03_td_1" rowspan="2" style="width:150px;"><input type="text" class="z_zy" style="width:100%;height:100%;line-height:30px;" id="r1_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid" dbValue ="1" value="" onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)"  onDblClick = "selZhaiyao(this)" /></td>
+              	<td class="z_tab_03_td_1" rowspan="2" style="width:150px;"><input type="text" class="z_zy" style="width:100%;height:100%;line-height:30px;" id="r1_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid" dbValue ="1" value="综合部-工资提记" onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)"  onDblClick = "selZhaiyao(this)" /></td>
                 <td class="z_tab_03_td_2"  rowspan="2" style="width:250px;">
                 
-                <textarea id="r1_c2" style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue="2"  onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)" onblur = "cellBlur(this)"  onDblClick = "selKemu(this,'wa_operate_dsign')"></textarea>
+                <textarea id="r1_c2" style="width:130px;height:30px;float:left;border:none;overflow:hidden;"  col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue="2"  onkeydown="return cellKeyControl(this)"   onfocus="cellFocus(this)" onblur = "cellBlur(this)"  onDblClick = "selKemu(this,'wa_operate_dsign')">办公费</textarea>
                 
                 <input type="button" class="finder"   onclick="toSelKemu(this,'wa_operate_dsign')" style="display:none;"/>
                 
@@ -235,21 +244,22 @@ var pageWindowId="wa_operate_dsign";
                 	<!-- 借方金额 start -->
                 	<table cellpadding="0" cellspacing="0" border="0"   class="z_tab_04">
                     	<tr event_mark="moneyRow" row="1" col="3"  id="r1_c3" dbValue="" >
-                        	<td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_1"  mcol="1"  /> </td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_2"  mcol="2"  /> </td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_3"  mcol="3"  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_4"  mcol="4"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_5"  mcol="5"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_6"  mcol="6"  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_7"   mcol="7"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_8"   mcol="8"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_9"    mcol="9"  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r1_c3_10"  mcol="10"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_11"   mcol="11" /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_12"   mcol="12" /></td>
-                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r1_c3_13"  mcol="13"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r1_c3_14"   mcol="14" /></td>
-                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "r1_c3_15"  mcol="15" /></td>
+                        	 	<td class="z_tab_04_td_g"><input type="text" size="1" id="r1_c3_1" mcol="1" value=""> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_2" mcol="2" value=""> </td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_3" mcol="3" value=""></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id="r1_c3_4" mcol="4" value=""></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_5" mcol="5" value=""></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_6" mcol="6" value=""></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id="r1_c3_7" mcol="7" value=""></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_8" mcol="8" value=""></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_9" mcol="9" value=""></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id="r1_c3_10" mcol="10" value="6"></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_11" mcol="11" value="5"></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_12" mcol="12" value="0"></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id="r1_c3_13" mcol="13" value="0"></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id="r1_c3_14" mcol="14" value="0"></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id="r1_c3_15" mcol="15" value="0"></td>
+               			
                          </tr>
                     </table><!-- 借方金额 end -->
                 </td>
@@ -290,12 +300,12 @@ var pageWindowId="wa_operate_dsign";
             </tr>
             
             <tr bgcolor="#FFFFFF" row="2"  onclick="dataRowClickBiz(this)">
-            	<td class="z_tab_03_td_1" rowspan="2"><input  type="text" class="z_zy" style="width:100%;height:100%;line-height:30px;" id="r2_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)"   onDblClick = "selZhaiyao(this)" /> </td>
+            	<td class="z_tab_03_td_1" rowspan="2"><input  type="text" class="z_zy" style="width:100%;height:100%;line-height:30px;" id="r2_c1"   col= "1"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="1" value="综合部-工资提记" onkeydown="return cellKeyControl(this)" onfocus="cellFocus(this)"   onDblClick = "selZhaiyao(this)" /> </td>
                 <td class="z_tab_03_td_2" rowspan="2" style="width:250px;">
                 
                 <textarea id="r2_c2" 
 
-style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value=""  onkeydown="return cellKeyControl(this)"  onfocus="cellFocus(this)"   onblur = "cellBlur(this)"  onDblClick = "selKemu(this,'wa_operate_dsign')"></textarea>
+style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "2"  dataType="1" dictId="zhaiyao.dictid"  dbValue ="2" value="综合部-工资提记"  onkeydown="return cellKeyControl(this)"  onfocus="cellFocus(this)"   onblur = "cellBlur(this)"  onDblClick = "selKemu(this,'wa_operate_dsign')">应付职工薪酬</textarea>
                 <input type="button" class="finder" onclick="toSelKemu(this,'wa_operate_dsign')" style="display:none;"/>
                 
                 </td>
@@ -359,12 +369,12 @@ style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "
                             <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_22"  mcol="22"  /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_23"  mcol="23"  /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_24"  mcol="24"  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_25"  mcol="25"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_26"  mcol="26"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_27"  mcol="27"  /></td>
-                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r2_c3_28"  mcol="28"  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_29"  mcol="29"  /></td>
-                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" id= "r2_c3_30"  mcol="30"  /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "r2_c3_25"  value="6" mcol="25"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_26"  value="5" mcol="26"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_27"  value="0" mcol="27"  /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "r2_c3_28"  value="0" mcol="28"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "r2_c3_29"   value="0" mcol="29"  /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text" size="1" value="0"  id= "r2_c3_30"  mcol="30"  /></td>
           </tr>
                     </table><!-- 贷方金额 end -->
                 </td>
@@ -671,12 +681,12 @@ style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "
                             <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_7"   mcol="7"  value="" /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_8"   mcol="8"  value=""   /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_9"    mcol="9"  value=""  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_10"  mcol="10"  value=""  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_11"   mcol="11" value="" /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_12"   mcol="12" value=""  /></td>
-                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_13"  mcol="13"  value=""  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_14"   mcol="14" value=""  /></td>
-                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_15"  mcol="15" value=""  /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_10"  mcol="10"  value="6"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_11"   mcol="11" value="5" /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_12"   mcol="12" value="0"  /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_13"  mcol="13"  value="0"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_14"   mcol="14" value="0"  /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_15"  mcol="15" value="0"  /></td>
                			</tr>
                     </table><!-- 借方金额 end -->
                 </td>
@@ -694,12 +704,12 @@ style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "
                             <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_22"   mcol="7"  value=""   /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_23"   mcol="8"  value=""   /></td>
                             <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_24"    mcol="9"  value=""  /></td>
-                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_25"  mcol="10"  value=""   /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_26"   mcol="11" value=""  /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_27"   mcol="12" value=""  /></td>
-                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_28"  mcol="13"  value=""   /></td>
-                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_29"   mcol="14" value=""  /></td>
-                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_30"  mcol="15" value=""  /></td>
+                            <td class="z_tab_04_td_g"><input type="text" size="1" id= "rhj_c3_25"  mcol="10"  value="6"   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_26"   mcol="11" value="5"  /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_27"   mcol="12" value="0"  /></td>
+                            <td class="z_tab_04_td_r"><input type="text" size="1" id= "rhj_c3_28"  mcol="13"  value="0"   /></td>
+                            <td class="z_tab_04_td_h"><input type="text" size="1" id= "rhj_c3_29"   mcol="14" value="0"  /></td>
+                            <td class="z_tab_04_td_h" style="border:none"><input type="text"   size="1"  id= "rhj_c3_30"  mcol="15" value="0"  /></td>
                			</tr>
                     </table><!-- 贷方金额 end -->
                 </td>
@@ -743,7 +753,7 @@ style="width:130px;height:30px;float:left;border:none;overflow:hidden;"   col= "
          	<span class="z_p_span_01" >记账</span><span class="z_p_span_05" id="bookkeeper" ></span>
          	<span class="z_p_span_02" >审核</span><span class="z_p_span_05" id="audit" ></span>
          	<span class="z_p_span_03" >出纳</span><span class="z_p_span_05" id="cashier" ></span>
-         	<span class="z_p_span_04" >制单</span><span class="z_p_span_05" id="producer"></span>
+         	<span class="z_p_span_04" >制单</span><span class="z_p_span_05" >王平</span>
          	
          </p>
          
