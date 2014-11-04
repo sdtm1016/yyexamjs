@@ -12,6 +12,16 @@
 	  <link rel="stylesheet" href="../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css" /> 
 	  <script type="text/javascript" src="../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script> 
 	  <script type="text/javascript" src="js/skjs.js"></script> 
+	   <style> 
+	 .buttongroup,  body{
+		   background-color:#FFF;
+		   }
+		   .titles h1{
+			   display:inline-block;
+			   width:130px;
+			   font-size:30px;
+		   }
+	   </style>
  </head> 
  <body> 
   <div> 
@@ -64,16 +74,21 @@
     </div> 
    </div> 
    <hr /> 
-   <div style="width:164px;height:290px;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;"> 
-    <ul id="settleStyleTree" class="ztree" style="margin-left:-20px;"> 
-    </ul> 
-   </div> 
-   <div id="form1">
+	<div class="titles">
+	<h1>收款单</h1>
+	客户： 
+    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
+	预约合计： 
+    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
+	</div>
+    <hr /> 
+
+   <div id="form1">  
      类别编码： 
-    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly="" /> 
+    <input id="csscode" type="text" name="settleStyle.csscode" size="26" onblur="isSpecialChar(this)" readonly /> 
     <br /> 
     <br /> 类别名称： 
-    <input id="cssname" type="text" name="settleStyle.cssname" size="26" onblur="isSpecialChar(this)" readonly="" /> 
+    <input id="cssname" type="text" name="settleStyle.cssname" size="26" onblur="isSpecialChar(this)" readonly /> 
     <br /> 
     <br /> 票据管理方式： 
     <input type="checkbox" id="bssflag" class="ivtalm" /> 
@@ -83,7 +98,7 @@
     <input id="bend" type="hidden" name="settleStyle.bssend" size="26" /> 
     <div>
      编码原则： 
-     <input id="bmgz" type="text" name="" readonly="" style="border:0;background:transparent;" /> 
+     <input id="bmgz" type="text" name="" readonly style="border:0;background:transparent;" /> 
     </div> 
     <br /> 
     <br /> 
