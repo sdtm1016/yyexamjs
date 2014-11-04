@@ -42,7 +42,7 @@ $(document).ready(function(){
 	param.period=$("#jtkjyf").html().split(".")[1];
 	
 	//加载数据-------
-	reloadData();
+	//reloadData();
 	 /*合并科目，辅助项点击事件(2013-9-4) lyl*/
 	$("#mergerSame").unbind("click").bind("click",function(){
 		var flag=$("#mergerSame").attr("checked");
@@ -408,16 +408,19 @@ function deliverValue(object){
 						<tr>
 							<td rowspan="2" width="95">部门名称</td>
 							<td rowspan="2" width="95">人员类别</td>
-							<td rowspan="2" width="95" >人员姓名</td>
-							<td rowspan="2" width="95">工资项目</td>
-							<td colspan="5">工资分摊</td>
+							<td colspan="3">应发合计</td>
 						</tr>
 						<tr>
-						    <td width="71">计提基数</td>
-						    <td width="71">计提比例</td>
-						    <td width="71">计提金额</td>
+						    <td width="71">分配金额</td>
 							<td width="71">借方科目</td>
 							<td width="71">贷方科目</td>
+						</tr>
+						<tr>
+						    <td width="71">综合部</td>
+						    <td width="71">管理人员</td>
+						    <td width="71">6500.00</td>
+							<td width="71">660201</td>
+							<td width="71">2211</td>
 						</tr>
 					</table>
 				</div>
