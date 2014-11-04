@@ -576,9 +576,9 @@ $(document).ready(function() {
 		success: function(data){
 			var ml = data.enableModuleList.toString();
 			var left = 112;//“文件”和“基础设置”的宽度和
-			var store = [];//模块按一定展示顺序排序
+			//var store = [];//模块按一定展示顺序排序
 
-			if(ml.indexOf("GL")!=-1){
+			/*if(ml.indexOf("GL")!=-1){
 				store[store.length] = "GL";	
 				store[store.length] = "MR";	
 			}
@@ -594,7 +594,9 @@ $(document).ready(function() {
 			if(ml.indexOf("GX")!=-1){
 				store[store.length] = "PU";	
 				store[store.length] = "SA";	
-			}
+			}*/
+			
+			var store=['GL','WA','FA','PU','SA'];
 
 			var mcec = new hashMap();//Model click excute code map.
 			
