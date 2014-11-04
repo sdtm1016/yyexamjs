@@ -1,5 +1,6 @@
 html,body{padding:0px 0px 0px 0px;background-color: #D4D0C8;}
-*,input{font-family:ËÎÌו;font-size:12px;}
+*,input{font-family:ËÎÌו;font-size:12px; font-weight:700;color:
+#000;}
 .border_outside{border-top:1px solid #808080;border-right:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF;border-left:1px solid #808080;}
 .border_inside{border-top:1px solid #FFFFFF;border-right:1px solid #808080;border-bottom:1px solid #808080;border-left:1px solid #FFFFFF;}
 

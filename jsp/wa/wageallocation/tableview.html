@@ -8,17 +8,35 @@
 <script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
 <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
 <script type="text/javascript" src="../../../js/publicFunction.js"></script>
-
 <style type="text/css">
-.table_header {border-collapse:collapse;cursor:default;font-size:12px;width:100%;}
-.table_header tr {height:35px;}
-.table_header td {border:1px solid #000;text-align:center;padding:0px;}
-
-
-#datarows {border-collapse:collapse;cursor:default;font-size:12px;}
-#datarows tr {background-color:#fff;height:20px;}
-#datarows td {border:1px solid #000;text-align:center;padding:0px;}
-
+.table_header {
+	border-collapse: collapse;
+	cursor: default;
+	font-size: 12px;
+	width: 100%;
+}
+.table_header tr {
+	height: 25px;
+}
+.table_header td {
+	border: 1px solid #000;
+	text-align: center;
+	padding: 0px;
+}
+#datarows {
+	border-collapse: collapse;
+	cursor: default;
+	font-size: 12px;
+}
+#datarows tr {
+	background-color: #fff;
+	height: 20px;
+}
+#datarows td {
+	border: 1px solid #000;
+	text-align: center;
+	padding: 0px;
+}
 </style>
 <script type="text/javascript">
 
@@ -357,94 +375,76 @@ function deliverValue(object){
 
  /*   end */
 </script>
-	
 </head>
 <body>
-	<div class="container" style="float:left;width:700px;height:500px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
-		<div style="width:850px;height:493px;margin-top:1px;margin-left:3px;">
-			<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
-			<div class="buttongroup">
-				<div class="group">
-					<div><input type="button" value="重选" onclick="reselect();" style="background-image:url('../../../images/icon/reselect.gif');"/></div>
+<div class="container" style="float: left; width: 1039px; height: 500px; background-color: #D4D0C8; position: absolute; top: -9px; left: -1px;">
+				<div style="width:850px;height:493px;margin-top:1px;margin-left:3px;">
+								<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
+								<div class="buttongroup">
+												<div class="group">
+																<div>
+																				<input type="button" value="重选" onclick="reselect();" style="background-image:url('../../../images/icon/reselect.gif');"/>
+																</div>
+												</div>
+												<div class="group">
+																<div>
+																				<input type="button" value="制单" onclick="makePZ()" style="background-image:url('../../../images/icon/find.gif');"/>
+																</div>
+																<div>
+																				<input disabled="disabled" type="button" value="批制" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/batch.gif');"/>
+																</div>
+												</div>
+												<div class="group">
+																<div>
+																				<input type="button" value="退出" onclick="window.parent.closeWindow('wa_wageallocation_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/>
+																</div>
+												</div>
+								</div>
+								<div style="width:840px; background-color:#fff;overflow-x:auto;">
+												<div style="width:100%;height:84px;">
+																<div id="title" style="height:30px;font-size:22px;color:#000;font-weight:bold;text-align:center;text-decoration:underline;padding-top:10px;">工资计提一览表</div>
+																<div style="height:14px;color:#000080;margin-top:5px;">
+																				<div style="float:left;padding-top:5px;margin-left:20px;">     计提会计月份：2010年1月<span id="jtkjyf"></span> </div>
+																</div>
+												</div>
+												<div style="width:760px;height:50px;">
+																<table class="table_header" id="name" >
+																				<tr>
+																								<td rowspan="2" width="95">部门名称</td>
+																								<td rowspan="2" width="95">人员类别</td>
+																								<td colspan="3">应发合计</td>
+																				</tr>
+																				<tr>
+																								<td width="71">分配金额</td>
+																								<td width="71">借方科目</td>
+																								<td width="71">贷方科目</td>
+																				</tr>
+																				<tr>
+																								<td width="71"><div align="left">综合部</div></td>
+																								<td width="71"><div align="left">管理人员</div></td>
+																								<td width="71"><div align="right">6500.00</div></td>
+																								<td width="71"><div align="right">660201</div></td>
+																								<td width="71"><div align="right">2211</div></td>
+																				</tr>
+																</table>
+												</div>
+												<div style="width:858px;height:255px;border:1px solid #000;overflow-x:hidden;overflow-y:auto;border-top:none;">
+																<table style="width:860px;height:50px;overflow-y:hidden;" class="table_style" >
+																				<tbody id="datarows">
+																				</tbody>
+																</table>
+												</div>
+								</div>
+								<div style="height:26px;line-height:26px;">
+												<div style="float:left;">&nbsp;&nbsp;&nbsp;&nbsp;记录数：<span id="dataCount">0</span></div>
+												<div style="float:right;width:86px;height:16px;border:1px solid #000;margin-top:6px;margin-right:6px;">
+																<div style="margin-top:4px;margin-left:8px;border:1px solid #000;background-color:#c0ffc0;width:16px;height:8px;float:left;"></div>
+																<div style="margin-left:6px;float:left;margin-top:-4px;">已经制单</div>
+												</div>
+								</div>
 				</div>
-				<div class="group">
-					<div><input type="button" value="制单" onclick="makePZ()" style="background-image:url('../../../images/icon/find.gif');"/></div>
-					<div><input disabled="disabled" type="button" value="批制" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/batch.gif');"/></div>
-				</div>
-				
-				<div class="group">
-					<div><input type="button" value="退出" onclick="window.parent.closeWindow('wa_wageallocation_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/></div>
-				</div>
-				
-			</div>
-			
-			<div style="width:840px;height:420px;background-color:#fff;overflow-x:auto;overflow-y:hidden;">
-				
-				<div style="width:100%;height:84px;">
-					<div id="title" style="height:30px;font-size:20px;color:#000080;font-weight:bold;text-align:center;text-decoration:underline;padding-top:10px;">
-						
-					</div>
-					<div style="height:14px;color:#000080;margin-left:20px;display: block;" >
-						<input id="mergerSame" type="checkbox" style="margin-bottom:-6px;"/><label for="cb_1">合并科目相同、辅助项相同的分录</label>
-					</div>
-					<div style="height:14px;color:#000080;margin-top:5px;">
-						<div style="float:left;margin-left:20px;">
-							类型：
-							<select id="ijtid" onchange="reloadData(this)" style="width:200px;">
-								<option></option>
-								<option></option>
-								<option></option>
-								<option></option>
-							</select>
-						</div>
-						<div style="float:right;padding-top:5px;margin-right:20px;">
-							计提会计月份：<span id="jtkjyf"></span>
-						</div>
-					</div>
-				</div>
-				
-				<div style="width:860px;height:70px;background-color:#ccc;">
-					<table class="table_header" id="name" >
-						<tr>
-							<td rowspan="2" width="95">部门名称</td>
-							<td rowspan="2" width="95">人员类别</td>
-							<td colspan="3">应发合计</td>
-						</tr>
-						<tr>
-						    <td width="71">分配金额</td>
-							<td width="71">借方科目</td>
-							<td width="71">贷方科目</td>
-						</tr>
-						<tr>
-						    <td width="71">综合部</td>
-						    <td width="71">管理人员</td>
-						    <td width="71">6500.00</td>
-							<td width="71">660201</td>
-							<td width="71">2211</td>
-						</tr>
-					</table>
-				</div>
-				
-				<div style="width:858px;height:266px;border:1px solid #000;overflow-x:hidden;overflow-y:auto;border-top:none;">
-				
-					<table style="width:860px;height:50px;overflow-y:hidden;" class="table_style" >
-						<tbody id="datarows"></tbody>
-					</table>
-				
-				</div>
-				
-			</div>
-			<div style="height:26px;line-height:26px;">
-				<div style="float:left;">&nbsp;&nbsp;&nbsp;&nbsp;记录数：<span id="dataCount">0</span></div>
-				<div style="float:right;width:86px;height:16px;border:1px solid #000;margin-top:6px;margin-right:6px;">
-					<div style="margin-top:4px;margin-left:8px;border:1px solid #000;background-color:#c0ffc0;width:16px;height:8px;float:left;"></div>
-					<div style="margin-left:6px;float:left;margin-top:-4px;">已经制单</div>
-				</div>
-			</div>
-		</div>
-	</div>
+</div>
 </body>
-
 <script type="text/javascript">
 /***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
 
@@ -474,5 +474,4 @@ function rowSelection(){
 
 rowSelection();
 </script>
-
 </html>
