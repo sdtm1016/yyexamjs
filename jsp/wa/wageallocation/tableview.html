@@ -206,7 +206,7 @@ function reselect(){
 function makePZ(){
 	//准备数据
 	//param.dataForMakePz="";
-	param.waftid=$("#ijtid").val();
+	/* param.waftid=$("#ijtid").val();
 	param.cgzgradenum=cgzgradenum;
 	//param.period=$("#jtkjyf").html().split(".")[1];
 	param.shareWithDep=param.fpfs;
@@ -238,8 +238,8 @@ function makePZ(){
 				}
 		},
 		dataType:"json"
-	}); 
-	
+	});  */
+	window.parent.openWindow("wa_operate_dsign","wa_wageallocation_tableview",null);
 }
 
 
