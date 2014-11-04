@@ -1,0 +1,10 @@
+ {"listTree":[
+		{"name":"正式人员2", "open":true, "children": [
+			{ "name":"采购部"},
+			{ "name":"生产部","checked":true},
+			{ "name":"销售部"},
+			{ "name":"财务部"},
+			{ "name":"综合部"}
+			]
+		}
+	]}
