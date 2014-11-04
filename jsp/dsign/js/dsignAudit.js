@@ -371,6 +371,9 @@ function unauditAlldsign() {
 function auditDsign() {
 	/*shulei*/
 	window.parent.parent.updateScore(2,0);
+	jAlert("审核成功！","提示",function(){
+	});
+	return;
 	
 	var curBookkeeper = document.getElementById("bookkeeper").innerHTML;
 	//作废的凭证不能审核

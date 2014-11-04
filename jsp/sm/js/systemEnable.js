@@ -1,4 +1,4 @@
-var account = window.parent.valueMap.get("systemEnable");
+var account=window.parent.valueMap.get("systemEnable");
 var initdate="";//封装初始数据
 var currentLoginedUaAccount;
 //修改时调用此方法
@@ -12,6 +12,7 @@ if(account == null || account.iyear == undefined || account.imonth == undefined)
 		imonth:currentLoginedUaAccount.imonth
 	};
 }
+var account={};
 $(document).ready(function(){
 	var str = "[" + account.caccId +"]"+ account.caccName + " 账套启用会计期间 "+ account.iyear +" 年 "+ account.imonth +" 月";
 	$("#account").html(str);
@@ -79,7 +80,6 @@ $(document).ready(function(){
 function dateFunc(date1){
 
 	if(date1.checked==true){
-
 		
 		WdatePicker({
 			el:'dateflag',
