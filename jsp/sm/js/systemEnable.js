@@ -12,7 +12,7 @@ if(account == null || account.iyear == undefined || account.imonth == undefined)
 		imonth:currentLoginedUaAccount.imonth
 	};
 }
-var account={};
+
 $(document).ready(function(){
 	var str = "[" + account.caccId +"]"+ account.caccName + " 账套启用会计期间 "+ account.iyear +" 年 "+ account.imonth +" 月";
 	$("#account").html(str);

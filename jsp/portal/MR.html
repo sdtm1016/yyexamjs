@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="css/otherpage.css" type="text/css"/>
+<script type="text/javascript" src="../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../js/publicFunction.js"></script>
+<script type="text/javascript">
+/* 
+$(document).ready(function() {
+	//current module image
+	var openedPages = window.parent.openedPages;
+	var exists = false;
+	//alert(openedPages.length);
+	for(var i=0;i<openedPages.length;i++){
+		if(openedPages[i].module=="MR" && openedPages[i].opened==true){
+			exists = true;
+			document.getElementById("h1").innerHTML = "欢迎使用！";
+			break;
+		}
+		if((i+1)==openedPages.length){
+			
+		}
+	}
+	
+	if(!exists){
+		var page = {};
+		page.module = "MR";
+		page.opened = true;
+		window.parent.openedPages[window.parent.openedPages.length]=page;
+	}
+	
+	//alert(window.parent.openedPages.length);
+});
+ */
+</script>
+</head>
+
+<body>
+
+
+<!-- 窗体容器 开始 -->
+ <div>
+ 
+	
+	
+	
+	
+	<!-- 发票 相关页面 开始 -->
+		
+		
+		<!-- 报表设计器 -->
+		<div id="mr_eSReport_eReport"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window" width="840" height="600" title="报表设计器"
+			src="../mr/eSReport/eReport.html"></div>
+			
+		<!-- 报表上传 -->
+		<div id="mr_ReportManage_index"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window" width="840" height="600" title="报表上传" framescrolling="true"
+			src="../mr/ReportManage/index.html"></div>
+			
+		<!-- 报表管理 -->
+		<div id="mr_ReportManage_index"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window" width="840" height="600" title="报表管理" framescrolling="true"
+			src="../mr/ReportManage/index.html"></div>
+			
+			
+			
+	   <!-- 公式录入向导-->
+		<div id="mr_FuncGuide_fw1"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window" width="500" height="400" title="报表公式向导1" framescrolling="true"
+			src="../mr/eSReport/FuncGuide/fw1.html"></div>	
+		
+		<div id="mr_FuncGuide_fw2"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window" width="500" height="400" title="报表公式向导2" framescrolling="true"
+			src="../mr/eSReport/FuncGuide/fw2.html"></div>		
+			
+		<!-- 凭证页面.科目参照 subjectsreference.html -->
+	    <div id="dsign_subjectsreference"
+		style="margin-left: 70px;margin-top: 50px; padding: auto; display: none;"
+		type="window" width="450" height="340" title="科目参照"
+		src="../dsign/subjectsreference.html"></div>	
+		
+			
+		<!-- 部门参照 -->
+		<div id="basic_comref_dptref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/dptref.html"></div>	
+		
+		<!-- 个人参照 -->
+		<div id="basic_comref_personref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/personref.html"></div>
+		
+		<!-- 客户参照 -->
+		<div id="basic_comref_cusref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/cusref.html"></div>
+		
+		<!-- 供应商参照 -->
+		<div id="basic_comref_supref"
+			style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+			type="window" width="750" height="370" title="参照"
+			src="../basic/comref/supref.html"></div>	
+	
+	
+		<!-- alert和confirm 警告窗口  开始-->
+		<div id="basic_alert"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="alert.html"></div>
+		<div id="basic_confirm"
+			style="margin-left: 5px;margin-top: 5px; padding: auto; display: none;"
+			type="window"  title="系统提示信息"
+			src="confirm.html"></div>
+		<!-- alert和confirm 警告窗口  结束-->
+	
+	
+	
+	
+	
+		<!-- 函数编辑相关窗体 开始  -->
+		
+		
+			<!-- 公式定义 -->
+			<div id="mr_general_eSReport_define_formula"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="468" height="121" title="定义公式"
+				src="../mr/eSReport/general/define_formula.html"></div>	
+			
+			<!-- 函数向导 -->
+			<div id="mr_general_eSReport_function_wizard"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="470" height="321" title="函数向导"
+				src="../mr/eSReport/general/function_wizard.html"></div>	
+			
+			<!-- 常规函数编辑 -->
+			<div id="mr_general_eSReport_fun1_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="440" height="350" title="常规函数编辑"
+				src="../mr/eSReport/general/fun1_edit.html"></div>	
+			
+			<!-- 统计函数编辑 -->
+			<div id="mr_general_eSReport_fun2_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="430" height="233" title="统计函数编辑"
+				src="../mr/eSReport/general/fun2_edit.html"></div>	
+			
+			<!-- 数学函数编辑 -->
+			<div id="mr_general_eSReport_fun3_edit"
+				style="margin-left: 30px;margin-top: 14px; padding: auto; display: none;"
+				type="window" width="374" height="171" title="数学函数编辑"
+				src="../mr/eSReport/general/fun3_edit.html"></div>	
+			
+			
+			
+			
+		
+		<!-- 函数编辑相关窗体 结束  -->
+	
+	
+	
+	
+</div>
+<!-- 窗体容器 结束 -->
+
+
+
+
+
+
+
+
+
+
+ <div class="topbar">
+ 
+ 	<span></span>
+ 	
+	<div onclick="">
+		<span></span>
+		某某报表
+	</div>
+	
+	<div onclick="openWindow('');">
+		<span></span>
+		某某报表
+	</div>
+		
+	<div onclick="openWindow('');">
+		<span></span>
+		某某报表
+	</div>
+		
+	<div onclick="openWindow('');">
+		<span></span>
+		某某报表
+	</div>
+		
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ <div class="flowchart">
+ 
+ 	
+ 	<a style="margin-top:60px;margin-left:215px;" href="javascript:openWindow('mr_eSReport_eReport');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_FKJS.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_FKJS-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_FKJS.jpg'"
+ 		/><br/>
+ 		报表设计器
+ 	</a>
+ 	
+ 	<a style="margin-top:212px;margin-left:60px;" href="javascript:openWindow('mr_ReportManage_index');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_CGFP.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_CGFP-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_CGFP.jpg'"
+ 		/><br/>
+ 		报表上传
+ 	</a>
+ 
+ 
+ 	<a style="margin-top:212px;margin-left:215px;" href="javascript:openWindow('mr_ReportManage_index');" onfocus="this.blur();">
+ 		<img border="0"	src="../../images/portal/CWork/imgList/PU_GYSWL.jpg" 
+	 		onmouseover="this.src='../../images/portal/CWork/imgList/PU_GYSWL-m.jpg'" 
+	 		onmouseout="this.src='../../images/portal/CWork/imgList/PU_GYSWL.jpg'"
+ 		/><br/>
+ 		报表管理
+ 	</a>
+ 
+ 
+ 	
+ 	
+ 	
+ 	<div>
+ 		<img src="../../images/portal/CWork/ImageList1/PU1024.gif"/>
+ 	</div>
+ 	
+ </div>
+ 
+ 
+ 
+ 
+ 
+ <div class="footpanel">
+ 
+	 <div class="actionList">
+	
+	
+		<div onclick="openWindow('');">
+			<div></div>
+			我的工作台
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			某某某报表
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			某某某报表
+		</div>
+			
+		<div onclick="openWindow('');">
+			某某某报表
+		</div>
+			
+		<div onclick="">
+			<div></div>
+			
+		</div>
+		
+		<div onclick="openWindow('');">
+			
+		</div>
+		
+		<div onclick="openWindow('');">
+			<div></div>
+			某某某报表
+		</div>
+			
+			
+	 </div>
+ 
+ </div>
+ 
+
+
+
+
+ 
+</body>
+
+<script type="text/javascript" src="../../js/winui/plugin/winui.window.js"></script>
+</html>

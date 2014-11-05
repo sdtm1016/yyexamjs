@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>公式向导</title>
+	<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<style type="text/css">
+	
+	</style>
+	<!-- 引入jquery组件 -->
+    <script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="../../../../js/publicFunctionForCell.js"></script>
+	
+	<script type="text/javascript" src="js/fw1.js"></script>
+	<script type="text/javascript">
+		queryFunctionGrid();
+	</script>
+	
+	<script type="text/javascript">
+	
+	//点击左边列表中的项时，右边对应项默认也选中
+	function setSelected(select,selectId){
+		document.getElementById(selectId).value =select.value;
+	}
+	
+	function nextWindow(){
+		
+		//取得被选中的值并传递给下一个窗体
+		var selFuncDesc= $("#left_select").find("option:selected").text(); 
+		var selFuncName= $("#right_select").find("option:selected").text(); 
+		if(selFuncDesc=="" || selFuncName==""){
+			jAlert("请选择函数。");
+			return;
+		}
+		window.dialogArguments.arg1=selFuncDesc;
+		window.dialogArguments.arg2=selFuncName;
+		window.close();
+		
+		//var param = {selFuncDesc:selFuncDesc,selFuncName:selFuncName};
+		//window.parent.closeWindow('mr_FuncGuide_fw1');
+		//window.parent.openWindow('mr_FuncGuide_fw2','mr_FuncGuide_fw1',param);
+	}
+	
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:380px;height:234px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:360px;height:214px;margin-left:10px;margin-top:10px;">
+			<div style="height:190px;width:100%;">
+				<div style="width:184px;height:100%;float:left;">
+					<span>公式名称</span>
+					<div>
+						<select style="width:156px;" size="10" id="left_select" onchange="setSelected(this,'right_select');">
+							<option value="fn_1">函数111111</option>
+							<option value="fn_2">函数222222</option>
+							<option value="fn_3">函数333333</option>
+							<option value="fn_4">函数444444</option>
+							<option value="fn_5">函数555555</option>
+							<option value="fn_6">函数666666</option>
+							<option value="fn_7">函数777777</option>
+							<option value="fn_8">函数888888</option>
+							<option value="fn_9">函数999999</option>
+						</select>
+					</div>
+				</div>
+				<div style="width:156px;height:100%;float:left;">
+					<span>函数名</span>
+					<div>
+						<select style="width:156px;" size="10" id="right_select" onchange="setSelected(this,'left_select');">
+							<option value="fn_1">function1()</option>
+							<option value="fn_2">function2()</option>
+							<option value="fn_3">function3()</option>
+							<option value="fn_4">function4()</option>
+							<option value="fn_5">function5()</option>
+							<option value="fn_6">function6()</option>
+							<option value="fn_7">function7()</option>
+							<option value="fn_8">function8()</option>
+							<option value="fn_9">function9()</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div style="width:100%;height:26px;text-align:right;">
+				<input type="button" value="取消" onclick="javascript:window.parent.closeWindow('mr_FuncGuide_fw1');"/>&nbsp;
+				<input type="button" value="上一步" disabled="disabled"/>&nbsp;
+				<input type="button" value="下一步" onclick="nextWindow();"/>&nbsp;&nbsp;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
+		</div>
+	</div>
+</body>
+</html>

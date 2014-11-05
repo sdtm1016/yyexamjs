@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>公式向导</title>
+	<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<style type="text/css">
+	
+	</style>
+	<!-- 引入jquery组件 -->
+	<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../../../../js/publicFunctionForCell.js"></script>
+	<script type="text/javascript" src="../../../../js/My97DatePicker/WdatePicker.js"></script>
+	<SCRIPT  type="text/javascript" src="../control/Cell.js"></SCRIPT>
+	
+	<script type="text/javascript">
+	
+	var code01="";//辅助核算项 编码1
+	var code02="";//辅助核算项 编码2
+	var cassItem=""; //项目大类编码
+	
+	
+	
+	$(document).ready(function(){
+		initItems(selFuncName);
+		
+	});
+	
+	//设置方向
+	function setFX(){
+		$("#tr_selfx").show();
+		//方向添加默认选项-------后台获取科目性质本身方向即可  add ny lval 20130903---begin-----
+		$("#selfx").prepend("<option value=0 selected='true'>默认</option>"); 
+		$("#selfx").val(0);//选中状态
+		//方向添加默认选项-------后台获取科目性质本身方向即可  add ny lval 20130903---end-----
+	}
+	//添加会计期间
+	function setPeriod(){
+		$("#tr_selperiod").show();
+		$("#selperiod").val("月");
+	}
+	
+	//根据函数名称 确定展示的项目
+	function initItems(funcname){
+		funcname=funcname.toUpperCase();//将传入进来的转换成大写(2013-8-23) lyl
+		switch (funcname) {
+				case "QC" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					setPeriod();
+					break;
+				case "SQC" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					break;
+				case "WQC" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					break;
+				case "QM" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					break;
+				case "SQM" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					break;
+		
+				case "WQM" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					setFX();
+					break;
+				case "FS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "SFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "WFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+		
+				case "DFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").show();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "SDFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").show();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "WDFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").show();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+		
+				case "LFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "SLFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+		
+				case "WLFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+		
+				case "TFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "STFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "WTFS" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").show();
+					$("#tr_ppfs").show();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "JE" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").hide();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "SJE" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").hide();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "WJE" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").show();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").hide();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					break;
+				case "HL" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").hide();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").hide();
+					$("#tr_beginDate").hide();
+					$("#tr_endDate").hide();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").show();
+					$("#tr_hllx").show();
+					$("#tr_isInclude").show();
+					break;
+				case "XJLL" :
+					$("#tr_selyear").show();
+					$("#tr_codeid").hide();
+					$("#tr_dfcodeid").hide();
+					setPeriod();
+					$("#tr_selfx").show();
+					$("#tr_beginDate").show();
+					$("#tr_endDate").show();
+					$("#tr_digest").hide();
+					$("#tr_ppfs").hide();
+					$("#tr_bz").hide();
+					$("#tr_hllx").hide();
+					$("#tr_isInclude").show();
+					
+					$("#tr_personid").hide();
+					$("#tr_cusid").hide();
+					$("#tr_supid").hide();
+					$("#tr_deptid").hide();
+					$("#tr_itemid").show();
+					disable_false("itemid");
+					disable_false("itembtn");
+					break;
+				default :
+					jAlert("暂时没有该函数的向导。");
+	       }
+		
+	}
+	
+	
+	//继续输入公式复选框控制处理函数
+	function setdis(checkbox){
+		var rdgc = document.getElementById("rdgc");
+		
+		if(checkbox.checked==true){
+			rdgc.style.display="block";
+			
+			checkbox.parentNode.parentNode.style.border="1px solid #666";
+		}else{
+			rdgc.style.display="none";
+			checkbox.parentNode.parentNode.style.border="none";
+		}
+		
+	}
+	
+	
+	
+	
+	/***
+	 *此变量用于为三个弹出科目的文本框取值赋值提供目标
+	 */
+	var target="";
+	
+	//实现取值窗体值函数（从子窗体传过来的）
+	function deliverValue(paramObject){
+		if (target!="codeid") {
+			document.getElementById(target).value=paramObject.ccode;
+		}else{
+		    document.getElementById(target).value=paramObject.selKemuCode;
+		    //判断辅助项情况
+		    loadCode(paramObject.selKemuCode);
+		}	
+	}
+//加载科目
+function loadCode(codeid){
+	if(codeid!=""&&codeid!=null){
+		 $.getJSON('code!queryCodeByCode', {"ccode":codeid,"year":"2010"},function(r) {
+			 //修改 科目方向默认值(2013-9-16)lyl
+			 if(selFuncName=="QC"||selFuncName=="SQC"||selFuncName=="WQC"||selFuncName=="QM"||selFuncName=="SQM"||selFuncName=="WQM"){
+				 if(r.code1!=null ){
+					 if(r.code1.bproperty==1){//借
+						 $("#selfx option:selected").attr("value","借");
+					 }else if(r.code1.bproperty==0){
+						 $("#selfx option:selected").attr("value","贷");
+					 }
+				 }
+				 
+			 }
+			    
+				  if(r.code1!=null && r.code1.bperson==1){
+					  //个人辅助核算   启用 
+					  disable_false("personid");
+					  disable_false("personbtn");
+				  }else{
+					  //禁用
+					   disable_true("personid");
+					   disable_true("personbtn");
+				  }
+				  if(r.code1!=null && r.code1.bcus==1){
+					  //客户辅助核算
+					  disable_false("cusid");
+					  disable_false("cusbtn");
+				  }else{
+					  //禁用
+					  disable_true("cusid");
+					   disable_true("cusbtn");
+				  }
+				  if(r.code1!=null && r.code1.bsup==1){
+					  //供应商辅助核算
+					  disable_false("supid");
+					  disable_false("supbtn");
+				  }else{
+					  //禁用
+					   disable_true("supid");
+					   disable_true("supbtn");
+				  }
+				  if(r.code1!=null && r.code1.bdept){
+					  //部门辅助核算
+					   disable_false("deptid");
+					   disable_false("deptbtn");
+				  }else{
+					  //禁用
+					  disable_true("deptid");
+					  disable_true("deptbtn");
+				  }
+				  if(r.code1!=null && r.code1.bitem){
+					  //项目辅助核算
+					  disable_false("itemid");
+					   disable_false("itembtn");
+					   cassItem=r.code1.cassItem;
+				  }else{
+					  //禁用
+					   disable_true("itemid");
+					   disable_true("itembtn");
+				  }
+		});  
+	}
+	 $("#supid").val("");
+	 $("#cusid").val("");
+	 $("#personid").val("");
+	 $("#itemid").val("");
+	 $("#deptid").val("");
+}
+
+//会计 期间 和  截止 日期 不能 同时生效 
+function period(){
+	if($("#selperiod").val()==""){
+		 disable_false("endDate");
+	}else{
+		 disable_true("endDate");
+	} 
+	
+	if($("#selperiod").val()!="" && $("#funcName").val()=="XJLL"){
+		disable_true("beginDate");
+		disable_true("endDate");
+	}
+	
+		
+}
+
+//禁用控件   传入 控件ID
+function disable_true(id){
+	$("#"+id).attr("disabled","disabled");
+	$("#"+id).css("background-color","#808080");
+}
+//启用 控件
+function disable_false(id){
+	$("#"+id).attr("disabled",false);
+	$("#"+id).css("background-color","");
+}
+
+function openReference(id){
+	
+	if(id == "codeid"){
+		var obj = ReportJs.Util.openWindow('subjectsreference.html',500,500);
+		$("#codeid").val(obj.arg1);
+		 //判断辅助项情况
+	    loadCode(obj.arg1);
+	}
+	
+	if(id == "dfcodeid"){
+		var obj = ReportJs.Util.openWindow('subjectsreference.html',750,360);
+		$("#dfcodeid").val(obj.arg1);
+		 //判断辅助项情况
+	    loadCode(obj.arg1);
+	}
+	
+	if(id == "personid"){
+		var obj = ReportJs.Util.openWindow('personref.html',750,360);
+		$("#personid").val(obj.arg1);
+	}
+	if(id == "cusid"){
+		var obj = ReportJs.Util.openWindow('cusref.html',750,360);
+		$("#cusid").val(obj.arg1);
+	}
+	if(id == "supid"){
+		var obj = ReportJs.Util.openWindow('supref.html',750,360);
+		$("#supid").val(obj.arg1);
+	}
+	if(id == "deptid"){
+		var obj = ReportJs.Util.openWindow('dptref.html',750,360);
+		$("#deptid").val(obj.arg1);
+	}
+	if(id == "itemid"){
+		var obj={};
+		obj.arg0=cassItem;
+		var obj = ReportJs.Util.openWindow('fitemref.html',750,360,obj);
+		$("#itemid").val(obj.arg1);
+		//obj.arg2//项目id
+		//obj.arg1 //项目编码
+		$("#citemid").val(obj.arg2);
+		
+	}
+	
+	
+	
+}
+
+//确定
+function returnvalue(){
+	if(conversioncode_s('code',$("#codeid"))){
+		getFuncString();
+	}
+	
+}
+
+
+
+
+function conversioncode_s(type,nowinput,executeClearBlur){
+	var c_val=$(nowinput).val().split(",")[0];
+	if(c_val==""){
+		return;
+	}
+	$.ajax({
+	    url: "consulteditAction!findbycodeorname",
+	    type: 'post',
+	    dataType: "json",
+	    cache:false,
+	    async:false,
+	    data:"tablename="+type+"&param="+c_val,
+	    success: function(data){
+	    	var d_result=data.result;
+	    	var param={};
+	    	var t_message="";
+	    	if(d_result!=""){
+	    		var ress=d_result.split(":");
+	    		if(ress[0]=="0"){
+	    			if(type=="code"){
+	    				param.selKemuCode=ress[2];
+	    				param.selKemuName=ress[3];
+			    	}
+	    		}else{
+	    			if(type=="code"){
+	    				param.selKemuCode="";
+	    				param.selKemuName="";
+	    				t_message="录入科目错误！<br>科目不存在或科目非明细级！";
+			    	}
+	    		}
+	    	}else{
+	    		if(type=="code"){
+    				param.selKemuCode="";
+    				param.selKemuName="";
+    				t_message="录入科目错误！<br>科目不存在或科目非明细级！";
+		    	}
+	    	}
+	    	//deliverValue(param);
+	    	if(t_message!=""){
+	    		jAlert(t_message,"提示信息",function (){
+	    			$(nowinput).focus();
+	    			return false;
+	    		});
+	    	}
+	    }
+	  });
+	return true;
+}
+
+
+	</script>
+	
+</head>
+<body>
+	<div class="container" id="container" style="width:350px;height:360px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:320px;height:350px;margin-left:10px;margin-top:10px;">
+			<div style="text-align:left;margin-top:10px;">
+				<table>
+				   <tr><td>函数名称</td><td><input disabled="disabled" type="text"  id="funcName" style="width:160px;"/></td></tr>
+				  <!--  <tr><td>函数说明</td><td><input disabled="disabled" type="text"  id="funcDesc" style="width:160px;"/></td></tr> -->
+				   <tr id="tr_selyear"><td>会计年度</td><td><select id= "selyear" disabled="disabled" style="width:185px;">
+						    <option>年</option>
+						</select></td></tr>
+<tr id="tr_codeid"><td style="color: red;">科目编码*</td><td><input type="text"  onkeyup="loadCode(this.value);"     onblur= "target='codeid';conversioncode_s('code',this);loadCode(this.value)" 
+id="codeid" style="width:160px;"/>
+<input type="button" class="finder" onclick="javascript:openReference('codeid')"/></td></tr>
+				  
+				   <tr id="tr_dfcodeid"><td style="color: red;">对方科目*</td><td><input  type="text"   onblur= "loadCode(this.value)" id="dfcodeid" style="width:160px;"/><input type="button" class="finder" onclick="javascript:openReference('dfcodeid')"/></td></tr>
+				  
+				   <tr id="tr_selperiod"><td style="color: red;">会计期间*</td><td><select  id= "selperiod" onblur= "javascript:period()" style="width:185px;">
+							<option value="" selected="selected"></option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="21">21</option>
+							<option value="22">22</option>
+							<option value="23">23</option>
+							<option value="24">24</option>
+							<option value="30">30</option>
+							<option value="月">月</option>
+							<option value="全年">全年</option>
+							
+						</select></td></tr>
+				   <tr id="tr_selfx"><td style="color: red;">方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向*</td><td>
+				        <select id = "selfx" style="width:185px;">
+							<option>借</option>
+							<option>贷</option>
+						</select></td></tr>
+				   <tr id="tr_beginDate"><td>起始日期</td><td><input id="beginDate" type="text" style="width:160px;" onclick="WdatePicker()"/><input type="button" class="picker" onclick="document.getElementById('endDate').click();"/></td></tr>
+				   <tr id="tr_endDate"><td>截至日期</td><td><input id="endDate" type="text" style="width:160px;" onclick="WdatePicker()"/><input type="button" class="picker" onclick="document.getElementById('endDate').click();"/></td></tr>
+				   
+				    <tr id="tr_digest"><td >摘要</td><td><input  type="text"    id="digest" style="width:160px;"/></td></tr>
+				    <tr id="tr_ppfs">
+				       <td >匹配方式</td>
+				       <td>
+					        <select  id = "ppfs" style="width:185px;">
+								<option>=</option>
+								<option>==</option>
+							</select>
+						</td>
+					</tr>
+					
+					
+					 <tr id="tr_bz">
+				       <td >币种</td>
+				       <td>
+					        <select  id = "bz" style="width:185px;">
+								<option>美元</option>
+								<option>英镑</option>
+							</select>
+						</td>
+					</tr>
+					<tr id="tr_hllx">
+				       <td >汇率类型</td>
+				       <td>
+					        <select  id = "hllx" style="width:185px;">
+								<option>固定</option>
+								<option>浮动</option>
+								<option>调整</option>
+							</select>
+						</td>
+					</tr>
+						
+				   <tr id="tr_isInclude"><td>包含未记账凭证</td><td>
+				        <select id = "isInclude" style="width:184px;">
+							<option>否</option>
+							<option>是</option>
+						</select></td></tr>
+				   <tr id="tr_personid"><td>个&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人&nbsp;</td><td><input readonly="readonly"  disabled="disabled" type="text" id="personid" style="width:160px;background-color: #808080;"/><input disabled="disabled" id = "personbtn" type="button" class="finder" onclick="javascript:openReference('personid')"/></td></tr>
+				   <tr id="tr_cusid"><td>客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户</td><td><input readonly="readonly" disabled="disabled" type="text" id="cusid" style="width:160px;background-color: #808080;"/><input disabled="disabled" id = "cusbtn" type="button" class="finder" onclick="javascript:openReference('cusid')"/></td></tr>
+				   <tr id="tr_supid"><td>供 应 商&nbsp;&nbsp;</td><td>                                 <input  disabled="disabled" type="text" id="supid" style="width:160px;background-color: #808080;"/><input disabled="disabled" id = "supbtn" type="button" class="finder" onclick="javascript:openReference('supid')"/></td></tr>
+				   <tr id="tr_deptid"><td>部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门&nbsp;</td><td><input readonly="readonly" direadonly="readonly"sabled="disabled" type="text" id="deptid" style="width:160px;background-color: #808080;"/><input disabled="disabled" id = "deptbtn" type="button" class="finder" onclick="javascript:openReference('deptid')"/></td></tr>
+				   <tr id="tr_itemid"><td>项&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目&nbsp;</td><td><input  readonly="readonly"  disabled="disabled" type="text" id="itemid" style="width:160px;background-color: #808080;"/><input disabled="disabled" id = "itembtn"  type="button" class="finder" onclick="javascript:openReference('itemid')"/></td></tr>
+				<input  disabled="disabled" type="hidden" id="citemid" />
+				</table>
+			</div>
+			<div style="width:100%;height:26px;text-align:right;">
+				<input type="button" value="确定" onclick="returnvalue()"/>&nbsp;
+				<input type="button" value="取消" onclick="javascript:window.close();"/>&nbsp;
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+//获取父窗体传来的值
+//var selFuncDesc= window.dialogArguments.arg0.arg1;
+var selFuncName= window.dialogArguments.arg0.arg2;
+selFuncName = selFuncName.toUpperCase();
+document.getElementById("funcName").value=selFuncName ;
+//document.getElementById("funcDesc").value=selFuncDesc ;
+
+</script>
+
+<script type="text/javascript" src="js/fw2.js"></script>	
+
+</html>

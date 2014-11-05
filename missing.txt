@@ -1,5 +1,4 @@
-GET http://localhost/yyexamjs/images/portal/CTree/sysButton/WALogin.jpg 404 (Not Found) WALogin.jpg:1
-GET http://localhost/images/newbuttons/finder_outset.jpg 404 (Not Found) billauditquery.html:268
-GET http://localhost/images/newbuttons/dateselector_outset.jpg 404 (Not Found) billauditquery.html:277
-GET http://localhost/images/newbuttons/finder_outset.jpg 404 (Not Found) billauditquery.html:1
-GET http://localhost/images/newbuttons/dateselector_outset.jpg 404 (Not Found) 
+GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
+GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
+GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
+GET http://localhost/yyexamjs/images/portal/CWork/imgList/SA_XSFP-m.jpg 404 (Not Found) 

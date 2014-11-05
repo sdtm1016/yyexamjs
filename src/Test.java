@@ -18,6 +18,7 @@ public class Test {
 	static String basePath1="http://t3online.chanjet.com/yyexamjs/";
 	public static void main(String[] args) throws Exception {
 		//copyFile("http://t3online.chanjet.com/yyexamjs/jsp/portal/WD.html");
+		//copyFile("http://t3online.chanjet.com/yyexamjs/jsp/portal/MR.html");
 		getMissingFile();
 	}
 

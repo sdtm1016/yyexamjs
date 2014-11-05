@@ -596,7 +596,7 @@ $(document).ready(function() {
 				store[store.length] = "SA";	
 			}*/
 			
-			var store=['GL','WA','FA','PU','SA'];
+			var store=['GL','MR','WA','FA','PU','SA'];
 
 			var mcec = new hashMap();//Model click excute code map.
 			
@@ -604,14 +604,11 @@ $(document).ready(function() {
 				var mn = store[i];
 				
 				$("#"+mn).parent().show();
-				if(mn=="MR"){
-					continue;
-				}
 				
 				//IE7兼容解决思路：
 				//在循环内为每个模块生成一级菜单点击事件要执行的源码字符串，存放进Map，然后点击后使用eval函数执行字符串。
 				var ec="";
-				if(mn=="FA"){
+				if(mn=="FA"||mn=="MR"){
 					ec = ""+mn.toLowerCase()+"_navigation_filter()"+";";
 					fa_menu_left=left;
 				}else{
@@ -625,11 +622,8 @@ $(document).ready(function() {
 					mId = mId.substring(2,mId.length);
 					eval(mcec.get(mId));
 				};
-				
-				
-				
-				
 				$("#M_"+mn).show();
+				
 				left = left + $("#M_"+mn).html().length*12+5*2;//名称长度*12像素宽+容器两边padding宽
 			}
 			
