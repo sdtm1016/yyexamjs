@@ -143,73 +143,81 @@ px;
 </style>
 
 <script type="text/javascript">
+var  currentIndex=1;
 $(function(){
-	var  currentIndex=0;
-		// 填充第一题
+
 		$(".Titlelist>textarea").val(questions[0][0]); 
 		$("#myModal").html(questions[0][1]);
-			$(".loginL ul >li").each(function(e){
-				if ($(this).html()>questions.length) {
-					$(this).html("&nbsp;");
-				};
-			})
-
 		/*切换题目*/
 		$(".loginL ul >li").click(function(){
-			
-			if ($(this).html()<=questions.length) {
-				$(".loginL ul >li").each(function(e){
-					if ($(this).attr("class")=="cur") {
-						$(this).removeClass("cur");
-					};
-				}) 
-					$(this).addClass("cur");
-				  currentIndex=$(this).html();
-				  gotoQuestion(currentIndex-1);
-			}
-			
+			$(".loginL ul >li").each(function(e){
+				if ($(this).attr("class")=="cur") {
+					$(this).removeClass("cur");
+				};
+			})
+			$(this).addClass("cur");
+			  currentIndex=$(this).html();
+			gotoQuestion(currentIndex);
 		});
 
 		/*上一题 ，下一题*/
 		$(".down").click(function(){
 			$(".loginL ul >li").each(function(e){
-				if ($(this).hasClass("cur")) { 
+				if ($(this).hasClass("cur")) {
+						$(this).removeClass("cur");
 				 _this =$(this);
 					return;
 				}; 
 			})
-				
-				if (currentIndex<questions.length) {
-						$(_this).removeClass("cur");
-					$(_this).next().eq(0).addClass("cur");
-				  	currentIndex=$(_this).next().html();
-				};
-			gotoQuestion(currentIndex-1);
+				$(_this).next().eq(0).addClass("cur");
+				  currentIndex=$(_this).next().html();
+				gotoQuestion(currentIndex);
 
 		})
 		$(".up").click(function(){
 			$(".loginL ul >li").each(function(e){
 				if ($(this).hasClass("cur")) {
+						$(this).removeClass("cur");
 				 _this =$(this);
 					return;
 				}; 
 			})
-				if (currentIndex>1) {
-						$(_this).removeClass("cur");
-					$(_this).prev().eq(0).addClass("cur");
-					 currentIndex=$(_this).prev().html();
-				};
-			gotoQuestion(currentIndex-1);
+				$(_this).prev().eq(0).addClass("cur");
+				 currentIndex=$(_this).prev().html();
+				gotoQuestion(currentIndex);
 
 		})  
+		 $("#dateField").val(getNowFormatDate());
+		 $(".gostart").click(function(){
+		 	if (checkLogin()=="-1") {
+		 		alert("登陆信息错误");
+		 	}else {
+		 		$("#rightiframe").attr("src",checkLogin())
+
+		 	}
+		 })
 
 })
 /*切换题目*/
   function gotoQuestion(currentIndex){
   	console.log(currentIndex);
-  	$(".Titlelist>textarea").val(questions[currentIndex][0]); 
-		$("#myModal").html(questions[currentIndex][1]);
  }
+	 function getNowFormatDate() {
+	    var date = new Date();
+	    var seperator1 = "-";
+	    var seperator2 = ":";
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+	    }
+	    if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+	    return currentdate;
+	} 
+
 </script>
 </head>
 <body>
@@ -256,7 +264,7 @@ $(function(){
 								</span> <span>密码
 								<input id="passwordField" type="text"  style="  width:70px;">
 								</span> <span>账套号
-								<select id="bookField" name="exam"  style="  width:90px;"size="1">
+								<select id="bookField" name="exam"  style="width:90px;"size="1">
 										<option value='101'>101</option>
 										<option value='102'>102</option>
 										<option value='103'>103</option>
@@ -270,7 +278,7 @@ $(function(){
 								</span> 
 
 								<span>操作日期
-<!-- 								<input id="dateField" type="text"  onClick="WdatePicker()" style="width:90px;"> -->
+ 							<input id="dateField" type="text"  class onClick="WdatePicker()" style="width:90px;">  
 								</span> 
 								<span class="gostart"> 运行</span> <span class="goScore">评分</span> <span class="goresult">得分 0  分</span> </div>
 						<div class="Title">
@@ -285,7 +293,13 @@ $(function(){
 				</div>
 		</div>
 </div>
-<div class="bg"></div>
+
+	<iframe id="rightiframe" frameborder="0" scrolling="no" src="default.html" style="width:100%;height:458px;">
+		
+			<div class="bg">
+			</div>
+	</iframe>
+
 
 <!-- 弹出层内容 -->
 <div id="myModal" class="reveal-modal">

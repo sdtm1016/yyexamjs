@@ -17,12 +17,12 @@ var loginRules=[
 ];
 
 function checkLogin(){
-	var rule=loginRules[currentIndex];
+	var rule=loginRules[currentIndex-1];
 	if((rule[0]==''||rule[0]==$('systemField').val())&&
 			(rule[1]==''||rule[1]==$('userNameField').val())&&
 			(rule[2]==''||rule[2]==$('passwordField').val())&&
 			(rule[3]==''||rule[3]==$('bookField').val())&&
-			(rule[4]==''||rule[4]==$('dateField').val())&&){
+			(rule[4]==''||rule[4]==$('dateField').val())){
 		if(rule[0]=='0'){
 			return "jsp/sm/index.html"
 		}else{
