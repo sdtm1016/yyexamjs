@@ -1,14 +1,64 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>登陆系统</title>
-	<script type="text/javascript" src="js/jquery-1.7.2.js"></script>
-	<script type="text/javascript">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>登陆系统</title>
+<script type="text/javascript" src="js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="js/selecttime/WdatePicker.js"></script>
+<script type="text/javascript">
+$(function(){
+	var  nowTitle;
+		/*切换题目*/
+		$(".loginL ul >li").click(function(){
+			$(".loginL ul >li").each(function(e){
+				if ($(this).attr("class")=="cur") {
+					$(this).removeClass("cur");
+				};
+			})
+			$(this).addClass("cur");
+			  nowTitle=$(this).html();
+			gotoQuestion(nowTitle);
+		});
 
-	</script>
-	<style type="text/css">
+		/*上一题 ，下一题*/
+		$(".down").click(function(){
+			$(".loginL ul >li").each(function(e){
+				if ($(this).hasClass("cur")) {
+						$(this).removeClass("cur");
+				 _this =$(this);
+					return;
+				}; 
+			})
+				$(_this).next().eq(0).addClass("cur");
+				  nowTitle=$(_this).next().html();
+				gotoQuestion(nowTitle);
+
+		})
+		$(".up").click(function(){
+			$(".loginL ul >li").each(function(e){
+				if ($(this).hasClass("cur")) {
+						$(this).removeClass("cur");
+				 _this =$(this);
+					return;
+				}; 
+			})
+				$(_this).prev().eq(0).addClass("cur");
+				 nowTitle=$(_this).prev().html();
+				gotoQuestion(nowTitle);
+
+		}) 
+
+
+})
+/*切换题目*/
+  function gotoQuestion(nowTitle){
+  	console.log(nowTitle);
+ }
+</script>
+<style type="text/css">
 /* ------- This is the CSS Reset ------- */
+
+
 
 
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
@@ -19,32 +69,184 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 }
 .login {
 	position: relative;
-	width: 100%;
-	height: 120px;
-	background-color: #1A85D9;
-	font: normal 12px/24px "Microsoft YaHei",Helvetica, Tahoma, Arial, sans-serif;
+px;
+	border: 1px solid #fff;
+	background-color: #3AA7FE;
+	font: normal 12px/24px "Microsoft YaHei", Helvetica, Tahoma, Arial, sans-serif;
 }
 .login>h1 {
-	border: 1px solid #fff;
 	font-size: 14px;
-	color: #E4F1FD; 
+	color: #E4F1FD;
+	height: 20px;
 	font-family: normal 16px/26px "Microsoft YaHei";
-
 }
 .bg {
 	position: relative;
 	background: url(images/bg.png);
 	background-size: 100%;
+	height:60%;
+	min-height: 580px;
+	margin-top: 3px;
+}
+.loginL {
+	width: 110px;
+	height: 145px;
+	float: left;
+	padding: 5px;
+	padding-top: 0px;
+	margin: 5px 10px 5px 10px;
+	border: 1px solid #fff;
+}
+.loginC {
+	width: 100px;
+	height: 100px;
+	float: right;
+	position: relative;
+	z-index: 9999;
+}
+.loginR {
+	width: 20%;
+	min-width: 100px;
+	float: left;
+}
+.loginL h2 {
+	font-size: 15px;
+	color: #fff;
+	text-align: center;
+}
+.loginL ul >li {
+	position: relative;
+	display: inline-block;
+	width: 32px;
+	height: 25px;
+	margin: 1px;
+	color: #fff;
+	background-color: #ccc;
+	text-align: center;
+	cursor: pointer
+}
+.loginL ul >li:hover  ,.loginL ul > .cur{
+	background-color: #1377BD;
+	color: #fff;
+	border-radius: 3px;
+}
+.loginC > .btn {
+	display: inline-block;
+	width: 63px;
+	height: 25px;
+	margin: 6px auto;
+	background-color: #33485D;
+	color: #fff;
+	text-align: center;
+	cursor: pointer;
+}
+.btn+.yellow {
+	background-color: #CD8508;
+}
+.center {
+	position: relative;
+	z-index: 22;
+	height: 150px;
+	border: 1px solid #fff;
+	margin: 5px 10px 5px 145px;
+	color: #fff;
+	font-size: 14px;
+	overflow: hidden;
+}
+.Title textarea {
+	position: relative;
 	width: 100%;
-	height: 80%;
-	min-height: 680px;
+	font-size: 16px;
+	height: 116px;
+	margin-left:1px;
+	background-color: #F3EFEF;
+	margin-top: 2px;
+}
+.Titlelist{
+	padding-right:8px;
+}
+.gostart, .goScore, .goresult {
+	display: inline-block;
+	width: 75px;
+	height: 25px;
+	text-align: center;
+	margin-left: 5px;
+	cursor: pointer;
+}
+.gostart {
+ 	background-color: #EE8075;
+}
+.goScore {
+	background-color: #5ED0BA;
 }
 </style>
-	</head>
-	<body>
+</head>
+<body>
 <div class="login">
-	<h1>江苏省会计从业资格无纸化考试模拟系统</h1>
-	</div>
+		<h1>江苏省会计从业资格无纸化考试模拟系统</h1>
+		<div class="loginL">
+				<h2>实务操作题</h2>
+				<ul>
+						<li class="cur">1</li>
+						<li>2</li>
+						<li>3</li>
+						<li>4</li>
+						<li>5</li>
+						<li>6</li>
+						<li>7</li>
+						<li>8</li>
+						<li>9</li>
+						<li>10</li>
+						<li>11</li>
+						<li>12</li>
+				</ul>
+		</div>
+		<div>
+				<div  class="loginC"> 
+					<span class="btn up">上一题</span> 
+					<span class="btn down ">下一题</span> 
+					<span class="btn">考&nbsp;&nbsp;虑</span>
+					<span class="btn yellow">本题解析</span>
+					  </div>
+				<div class="center">
+						<div> <span>选择系统
+								<select name="exam" style="  width:90px;" size="1">
+										<option value='0'>系统管理</option>
+										<option value='1'>信息门户</option>
+								</select>
+								</span> <span>用户名
+								<input type="text" style="  width:70px;" >
+								</span> <span>密码
+								<input type="text"  style="  width:70px;">
+								</span> <span>套账号
+								<select name="exam"  style="  width:90px;"size="1">
+										<option value='101'>101</option>
+										<option value='102'>102</option>
+										<option value='103'>103</option>
+										<option value='104'>104</option>
+										<option value='105'>105</option>
+										<option value='111'>111</option>
+										<option value='121'>121</option>
+										<option value='131'>131</option>
+								</select>
+								</span> 
+
+								<span>操作日期
+								<input type="text"  onClick="WdatePicker()" style="width:90px;">
+								</span> 
+								<span class="gostart"> 运行</span> <span class="goScore">评分</span> <span class="goresult">得分 0  分</span> </div>
+						<div class="Title">
+								<div  class="Titlelist">
+									<textarea  readonly="readonly">[第一题]
+系统管理：建立企业核算账套
+要求：建立帐套，帐套参数如下：
+（1）帐套信息
+			</textarea>
+								</div>
+						</div>
+				</div>
+		</div>
+</div>
 <div class="bg"></div>
 </body>
 </html>
