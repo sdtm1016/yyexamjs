@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>收付款单据录入</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
+		<link rel="stylesheet" type="text/css" href="../../pu/pas/css/invoice.css">
+		<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+		<script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<!-- 引入日期组件 -->
+		<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+	</head>
+<body>
+	<div class="container" style="float:left;width:644px;height:450px;background-color: #fff;position:absolute;top:0px;left:0px;">
+		<div class="buttongroup" style="position:relative;z-index:1;">
+			<div class="group">
+				<div>
+					<input type="button" id = "addPas"  value="增加" onclick="addPas();" style="background-image:url('../../../images/icon/add.gif');" />
+				</div>
+				<div>
+					<input type="button" id = "upsPas" value="修改" onclick="updatePas();" style="background-image:url('../../../images/icon/update.gif');" />
+				</div>
+				<div>
+					<input type="button" id = "delPas" value="删除" onclick="delApClose();" style="background-image:url('../../../images/icon/delete.gif');" />
+				</div>
+			</div>
+			<div class="group">
+				<div style="width:45px;height:35px;padding:0px;">
+					<div style="width:100%;padding:0px;">
+						<input type="button" id = "hexiaoPas"  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
+						<input type="button" id = "hexiaoPas1" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
+					</div>
+					<ul style="display:none;width:120px;">
+						<li onclick="showHesuanByDwcode();">同币核销</li>
+						<li onclick="exchHesuan();">异币核销</li>
+					</ul>
+				</div>
+				<div>
+					<input type="button" id = "daifuPas"  value="代付" id = "btnSave" style="background-image:url('../../../images/icon/agent.gif');"  onclick="save()" />
+				</div>
+				<div>
+					<input type="button"  id = "yufuPas"  value="预付" id = "btnSave" style="background-image:url('../../../images/icon/advance.gif');"  onclick="save()" />
+				</div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button"  id = "savePas"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
+				</div>
+				<div>
+					<input type="button"  id = "giveupPas"  value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveupPas()"/>
+				</div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button"  id = "autoPas"  value="自动" style="background-image:url('../../../images/icon/bearing.gif');"/>
+				</div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button" id = "locationPas"  value="定位" style="background-image:url('../../../images/icon/return.gif');"/>
+				</div>
+				<div>
+					<input type="button"  id = "filterPas" value="过滤" style="background-image:url('../../../images/icon/screening.gif');"/>
+				</div>
+				<div>
+					<input type="button"  id = "firstPas" value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"  onclick = "getPaging(this);"/>
+				</div>
+				<div>
+					<input type="button"  id = "upPas" value="上张" style="background-image:url('../../../images/icon/prevcard.gif');" onclick = "getPaging(this);"/>
+				</div>
+				<div>
+					<input type="button"  id = "downPas" value="下张" style="background-image:url('../../../images/icon/nextcard.gif');" onclick = "getPaging(this);"/>
+				</div>
+				<div>
+					<input type="button"  id = "lastPas" value="末张" style="background-image:url('../../../images/icon/lastcard.gif');" onclick = "getPaging(this);"/>
+				</div>
+				<div>
+					<input type="button"  id = "transPas" value="切换" style="background-image:url('../../../images/icon/change.gif');" onclick = "transPas();"/>
+				</div>
+				<div>
+					<input type="button"  id = "refreshPas" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');" onclick = "refreshPas();"/>
+				</div>
+			</div>
+			<div class="group">
+				<div>
+					<input type="button"  id = "exitPas" value="退出" onclick="exitPas()" style="background-image:url('../../../images/icon/exit.gif');"/>
+				</div>
+			</div>
+		</div>
+		<div style="position:relative;z-index:0;">
+			<div style="width:628px;height:396px;position:absolute;margin-top:10px;margin-left:7px;border:1px solid #000;background-color:#fff;"></div>
+			<div style="width:628px;height:396px;position:absolute;margin-top:8px;margin-left:5px;border:1px solid #000;background-color:#fff;"></div>
+			<div style="width:628px;height:396px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;">
+				<div style="margin-top:6px;margin-left:6px;">
+					<div>
+						<div style="height:24px;">
+							<div id = "djtypename" cVouchType="49" pasId = "" style="width:160px;margin-top:-2px;text-align:right;font-size:24px;font-family:楷体;font-weight:bold;color:blue;float:left;">
+								收款单
+							</div>
+							<div id = "dwname" style="float:left;width:80px;padding-top:2px;text-align:right;">
+								供应商&nbsp;
+							</div>
+							<div style="float:left;">
+								<input type="text" id="cdwcode" dbvalue = ""  class="querybox"   onclick="queryBoxClick(this)" readonly="readonly" /><input type="button" class="innerfinder" style="display: block;"  onclick="queryButtonClick(this)"/>
+								<div class="floatclear"></div>
+							</div>
+							<div id = "djsumname" style="float:left;width:60px;text-align:right;padding-top:2px;">
+								预付合计&nbsp;
+							</div>
+							<div style="float:left;">
+								<input type="text" id = "yfheji" style="width:80px;" disabled="disabled"/>
+							</div>
+						</div>
+						<hr>
+						<div id="topTextBoxContainer">
+							<table class="inputtable" border="0">
+								<tr style="height:22px;">
+									<td width="59" align="right" id="ordernoTd1"><label>订单号</label></td>
+									<td id="ordernoTd2">
+										<div>
+											<input type="text" id="orderno" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td width="59"></td>
+									<td></td>
+									<td width="59" align="right"></td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><label class="colblu">结算单号</label></td>
+									<td>
+										<div>
+											<input type="text" id="cvouchid" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">日期</label></td>
+									<td>
+										<div>
+											<input type="text" id="dvouchdate" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">结算方式</label></td>
+									<td>
+										<div>
+											<input type="text" id="csscode" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><label>结算科目</label></td>
+									<td>
+										<div>
+											<input type="text" id="ccode" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">币种</label></td>
+									<td>
+										<div>
+											<input type="text" id="cexch_name" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label class="colblu">汇率</label></td>
+									<td>
+										<div>
+											<input type="text" id="iexchrate" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><label class="colblu">金额</label></td>
+									<td>
+										<div>
+											<input type="text" id="iamount" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>票据号</label></td>
+									<td>
+										<div>
+											<input type="text" id="cnoteno" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"><label>银行账号</label></td>
+									<td>
+										<div>
+											<input type="text" id="cbankaccount" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><label>部门</label></td>
+									<td>
+										<div>
+											<input type="text" id="cdeptcode" dbvalue = ""  class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label>业务员</label></td>
+									<td>
+										<div>
+											<input type="text" id="cperson" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									
+									<td align="right"><label>项目</label></td>
+									<td>
+										<div>
+											<input type="text" id="citemcode" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><label>摘要</label></td>
+									<td>
+										<div>
+											<input type="text" id="cdigest" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td>
+									<td align="right"></td>
+									<td>
+									</td>
+									<td></td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div onscroll="tableScroll(this);" style="width:610px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
+						<table cellpadding="0" id="datatable_header" border=0 class="table_header" style="width:860px;">
+							<tr>
+								<td style="width:70px;">单据类型</td>
+								<td style="width:90px;">单据编号</td>
+								<td style="width:80px;">部门</td>
+								<td style="width:60px;">业务员</td>
+								<td style="width:120px;">摘要</td>
+								<td style="width:70px;">单据日期</td>
+								<td style="width:80px;">付款条件</td>
+								<td style="width:60px;">金额</td>
+								<td style="width:70px;">余额</td>
+								<td style="width:80px;">本次结算</td>
+								<td style="width:60px;">到期日</td>
+							</tr>
+						</table>
+						<table contextmenu="table_contextmenu" cellpadding="0" id="datatable_bodyer" border=0 class="table_bodyer" style="width:860px;">
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+						</table>
+						<div style="height:18px;"></div>
+					</div>
+					<div id="datatable_footer_container" style="border-bottom:1px solid #000;width:594px;position:absolute;z-index:30;margin-top:143px;margin-left:2px;overflow:hidden;">
+						<table cellpadding="0" id="datatable_footer" border=0 class="table_footer" style="width:860px;">
+							<tr>
+								<td style="width:70px;">合计</td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;text-align:right;" id="sumMoney">0.00</td>
+								<td style="width:70px;text-align:right;" id="sumBalance">0.00</td>
+								<td style="width:80px;text-align:right;" id="sumTheSettlement">0.00</td>
+								<td style="width:60px;"></td>
+							</tr>
+						</table>
+					</div>
+					<div id="bottomTextBoxContainer">
+						<br>
+						<table>
+							<tr style="height:4px;">
+								<td colspan="6"></td>
+							</tr>
+							<tr>
+								<td align="right"><label id = "df_dwname" >代付供应商</label></td>
+								<td>
+									<select style="width:160px;" disabled='disabled' >
+										<option>供应商1</option>
+										<option>供应商2</option>
+										<option>供应商3</option>
+									</select>
+								</td>
+								<td width="50">代付金额</td>
+								<td><input type="text" id="cdefine6"  style="width:100px;height:12px;"/></td>
+								<td align="right" id = "djyfname"  >使用预付</td>
+								<td><input type="text" id="cpbvmaker" style="width:150px;height:12px;"/></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+function queryButtonClick(btn){
+	var param = {};
+	param.subjectBusinessId = "";
+	param.subjectBusinessName = "";
+	window.parent.openWindow('basic_comref_supref','pu_pas_pas',param);
+}
+/************ 查询文本框相关代码 E *************/
+</script>
+</body>
+</html>

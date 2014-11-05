@@ -49,7 +49,8 @@
 			 */
 			var isCusCategoryBz = true;
 			function isCusCategory() {
-				$.ajax({
+				isCusCategoryBz=true;
+				/* $.ajax({
 					url:"vendor!isSupCategory",
 					type:"post",
 					dataType:"json",
@@ -60,7 +61,7 @@
 					success: function(data){
 						isCusCategoryBz = data.isCategory;
 					}
-				});
+				}); */
 			}
 			//树节点集合的全局变量
 			var zNodes = [];
@@ -90,7 +91,7 @@
 				};
 				//ztree加载树节点
 				$.ajax({
-					url:"vendorClass!queryVendorClass.action",
+					url:"data/queryVendorClass.json",
 					type:"post",
 					dataType:"json",
 					async : false,   
@@ -117,10 +118,10 @@
 			function getVendorClassListNodes(vendorClassList){
 				zNodes = [];
 				var gradeValue= $("#bmgz").attr("gradeValue");
-				if(gradeValue==""){
+				/* if(gradeValue==""){
 					jAlert("编码规则不能为空!");
 					return;
-				}
+				} */
 				var node = "";
 				var vendorClass;
 				var nodeObj;
@@ -166,11 +167,11 @@
 			//根据供应商类别编码查询供应商档案
 			function showVendorInformation(treeNode){
 				var vendorCode={};
-				if(treeNode.id!="SUPTYPE"){
+				/* if(treeNode.id!="SUPTYPE"){
 					vendorCode={code:treeNode.id};
-				}
+				} */
 				$.ajax({
-					url:"vendor!queryVendorByCvccode",
+					url:"data/queryVendorByCvccode.json",
 					data:vendorCode,
 					type:"post",
 					datatype:"json",
