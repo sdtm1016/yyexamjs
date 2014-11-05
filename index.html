@@ -226,16 +226,16 @@ $(function(){
 					  </div>
 				<div class="center">
 						<div> <span>选择系统
-								<select name="exam" style="  width:90px;" size="1">
+								<select id="systemField" name="exam" style="  width:90px;" size="1">
 										<option value='0'>系统管理</option>
 										<option value='1'>信息门户</option>
 								</select>
 								</span> <span>用户名
-								<input type="text" style="  width:70px;" >
+								<input id="userNameField" type="text" style="  width:70px;" >
 								</span> <span>密码
-								<input type="text"  style="  width:70px;">
-								</span> <span>套账号
-								<select name="exam"  style="  width:90px;"size="1">
+								<input id="passwordField" type="text"  style="  width:70px;">
+								</span> <span>账套号
+								<select id="bookField" name="exam"  style="  width:90px;"size="1">
 										<option value='101'>101</option>
 										<option value='102'>102</option>
 										<option value='103'>103</option>
@@ -248,7 +248,7 @@ $(function(){
 								</span> 
 
 								<span>操作日期
-								<input type="text"  onClick="WdatePicker()" style="width:90px;">
+<!-- 								<input id="dateField" type="text"  onClick="WdatePicker()" style="width:90px;"> -->
 								</span> 
 								<span class="gostart"> 运行</span> <span class="goScore">评分</span> <span class="goresult">得分 0  分</span> </div>
 						<div class="Title">
