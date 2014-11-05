@@ -144,46 +144,62 @@ px;
 
 <script type="text/javascript">
 $(function(){
-	var  currentIndex;
+	var  currentIndex=0;
+		// 填充第一题
 		$(".Titlelist>textarea").val(questions[0][0]); 
 		$("#myModal").html(questions[0][1]);
-		/*切换题目*/
-		$(".loginL ul >li").click(function(){
 			$(".loginL ul >li").each(function(e){
-				if ($(this).attr("class")=="cur") {
-					$(this).removeClass("cur");
+				if ($(this).html()>questions.length) {
+					$(this).html("&nbsp;");
 				};
 			})
-			$(this).addClass("cur");
-			  currentIndex=$(this).html();
-			gotoQuestion(currentIndex);
+
+		/*切换题目*/
+		$(".loginL ul >li").click(function(){
+			
+			if ($(this).html()<=questions.length) {
+				$(".loginL ul >li").each(function(e){
+					if ($(this).attr("class")=="cur") {
+						$(this).removeClass("cur");
+					};
+				}) 
+					$(this).addClass("cur");
+				  currentIndex=$(this).html();
+				  gotoQuestion(currentIndex-1);
+			}
+			
 		});
 
 		/*上一题 ，下一题*/
 		$(".down").click(function(){
 			$(".loginL ul >li").each(function(e){
-				if ($(this).hasClass("cur")) {
-						$(this).removeClass("cur");
+				if ($(this).hasClass("cur")) { 
 				 _this =$(this);
 					return;
 				}; 
 			})
-				$(_this).next().eq(0).addClass("cur");
-				  currentIndex=$(_this).next().html();
-				gotoQuestion(currentIndex);
+				
+				if (currentIndex<questions.length) {
+						$(_this).removeClass("cur");
+					$(_this).next().eq(0).addClass("cur");
+				  	currentIndex=$(_this).next().html();
+				};
+			gotoQuestion(currentIndex-1);
 
 		})
 		$(".up").click(function(){
 			$(".loginL ul >li").each(function(e){
 				if ($(this).hasClass("cur")) {
-						$(this).removeClass("cur");
 				 _this =$(this);
 					return;
 				}; 
 			})
-				$(_this).prev().eq(0).addClass("cur");
-				 currentIndex=$(_this).prev().html();
-				gotoQuestion(currentIndex);
+				if (currentIndex>1) {
+						$(_this).removeClass("cur");
+					$(_this).prev().eq(0).addClass("cur");
+					 currentIndex=$(_this).prev().html();
+				};
+			gotoQuestion(currentIndex-1);
 
 		})  
 
@@ -191,6 +207,8 @@ $(function(){
 /*切换题目*/
   function gotoQuestion(currentIndex){
   	console.log(currentIndex);
+  	$(".Titlelist>textarea").val(questions[currentIndex][0]); 
+		$("#myModal").html(questions[currentIndex][1]);
  }
 </script>
 </head>
