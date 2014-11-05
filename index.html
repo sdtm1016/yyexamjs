@@ -145,64 +145,85 @@ px;
 <script type="text/javascript">
 var  currentIndex=1;
 $(function(){
-
+		// 填充第一题
 		$(".Titlelist>textarea").val(questions[0][0]); 
 		$("#myModal").html(questions[0][1]);
-		/*切换题目*/
-		$(".loginL ul >li").click(function(){
 			$(".loginL ul >li").each(function(e){
-				if ($(this).attr("class")=="cur") {
-					$(this).removeClass("cur");
+				if ($(this).html()>questions.length) {
+					$(this).html("&nbsp;");
 				};
 			})
-			$(this).addClass("cur");
-			  currentIndex=$(this).html();
-			gotoQuestion(currentIndex);
+
+		/*切换题目*/
+		$(".loginL ul >li").click(function(){
+			
+			if ($(this).html()<=questions.length) {
+				$(".loginL ul >li").each(function(e){
+					if ($(this).attr("class")=="cur") {
+						$(this).removeClass("cur");
+					};
+				}) 
+					$(this).addClass("cur");
+				  currentIndex=$(this).html();
+				  gotoQuestion(currentIndex-1);
+			}
+			
 		});
 
 		/*上一题 ，下一题*/
 		$(".down").click(function(){
 			$(".loginL ul >li").each(function(e){
-				if ($(this).hasClass("cur")) {
-						$(this).removeClass("cur");
+				if ($(this).hasClass("cur")) { 
 				 _this =$(this);
 					return;
 				}; 
 			})
-				$(_this).next().eq(0).addClass("cur");
-				  currentIndex=$(_this).next().html();
-				gotoQuestion(currentIndex);
+				
+				if (currentIndex<questions.length) {
+						$(_this).removeClass("cur");
+					$(_this).next().eq(0).addClass("cur");
+				  	currentIndex=$(_this).next().html();
+				};
+			gotoQuestion(currentIndex-1);
 
 		})
 		$(".up").click(function(){
 			$(".loginL ul >li").each(function(e){
 				if ($(this).hasClass("cur")) {
-						$(this).removeClass("cur");
 				 _this =$(this);
 					return;
 				}; 
 			})
-				$(_this).prev().eq(0).addClass("cur");
-				 currentIndex=$(_this).prev().html();
-				gotoQuestion(currentIndex);
+				if (currentIndex>1) {
+						$(_this).removeClass("cur");
+					$(_this).prev().eq(0).addClass("cur");
+					 currentIndex=$(_this).prev().html();
+				};
+			gotoQuestion(currentIndex-1);
 
 		})  
-		 $("#dateField").val(getNowFormatDate());
-		 $(".gostart").click(function(){
-		 	if (checkLogin()=="-1") {
+		$("#dateField").val(getNowFormatDate());
+		$(".gostart").click(function(){
+			var loginResult=checkLogin();
+		 	if (loginResult=="-1") {
 		 		alert("登陆信息错误");
 		 	}else {
-		 		$("#rightiframe").attr("src",checkLogin())
-
+		 		$("#rightiframe").attr("src",loginResult);
 		 	}
-		 })
+		 });
+		$('#scoreBtn').click(function(){
+			 $('#score_area').text($("#rightiframe")[0].contentWindow.getScore(scoreTypes[currentIndex-1]));
+		 });
 
 })
 /*切换题目*/
   function gotoQuestion(currentIndex){
-  	console.log(currentIndex);
+  	$(".Titlelist>textarea").val(questions[currentIndex][0]); 
+	$("#myModal").html(questions[currentIndex][1]);
+	$("#rightiframe").attr("src","default.html");
  }
-	 function getNowFormatDate() {
+ 
+function getNowFormatDate() {
 	    var date = new Date();
 	    var seperator1 = "-";
 	    var seperator2 = ":";
@@ -217,7 +238,6 @@ $(function(){
 	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
 	    return currentdate;
 	} 
-
 </script>
 </head>
 <body>
@@ -264,7 +284,7 @@ $(function(){
 								</span> <span>密码
 								<input id="passwordField" type="text"  style="  width:70px;">
 								</span> <span>账套号
-								<select id="bookField" name="exam"  style="width:90px;"size="1">
+								<select id="bookField" name="exam"  style="  width:90px;"size="1">
 										<option value='101'>101</option>
 										<option value='102'>102</option>
 										<option value='103'>103</option>
@@ -278,28 +298,22 @@ $(function(){
 								</span> 
 
 								<span>操作日期
- 							<input id="dateField" type="text"  class onClick="WdatePicker()" style="width:90px;">  
+ 								<input id="dateField" type="text"  onClick="WdatePicker()" style="width:90px;">
 								</span> 
-								<span class="gostart"> 运行</span> <span class="goScore">评分</span> <span class="goresult">得分 0  分</span> </div>
+								<span class="gostart"> 运行</span> <span id="scoreBtn" class="goScore">评分</span> <span class="goresult">得分 <span id="score_area">0</span> 分</span> </div>
 						<div class="Title">
 								<div  class="Titlelist">
-									<textarea  readonly="readonly">[第一题]
-系统管理：建立企业核算账套
-要求：建立帐套，帐套参数如下：
-（1）帐套信息
-			</textarea>
+									<textarea  readonly="readonly"></textarea>
 								</div>
 						</div>
 				</div>
 		</div>
 </div>
-
-	<iframe id="rightiframe" frameborder="0" scrolling="no" src="default.html" style="width:100%;height:458px;">
+<iframe id="rightiframe" frameborder="0" scrolling="no" src="default.html" style="width:100%;height:458px;">
 		
 			<div class="bg">
 			</div>
 	</iframe>
-
 
 <!-- 弹出层内容 -->
 <div id="myModal" class="reveal-modal">
