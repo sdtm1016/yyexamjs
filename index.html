@@ -6,6 +6,7 @@
 <script type="text/javascript" src="js/jquery-1.7.2.js"></script>
 <script type="text/javascript" src="js/selecttime/WdatePicker.js"></script>
 <script type="text/javascript" src="js/jquery.reveal.js"></script> 
+<script type="text/javascript" src="questions/data1.js"></script> 
 <style type="text/css">
 /* ------- This is the CSS Reset ------- */
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
@@ -143,7 +144,9 @@ px;
 
 <script type="text/javascript">
 $(function(){
-	var  nowTitle;
+	var  currentIndex;
+		$(".Titlelist>textarea").val(questions[0][0]); 
+		$("#myModal").html(questions[0][1]);
 		/*切换题目*/
 		$(".loginL ul >li").click(function(){
 			$(".loginL ul >li").each(function(e){
@@ -152,8 +155,8 @@ $(function(){
 				};
 			})
 			$(this).addClass("cur");
-			  nowTitle=$(this).html();
-			gotoQuestion(nowTitle);
+			  currentIndex=$(this).html();
+			gotoQuestion(currentIndex);
 		});
 
 		/*上一题 ，下一题*/
@@ -166,8 +169,8 @@ $(function(){
 				}; 
 			})
 				$(_this).next().eq(0).addClass("cur");
-				  nowTitle=$(_this).next().html();
-				gotoQuestion(nowTitle);
+				  currentIndex=$(_this).next().html();
+				gotoQuestion(currentIndex);
 
 		})
 		$(".up").click(function(){
@@ -179,15 +182,15 @@ $(function(){
 				}; 
 			})
 				$(_this).prev().eq(0).addClass("cur");
-				 nowTitle=$(_this).prev().html();
-				gotoQuestion(nowTitle);
+				 currentIndex=$(_this).prev().html();
+				gotoQuestion(currentIndex);
 
 		})  
 
 })
 /*切换题目*/
-  function gotoQuestion(nowTitle){
-  	console.log(nowTitle);
+  function gotoQuestion(currentIndex){
+  	console.log(currentIndex);
  }
 </script>
 </head>
@@ -244,6 +247,7 @@ $(function(){
 										<option value='111'>111</option>
 										<option value='121'>121</option>
 										<option value='131'>131</option>
+										<option value='999'>999</option>
 								</select>
 								</span> 
 
