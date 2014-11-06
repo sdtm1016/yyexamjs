@@ -63,7 +63,7 @@ $(function() {
 		if (loginResult == "-1") {
 			alert("登陆信息错误");
 		} else {
-			$("#rightiframe").attr("src", loginResult);
+			$("#rightiframe")[0].src=loginResult;
 		}
 	});
 	$('#scoreBtn').click(function() {

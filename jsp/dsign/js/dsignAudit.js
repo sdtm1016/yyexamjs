@@ -372,6 +372,7 @@ function auditDsign() {
 	/*shulei*/
 	window.parent.parent.updateScore(2,0);
 	jAlert("审核成功！","提示",function(){
+		$('#audit').text('王平');
 	});
 	return;
 	
