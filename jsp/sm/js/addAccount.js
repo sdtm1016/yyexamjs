@@ -140,7 +140,7 @@ function prev(){
 
 //根据panelIndex值启用和屏蔽完成按钮
 function disablPanel(panelIndex){
-	if(panelIndex<4){
+	if(panelIndex<5){
 		//禁用完成按钮
 		document.getElementById("finisButton").disabled=true;
 	}else{
@@ -152,19 +152,20 @@ function disablPanel(panelIndex){
  *建账套提交方法
  */
 function addAccount(){
-
-	$("#cancelButton").attr("disabled",true);
-	$("#prevButton").attr("disabled",true);
-	$("#nextButton").attr("disabled",true);
-	$("#finisButton").attr("disabled",true);
-	
-	var uaAccount = $("#addForm").serialize();
-	var caccId = $("#caccId").val();
-	var caccName = $("#caccName").val();
-	var iyear = $("#iyear").val();
-	var imonth = $("#imonth").val();
-	
-	/*	
+	 jConfirm('可以创建账套了么?', '创建账套', function(r) {
+         if(r){
+        	 $("#cancelButton").attr("disabled",true);
+        	 $("#prevButton").attr("disabled",true);
+        	 $("#nextButton").attr("disabled",true);
+        	 $("#finisButton").attr("disabled",true);
+        	 
+        	 var uaAccount = $("#addForm").serialize();
+        	 var caccId = $("#caccId").val();
+        	 var caccName = $("#caccName").val();
+        	 var iyear = $("#iyear").val();
+        	 var imonth = $("#imonth").val();
+        	 
+        	 /*	
 	$.ajax({
 	 	url:"uaAccount!add.action",
 	 	type:"post",
@@ -198,24 +199,27 @@ function addAccount(){
 
 	 });
 	 
-	 */
-	 
-	 /*shulei*/
-	if($('#foreignCurrency').prop('checked')){
-		window.parent.updateScore(1,3);
-	}
-	 
-	 /*shulei*/
-	 var account = {
-		accid:4800197,
-		caccId:caccId,
-		caccName:caccName,
-		iyear:iyear,
-		imonth:imonth,
-		action:"add"
-	};
-	window.parent.openWindow("addgrade","addAccount",account);
-	window.parent.closeWindow("addAccount");
+        	  */
+        	 
+        	 /*shulei*/
+        	 if($('#foreignCurrency').prop('checked')){
+        		 window.parent.updateScore(1,3);
+        	 }
+        	 
+        	 /*shulei*/
+        	 var account = {
+        			 accid:4800197,
+        			 caccId:caccId,
+        			 caccName:caccName,
+        			 iyear:iyear,
+        			 imonth:imonth,
+        			 action:"add"
+        	 };
+        	 window.parent.openWindow("addgrade","addAccount",account);
+        	 window.parent.closeWindow("addAccount");
+         }
+	 });
+
 	 
 }
 $(document).ready(function() {
