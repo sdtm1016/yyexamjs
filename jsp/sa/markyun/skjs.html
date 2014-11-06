@@ -17,53 +17,41 @@
 		<div class="buttongroup" style="position:relative;z-index:1;">
 			<div class="group">
 				<div>
+					<input type="button" value="设置" style="background-image:url('../../../images/icon/setting.gif');"/>
+				</div>
+				<div>
+					<input type="button" value="打印" style="background-image:url('../../../images/icon/print.gif');"/>
+				</div>
+				<div>
+					<input type="button" value="输出" style="background-image:url('../../../images/icon/output.gif');"/>
+				</div>
+			</div>
+			<div class="group">
+				<div>
 					<input type="button" id = "addPas"  value="增加" onclick="addPas();" style="background-image:url('../../../images/icon/add.gif');" />
 				</div>
 				<div>
 					<input type="button" id = "upsPas" value="修改" onclick="updatePas();" style="background-image:url('../../../images/icon/update.gif');" />
 				</div>
 				<div>
+					<input type="button"  id = "savePas"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
+				</div>
+				<div>
 					<input type="button" id = "delPas" value="删除" onclick="delApClose();" style="background-image:url('../../../images/icon/delete.gif');" />
 				</div>
 			</div>
 			<div class="group">
-				<div style="width:45px;height:35px;padding:0px;">
-					<div style="width:100%;padding:0px;">
-						<input type="button" id = "hexiaoPas"  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
-						<input type="button" id = "hexiaoPas1" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
-					</div>
-					<ul style="display:none;width:120px;">
-						<li onclick="showHesuanByDwcode();">同币核销</li>
-						<li onclick="exchHesuan();">异币核销</li>
-					</ul>
-				</div>
-				<div>
-					<input type="button" id = "daifuPas"  value="代付" id = "btnSave" style="background-image:url('../../../images/icon/agent.gif');"  onclick="save()" />
-				</div>
-				<div>
-					<input type="button"  id = "yufuPas"  value="预付" id = "btnSave" style="background-image:url('../../../images/icon/advance.gif');"  onclick="save()" />
-				</div>
-			</div>
-			<div class="group">
-				<div>
-					<input type="button"  id = "savePas"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
-				</div>
 				<div>
 					<input type="button"  id = "giveupPas"  value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveupPas()"/>
 				</div>
-			</div>
-			<div class="group">
 				<div>
-					<input type="button"  id = "autoPas"  value="自动" style="background-image:url('../../../images/icon/bearing.gif');"/>
+					<input type="button" id = "hexiaoPas"  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
+				</div>
+				<div>
+					<input type="button" id = "shenhePas"  value="审核" id = "btnSave" style="background-image:url('../../../images/icon/yes.gif');"  onclick="" />
 				</div>
 			</div>
 			<div class="group">
-				<div>
-					<input type="button" id = "locationPas"  value="定位" style="background-image:url('../../../images/icon/return.gif');"/>
-				</div>
-				<div>
-					<input type="button"  id = "filterPas" value="过滤" style="background-image:url('../../../images/icon/screening.gif');"/>
-				</div>
 				<div>
 					<input type="button"  id = "firstPas" value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"  onclick = "getPaging(this);"/>
 				</div>
@@ -76,14 +64,11 @@
 				<div>
 					<input type="button"  id = "lastPas" value="末张" style="background-image:url('../../../images/icon/lastcard.gif');" onclick = "getPaging(this);"/>
 				</div>
-				<div>
-					<input type="button"  id = "transPas" value="切换" style="background-image:url('../../../images/icon/change.gif');" onclick = "transPas();"/>
-				</div>
-				<div>
-					<input type="button"  id = "refreshPas" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');" onclick = "refreshPas();"/>
-				</div>
 			</div>
 			<div class="group">
+				<div>
+					<input type="button"  id = "helpPas" value="帮助" onclick="" style="background-image:url('../../../images/icon/help.gif');"/>
+				</div>
 				<div>
 					<input type="button"  id = "exitPas" value="退出" onclick="exitPas()" style="background-image:url('../../../images/icon/exit.gif');"/>
 				</div>
@@ -103,7 +88,8 @@
 								供应商&nbsp;
 							</div>
 							<div style="float:left;">
-								<input type="text" id="cdwcode" dbvalue = ""  class="querybox"   onclick="queryBoxClick(this)" readonly="readonly" /><input type="button" class="innerfinder" style="display: block;"  onclick="queryButtonClick(this)"/>
+								<input type="text" id="cdwcode" dbvalue = ""  class="querybox"   onclick="" readonly="readonly" />
+								<input type="button" class="innerfinder" style="display: block;"  onclick=""/>
 								<div class="floatclear"></div>
 							</div>
 							<div id = "djsumname" style="float:left;width:60px;text-align:right;padding-top:2px;">
@@ -141,7 +127,7 @@
 									<td align="right"><label class="colblu">日期</label></td>
 									<td>
 										<div>
-											<input type="text" id="dvouchdate" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<input type="text" id="dvouchdate" disabled class="querybox" value="2010-1-31" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>
@@ -164,14 +150,14 @@
 									<td align="right"><label class="colblu">币种</label></td>
 									<td>
 										<div>
-											<input type="text" id="cexch_name" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<input type="text" id="cexch_name" disabled value="人民币" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>
 									<td align="right"><label class="colblu">汇率</label></td>
 									<td>
 										<div>
-											<input type="text" id="iexchrate" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<input type="text" id="iexchrate" disabled value="1.00000000" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>

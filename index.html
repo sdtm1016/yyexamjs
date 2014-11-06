@@ -217,11 +217,11 @@ $(function(){
 
 })
 /*切换题目*/
-  function gotoQuestion(currentIndex){
+function gotoQuestion(currentIndex){
   	$(".Titlelist>textarea").val(questions[currentIndex][0]); 
 	$("#myModal").html(questions[currentIndex][1]);
 	$("#rightiframe").attr("src","default.html");
- }
+}
  
 function getNowFormatDate() {
 	    var date = new Date();
