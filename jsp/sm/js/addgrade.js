@@ -125,7 +125,7 @@ function doSave(){
 	/*shulei*/
 	var grs="4800367*科目编码级次*9*15*9*1*4222".split('*');
 	if(grs[grs.length-1]=="4222"){
-		window.parent.updateScore(1,4);
+		window.parent.updateScore('1-1',4);
 	}
 	window.parent.closeWindow("addgrade");
 	window.parent.openWindow("accuracy","addgrade",account);

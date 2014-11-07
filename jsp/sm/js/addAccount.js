@@ -40,7 +40,7 @@ function next(){
 			}
 			/*shulei*/
 			 if(textId=="201"&&textName=="北京启明科技公司"&&testIyear=="2010"&&testImonth=="1"){
-				window.parent.updateScore(1,0);
+				window.parent.updateScore('1-1',0);
 			 }
 			
 
@@ -84,7 +84,7 @@ function next(){
 			
 			/*shulei*/
 			 if(textCunitname=="北京启明科技公司"&&textCunitabbre=="启明科技"){
-				window.parent.updateScore(1,1);
+				window.parent.updateScore('1-1',1);
 			}
 		}
 		if(panelIndex==3){
@@ -95,7 +95,7 @@ function next(){
 			
 			/*shulei*/
 			if($('#ctradekind_s').val()=="2007年新会计准则"&&$('#caccMaster_s').val()=="demo"){
-				window.parent.updateScore(1,2);
+				window.parent.updateScore('1-1',2);
 			}
 		}
 		if(panelIndex<5){
@@ -203,7 +203,7 @@ function addAccount(){
         	 
         	 /*shulei*/
         	 if($('#foreignCurrency').prop('checked')){
-        		 window.parent.updateScore(1,3);
+        		 window.parent.updateScore('1-1',3);
         	 }
         	 
         	 /*shulei*/

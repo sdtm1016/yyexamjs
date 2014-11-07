@@ -145,6 +145,25 @@
 		}
 		
 		$('#wa_wageallocation_tableview>div>div>span').text('工资分摊明细-（工资类别:正式人员2）');
+		
+		//计算分数
+		var flag1=false;
+		var flag2=false;
+		$('#datatable_1_bodyer input').each(function(i,n){
+			if($(n).prop('checked')){
+				flag1=true;
+				if(n.value!='10:应付工资10'){
+					flag2=true;
+				}
+			}
+		});
+		var zTree = $.fn.zTree.getZTreeObj("dpt_tree");
+		var checkedNodes = zTree.getCheckedNodes();
+		if((flag1&&!flag2)&&(checkedNodes.length==2&&checkedNodes[1].name=='综合部')){
+			window.parent.parent.updateScore('1-5',1);
+		}
+		//计算分数结束
+		
 		window.parent.openWindow("wa_wageallocation_tableview","wa_wageallocation_first", param);
 		window.parent.closeWindow("wa_wageallocation_first");
 	}

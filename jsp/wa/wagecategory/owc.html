@@ -30,6 +30,14 @@
 			jAlert("请选择要打开的工资类别");
 			return;
 		}
+		var selected;
+		$('#datatable_1_bodyer tr').each(function(i,n){
+			if($(n).attr('style')!=null&&$(n).text().indexOf('正式人员2')>-1){
+				window.parent.parent.updateScore('1-5',0);
+			}
+		});
+		
+		window.parent.parent.updateScore('1-5',0)
 		window.parent.parent.wa_wageTypeId=1; //打开 工资 类别 标志     1表示 打开 了一种 工资 类别 
 		window.parent.parent.wa_currentWaAccount={}; //里面 保存  当前打开 工资类别 的 ：工资 类别号，工资类别名称
 		window.parent.parent.wa_currentWaAccount.cgzgradenum=currentSeletedRow.cells[0].innerHTML;//工资 类别号
