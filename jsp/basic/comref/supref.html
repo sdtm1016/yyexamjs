@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>供应商档案参照</title>
+		<title>客户档案参照</title>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
 		<style type="text/css">
 			#footer{width:100%;margin-left:4px;}
@@ -19,6 +19,26 @@
 		<!-- 规则表 -->
 		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
 		<script type="text/javascript">
+		 
+			//程序入口
+			$(document).ready(function(){
+				var gradeValue = grademarkValue('vendorclass'); 
+				//客户分类编码原则
+				$("#bmgz").attr("gradeValue",gradeValue);
+				//判断是有允许分类(如果不允许则默认添加一条记录)
+				isCusCategory();
+				//加载客户分类树
+				queryVendorClassTree(null);
+
+					$(".selectCurr").click(function(){
+				
+ 					if ($(this).find("td").eq(1).html()=="北京光明中学") {
+ 						window.parent.$("#sa_markyun_skjs").find("iframe")[0].contentWindow.tianchong("北京光明中学");
+ 					};
+					 setTimeout('window.parent.closeWindow("basic_comref_supref")',250); 
+				});
+					
+			});
 			//返回被选中的数据对象
 			function returnSelected(tr){
 				var param={};
@@ -33,18 +53,8 @@
 			function selectCurrentRow(obj){
 				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
 			}
-			//程序入口
-			$(document).ready(function(){
-				var gradeValue = grademarkValue('vendorclass'); 
-				//供应商分类编码原则
-				$("#bmgz").attr("gradeValue",gradeValue);
-				//判断是有允许分类(如果不允许则默认添加一条记录)
-				isCusCategory();
-				//加载供应商分类树
-				queryVendorClassTree(null);
-			});
 			/**
-			 * 是否允许供应商分类，允许返回true，否则返回false
+			 * 是否允许客户分类，允许返回true，否则返回false
 			 * @returns {Boolean}
 			 */
 			var isCusCategoryBz = true;
@@ -71,7 +81,7 @@
 			var action = null;
 			//所有存货分类对象的集合
 			var vendorClassList=null;
-			//当前选中供应商档案
+			//当前选中客户档案
 			var currentClickedRow=null;
 			//当前弹窗动作目标
 			var xaction = null;
@@ -90,13 +100,21 @@
 					}
 				};
 				//ztree加载树节点
-				$.ajax({
+			
+
+			 var zNodes =[  
+	            {id:1, pId:0, name:"客户档案", open:true},  
+	            {id:2, pId:1, name:"00无分类"} 
+ 	        ];  
+  
+            $.fn.zTree.init($("#vendorClassTree"), setting, zNodes);  
+				/*$.ajax({
 					url:"data/queryVendorClass.json",
 					type:"post",
 					dataType:"json",
 					async : false,   
 					error: function () {
-			            jAlert('请求失败');   
+			          //  jAlert('请求失败');   
 			        }, 
 					success:function(jsonData){
 						vendorClassList = jsonData.vendorClassList;
@@ -109,12 +127,12 @@
 						}
 						var selNode = zTree.getNodeByParam("id", vendorClassCode);
 		    			zTree.selectNode(selNode);
-		    			//显示供应商信息列表
+		    			//显示客户信息列表
 		    			showVendorInformation(selNode);
 					}
-				});	
+				});	*/
 			}
-			//获取供应商分类树节点的方法
+			//获取客户分类树节点的方法
 			function getVendorClassListNodes(vendorClassList){
 				zNodes = [];
 				var gradeValue= $("#bmgz").attr("gradeValue");
@@ -126,14 +144,14 @@
 				var vendorClass;
 				var nodeObj;
 				//根节点
-				node = "{id:'SUPTYPE',name:'供应商分类',open:true}";
+				node = "{id:'SUPTYPE',name:'客户分类',open:true}";
 				nodeObj =  eval('(' + node + ')') ;
 		    	zNodes.push(nodeObj);
 				for(var i=0;i<vendorClassList.length;i++){
 					vendorClass = vendorClassList[i];
 					//本级次
 					var ivcgrade = vendorClass.ivcgrade;
-					//供应商分类编码
+					//客户分类编码
 					var cvccode = vendorClass.cvccode;
 					//父节点id
 					var parentid ;
@@ -164,7 +182,7 @@
 			function ZtreeDblClick(event, treeId, treeNode){
 				
 			}
-			//根据供应商类别编码查询供应商档案
+			//根据客户类别编码查询客户档案
 			function showVendorInformation(treeNode){
 				var vendorCode={};
 				/* if(treeNode.id!="SUPTYPE"){
@@ -221,18 +239,18 @@
 						<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_supref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
 					</div>
 				</div>
-				<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
+				<!-- <div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
 					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
 						<div style="margin-top:3px;">
 							查询：<select disabled="disabled">
-								<option>供应商助记码</option>
+								<option>客户助记码</option>
 								<option>AAAAAAAA</option>
 								<option>BBBBBBBBB</option>
 							</select><input type="text" disabled="disabled" style="width:110px;"/><input disabled="disabled" type="button" class="finder"/>
 						</div>
 					</div>
-				</div>
-				<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+				</div> -->
+				<!-- <div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
 					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
 						<legend>模糊匹配定位：</legend>
 						<div style="height:20px;">
@@ -243,7 +261,7 @@
 						</div>
 					</fieldset>
 					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
-				</div>
+				</div> -->
 			</div>
 			<div style="width:100%;height:274px;margin-left:4px;">
 				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
@@ -254,11 +272,11 @@
 						<thead>
 							<tr id="datatable_header">
 								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
-								<td style="width:150px;">供应商编码</td>
-								<td style="width:500px;">供应商名称</td>
-								<td style="width:200px;">供应商简称</td>
-								<td style="width:150px;">供应商助记码</td>
-								<td style="width:300px;">供应商分类编码</td>
+								<td style="width:150px;">客户编号</td>
+								<td style="width:200px;">客户名称</td>
+								<td style="width:200px;">客户简称</td>
+								<td style="width:150px;">客户助记码</td>
+								<td style="width:250px;">客户分类编码</td>
 								<td style="width:200px;">地址</td>
 								<td style="width:150px;">发货日期</td>
 								<td style="width:200px;">专营业务员</td>
@@ -266,17 +284,40 @@
 							</tr>
 						</thead>
 						<tbody id="datatable_bodyer">
+							<tr class="selectCurr"> 
+								<td style="width:150px;height: 20px;line-height: 20px;">001</td>
+								<td style="width:200px;">北京光明中学</td>
+								<td style="width:200px;">光明中学</td>
+								<td style="width:150px;">00</td>
+								<td style="width:250px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+							<tr class="selectCurr"> 
+								
+								<td style="width:150px;height: 20px;line-height: 20px;">001</td>
+								<td style="width:200px;">广州力宏公司</td>
+								<td style="width:200px;">广州力宏</td>
+								<td style="width:150px;">00</td>
+								<td style="width:250px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<!-- 底部状态栏容器 S -->
-			<div id="footer">
-				<div  style="margin-left:0px;">定位列名：</div>
-				<div id="selColumn" >常用摘要正文</div>
-				<div id="loadRecord" > 已加载n条记录</div>
-				<div id = "selRecord" >已选中n条记录</div>
-			</div>
+		<!-- 	<div id="footer">
+			<div  style="margin-left:0px;">定位列名：</div>
+			<div id="selColumn" >常用摘要正文</div>
+			<div id="loadRecord" > 已加载n条记录</div>
+			<div id = "selRecord" >已选中n条记录</div>
+		</div> -->
 			<!-- 底部状态栏容器 E -->
 		</div>
 		<input id="bmgz" type="hidden"/>

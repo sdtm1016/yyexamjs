@@ -11,9 +11,14 @@
 		<script type="text/javascript" src="../../../js/tableRef.js"></script>
 		<!-- 引入日期组件 -->
 		<script type="text/javascript" src="../../../js/My97DatePicker/WdatePicker.js"></script>
+		<style>
+			.px80{
+				width: 80px;
+			}
+		</style>
 	</head>
 <body>
-	<div class="container" style="float:left;width:644px;height:450px;background-color: #fff;position:absolute;top:0px;left:0px;">
+	<div class="container" style="float:left;width:644px;height:400px;position:absolute;top:0px;left:0px;">
 		<div class="buttongroup" style="position:relative;z-index:1;">
 			<div class="group">
 				<div>
@@ -75,25 +80,25 @@
 			</div>
 		</div>
 		<div style="position:relative;z-index:0;">
-			<div style="width:628px;height:396px;position:absolute;margin-top:10px;margin-left:7px;border:1px solid #000;background-color:#fff;"></div>
-			<div style="width:628px;height:396px;position:absolute;margin-top:8px;margin-left:5px;border:1px solid #000;background-color:#fff;"></div>
-			<div style="width:628px;height:396px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;">
+			<div style="width:628px;height:396px;position:absolute;margin-top:10px;margin-left:7px;"></div>
+			<div style="width:628px;height:396px;position:absolute;margin-top:8px;margin-left:5px;"></div>
+			<div style="width:628px;height:396px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;font-weight:400;">
 				<div style="margin-top:6px;margin-left:6px;">
 					<div>
 						<div style="height:24px;">
-							<div id = "djtypename" cVouchType="49" pasId = "" style="width:160px;margin-top:-2px;text-align:right;font-size:24px;font-family:楷体;font-weight:bold;color:blue;float:left;">
+							<div id = "djtypename" cVouchType="49" pasId = "" style="width:160px;margin-top:-2px;text-align:center;font-size:24px;font-family:楷体;font-weight:bold;float:left;">
 								收款单
 							</div>
-							<div id = "dwname" style="float:left;width:80px;padding-top:2px;text-align:right;">
-								供应商&nbsp;
+							<div id = "dwname" style="float:left;color:blue;width:80px;padding-top:2px;text-align:right;">
+								客&nbsp; &nbsp;户&nbsp;
 							</div>
 							<div style="float:left;">
 								<input type="text" id="cdwcode" dbvalue = ""  class="querybox"   onclick="" readonly="readonly" />
-								<input type="button" class="innerfinder" style="display: block;"  onclick=""/>
+								<input type="button" class="innerfinder" style="display: block;"  onclick="gotoRecName()"/>
 								<div class="floatclear"></div>
 							</div>
-							<div id = "djsumname" style="float:left;width:60px;text-align:right;padding-top:2px;">
-								预付合计&nbsp;
+							<div id = "djsumname" style="float:left;color:blue; width:60px;text-align:right;padding-top:2px;">
+								预收合计&nbsp;
 							</div>
 							<div style="float:left;">
 								<input type="text" id = "yfheji" style="width:80px;" disabled="disabled"/>
@@ -124,7 +129,7 @@
 											<div class="floatclear"></div>
 										</div>
 									</td>
-									<td align="right"><label class="colblu">日期</label></td>
+									<td align="right"><label class="colblu">日&nbsp; &nbsp;期</label></td>
 									<td>
 										<div>
 											<input type="text" id="dvouchdate" disabled class="querybox" value="2010-1-31" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
@@ -147,23 +152,23 @@
 											<div class="floatclear"></div>
 										</div>
 									</td>
-									<td align="right"><label class="colblu">币种</label></td>
+									<td align="right"><label class="colblu">币&nbsp; &nbsp;种</label></td>
 									<td>
 										<div>
 											<input type="text" id="cexch_name" disabled value="人民币" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>
-									<td align="right"><label class="colblu">汇率</label></td>
+									<td align="right"><label class="colblu">汇&nbsp; &nbsp;率</label></td>
 									<td>
 										<div>
-											<input type="text" id="iexchrate" disabled value="1.00000000" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<input type="text" id="iexchrate" disabled value="1" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><label class="colblu">金额</label></td>
+									<td align="right"><label class="colblu">金&nbsp; &nbsp;额</label></td>
 									<td>
 										<div>
 											<input type="text" id="iamount" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
@@ -186,7 +191,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><label>部门</label></td>
+									<td align="right"><label>部&nbsp; &nbsp;门</label></td>
 									<td>
 										<div>
 											<input type="text" id="cdeptcode" dbvalue = ""  class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
@@ -202,7 +207,7 @@
 										</div>
 									</td>
 									
-									<td align="right"><label>项目</label></td>
+									<td align="right"><label>项&nbsp; &nbsp;目</label></td>
 									<td>
 										<div>
 											<input type="text" id="citemcode" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
@@ -211,33 +216,42 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><label>摘要</label></td>
+									<td align="right"><label>摘&nbsp; &nbsp;要</label></td>
 									<td>
 										<div>
 											<input type="text" id="cdigest" dbvalue = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
 										</div>
 									</td>
-									<td align="right"></td>
-									<td>
+									<td  class="sshow" align="right" style="display:none;"><label>本次结算</label></td>
+									<td  class="sshow" style="display:none;">
+										<div>
+											<input type="text" id="cdijieusan" value = "46800" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div>
+									</td> 
+									<td  class="px80 sshow" align="right" style="display:none;" ><label>中间币金额</label></td>
+									<td class="px80 sshow" style="display:none;">
+										<div>
+											46800
+											<div class="floatclear"></div>
+										</div>
 									</td>
-									<td></td>
-									<td></td>
 								</tr>
 							</table>
 						</div>
 					</div>
-					<div onscroll="tableScroll(this);" style="width:610px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
+					<div onscroll="tableScroll(this);" style=" margin-top:15px;width:610px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
 						<table cellpadding="0" id="datatable_header" border=0 class="table_header" style="width:860px;">
 							<tr>
-								<td style="width:70px;">单据类型</td>
-								<td style="width:90px;">单据编号</td>
+								<td style="width:110px;" >单据类型</td>
+								<td style="width:100px;">单据编号</td>
 								<td style="width:80px;">部门</td>
 								<td style="width:60px;">业务员</td>
-								<td style="width:120px;">摘要</td>
-								<td style="width:70px;">单据日期</td>
+								<td style="width:100px;">摘要</td>
+								<td style="width:100px;">单据日期</td>
 								<td style="width:80px;">付款条件</td>
-								<td style="width:60px;">金额</td>
+								<td style="width:70px;">金额</td>
 								<td style="width:70px;">余额</td>
 								<td style="width:80px;">本次结算</td>
 								<td style="width:60px;">到期日</td>
@@ -245,41 +259,41 @@
 						</table>
 						<table contextmenu="table_contextmenu" cellpadding="0" id="datatable_bodyer" border=0 class="table_bodyer" style="width:860px;">
 							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
+								<td style="width:110px;" class="danju"></td>
+								<td style="width:100px;" class="bianhao"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:100px;"></td>
+								<td style="width:100px;" class="riqi"></td>
+								<td style="width:80px;"></td>
+								<td style="width:70px;" class="jine">46800</td>
+								<td style="width:70px;" class="yue">46800</td>
+								<td style="width:80px;"> </td>
+								<td style="width:60px;"></td>
+							</tr>
+								<tr>
+									<td style="width:100px;" class="danju"></td>
+								<td style="width:100px;" class="bianhao"></td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
+								<td style="width:100px;" class="riqi"></td>
 								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
+								<td style="width:70px;" class="jine">234000</td>
+								<td style="width:70px;" class="yue">234000</td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
 							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
+								<td style="width:100px;" class="danju"></td>
+								<td style="width:100px;" class="bianhao"></td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
+								<td style="width:100px;" class="riqi"></td>
 								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-							</tr>
-							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
+								<td style="width:70px;" class="jine"></td>
+								<td style="width:70px;" class="yue"></td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
@@ -357,25 +371,25 @@
 					</div>
 					<div id="bottomTextBoxContainer">
 						<br>
-						<table>
+					 <table>
 							<tr style="height:4px;">
 								<td colspan="6"></td>
 							</tr>
 							<tr>
-								<td align="right"><label id = "df_dwname" >代付供应商</label></td>
+								<td align="right"><label id = "df_dwname" >代付客户</label></td>
 								<td>
-									<select style="width:160px;" disabled='disabled' >
-										<option>供应商1</option>
-										<option>供应商2</option>
-										<option>供应商3</option>
+									<select style="width:140px;" disabled='disabled' >
+										<option>客户1</option>
+										<option>客户2</option>
+										<option>客户3</option>
 									</select>
 								</td>
-								<td width="50">代付金额</td>
+								<td width="80">代付金额</td>
 								<td><input type="text" id="cdefine6"  style="width:100px;height:12px;"/></td>
 								<td align="right" id = "djyfname"  >使用预付</td>
 								<td><input type="text" id="cpbvmaker" style="width:150px;height:12px;"/></td>
 							</tr>
-						</table>
+						</table> 
 					</div>
 				</div>
 			</div>
@@ -383,6 +397,30 @@
 	</div>
 <script>
 function queryButtonClick(btn){
+	var param = {};
+	param.subjectBusinessId = "";
+	param.subjectBusinessName = "";
+	window.parent.openWindow('basic_comref_supref','pu_pas_pas',param);
+}
+function tianchong(vals){
+	$("#cdwcode").val(vals);
+	$("#orderno").val("0000000001");
+	$("#iamount").val(468000);
+}
+ function showHesuanByDwcode(){
+ 	$(".inputtable").find(".sshow").each(function(){
+ 		$(this).attr("style","");
+ 	})
+ 	$(".danju").eq(0).html("27号，普通发票");
+	$(".bianhao").eq(0).html("0000000001");
+	$(".riqi").eq(0).html("2010-01-03");
+	$(".danju").eq(1).html("27号，普通发票");
+	$(".bianhao").eq(1).html("0000000003");
+	$(".riqi").eq(1).html("2010-01-03");
+
+
+ }
+function gotoRecName(){
 	var param = {};
 	param.subjectBusinessId = "";
 	param.subjectBusinessName = "";
