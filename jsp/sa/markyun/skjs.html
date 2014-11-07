@@ -281,7 +281,7 @@
 								<td style="width:80px;"></td>
 								<td style="width:70px;" class="jine">234000</td>
 								<td style="width:70px;" class="yue">234000</td>
-								<td style="width:80px;"></td>
+								<td style="width:80px;"><input type="text" style="width:50px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
 							<tr>
@@ -425,6 +425,12 @@ function gotoRecName(){
 	param.subjectBusinessId = "";
 	param.subjectBusinessName = "";
 	window.parent.openWindow('basic_comref_supref','pu_pas_pas',param);
+}
+function exitPas(){
+		var param = {};
+	param.subjectBusinessId = "";
+	param.subjectBusinessName = "";
+	window.parent.closeWindow('sa_markyun_skjs');
 }
 /************ 查询文本框相关代码 E *************/
 </script>
