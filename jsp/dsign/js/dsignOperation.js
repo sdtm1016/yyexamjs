@@ -235,7 +235,12 @@ function addDsign(){
    * 保存凭证按钮
    */
   function saveDsignAccvouch(pzlx){
-
+	  
+	  jAlert("已完成计提工资的凭证保存工作！","计提工资",function(){
+		  window.parent.closeWindow("wa_operate_dsign");
+	  });
+	  return;
+	  
 	  tempErrorMassage="";
 	  tempErrorDom=null;
 	  if(inputBz==false){

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>工资分摊明细</title>
+<title>工资分摊明细11</title>
 <link rel="stylesheet" type="text/css" href="../../../css/public.css">
 <link rel="stylesheet" type="text/css" href="../../../css/contextmenu.css">
 <script type="text/javascript" src="../../../js/winui/plugin/winui.contextmenu.js"></script>
@@ -382,22 +382,26 @@ function deliverValue(object){
 								<div style="width:100%;margin-top:1px;border-top:1px solid #404040;border-bottom:1px solid #fff;"></div>
 								<div class="buttongroup">
 												<div class="group">
-																<div>
-																				<input type="button" value="重选" onclick="reselect();" style="background-image:url('../../../images/icon/reselect.gif');"/>
-																</div>
+													<div>
+														<input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/>
+													</div>
+													<div>
+														<input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/>
+													</div>
+													<div>
+														<input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/>
+													</div>
 												</div>
 												<div class="group">
-																<div>
-																				<input type="button" value="制单" onclick="makePZ()" style="background-image:url('../../../images/icon/find.gif');"/>
-																</div>
-																<div>
-																				<input disabled="disabled" type="button" value="批制" onclick="window.parent.openWindow('');" style="background-image:url('../../../images/icon/batch.gif');"/>
-																</div>
-												</div>
-												<div class="group">
-																<div>
-																				<input type="button" value="退出" onclick="window.parent.closeWindow('wa_wageallocation_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/>
-																</div>
+													<div>
+														<input type="button" value="制单" onclick="makePZ()" style="background-image:url('../../../images/icon/find.gif');"/>
+													</div>
+													<div>
+														<input type="button"  id = "helpPas" value="帮助" onclick="" style="background-image:url('../../../images/icon/help.gif');"/>
+													</div>
+													<div>
+														<input type="button" value="退出" onclick="window.parent.closeWindow('wa_wageallocation_tableview');" style="background-image:url('../../../images/icon/exit.gif');"/>
+													</div>
 												</div>
 								</div>
 								<div style="width:740px; background-color:#fff;overflow-x:auto;">

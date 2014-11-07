@@ -63,7 +63,7 @@ function wa_navigation_filter(){
 				
 
 				
-				$.ajax({
+				/*$.ajax({
 					url:'data/queryWageTypes.json',
 					type:'post',
 					dataType:'json',
@@ -88,7 +88,8 @@ function wa_navigation_filter(){
 						openWindow("wa_wagecategory_wcw","wa_wagecategory_wagewizard",param);
 					}
 				});
-				flag = false;
+				flag = false;*/
+				toPage('WA','WA.html');
 			}else if(isOpenWa == 0){
 				//第一次进入工资模块时向导
 				openWindow('wa_wagecategory_wagewizard');
