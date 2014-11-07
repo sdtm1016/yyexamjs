@@ -22,27 +22,27 @@
 		<div class="buttongroup" style="position:relative;z-index:1;">
 			<div class="group">
 				<div>
-					<input type="button" value="设置" style="background-image:url('../../../images/icon/setting.gif');"/>
+					<input type="button" value="设置"   disabled style="background-image:url('../../../images/icon/setting.gif');"/>
 				</div>
 				<div>
-					<input type="button" value="打印" style="background-image:url('../../../images/icon/print.gif');"/>
+					<input type="button" value="打印"  disabled  style="background-image:url('../../../images/icon/print.gif');"/>
 				</div>
 				<div>
-					<input type="button" value="输出" style="background-image:url('../../../images/icon/output.gif');"/>
+					<input type="button" value="输出"  disabled style="background-image:url('../../../images/icon/output.gif');"/>
 				</div>
 			</div>
 			<div class="group">
 				<div>
-					<input type="button" id = "addPas"  value="增加" onclick="addPas();" style="background-image:url('../../../images/icon/add.gif');" />
+					<input type="button" id = "addPas"    disabled value="增加" onclick="addPas();" style="background-image:url('../../../images/icon/add.gif');" />
 				</div>
 				<div>
-					<input type="button" id = "upsPas" value="修改" onclick="updatePas();" style="background-image:url('../../../images/icon/update.gif');" />
+					<input type="button" id = "upsPas"  disabled  value="修改" onclick="updatePas();" style="background-image:url('../../../images/icon/update.gif');" />
 				</div>
 				<div>
 					<input type="button"  id = "savePas"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
 				</div>
 				<div>
-					<input type="button" id = "delPas" value="删除" onclick="delApClose();" style="background-image:url('../../../images/icon/delete.gif');" />
+					<input type="button" id = "delPas"  disabled  value="删除" onclick="delApClose();" style="background-image:url('../../../images/icon/delete.gif');" />
 				</div>
 			</div>
 			<div class="group">
@@ -50,15 +50,15 @@
 					<input type="button"  id = "giveupPas"  value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveupPas()"/>
 				</div>
 				<div>
-					<input type="button" id = "hexiaoPas"  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
+					<input type="button" id = "hexiaoPas"   disabled  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
 				</div>
 				<div>
-					<input type="button" id = "shenhePas"  value="审核" id = "btnSave" style="background-image:url('../../../images/icon/yes.gif');"  onclick="" />
+					<input type="button" id = "shenhePas"   disabled  value="审核" id = "btnSave" style="background-image:url('../../../images/icon/yes.gif');"  onclick="" />
 				</div>
 			</div>
 			<div class="group">
 				<div>
-					<input type="button"  id = "firstPas" value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"  onclick = "getPaging(this);"/>
+					<input type="button"  id = "firstPas"  disabled  value="首张" style="background-image:url('../../../images/icon/firstcard.gif');"  onclick = "getPaging(this);"/>
 				</div>
 				<div>
 					<input type="button"  id = "upPas" value="上张" style="background-image:url('../../../images/icon/prevcard.gif');" onclick = "getPaging(this);"/>
@@ -425,6 +425,13 @@ function gotoRecName(){
 	window.parent.openWindow('basic_comref_supref','pu_pas_pas',param);
 }
  function saveApClose(){
+ 	$("#addPas").removeAttr("disabled");
+ 	$("#upsPas").removeAttr("disabled");
+ 	$("#delPas").removeAttr("disabled");
+ 	$("#shenhePas").removeAttr("disabled");
+ 	$("#hexiaoPas").removeAttr("disabled");
+ 
+
  	window.parent.updateScore('1-4',0);
  }
 
