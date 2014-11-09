@@ -39,7 +39,7 @@
 					<input type="button" id = "upsPas"  disabled  value="修改" onclick="updatePas();" style="background-image:url('../../../images/icon/update.gif');" />
 				</div>
 				<div>
-					<input type="button"  id = "savePas"  value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
+					<input type="button"  id = "savePas"   disabled value="保存" id = "btnSave" style="background-image:url('../../../images/icon/save.gif');"  onclick="saveApClose()" />
 				</div>
 				<div>
 					<input type="button" id = "delPas"  disabled  value="删除" onclick="delApClose();" style="background-image:url('../../../images/icon/delete.gif');" />
@@ -47,13 +47,13 @@
 			</div>
 			<div class="group">
 				<div>
-					<input type="button"  id = "giveupPas"  value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveupPas()"/>
+					<input type="button"  id = "giveupPas"   value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveupPas()"/>
 				</div>
 				<div>
-					<input type="button" id = "hexiaoPas"   disabled  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
+					<input type="button" id = "hexiaoPas" disabled  value="核销" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/calculate.gif');margin-top:0px;" onclick="showHesuanByDwcode();"/>
 				</div>
 				<div>
-					<input type="button" id = "shenhePas"   disabled  value="审核" id = "btnSave" style="background-image:url('../../../images/icon/yes.gif');"  onclick="" />
+					<input type="button" id = "shenhePas"  disabled  value="审核" id = "btnSave" style="background-image:url('../../../images/icon/yes.gif');"  onclick="" />
 				</div>
 			</div>
 			<div class="group">
@@ -406,17 +406,29 @@ function tianchong(vals){
 	$("#cdwcode").val(vals);
 	$("#orderno").val("0000000001");
 	$("#iamount").val(468000);
+	$("#addPas").removeAttr("disabled");
+ 	$("#upsPas").removeAttr("disabled");
+ 	$("#delPas").removeAttr("disabled");
+ 	$("#shenhePas").removeAttr("disabled");
+ 	$("#hexiaoPas").removeAttr("disabled");
+ 	$("#savePas").removeAttr("disabled");
+
+ 	
+ 	alert(3131);
 }
  function showHesuanByDwcode(){
  	$(".inputtable").find(".sshow").each(function(){
  		$(this).attr("style","");
+
  	})
+ 
  	$(".danju").eq(0).html("27号，普通发票");
 	$(".bianhao").eq(0).html("0000000001");
 	$(".riqi").eq(0).html("2010-01-03");
 	$(".danju").eq(1).html("27号，普通发票");
 	$(".bianhao").eq(1).html("0000000003");
 	$(".riqi").eq(1).html("2010-01-03");  
+
  }
 function gotoRecName(){
 	var param = {};
@@ -430,8 +442,20 @@ function gotoRecName(){
  	$("#delPas").removeAttr("disabled");
  	$("#shenhePas").removeAttr("disabled");
  	$("#hexiaoPas").removeAttr("disabled");
- 
+ 	$("#savePas").removeAttr("disabled");
+ 	$(".danju").eq(0).html("");
+	$(".bianhao").eq(0).html("");
+	$(".riqi").eq(0).html("");
+	$(".danju").eq(1).html("");
+	$(".bianhao").eq(1).html("");
+	$(".riqi").eq(1).html("");  
+	$(".inputtable").find(".sshow").each(function(){
+     $(this).attr("style","display: none");
 
+ 	}) 
+ 	$("#datatable_bodyer").find("tr").each(function(){
+ 		$(this).html("");
+ 	})
  	window.parent.updateScore('1-4',0);
  }
 
