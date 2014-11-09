@@ -412,22 +412,18 @@ function tianchong(vals){
  	$("#shenhePas").removeAttr("disabled");
  	$("#hexiaoPas").removeAttr("disabled");
  	$("#savePas").removeAttr("disabled");
-
- 	
- 	alert(3131);
 }
  function showHesuanByDwcode(){
  	$(".inputtable").find(".sshow").each(function(){
- 		$(this).attr("style","");
-
+ 		$(this).attr("style",""); 
  	})
  
- 	$(".danju").eq(0).html("27号，普通发票");
+ 	$(".danju").eq(0).html("27，普通发票");
 	$(".bianhao").eq(0).html("0000000001");
-	$(".riqi").eq(0).html("2010-01-03");
-	$(".danju").eq(1).html("27号，普通发票");
+	$(".riqi").eq(0).html("2010-01-31");
+	$(".danju").eq(1).html("27，普通发票");
 	$(".bianhao").eq(1).html("0000000003");
-	$(".riqi").eq(1).html("2010-01-03");  
+	$(".riqi").eq(1).html("2010-01-31");  
 
  }
 function gotoRecName(){
@@ -460,7 +456,7 @@ function gotoRecName(){
  }
 
 function exitPas(){
-		var param = {};
+	 var param = {};
 	param.subjectBusinessId = "";
 	param.subjectBusinessName = "";
 	window.parent.closeWindow('sa_markyun_skjs');
