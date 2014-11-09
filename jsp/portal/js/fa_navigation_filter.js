@@ -12,6 +12,14 @@
 var fa_mess="";//固定资产提信息
 //“固定资产”模块相关导航过滤器
 function fa_navigation_filter(){
+	var evt=(window.event || e);//获得事件
+	var evtsrc = (evt.srcElement || evt.target);
+	if(evtsrc.tagName!="IMG"){
+		$("#menu_FA").menu("show",{left:fa_menu_left,top:25});
+	}
+	toPage('FA','FA.html');
+	return;
+	
 	var res=true;
 	$.ajax({
 	    url: "faInitializa!isfirst",

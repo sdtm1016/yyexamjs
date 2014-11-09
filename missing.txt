@@ -1,4 +1,0 @@
-GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
-GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
-GET http://localhost/yyexamjs/images/portal/CTree/sysButton/SADown.jpg 404 (Not Found) SADown.jpg:1
-GET http://localhost/yyexamjs/images/portal/CWork/imgList/SA_XSFP-m.jpg 404 (Not Found) 
