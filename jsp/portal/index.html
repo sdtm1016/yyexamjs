@@ -763,6 +763,9 @@
 		<div>
 			<span>卡片</span>
 			<div style="width:120px;">
+				<div onclick="to_card(1)">卡片项目</div>
+				<div onclick="to_card(1)">卡片样式</div>
+				<div onclick="to_card(1)">卡片管理</div>
 				<div onclick="to_card(0)">录入原始卡片</div>
 				<div onclick="to_card(1)">资产增加</div>
 				<div onclick="getModelFrame().isCardReduce()">资产减少</div>
@@ -772,10 +775,42 @@
 						<div onclick="rfow('fa_card_assetschange');fa_ac_action=1;">原值增加</div>
 						<div onclick="rfow('fa_card_assetschange');fa_ac_action=2;">原值减少</div>
 						<div onclick="rfow('fa_card_assetschange');fa_ac_action=3;">部门转移</div>
-						<div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">使用状况变动</div>
-						<div onclick="rfow('fa_card_changebills');">变动单管理</div>
+ 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   使用状况变动
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   折旧方法调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   累计折旧调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   使用年限调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   工作总量调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   净残值（率）调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   类别调整
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   计提减值准备
+						  </div> 
+						  <div onclick="rfow('fa_card_assetschange');fa_ac_action=4;">
+						   转回减值准备
+						  </div> 
+						  <div onclick="rfow('fa_card_changebills');">
+						   变动单管理
+						  </div> 
+
 					</div>
 				</div>
+				<div onclick="to_card(0)">批量变动</div>
+				<div onclick="to_card(1)">资产评估</div>				
 			</div>
 		</div>
 

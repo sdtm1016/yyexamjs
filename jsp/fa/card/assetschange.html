@@ -117,7 +117,7 @@
 	   			    async:false,
 					dataType: "json",
 					error:function(){
-						jAlert("请求失败!");
+					//	jAlert("请求失败!");
 					},
 					success: function(data){
 						//如果已经生成凭证则不让删除(先删除凭证在删除变动单)
@@ -144,7 +144,7 @@
 		    				jAlert("操作失败!");
 		    			}
 		    		},"json").error(function(){
-						jAlert("请求失败！");
+						//jAlert("请求失败！");
 					});
 				}
 			});
@@ -160,10 +160,10 @@
 			    				getmaxFaVouchers();
 		    				});
 		    			}else{
-		    				jAlert("操作失败!");
+		    		//		jAlert("操作失败!");
 		    			}
 		    		},"json").error(function(){
-						jAlert("请求失败！");
+						//jAlert("请求失败！");
 					});
 				}
 			});
@@ -182,7 +182,7 @@
 		    				jAlert("操作失败!");
 		    			}
 		    		},"json").error(function(){
-						jAlert("请求失败！");
+				//		jAlert("请求失败！");
 					});
 				}
 			});
@@ -201,7 +201,7 @@
 		    				jAlert("操作失败!");
 		    			}
 		    		},"json").error(function(){
-						jAlert("请求失败！");
+					//	jAlert("请求失败！");
 					});
 				}
 			});
@@ -387,7 +387,7 @@
 	   		    dataType: "json",
 	   		    async:false,
 	   		    error:function(){
-	   		    	jAlert("请求失败!");
+	   		    	//jAlert("请求失败!");
 	   		    },
 	   		    success: function(data){
 	   		    	if(data.createBillsflag){
@@ -454,7 +454,7 @@
     		$.post("faVouchers!saveFaVouchers",{cardid:cardid,loptid:loptid,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,sbeforevoucher:sbeforevoucher,saftervoucher:saftervoucher,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,fixedAssetsName:fixedAssetsName,normsNum:normsNum,addmoney:addmoney,beforechangeresidual:beforechangeresidual,afterchangeresidual:afterchangeresidual,soperator:soperator,scurrency:scurrency,dblbvrate:dblbvrate,dblexchangerate:dblexchangerate},function(jsondata){
     			isCreateBills(snum);
     		},"json").error(function(){
-				jAlert("请求失败！");
+			//	jAlert("请求失败！");
 			});
     	}
     	
@@ -509,7 +509,7 @@
     		$.post("faVouchers!saveFaVouchers",{cardid:cardid,loptid:loptid,snum:snum,dtransdate:dtransdate,ivouchertype:ivouchertype,svouchername:svouchername,sbeforevoucher:sbeforevoucher,saftervoucher:saftervoucher,memreason:memreason,scardnum:scardnum,sitemid:sitemid,startdate:startdate,fixedAssetsName:fixedAssetsName,normsNum:normsNum,addmoney:addmoney,beforechangeresidual:beforechangeresidual,afterchangeresidual:afterchangeresidual,soperator:soperator,scurrency:scurrency,dblbvrate:dblbvrate,dblexchangerate:dblexchangerate},function(jsondata){
     			isCreateBills(snum);
     		},"json").error(function(){
-				jAlert("请求失败！");
+				//jAlert("请求失败！");
 			});
     	}
     	/*保存部门转移*/
@@ -559,7 +559,7 @@
     				getmaxFaVouchers()
     			});
     		},"json").error(function(){
-				jAlert("请求失败！");
+			//	jAlert("请求失败！");
 			});
     		
     	}
@@ -603,7 +603,7 @@
     				getmaxFaVouchers();
     			});
     		},"json").error(function(){
-				jAlert("请求失败！");
+			//	jAlert("请求失败！");
 			});
     		
     	}
@@ -1000,7 +1000,7 @@
 			$.post("faVouchers!receiveMaxSnumFaVouchers",function(josndata){
 				setFaVouchersInfo(josndata.faVouchers);
 			},"json").error(function(){
-				jAlert("请求失败！");
+			//	jAlert("请求失败！");
 			});
     	}
     	//根据变动单号获取变动单信息
@@ -1012,7 +1012,7 @@
 	   			    async:false,
 					dataType: "json",
 					error:function(){
-						jAlert("请求失败!");
+//jAlert("请求失败!");
 					},
 					success: function(josndata){
 						setFaVouchersInfo(josndata.faVouchers);
@@ -1031,7 +1031,7 @@
 		    	$("#typesel").val(faVouchers.ivouchertype);
 		   		switch(type){
 				case 0:
-					jAlert("发生错误");
+					//jAlert("发生错误");
 					break;
 				case 1:
 					/*变动单编号*/
@@ -1135,7 +1135,7 @@
 			   		    dataType: "json",
 			   		    async:false,
 			   		    error:function(){
-			   		    	jAlert("请求失败!");
+			   		    	//jAlert("请求失败!");
 			   		    },
 			   		    success: function(data){
 			   		    	faCardlist=data.faCardlist;
@@ -1276,7 +1276,7 @@
 	   			/*设置可编辑状态*/
 	   			setEitorState(true);
 	   		},"json").error(function(){
-				jAlert("请求失败！");
+			//	jAlert("请求失败！");
 			});
     	}
     	/*根据变动类型显示变动表单*/
@@ -1442,7 +1442,7 @@
 	   		    dataType: "json",
 	   		    async:false,
 	   		    error:function(){
-	   		    	jAlert("请求失败!");
+	   		   // 	jAlert("请求失败!");
 	   		    },
 	   		    success: function(data){
 	   		    	faCards=data.faCards;
@@ -1504,14 +1504,24 @@
 			</div>	
 			<div class="buttongroup" style="border-bottom:solid 1px #999">
 				<div class="group">
-                    <div><input type="button" id="operate" value="操作" class="operateIco"/></div>
-					<div><input type="button" id="add" value="添加" class="addIco"/></div>
-					<div><input type="button" id ="delete" value="删除" class="delIco"/></div>
+					<div><input type="button" onclick="doopenCards()" id="openCards" value="打开" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="window.parent.closeWindow('fa_card_cardmanager');"/></div>
+					<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div>
+					<div><input type="button" value="预览" disabled="disabled" style="background-image:url('../../../images/icon/preview.gif');"/></div>
+					<div><input type="button" id="refresh" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+				</div>
+			 <div class="group">
+					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="操作" onclick="doupdate()" id="operate" style="background-image:url('../../../images/icon/update.gif');"/></div>
+					<div><input type="button" value="删除" onclick="dodelete()" id="delete" style="background-image:url('../../../images/icon/delete.gif');"/></div>
 				</div>
 				<div class="group">
-                    <div><input type="button" id="save" value="保存"  class="saveIco"/></div>
-					<div><input type="button" id="cancel" value="取消"  class="cancelIco"/></div>
-                    <div><input type="button" id ="refresh" value="刷新"  class="refreshIco"/></div>
+                  <div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+					<div><input type="button" value="查看" disabled="disabled" style="background-image:url('../../../images/icon/find.gif');"/></div>
+
+                   
 				</div>
 			</div>
 			<div style="width:150px;height:20px;position:relative;margin-top:1px; margin-left:498px;" class="v_a_m">
