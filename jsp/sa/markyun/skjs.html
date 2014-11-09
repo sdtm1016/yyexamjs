@@ -241,7 +241,7 @@
 							</table>
 						</div>
 					</div>
-					<div onscroll="tableScroll(this);" style=" margin-top:15px;width:610px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
+					<div style=" margin-top:15px;width:610px;height:176px;border:2px inset #ccc;overflow:scroll;float:left;">
 						<table cellpadding="0" id="datatable_header" border=0 class="table_header" style="width:860px;">
 							<tr>
 								<td style="width:110px;" >单据类型</td>
@@ -254,10 +254,10 @@
 								<td style="width:70px;">金额</td>
 								<td style="width:70px;">余额</td>
 								<td style="width:80px;">本次结算</td>
-								<td style="width:60px;">到期日</td>
+								<td style="width:80px;">本次结算(中间币种)</td> 
+								<td style="width:60px;">币种</td>
 							</tr>
-						</table>
-						<table contextmenu="table_contextmenu" cellpadding="0" id="datatable_bodyer" border=0 class="table_bodyer" style="width:860px;">
+						
 							<tr>
 								<td style="width:110px;" class="danju"></td>
 								<td style="width:100px;" class="bianhao"></td>
@@ -269,7 +269,9 @@
 								<td style="width:70px;" class="jine">46800</td>
 								<td style="width:70px;" class="yue">46800</td>
 								<td style="width:80px;"> </td>
-								<td style="width:60px;"></td>
+
+								<td style="width:80px;"> </td>
+								<td style="width:80px;">人民币</td>
 							</tr>
 								<tr>
 									<td style="width:100px;" class="danju"></td>
@@ -281,8 +283,10 @@
 								<td style="width:80px;"></td>
 								<td style="width:70px;" class="jine">234000</td>
 								<td style="width:70px;" class="yue">234000</td>
-								<td style="width:80px;"><input type="text" style="width:50px;"></td>
-								<td style="width:60px;"></td>
+								<td style="width:80px;"><input type="text" class="getcontmoney" style="width: 76px;height: 14PX;"></td>
+							<td style="width:80px;"> </td>
+
+								<td style="width:80px;">人民币</td>
 							</tr>
 							<tr>
 								<td style="width:100px;" class="danju"></td>
@@ -295,6 +299,8 @@
 								<td style="width:70px;" class="jine"></td>
 								<td style="width:70px;" class="yue"></td>
 								<td style="width:80px;"></td>
+					    		<td style="width:80px;"></td>
+
 								<td style="width:60px;"></td>
 							</tr>
 							<tr>
@@ -307,32 +313,7 @@
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-							</tr>
-							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-							</tr>
-							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
+						     	<td style="width:80px;"></td> 
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
@@ -347,28 +328,44 @@
 								<td style="width:60px;"></td>
 								<td style="width:70px;"></td>
 								<td style="width:80px;"></td>
+								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
+							<tr>
+								<td style="width:70px;"></td>
+								<td style="width:90px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+								<td style="width:120px;"></td>
+								<td style="width:70px;"></td>
+								<td style="width:80px;"></td>
+								<td style="width:100px;">702，000,00</td>
+								<td style="width:100px;">702，000,00</td>
+								<td style="width:60px;" class="setnumss">0,0</td> 
+								<td style="width:80px;"></td>
+								<td style="width:60px;"></td>
+							</tr>
+
 						</table>
 						<div style="height:18px;"></div>
 					</div>
-					<div id="datatable_footer_container" style="border-bottom:1px solid #000;width:594px;position:absolute;z-index:30;margin-top:143px;margin-left:2px;overflow:hidden;">
-						<table cellpadding="0" id="datatable_footer" border=0 class="table_footer" style="width:860px;">
-							<tr>
-								<td style="width:70px;">合计</td>
-								<td style="width:90px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;text-align:right;" id="sumMoney">0.00</td>
-								<td style="width:70px;text-align:right;" id="sumBalance">0.00</td>
-								<td style="width:80px;text-align:right;" id="sumTheSettlement">0.00</td>
-								<td style="width:60px;"></td>
-							</tr>
-						</table>
-					</div>
+			<!-- 				<div id="datatable_footer_container" >
+				<table cellpadding="0" id="datatable_footer" border=0 class="table_footer" style="width:860px;">
+					<tr>
+						<td style="width:70px;">合计</td>
+						<td style="width:90px;"></td>
+						<td style="width:80px;"></td>
+						<td style="width:60px;"></td>
+						<td style="width:120px;"></td>
+						<td style="width:70px;"></td>
+						<td style="width:80px;"></td>
+						<td style="width:60px;text-align:right;" id="sumMoney">0.00</td>
+						<td style="width:70px;text-align:right;" id="sumBalance">0.00</td>
+						<td style="width:80px;text-align:right;" id="sumTheSettlement">0.00</td>
+						<td style="width:60px;"></td>
+					</tr>
+				</table>
+			</div> -->
 					<div id="bottomTextBoxContainer">
 						<br>
 					 <table>
@@ -379,9 +376,7 @@
 								<td align="right"><label id = "df_dwname" >代付客户</label></td>
 								<td>
 									<select style="width:140px;" disabled='disabled' >
-										<option>客户1</option>
-										<option>客户2</option>
-										<option>客户3</option>
+									
 									</select>
 								</td>
 								<td width="80">代付金额</td>
@@ -396,6 +391,11 @@
 		</div>
 	</div>
 <script>
+$(function(){
+	$(".getcontmoney").keyup(function(){
+		$(".setnumss").html($(this).val());
+	});
+})
 function queryButtonClick(btn){
 	var param = {};
 	param.subjectBusinessId = "";
@@ -451,7 +451,7 @@ function gotoRecName(){
  	$("#datatable_bodyer").find("tr").each(function(){
  		$(this).html("");
  	})
- 	window.parent.updateScore('1-4',0);
+ 	window.parent.parent.updateScore('1-4',0);
  }
 
 function exitPas(){
