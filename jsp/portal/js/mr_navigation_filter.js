@@ -20,7 +20,8 @@ function mr_navigation_filter(){
 	//return false;
 	
 	toPage('MR','default.html');
-	openWindow('mr_eSReport_eReport');
+	//openWindow('mr_eSReport_eReport');
+	openWindow('mr_shulei_eReport');
 	return true;
 }
 
