@@ -12,7 +12,7 @@
 
 
 $(document).ready(function(){
-	$.ajax({
+	/*$.ajax({
 	    url: "faCards!findfacards",
 	    type: 'post',
 	    dataType: "json",
@@ -29,20 +29,66 @@ $(document).ready(function(){
 	    		rowSelection();
 	    	}
 	    }
-	  });
+	  });*/ 
+			var data ={
+				  people: [
+				    {
+				      'firstName': "00001", 
+				      lastName: "001", 
+				      email: "台式电脑"	
+				    }, 
+				    {
+				     'firstName': "00001", 
+				      lastName: "001", 
+				      email: "打印机"	
+				    }, 
+				    {
+				       'firstName': "00001", 
+				      lastName: "001", 
+				      email: "传真机"	
+				    },
+				     {
+				       'firstName': "00001", 
+				      lastName: "001", 
+				      email: "红旗轿车"	
+ 					},
+				     {
+				       'firstName': "00001", 
+				      lastName: "001", 
+				      email: "雪佛兰轿"	
+				    }
+				  ]
+				}
+
+	    	var faCards=data.people;
+	    	var trs=""
+	    	if(faCards!=null&&faCards.length!=0){
+	    		var len=faCards.length;
+	    		for(var i=0;i<len;i++){
+	    			var card=faCards[i];
+	    			//console.log( card.firstName);
+		    		trs=trs+"<tr ondblclick='btnConfirm()'  id='"+card.firstName+"'><td>"+card.firstName+"</td><td>"+card.lastName+"</td><td>"+card.email+"</td></tr>"
+		    	}
+	    		$("#datatable_1_bodyer").html(trs);
+	    		rowSelection();
+	    	}
 });
 /*** 树构建代码 结束 ***/
 
 
 
 //“确认”按钮处理函数
-function btnConfirm(){
-	
+function btnConfirm(){ 
+
 	if(currentSeletedRow == null){
 		jAlert("你还没选择数据");
 		return false;
 	}
 	
+	 window.parent.$("#fa_card_assetschange").find("iframe")[0].contentWindow.huitian("00001");
+	  setTimeout('window.parent.closeWindow("fa_basic_ref_cr")',250); 
+	 }
+	/*
 	var param = {};
 
 	//根据id获取完整的卡片对象
@@ -58,17 +104,8 @@ function btnConfirm(){
 		window.parent.closeWindow('fa_basic_ref_cr');
 		
 	},"json");
-	
-	
-}
-
-
-
-
-
-
-
-
+	 
+}*/ 
 
 
 </script>

@@ -25,6 +25,17 @@
 		.cardTable tbody td{border:1px solid #000;text-align:left;padding:0px;}
 	</style>
     <script type="text/javascript">
+
+ 
+	function huitian(val){
+		  $("#dept_kpbh").html(val);
+		  $("#dept_kssyrq").html("2008-1-1");
+		  $("#dept_bdqbm").html("财务室");
+
+		  
+		 
+	}
+
 		/*单据编码*/
 		var snum;
 		/*卡片编号*/
@@ -1283,7 +1294,7 @@
     	function setVouchersForm(fa_ac_action){
 	   		switch(fa_ac_action){
 			case 0:
-				jAlert("发生错误");
+			//	jAlert("发生错误");
 				break;
 			case 1:
 							  $("#typediv").html("-  原值增加  -");
@@ -1511,9 +1522,9 @@
 					<div><input type="button" id="refresh" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
 				</div>
 			 <div class="group">
-					<div><input type="button" value="保存" disabled="disabled" style="background-image:url('../../../images/icon/save.gif');"/></div>
-					<div><input type="button" value="取消" disabled="disabled" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
-					<div><input type="button" value="增加" disabled="disabled" style="background-image:url('../../../images/icon/add.gif');"/></div>
+					<div><input type="button" value="保存" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="取消" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
+					<div><input type="button" value="增加"  style="background-image:url('../../../images/icon/add.gif');"/></div>
 					<div><input type="button" value="操作" onclick="doupdate()" id="operate" style="background-image:url('../../../images/icon/update.gif');"/></div>
 					<div><input type="button" value="删除" onclick="dodelete()" id="delete" style="background-image:url('../../../images/icon/delete.gif');"/></div>
 				</div>
@@ -1526,9 +1537,9 @@
 			</div>
 			<div style="width:150px;height:20px;position:relative;margin-top:1px; margin-left:498px;" class="v_a_m">
 			    <select id='typesel' >
-			      <option value="1" selected="selected">原值增加</option>
+			      <option value="1" >原值增加</option>
 			      <option value="2">原值减少</option>
-			      <option value="3">部门转移</option>
+			      <option value="3" selected="selected">部门转移</option>
 			      <option value="4">使用状况调整</option>
 			    </select>
 			</div>
@@ -1600,7 +1611,7 @@
 						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
 							<div style="float:right;margin-top:8px;">
 							<div onclick="faCardEdit(event,document.getElementById('add_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
-							<div id="add_lrr" style="width:94px;text-align:right;float:left;" onclick="faCardEdit(event,this);">demo</div>
+							<div id="add_lrr" style="width:94px;text-align:right;float:left;" onclick="faCardEdit(event,this);">王平</div>
 							</div>
 						</div>
 					</div>
@@ -1674,7 +1685,7 @@
 						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
 							<div style="float:right;margin-top:8px;">
 							<div onclick="faCardEdit(event,document.getElementById('reduce_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;" >录入人</div>
-							<div id="reduce_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+							<div id="reduce_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">王平</div>
 							</div>
 						</div>
 					</div>
@@ -1733,7 +1744,7 @@
 						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
 							<div style="float:right;margin-top:8px;">
 							<div onclick="faCardEdit(event,document.getElementById('dept_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
-								<div id="dept_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+								<div id="dept_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">王平</div>
 							</div>
 						</div>
 					</div>
@@ -1783,7 +1794,7 @@
 						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
 							<div style="float:right;margin-top:8px;">
 							<div onclick="faCardEdit(event,document.getElementById('usestate_lrr'));" style="width:92px;font-family:楷体;text-align:right;float:left;">录入人</div>
-								<div id="usestate_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">demo</div>
+								<div id="usestate_lrr" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">王平</div>
 							</div>
 						</div>
 					</div>
