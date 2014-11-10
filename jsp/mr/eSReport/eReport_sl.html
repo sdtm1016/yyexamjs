@@ -1,0 +1,297 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="VI60_defaultClientScript" content="VBScript">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+
+<!--Style Sheets First one to adjust fonts on input fields.-->
+<link rel="stylesheet" type="text/css" href="control/olstyle.css">
+
+<script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript"
+	src="../../../js/publicFunctionForCell.js"></script>
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../../../js/jquery-alert/jquery.alerts.css">
+<script type="text/javascript"
+	src="../../../js/jquery-alert/jquery.alerts.js"></script>
+<title>财务报表</title>
+
+<script type="text/javascript">
+	//公式栏输入  焦点转移事件
+	function formulaTextOnblur() {
+		ReportJs.Base.inputgongshi();
+	}
+</script>
+
+<!--BUTTON-->
+<script for="cbButton" event="onmousedown()" language="JavaScript">
+	return onCbMouseDown(this);
+</script>
+
+<script for="cbButton" event="onclick()" language="JavaScript">
+	return onCbClickEvent(this);
+</script>
+
+<script for="cbButton" event="oncontextmenu()" language="JavaScript">
+	return (event.ctrlKey);
+</script>
+
+
+</head>
+<body id="mainbody" class="mainBody">
+
+	<ul id=nav>
+		<li class=top>
+			<a class=top_link href="#"> 
+				<span class=down>文件(F)</span>
+			</a>
+			<ul class=sub>
+			  <li><a href="#">新建(N)</a></li>
+		      <li><a href="#">打开(O)</a></li>
+		      <li><a href="#">执行(E)</a></li>
+		      <li><a href="#">自定义菜单(D)</a></li>
+		      <li><a href="#">常用批命令(B)</a></li>
+		      <li><a href="#">模板调整</a></li>
+		      <li><a href="#">货币符号(M)</a></li>
+		      <li><a href="#">其他财务软件数据</a></li>
+		      <li><a href="#">其他格式</a></li>
+		      <li><a href="#">命令窗(W)</a></li>
+		      <li><a href="#">重新登录</a></li>
+		      <li><a href="#">退出(X)</a></li>
+			</ul>
+		</li>
+		<li class=top>
+			<a id=services class=top_link href="#">
+				<span class=down>编辑(E)</span>
+			</a>
+			<ul class=sub>
+			    <li><a href="#">剪切(T)</a></li>
+			    <li><a href="#">复制(C)</a></li>
+			    <li><a href="#">粘贴(P)</a></li>
+			    <li><a href="#">选择性粘贴(S)</a></li>
+			    <li><a href="#">清除(A)</a></li>
+			    <li><a href="#">插入(I)<span class=sub_icon>&gt;</span></a></li>
+			    <li>
+			    	<a href="#" class="fly">追加(B)
+			    		<span class=sub_icon>&gt;</span>
+			    	</a>
+			      <ul>
+			        <li><a href="#">行(R)</a></li>
+			        <li><a href="#">列(C)</a></li>
+			        <li><a href="#">表页(P)</a></li>
+			      </ul>
+			    </li>
+			    <li><a href="#">交换(X)<span class=sub_icon>&gt;</span></a></li>
+			    <li><a href="#">删除(D)<span class=sub_icon>&gt;</span></a></li>
+			    <li><a href="#">定位(M)</a></li>
+			    <li><a href="#">查找(F)</a></li>
+			    <li><a href="#">替换(R)</a></li>
+			    <li><a href="#">区域填充(E)<span class=sub_icon>&gt;</span></a></li>
+			    <li><a href="#">格式/数据状态(Z) Ctrl+D</a></li>
+			    <li><a href="#">插入新对象</a></li>
+			    <li><a href="#">对象属性</a></li>
+			    <li><a href="#">对象外观</a></li>
+			    <li><a href="#">链接</a></li>
+			    <li><a href="#">对象(O)</a></li>
+			  </ul>
+		</li>
+		<li class=top>
+			<a id=services class=top_link href="#">
+				<span class=down>数据(D)</span>
+			</a>
+			<ul class=sub>
+		      <li><a href="#" class="fly">关键字(K)<span class=sub_icon>&gt;</span></a>
+		        <ul>
+		          <li><a href="#">设置(S)</a></li>
+		          <li><a href="#">录入(I)</a></li>
+		          <li><a href="#">偏移(O)</a></li>
+		          <li><a href="#">打印颜色(Y)</a></li>
+		          <li><a href="#">取消(E)</a></li>
+		        </ul>
+		      </li>
+		      <li><a href="#">编辑公式(F)<span class=sub_icon>&gt;</span></a></li>
+		      <li><a href="#">公式列表(L)</a></li>
+		      <li><a href="#">透视(D)</a></li>
+		      <li><a href="#">排序<span class=sub_icon>&gt;</span></a></li>
+		      <li><a href="#">汇总(T)<span class=sub_icon>&gt;</span></a></li>
+		      <li><a href="#">审核(C)</a></li>
+		      <li><a href="#">舍位平衡(B)</a></li>
+		      <li><a href="#">整表重算(A)</a></li>
+		      <li><a href="#">表页重算(P)</a></li>
+		      <li><a href="#">表页不计算(N)</a></li>
+		      <li><a href="#">数据采集</a></li>
+		      <li><a href="#">帐套初始(Y)</a></li>
+		    </ul>
+		</li>
+		<li class=top>
+			<a class=top_link href="#">
+				<span>工具(T)</span>
+			</a>
+		</li>
+		<li class=top>
+			<a class=top_link href="#">
+				<span>窗口(W)</span>
+			</a>
+		</li>
+		<li class=top>
+			<a class=top_link href="#">
+				<span>帮助(H)</span>
+			</a>
+		</li>
+	</ul>
+
+	<!--Top Toolbar-->
+	<table class="cbToolbar" id="formulaBar" cellpadding="0"
+		cellspacing="0" width="100%">
+		<tbody>
+			<tr>
+				<td nowrap=""><input type="text" class="tbButton" id="cellName"
+					title="单元格名字框" name="cbButton"> <a class="tbButton"
+					id="cmdFormulaInput1" title="表页不计算" href="#" name="cbButton"><img
+						align="absMiddle" src="general/formula_redo.gif" width="16"
+						height="16"></a> <a class="tbButton" id="cmdFormulaInput"
+					title="输入公式" href="#" name="cbButton"><img align="absMiddle"
+						src="general/formula.gif" width="16" height="16"></a> <a
+					class="tbButton" id="cmdFormulaInput3" title="输入取消" href="#"
+					name="cbButton"><img align="absMiddle"
+						src="general/formula_no.gif" width="16" height="16"></a> <a
+					class="tbButton" id="cmdFormulaInput4" title="输入确认" href="#"
+					name="cbButton"><img align="absMiddle"
+						src="general/formula_yes.gif" width="16" height="16"></a> <input
+					id="formulaTextId" name="formulaTextName" type="text" size="110"
+					onchange="formulaTextOnblur();"></td>
+				<td nowrap="" width="100%"></td>
+			</tr>
+		</tbody>
+	</table>
+	<table class="cbToolbar" id="idTBGeneral" cellpadding="0"
+		cellspacing="0" width="100%">
+		<tbody>
+			<tr>
+				<td nowrap=""><a class="tbButton" id="cmdFileNew" title="新建"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/new.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdFileOpen" title="打开"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/open.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdFileSave" title="保存"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/save.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdFilePrintPreview" title="打印预览" href="#" name="cbButton"><img
+						align="absMiddle" src="general/printpreview.gif" width="16"
+						height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdFilePrint" title="打印"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/print.gif" width="16" height="16"></a></td>
+
+				<td nowrap=""><a class="tbButton" id="cmdEditCut" title="剪切"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/cut.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdEditCopy" title="复制"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/copy.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdEditPaste" title="粘贴"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/paste.gif" width="16" height="16"></a></td>
+
+				<td nowrap=""><a class="tbButton" id="cmdEditUndo" title="撤消"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/undo.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdEditRedo" title="重做" href="#" name="cbButton" sticky="true"><img
+						align="absMiddle" src="general/redo.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdViewFreeze"
+					title="不滚动区域" href="#" name="cbButton"><img align="absMiddle"
+						src="general/freeze.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdFormatPainter"
+					title="格式刷" href="#" name="cbButton"><img align="absMiddle"
+						src="general/painter.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdSortAscending"
+					title="升序排列" href="#" name="cbButton"><img align="absMiddle"
+						src="general/sorta.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdSortDescending" title="降序排列" href="#" name="cbButton"><img
+						align="absMiddle" src="general/sortd.gif" width="16" height="16"></a></td>
+				<!-- <TD NOWRAP><A class=tbButton id=cmdFormulaInput title=输入公式 href="#" name=cbButton><IMG align=absMiddle src="general/formula.gif" width="16" height="16"></A></TD>
+	<TD class="tbDivider" NOWRAP><A class=tbButton id=cmdFormulaSerial title=填充单元公式序列 href="#" name=cbButton><IMG align=absMiddle src="general/formulaS.gif" width="16" height="16"></A></TD>
+	 -->
+				<td nowrap=""><a class="tbButton" id="cmdFormulaSumH"
+					title="水平求和" href="#" name="cbButton"><img align="absMiddle"
+						src="design/sumh.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdFormulaSumV"
+					title="垂直求和" href="#" name="cbButton"><img align="absMiddle"
+						src="design/sumv.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdFormulaSumHV" title="双向求和" href="#" name="cbButton"><img
+						align="absMiddle" src="design/sum.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdChartWzd" title="图表向导"
+					href="#" name="cbButton"><img align="absMiddle"
+						src="general/chartw.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdInsertPic"
+					title="插入图片" href="#" name="cbButton"><img align="absMiddle"
+						src="design/insertpic.gif" width="16" height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdHyperlink"
+					title="超级链接" href="#" name="cbButton"><img align="absMiddle"
+						src="design/hyperlink.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdWzdBarcode" title="条形码向导" href="#" name="cbButton"><img
+						align="absMiddle" src="design/barcode.gif" width="16" height="16"></a></td>
+
+				<td class="tbDivider" nowrap="" id="cmdViewScale" title="显示比例">
+					<select name="viewScaleSelect" style="WIDTH: 89px; HEIGHT: 23px"
+					onchange="changeViewScale(viewScaleSelect.value)" accesskey="v"
+					size="1">
+						<option value="200">200%</option>
+						<option value="150">150%</option>
+						<option value="120">120%</option>
+						<option value="110">110%</option>
+						<option selected="" value="100">100%</option>
+						<option value="90">90%</option>
+						<option value="80">80%</option>
+						<option value="70">70%</option>
+						<option value="50">50%</option>
+						<option value="30">30%</option>
+						<option value="20">20%</option>
+						<option value="15">15%</option>
+						<option value="10">10%</option>
+						<option value="5">5%</option>
+						<option value="3">3%</option>
+						<option value="1">1%</option>
+				</select>
+				</td>
+
+
+				<td nowrap=""><a class="tbButton" id="cmdShowGridline"
+					title="显示/隐藏背景网格线" href="#" name="cbButton"><img
+						align="absMiddle" src="general/gridline.gif" width="16"
+						height="16"></a></td>
+				<td nowrap=""><a class="tbButton" id="cmdVPagebreak"
+					title="垂直分隔线" href="#" name="cbButton"><img align="absMiddle"
+						src="general/vpagebreak.gif" width="16" height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdShowPagebreak" title="显示/隐藏分隔线" href="#" name="cbButton"><img
+						align="absMiddle" src="general/pagebreak.gif" width="16"
+						height="16"></a></td>
+				<td class="tbDivider" nowrap=""><a class="tbButton"
+					id="cmdAbout" title="关于华表插件" href="#" name="cbButton"><img
+						align="absMiddle" src="general/about.gif" width="16" height="16"></a></td>
+
+				<td nowrap="" width="100%"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="window-resizer-tooltip" style="display: none;">
+		<a href="#" title="Edit settings"
+			style="background-image: url(chrome-extension://kkelicaakdanhinjdeammmilcgefonfh/images/icon_19.png);"></a><span
+			class="tooltipTitle">Window size: </span><span class="tooltipWidth"
+			id="winWidth">683</span> x <span class="tooltipHeight" id="winHeight">728</span><br>
+		<span class="tooltipTitle">Viewport size: </span><span
+			class="tooltipWidth" id="vpWidth">667</span> x <span
+			class="tooltipHeight" id="vpHeight">222</span>
+	</div>
+</body>
+</html>
