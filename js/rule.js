@@ -20,7 +20,7 @@ function getScore(type_){
 
 var rules=[{
 	type:'1-1',//建立帐套
-	score:[2,2,1,1,2,2]
+	score:[2,1.5,1.5,1.5,1.5,2]
 },{
 	type:'1-2',//审核收-0001号凭证
 	score:[10]
@@ -29,10 +29,10 @@ var rules=[{
 	score:[10]
 },{
 	type:'1-5',//明细到工资项目
-	score:[2,4,4]
+	score:[1,5,2,2]
 },{
 	type:'2-1',//设置“工资管理、固定资产”模块的操作权限。
-	score:[5,5]
+	score:[2,2,3,3]
 }];
 
 function getStepScore(type_,step_){

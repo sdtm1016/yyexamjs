@@ -235,7 +235,7 @@ function addDsign(){
    * 保存凭证按钮
    */
   function saveDsignAccvouch(pzlx){
-	  window.parent.parent.updateScore('1-5',2);
+	  window.parent.parent.updateScore('1-5',3);
 	  jAlert("已完成计提工资的凭证保存工作！","计提工资",function(){
 		  window.parent.closeWindow("wa_operate_dsign");
 	  });
