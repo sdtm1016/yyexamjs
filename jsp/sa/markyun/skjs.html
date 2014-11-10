@@ -239,7 +239,8 @@
 									</td> 
 									<td  class="px80 sshow" align="right" style="display:none;" ><label>中间币金额</label></td>
 									<td class="px80 sshow" style=" text-align:left;display:none;">
-										<div>468000<div class="floatclear"></div>
+										
+										<div class="setmoney" style="   float: left;">468000<div class="floatclear"></div>
 										</div>
 									</td>
 								</tr>
@@ -327,9 +328,9 @@
 								<td style="width:120px;"></td>
 								<td style="width:70px;"></td>
 								<td style="width:80px;"></td>
-								<td style="width:100px;" class=""><span class="sshow">702，000.00</span></td>
-								<td style="width:100px;"  class=""><span class="sshow">702，000.00</span> </td>
-								<td style="width:60px; " class="setnumss"><span class="sshow">0.00</span> </td> 
+								<td style="width:100px;" class="setmont"><span class="sshow" >702，000.00</span></td>
+								<td style="width:100px;"  class="setmont1"><span class="sshow">702，000.00</span> </td>
+								<td style="width:60px; " class="setnumss setmont2"><span class="sshow">0.00</span> </td> 
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
@@ -388,10 +389,10 @@ function format_number(n) {
     var b = parseInt(n).toString();
     var len = b.length;
     if (len <= 3) {
-        return b;
+        return b+".00";
     }
     var r = len % 3;
-    return r > 0 ? b.slice(0, r) + "," + b.slice(r, len).match(/\d{3}/g).join(",") : b.slice(r, len).match(/\d{3}/g).join(",");
+    return r > 0 ? (b.slice(0, r) + "," + b.slice(r, len).match(/\d{3}/g).join(","))+".00" : b.slice(r, len).match(/\d{3}/g).join(",")+".00";
 }
 
 function queryButtonClick(btn){
@@ -446,6 +447,8 @@ function gotoRecName(){
 	$(".bianhao").eq(1).html("");
 	$(".riqi").eq(1).html("");  
 	$("#csscode").val("银行汇票");
+	$("#cdijieusan").val("234000");
+	$(".setmoney").html("234000");
 	$("#datatable_header").find(".sshow").each(function(){
  		$(this).attr("style","display:table-cell");
  		$(this).html(""); 
@@ -460,7 +463,9 @@ function gotoRecName(){
  		$(this).html("");
  	})
  		$("#iamount").val(234000);
-
+$(".setmont").html("0.00");
+$(".setmont1").html("0.00");
+$(".setmont2").html("0.00");
  	window.parent.parent.updateScore('1-4',0);
  }
 
