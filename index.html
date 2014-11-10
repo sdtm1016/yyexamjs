@@ -8,8 +8,7 @@
 <script type="text/javascript" src="js/jquery.reveal.js"></script> 
 <script type="text/javascript" src="questions/data1.js"></script> 
 <style type="text/css">
-/* ------- This is the CSS Reset ------- */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -187,8 +186,7 @@ $(function(){
 					$(_this).next().eq(0).addClass("cur");
 				  	currentIndex=$(_this).next().html();
 				};
-			gotoQuestion(currentIndex-1);
-
+			gotoQuestion(currentIndex-1); 
 		})
 		$(".up").click(function(){
 			$(".loginL ul >li").each(function(e){
@@ -243,8 +241,7 @@ function getNowFormatDate() {
 	} 
 </script>
 </head>
-<body>
-
+<body>  
 <!--[if lt IE 9]>
 <style>
 .reveal-modal-bg{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#cc000000,endColorstr=#cc000000);}

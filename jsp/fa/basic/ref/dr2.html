@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>部门参照</title>
+<link rel="stylesheet" type="text/css" href="../../../../css/public.css">
+	<link rel="stylesheet" href="../../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<style type="text/css">
+/**** 递计算框样式 ****/
+.gra .textbox {width:20px;height:18px;line-height:12px;padding:0px;}
+.gra .incbtn1{width:14px;height:10px;padding:0px;margin:0px;text-align:center;background-repeat:no-repeat;background-position:2px center;}
+.gra .incbtn2{width:14px;height:10px;padding:0px;margin:0px;text-align:center;background-repeat:no-repeat;background-position:2px center;}
+.ztree li span.button.ico_docu{
+background-position: -110px -16px;
+}
+</style>
+
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../../../../js/publicFunction.js"></script>
+	<script type="text/javascript" src="../../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+<script type="text/javascript"> 
+
+
+/*** 树构建代码 开始 ***/
+var setting = {
+	
+	data: {
+		simpleData: {
+			enable: true
+		}
+	},
+	callback:{
+		beforeClick:nodeClick,
+		onDblClick:btnConfirm
+	}
+	
+};
+
+var zNodes =null;
+
+	$(document).ready(function(){
+ 			var data =[  
+	            {id:1, pId:0, name:"客户档案", open:true},  
+	            {id:2, pId:1, name:"00无分类"} ,
+	            {id:3, pId:1, name:"01无分类"} 
+ 	        ];  
+  $.fn.zTree.init($("#treeview"), setting, data)
+	     
+/*
+	$.ajax({
+	    url: "fadepartMents!findDepartMent",
+	    type: 'post',
+	    dataType: "json",
+	    success: function(data){
+	    	zNodes=[{code:"",name:"固定资产部门编码目录",ssubject:"",open:true,children:[]}];
+	    	var znode=zNodes[0];
+	    	departments=data.departments; 
+	    	for(var i=0;i<departments.length;i++){
+	    		var department=departments[i];
+	    		var ssubject="";
+	    		if(department.ssubjectnum!=null&&department.ssubjectnum!=""&&department.ssubjectname!=null&&department.ssubjectname!=""){
+	    			ssubject=department.ssubjectnum+","+department.ssubjectname;
+	    		}
+	    		var depart={code:department.snum,name:department.sname,ssubject:ssubject,open:false,children:[]};
+	    		var ilevel=department.ilevel-0;
+	    		var par=getparent(znode,ilevel);
+	    		par[par.length]=depart;
+	    	}
+	    	$.fn.zTree.init($("#treeview"), setting, zNodes);
+	    	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	    	var nodes = zTree.getNodes()[0].children;
+	    	if(nodes!=undefined&&nodes!="undefined"&&nodes!=""&&nodes!=null&&nodes!="null"){
+	    		zTree.selectNode(nodes[0]);
+		    	document.getElementById("code").value = nodes[0].code;
+		    	document.getElementById("name").value = nodes[0].name;
+	    	}else{
+	    		return;
+	    	}
+	    	$.fn.zTree.getZTreeObj("treeview").expandAll(true);
+	    }
+	  });*/
+});
+/**
+获取树节点插入位置
+*/
+function getparent(znode,level){
+	var pare=znode.children;
+	for(var j=1;j<level;j++){
+		pare=pare[pare.length-1].children;
+	}
+	return pare;
+}
+/*** 树构建代码 结束 ***/
+
+
+
+//“确认”按钮处理函数
+function btnConfirm(){
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+
+		
+	if (selectedNodes.length > 0) {
+		if(selectedNodes[0].cod!=""){
+			var param = {};
+			//取得编码
+			param.code = selectedNodes[0].code;
+			//取得名称
+			param.name = selectedNodes[0].name;
+			
+			//部门对应这就科目
+			param.ssubject=selectedNodes[0].ssubject;
+			
+			//调用父窗体接收返回值函数
+			window.parent.deliverValue('fa_basic_ref_dr',param);
+			//关闭本窗体
+			window.parent.closeWindow('fa_basic_ref_dr');
+		}
+	}
+	
+}
+
+
+//按编码查询
+function queryByCode(){
+
+	var byCodeDiv = document.getElementById("byCodeDiv");
+	var byNameDiv = document.getElementById("byNameDiv");
+	var codeBox = document.getElementById("code");
+	byCodeDiv.style.display = "block";
+	byNameDiv.style.display = "none";
+	codeBox.disabled = false;
+	codeBox.style.backgroundColor = "#fff";
+}
+
+//按名称查询
+function queryByName(){
+
+	var byCodeDiv = document.getElementById("byCodeDiv");
+	var byNameDiv = document.getElementById("byNameDiv");
+	var codeBox = document.getElementById("code");
+	byCodeDiv.style.display = "none";
+	byNameDiv.style.display = "block";
+	codeBox.disabled = true;
+	codeBox.style.backgroundColor = "#D4D0C8";
+}
+
+
+
+
+
+
+function increasing(){
+	
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+	
+	if (selectedNodes.length > 0) {
+
+		var tId = parseInt(selectedNodes[0].tId.substr(9))-1;
+		if(tId==1){
+			return false;
+		}
+		var node = zTree.getNodeByTId("treeview_"+tId);
+		zTree.selectNode(node);
+		if(node != null){
+			document.getElementById("code").value = node.code;
+			document.getElementById("name").value = node.name;
+		}
+		
+	}
+	
+}
+
+
+
+function decline(){
+
+	var zTree = $.fn.zTree.getZTreeObj("treeview");
+	var selectedNodes = zTree.getSelectedNodes();
+	
+	if (selectedNodes.length > 0) {
+
+		var tId = parseInt(selectedNodes[0].tId.substr(9))+1;
+		var node = zTree.getNodeByTId("treeview_"+tId);
+		zTree.selectNode(node);
+		if(node != null){
+			document.getElementById("code").value = node.code;
+			document.getElementById("name").value = node.name;
+		}
+	}
+	
+	
+	
+	
+}
+
+
+
+
+function nodeClick(treeId, node, clickFlag){
+
+	if(node.isParent) return false;//当是父节点 返回false 不让选取
+	var tId = parseInt(node.tId.substr(9));
+	if(tId==1){
+		return false;
+	}
+
+	document.getElementById("code").value = node.code;
+	document.getElementById("name").value = node.name;
+}
+
+
+
+
+
+</script>
+</head>
+<body>
+	
+	<div class="container" style="float:left;width:272px;height:350px;background-color: #D4D0C8;position:absolute;top:0px;left:0px;">
+		<div style="width:252px;height:330px;margin-top:10px;margin-left:10px;">
+			
+			<div style="width:100%;height:222px;border:2px inset #ccc;background-color:#fff;overflow:auto;">
+				<div id="treeview" class="ztree"></div>
+			</div>
+			
+			<div style="width:100%;height:75px;">
+			<br>
+				<fieldset style="padding:0px;">
+					<legend>查询方式</legend>
+					<div style="height:50px;text-align:center;">
+						<div class="v_a_m">
+							<input type="radio" value="" name="rd_1" id="rd_1_1" onclick="queryByCode();"/><label for="rd_1_1">按编码查询</label>
+							<input type="radio" value="" name="rd_1" id="rd_1_2" onclick="queryByName();" style="margin-left:40px;"/><label for="rd_1_2">按名称查询</label>
+						</div>
+						<div>
+						
+							<div id="byCodeDiv">
+								<input id="code" readonly="readonly" type="text" style="width:206px;height:16px;background-color:#D4D0C8;" disabled="disabled"/>
+							</div>
+							
+							<div id="byNameDiv" class="gra" style="margin-left:16px;display:none;">
+								<div style="float:left;"><input id="name" readonly="readonly" class="textbox" type="text" style="width:196px;"/></div>
+								<div style="float:left;">
+									<div><input type="button" onfocus="this.blur();" class="incbtn1" onclick="increasing();" style="background-image:url('../../../../images/icon/up1.gif');"/></div>
+									<div><input type="button" onfocus="this.blur();" class="incbtn2" onclick="decline();" style="background-image:url('../../../../images/icon/down1.gif');"/></div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			
+			<div style="text-align:right;margin-top:6px;">
+				<input type="button" value="确认" onclick="btnConfirm();"/>
+				<input type="button" value="取消" onclick="window.parent.closeWindow('fa_basic_ref_dr');"/>
+			</div>
+					
+			
+		</div>
+	</div>
+	
+</body>
+</html>

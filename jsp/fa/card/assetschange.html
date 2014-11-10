@@ -24,17 +24,19 @@
 		.cardTable thead td{border:1px solid #000;text-align:center;}
 		.cardTable tbody td{border:1px solid #000;text-align:left;padding:0px;}
 	</style>
-    <script type="text/javascript">
-
- 
+    <script type="text/javascript"> 
 	function huitian(val){
 		  $("#dept_kpbh").html(val);
 		  $("#dept_kssyrq").html("2008-1-1");
 		  $("#dept_bdqbm").html("财务室");
-
-		  
-		 
+		  $("#dept_gdzcbh").html("001"); 
 	}
+	function dakai(){
+		var param = {};
+		param.subjectBusinessId = "";
+		param.subjectBusinessName = "";
+		window.parent.openWindow('fa_basic_ref_dr2','pu_pas_pas',param);
+	} 
 
 		/*单据编码*/
 		var snum;
@@ -405,7 +407,7 @@
 						var coutnoIds=new Array();
 						//传递业务号和业务类型
 						coutnoIds.push({index:snum,coutsign:"变动单"});
-						window.parent.openWindow('fa_operate_dsign','fa_card_assetschange',{coutnoIds:coutnoIds});
+					//	window.parent.openWindow('fa_operate_dsign','fa_card_assetschange',{coutnoIds:coutnoIds});
 	   		    	}else{
 	   		    		sucssSave();
 	   		    	}
