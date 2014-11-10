@@ -28,7 +28,7 @@
 	function huitian(val){
 		  $("#dept_kpbh").html(val);
 		  $("#dept_kssyrq").html("2008-1-1");
-		  $("#dept_bdqbm").html("财务室");
+		  $("#dept_bdqbm").html("财务部");
 		  $("#dept_gdzcbh").html("001"); 
 		  $("#dept_gdzcmc").html("台式电脑");
 	}
@@ -44,12 +44,12 @@ $(function(){
  $("#saveas").click(function(){
  		jConfirm('保存成功','变动单--使用状况调整',function(confirmflag) { 
 		});
-		$("#dept_kpbh").html("");
+		/* $("#dept_kpbh").html("");
 		  $("#dept_kssyrq").html("");
 		  $("#dept_bdqbm").html("");
 		  $("#dept_gdzcbh").html("");
 		  $("#dept_gdzcmc").html("");
-		   $("#dept_bdhbm").html(''); 
+		   $("#dept_bdhbm").html('');  */
  });
 
 });
@@ -1571,7 +1571,7 @@ $(function(){
 						<div style="height:16px;border-bottom:2px solid #000;">
 							<div style="float:left;padding:0px;">
 								<div onclick="faCardEdit(event,document.getElementById('add_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
-								<div id="add_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+								<div id="add_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00001</div>
 							</div>
 							<div style="float:right;">
 								<div onclick="faCardEdit(event,document.getElementById('add_rq'));" style="font-family:楷体;float:left;">变动日期</div>
@@ -1643,11 +1643,11 @@ $(function(){
 						<div style="height:16px;border-bottom:2px solid #000;">
 							<div style="float:left;padding:0px;">
 								<div onclick="faCardEdit(event,document.getElementById('reduce_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
-								<div id="reduce_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+								<div id="reduce_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00001</div>
 							</div>
 							<div style="float:right;">
 								<div onclick="faCardEdit(event,document.getElementById('reduce_rq'));" style="font-family:楷体;float:left;">变动日期</div>
-								<div id="reduce_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+								<div id="reduce_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-01-31</div>
 							</div>
 						</div>
 						<div style="height:150px;">
@@ -1717,11 +1717,11 @@ $(function(){
 						<div style="height:16px;border-bottom:2px solid #000;">
 							<div style="float:left;padding:0px;">
 								<div onclick="faCardEdit(event,document.getElementById('dept_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
-								<div id="dept_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+								<div id="dept_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00001</div>
 							</div>
 							<div style="float:right;">
 								<div onclick="faCardEdit(event,document.getElementById('dept_rq'));" style="font-family:楷体;float:left;">变动日期</div>
-								<div id="dept_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+								<div id="dept_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-01-31</div>
 							</div>
 						</div>
 						<div style="height:110px;">
@@ -1751,7 +1751,7 @@ $(function(){
 							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_cfdd'));">存放地点</div>
 							<div class="fa_card_column_5" id="dept_cfdd" onclick="faCardEdit(event,this);"></div>
 							
-							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_xcfdd'));">新的存放地点</div>
+							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_xcfdd'));">新存放地点</div>
 							<div class="fa_card_column_5" id="dept_xcfdd" onclick="faCardEdit(event,this);"></div>
 						</div>
 						<div>
@@ -1778,11 +1778,11 @@ $(function(){
 						<div style="height:16px;border-bottom:2px solid #000;">
 							<div style="float:left;padding:0px;">
 								<div onclick="faCardEdit(event,document.getElementById('usestate_bddbh'));" style="width:92px;font-family:楷体;text-align:right;float:left;">变动单编号</div>
-								<div id="usestate_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00003</div>
+								<div id="usestate_bddbh" onclick="faCardEdit(event,this);" style="width:94px;text-align:right;float:left;">00001</div>
 							</div>
 							<div style="float:right;">
 								<div onclick="faCardEdit(event,document.getElementById('usestate_rq'));" style="font-family:楷体;float:left;">变动日期</div>
-								<div id="usestate_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+								<div id="usestate_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-01-31</div>
 							</div>
 						</div>
 						<div style="height:100px;">

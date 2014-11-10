@@ -43,8 +43,7 @@ var setting = {
 //“确认”按钮处理函数
 function btnConfirm(){  
 		var name=$("#name").val(); 
-		var name2 =name.substring(2, 10);
-	 	window.parent.$("#fa_card_assetschange").find("iframe")[0].contentWindow.huitian2(name2);
+	 	window.parent.$("#fa_card_assetschange").find("iframe")[0].contentWindow.huitian2(name);
 		window.parent.closeWindow('fa_basic_ref_dr2');
 	
 }
@@ -56,11 +55,11 @@ var zNodes =null;
  			var data =[  
 	            {id:1, pId:0, name:"固定资产部门编码目录", open:true},  
 	            {id:2, pId:1, name:"&固定资产部门编码目录"} ,
-	            {id:3, pId:1, name:" 1 采购部"} ,
-	            {id:4, pId:1, name:" 2 生产部"} ,
-	             {id:5, pId:1, name:" 3 销售部"} ,
-	              {id:6, pId:1, name:" 4 财务部"} ,
-	               {id:7, pId:1, name:" 5 综合部"}   	           
+	            {id:3, pId:1, name:"1采购部"} ,
+	            {id:4, pId:1, name:"2生产部"} ,
+	             {id:5, pId:1, name:"3销售部"} ,
+	              {id:6, pId:1, name:"4财务部"} ,
+	               {id:7, pId:1, name:"5综合部"}   	           
 
  	        ];  
   $.fn.zTree.init($("#treeview"), setting, data)
@@ -194,7 +193,7 @@ function nodeClick(treeId, node, clickFlag){
 	}
 
 	document.getElementById("code").value = node.code;
-	document.getElementById("name").value = node.name;
+	document.getElementById("name").value = node.name.substr(1);
 }
 
 
