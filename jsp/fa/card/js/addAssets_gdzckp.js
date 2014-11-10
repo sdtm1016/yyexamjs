@@ -242,7 +242,7 @@ function faCardEdit(event,div){
 		//卡片编号
 		case "kpbh":
 
-			var component = "<input type='text' value='"+temp+"' readonly='readonly' style='height:14px;width:90px;margin-top:-4px;background-color:#ccc;'/>";
+			var component = "<input type='text' value='"+temp+"' style='height:14px;width:90px;margin-top:-4px;background-color:#ccc;'/>";
 			div.innerHTML=component;
 			//将选中改为聚焦select()
 			div.getElementsByTagName("input")[0].select();

@@ -87,7 +87,7 @@ function faCardEdit(event,div){
 			break;
 		//日期
 		case "add_rq":
-			var component = "<input type='text' value='"+temp+"' readonly='readonly' style='height:14px;width:90px;margin-top:-4px;background-color:#ccc;'/>";
+			var component = "<input type='text' value='"+temp+"'  style='height:14px;width:90px;margin-top:-4px;background-color:#ccc;'/>";
 			div.innerHTML=component;
 			div.getElementsByTagName("input")[0].select();
 			currentEditingElement=div;
@@ -152,7 +152,7 @@ function faCardEdit(event,div){
 			break;
 		//变动原因
 		case "add_bdyy":
-			var component = "<input type='text' value='"+temp+"' readonly='readonly' style='height:14px;width:474px;margin-top:-4px;background-color:#ccc;'/>";
+			var component = "<input type='text' value='"+temp+"'style='height:14px;width:474px;margin-top:-4px;background-color:#ccc;'/>";
 			div.innerHTML=component;
 			
 			editerState(div);
@@ -663,7 +663,7 @@ function faCardEdit(event,div){
 			break;
 		//变动原因
 		case "dept_bdyy":
-			var component = "<input type='text' value='"+temp+"' readonly='readonly' style='height:14px;width:474px;margin-top:-4px;background-color:#ccc;'/>";
+			var component = "<input type='text' value='"+temp+"' style='height:14px;width:474px;margin-top:-4px;'/>";
 			div.innerHTML=component;
 			editerState(div);
 			div.getElementsByTagName("input")[0].select();

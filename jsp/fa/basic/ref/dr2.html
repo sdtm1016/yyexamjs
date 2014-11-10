@@ -21,6 +21,9 @@ background-position: -110px -16px;
 	<script type="text/javascript" src="../../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
 <script type="text/javascript"> 
 
+$(function(){
+	queryByName();
+})
 
 /*** 树构建代码 开始 ***/
 var setting = {
@@ -37,13 +40,28 @@ var setting = {
 	
 };
 
+//“确认”按钮处理函数
+function btnConfirm(){  
+		var name=$("#name").val(); 
+		var name2 =name.substring(2, 10);
+	 	window.parent.$("#fa_card_assetschange").find("iframe")[0].contentWindow.huitian2(name2);
+		window.parent.closeWindow('fa_basic_ref_dr2');
+	
+}
+
+
 var zNodes =null;
 
 	$(document).ready(function(){
  			var data =[  
-	            {id:1, pId:0, name:"客户档案", open:true},  
-	            {id:2, pId:1, name:"00无分类"} ,
-	            {id:3, pId:1, name:"01无分类"} 
+	            {id:1, pId:0, name:"固定资产部门编码目录", open:true},  
+	            {id:2, pId:1, name:"&固定资产部门编码目录"} ,
+	            {id:3, pId:1, name:" 1 采购部"} ,
+	            {id:4, pId:1, name:" 2 生产部"} ,
+	             {id:5, pId:1, name:" 3 销售部"} ,
+	              {id:6, pId:1, name:" 4 财务部"} ,
+	               {id:7, pId:1, name:" 5 综合部"}   	           
+
  	        ];  
   $.fn.zTree.init($("#treeview"), setting, data)
 	     
@@ -94,42 +112,14 @@ function getparent(znode,level){
 /*** 树构建代码 结束 ***/
 
 
-
-//“确认”按钮处理函数
-function btnConfirm(){
-	var zTree = $.fn.zTree.getZTreeObj("treeview");
-	var selectedNodes = zTree.getSelectedNodes();
-
-		
-	if (selectedNodes.length > 0) {
-		if(selectedNodes[0].cod!=""){
-			var param = {};
-			//取得编码
-			param.code = selectedNodes[0].code;
-			//取得名称
-			param.name = selectedNodes[0].name;
-			
-			//部门对应这就科目
-			param.ssubject=selectedNodes[0].ssubject;
-			
-			//调用父窗体接收返回值函数
-			window.parent.deliverValue('fa_basic_ref_dr',param);
-			//关闭本窗体
-			window.parent.closeWindow('fa_basic_ref_dr');
-		}
-	}
-	
-}
-
-
 //按编码查询
 function queryByCode(){
 
 	var byCodeDiv = document.getElementById("byCodeDiv");
 	var byNameDiv = document.getElementById("byNameDiv");
 	var codeBox = document.getElementById("code");
-	byCodeDiv.style.display = "block";
-	byNameDiv.style.display = "none";
+	byCodeDiv.style.display = "none";
+	byNameDiv.style.display = "block";
 	codeBox.disabled = false;
 	codeBox.style.backgroundColor = "#fff";
 }
@@ -144,11 +134,7 @@ function queryByName(){
 	byNameDiv.style.display = "block";
 	codeBox.disabled = true;
 	codeBox.style.backgroundColor = "#D4D0C8";
-}
-
-
-
-
+} 
 
 
 function increasing(){
@@ -233,7 +219,7 @@ function nodeClick(treeId, node, clickFlag){
 					<div style="height:50px;text-align:center;">
 						<div class="v_a_m">
 							<input type="radio" value="" name="rd_1" id="rd_1_1" onclick="queryByCode();"/><label for="rd_1_1">按编码查询</label>
-							<input type="radio" value="" name="rd_1" id="rd_1_2" onclick="queryByName();" style="margin-left:40px;"/><label for="rd_1_2">按名称查询</label>
+							<input type="radio" value="" name="rd_1" id="rd_1_2"  checked="checked"  onclick="queryByName();" style="margin-left:40px;"/><label for="rd_1_2">按名称查询</label>
 						</div>
 						<div>
 						

@@ -14,7 +14,7 @@
 	<style type="text/css">
 		.tabpanel{background-color:#fff;padding:0px;width:604px;height:314px;margin-top:-3px;margin-left:-4px;border:2px inset #ccc;border-top:none;text-align:center;}
 		.panelcontent {width:570px;margin:auto;text-align:left;}
-		.fa_card_column_1 {width:92px;height:14px;margin-top:4px;float:left;text-align:right;}
+		.fa_card_column_1 {width:92px;height:14px;margin-top:4px;float:left;text-align:right; font-weight: 400;}
 		.fa_card_column_2 {width:94px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
 		.fa_card_column_3 {width:286px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
 		.fa_card_column_4 {width:474px;height:14px;margin-top:4px;float:left;text-align:right;margin-left:2px;border-bottom: 1px dotted black;}
@@ -30,10 +30,29 @@
 		  $("#dept_kssyrq").html("2008-1-1");
 		  $("#dept_bdqbm").html("财务室");
 		  $("#dept_gdzcbh").html("001"); 
+		  $("#dept_gdzcmc").html("台式电脑");
+	}
+	function huitian2(val){
+		 
+		  $("#dept_bdhbm").html(val); 
 	}
 	function dakai(){ 
 		window.parent.openWindow('fa_basic_ref_dr2');
 	} 
+$(function(){
+
+ $("#saveas").click(function(){
+ 		jConfirm('保存成功','变动单--使用状况调整',function(confirmflag) { 
+		});
+		$("#dept_kpbh").html("");
+		  $("#dept_kssyrq").html("");
+		  $("#dept_bdqbm").html("");
+		  $("#dept_gdzcbh").html("");
+		  $("#dept_gdzcmc").html("");
+		   $("#dept_bdhbm").html(''); 
+ });
+
+});
 
 		/*单据编码*/
 		var snum;
@@ -1521,7 +1540,7 @@
 					<div><input type="button" id="refresh" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
 				</div>
 			 <div class="group">
-					<div><input type="button" value="保存" style="background-image:url('../../../images/icon/save.gif');"/></div>
+					<div><input type="button" value="保存"  id="saveas" style="background-image:url('../../../images/icon/save.gif');"/></div>
 					<div><input type="button" value="取消" style="background-image:url('../../../images/icon/cancel.gif');"/></div>
 					<div><input type="button" value="增加"  style="background-image:url('../../../images/icon/add.gif');"/></div>
 					<div><input type="button" value="操作" onclick="doupdate()" id="operate" style="background-image:url('../../../images/icon/update.gif');"/></div>
@@ -1556,7 +1575,7 @@
 							</div>
 							<div style="float:right;">
 								<div onclick="faCardEdit(event,document.getElementById('add_rq'));" style="font-family:楷体;float:left;">变动日期</div>
-								<div id="add_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-02-17</div>
+								<div id="add_rq" onclick="faCardEdit(event,this);" style="font-family:宋体;float:left;width:95px;text-align:right;">2010-01-31</div>
 							</div>
 						</div>
 						<div style="height:150px;">
@@ -1737,7 +1756,9 @@
 						</div>
 						<div>
 							<div class="fa_card_column_1" onclick="faCardEdit(event,document.getElementById('dept_bdyy'));">变动原因</div>
-							<div class="fa_card_column_4" id="dept_bdyy" onclick="faCardEdit(event,this);"></div>
+							<div class="fa_card_column_4" id="dept_bdyy" onclick="faCardEdit(event,this);">
+								
+							</div>
 						</div>
 						</div>
 						<div style="height:20px;border-top:2px solid #000;margin-top:-3px;">
@@ -1808,4 +1829,4 @@
 	<!-- 是否可编辑,可添加产出操作。变动单管理打开此页面时用到 -->
 	<input type="hidden" id="iscanoprate" value="true">
 </body>
-</html>
+</html> 

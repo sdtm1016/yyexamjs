@@ -17,6 +17,10 @@
 			}
 			.sshow{
 					display: none;
+					text-align: right;
+			}
+			.inputtable .sshow{
+					text-align:right;
 			}
 		</style>
 	</head>
@@ -234,7 +238,7 @@
 										</div>
 									</td> 
 									<td  class="px80 sshow" align="right" style="display:none;" ><label>中间币金额</label></td>
-									<td class="px80 sshow" style="display:none;">
+									<td class="px80 sshow" style=" text-align:left;display:none;">
 										<div>468000<div class="floatclear"></div>
 										</div>
 									</td>
@@ -325,7 +329,7 @@
 								<td style="width:80px;"></td>
 								<td style="width:100px;" class=""><span class="sshow">702，000.00</span></td>
 								<td style="width:100px;"  class=""><span class="sshow">702，000.00</span> </td>
-								<td style="width:60px;" class="setnumss"><span class="sshow">0,0</span> </td> 
+								<td style="width:60px; " class="setnumss"><span class="sshow">0.00</span> </td> 
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
@@ -374,11 +378,22 @@
 		</div>
 	</div>
 <script>
-$(function(){
-	$(".getcontmoney").keyup(function(){
-		$(".setnumss").html($(this).val());
+$(function(){ 
+	$(".getcontmoney").keyup(function(){ 
+		$(".setnumss").html( format_number($(this).val()));
 	});
 })
+
+function format_number(n) {
+    var b = parseInt(n).toString();
+    var len = b.length;
+    if (len <= 3) {
+        return b;
+    }
+    var r = len % 3;
+    return r > 0 ? b.slice(0, r) + "," + b.slice(r, len).match(/\d{3}/g).join(",") : b.slice(r, len).match(/\d{3}/g).join(",");
+}
+
 function queryButtonClick(btn){
 	var param = {};
 	param.subjectBusinessId = "";
@@ -397,17 +412,19 @@ function tianchong(vals){
  	$("#savePas").removeAttr("disabled");
 }
  function showHesuanByDwcode(){
- 	$("body").find(".sshow ").each(function(){
+ 	$("#datatable_header").find(".sshow ").each(function(){
  		$(this).attr("style","display:table-cell"); 
  	}) 
- 	$(".danju").eq(0).html("27 普通发票");
+ 	$(".inputtable").find(".sshow ").each(function(){
+ 		$(this).attr("style","display:table-cell"); 
+ 	}) 
+  	$(".danju").eq(0).html("27 普通发票");
 	$(".bianhao").eq(0).html("0000000001");
 	$(".riqi").eq(0).html("2010-01-31");
 	$(".danju").eq(1).html("27 普通发票");
 	$(".bianhao").eq(1).html("0000000003");
 	$(".riqi").eq(1).html("2010-01-31");  
-	$("")
-
+ 
  }
 function gotoRecName(){
 	var param = {};
@@ -428,16 +445,22 @@ function gotoRecName(){
 	$(".danju").eq(1).html("");
 	$(".bianhao").eq(1).html("");
 	$(".riqi").eq(1).html("");  
-	$("body").find(".sshow").each(function(){
+	$("#csscode").val("银行汇票");
+	$("#datatable_header").find(".sshow").each(function(){
  		$(this).attr("style","display:table-cell");
  		$(this).html(""); 
 
  	}) 
+	$(".inputtable").find(".sshow ").each(function(){
+ 		$(this).attr("style","display:table-cell"); 
+ 	});
  	$(".setnumss").html("");
  	$(".getcontmoney").val("");
  	$("#datatable_bodyer").find("tr").each(function(){
  		$(this).html("");
  	})
+ 		$("#iamount").val(234000);
+
  	window.parent.parent.updateScore('1-4',0);
  }
 
