@@ -15,6 +15,9 @@
 			.px80{
 				width: 80px;
 			}
+			.sshow{
+					display: none;
+			}
 		</style>
 	</head>
 <body>
@@ -232,9 +235,7 @@
 									</td> 
 									<td  class="px80 sshow" align="right" style="display:none;" ><label>中间币金额</label></td>
 									<td class="px80 sshow" style="display:none;">
-										<div>
-											468000
-											<div class="floatclear"></div>
+										<div>468000<div class="floatclear"></div>
 										</div>
 									</td>
 								</tr>
@@ -266,8 +267,8 @@
 								<td style="width:100px;"></td>
 								<td style="width:100px;" class="riqi"></td>
 								<td style="width:80px;"></td>
-								<td style="width:70px;" class="jine">46800</td>
-								<td style="width:70px;" class="yue">46800</td>
+								<td style="width:70px;" class="jine "><span class="sshow">46800</span></td>
+								<td style="width:70px;" class="yue "><span class="sshow">46800</span></td>
 								<td style="width:80px;"> </td>
 
 								<td style="width:80px;"> </td>
@@ -281,8 +282,8 @@
 								<td style="width:120px;"></td>
 								<td style="width:100px;" class="riqi"></td>
 								<td style="width:80px;"></td>
-								<td style="width:70px;" class="jine">234000</td>
-								<td style="width:70px;" class="yue">234000</td>
+								<td style="width:70px;" class="jine "><span class="sshow"> 234000</span></td>
+								<td style="width:70px;" class="yue "><span class="sshow">234000</span></td>
 								<td style="width:80px;"><input type="text" class="getcontmoney" style="width: 76px;height: 14PX;"></td>
 							<td style="width:80px;"> </td>
 
@@ -304,7 +305,7 @@
 								<td style="width:60px;"></td>
 							</tr>
 							<tr>
-								<td style="width:70px;"></td>
+								<td style="width:100px;"></td>
 								<td style="width:90px;"></td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
@@ -316,32 +317,18 @@
 						     	<td style="width:80px;"></td> 
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
-							</tr>
+							</tr> 
 							<tr>
-								<td style="width:70px;"></td>
+								<td style="width:100px;" >合计</td>
 								<td style="width:90px;"></td>
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 								<td style="width:120px;"></td>
 								<td style="width:70px;"></td>
 								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-							</tr>
-							<tr>
-								<td style="width:70px;"></td>
-								<td style="width:90px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:60px;"></td>
-								<td style="width:120px;"></td>
-								<td style="width:70px;"></td>
-								<td style="width:80px;"></td>
-								<td style="width:100px;">702，000,00</td>
-								<td style="width:100px;">702，000,00</td>
-								<td style="width:60px;" class="setnumss">0,0</td> 
+								<td style="width:100px;" class=""><span class="sshow">702，000.00</span></td>
+								<td style="width:100px;"  class=""><span class="sshow">702，000.00</span> </td>
+								<td style="width:60px;" class="setnumss"><span class="sshow">0,0</span> </td> 
 								<td style="width:80px;"></td>
 								<td style="width:60px;"></td>
 							</tr>
@@ -352,7 +339,7 @@
 			<!-- 				<div id="datatable_footer_container" >
 				<table cellpadding="0" id="datatable_footer" border=0 class="table_footer" style="width:860px;">
 					<tr>
-						<td style="width:70px;">合计</td>
+						<td style="width:70px;display: block; " >合计</td>
 						<td style="width:90px;"></td>
 						<td style="width:80px;"></td>
 						<td style="width:60px;"></td>
@@ -375,8 +362,7 @@
 							<tr>
 								<td align="right"><label id = "df_dwname" >代付客户</label></td>
 								<td>
-									<select style="width:140px;" disabled='disabled' >
-									
+									<select style="width:140px;" disabled='disabled' > 
 									</select>
 								</td>
 								<td width="80">代付金额</td>
@@ -414,8 +400,8 @@ function tianchong(vals){
  	$("#savePas").removeAttr("disabled");
 }
  function showHesuanByDwcode(){
- 	$(".inputtable").find(".sshow").each(function(){
- 		$(this).attr("style",""); 
+ 	$("body").find(".sshow ").each(function(){
+ 		$(this).attr("style","display:table-cell"); 
  	}) 
  	$(".danju").eq(0).html("27，普通发票");
 	$(".bianhao").eq(0).html("0000000001");
@@ -423,6 +409,7 @@ function tianchong(vals){
 	$(".danju").eq(1).html("27，普通发票");
 	$(".bianhao").eq(1).html("0000000003");
 	$(".riqi").eq(1).html("2010-01-31");  
+	$("")
 
  }
 function gotoRecName(){
@@ -444,10 +431,13 @@ function gotoRecName(){
 	$(".danju").eq(1).html("");
 	$(".bianhao").eq(1).html("");
 	$(".riqi").eq(1).html("");  
-	$(".inputtable").find(".sshow").each(function(){
-     $(this).attr("style","display: none");
+	$("body").find(".sshow").each(function(){
+ 		$(this).attr("style","display:table-cell");
+ 		$(this).html(""); 
 
  	}) 
+ 	$(".setnumss").html("");
+ 	$(".getcontmoney").val("");
  	$("#datatable_bodyer").find("tr").each(function(){
  		$(this).html("");
  	})

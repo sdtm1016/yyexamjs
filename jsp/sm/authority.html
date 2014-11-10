@@ -138,6 +138,12 @@ function doubleSys(event){
 			$(this).children().first().attr("bgcolor",clickcolor);
 			$(this).children().first().css("color","#ffffff");
 		});
+		if($(event).text()=='FA固定资产'){
+			window.parent.updateScore('2-1',2);
+		}
+		if($(event).text()=='WA工资管理'){
+			window.parent.updateScore('2-1',3);
+		}
 	}	
 }
 
@@ -341,6 +347,9 @@ function queryAuth(){
 }
 
 function addAuth(){
+	if($('#includeUser>tr[bgcolor="#0a246a"]').text().indexOf('丁清晨')>-1){
+		window.parent.updateScore('2-1',1);
+	}
 	loadSubsysAuth();
 	$("#alertDialog").css("display","");
 }

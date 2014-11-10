@@ -118,6 +118,7 @@ function doSubmit(){
 			return;
 		}else{
 			setCookie();
+			window.parent.updateScore('2-1',0);
 			window.parent.reg(LOGINED_USERNAME,LOGINED_USERTYPE);
 		}
 	}else{
