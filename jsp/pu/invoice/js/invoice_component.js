@@ -125,12 +125,7 @@ function deliverValue(valueObject){
 }
 /************ 查询文本框相关代码 E *************/
 
-
-
-
-
-
-
+ 
 //窗体关闭时，隐藏日历控件
 function onWindowClose(){
 	$dp.hide();
@@ -160,7 +155,4 @@ function limitInputNum(){
         event.returnValue = false;  
     }  
 	
-}
-
-
-
+} 

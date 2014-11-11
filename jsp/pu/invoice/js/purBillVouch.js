@@ -44,7 +44,7 @@ function ifAccounting(){
 		async:false,
 		datatype:"json",
 		error:function(){
-			jAlert("请求失败!");
+			// jAlert("请求失败!");
 		},
 		success:function(jsonData){
 			if(jsonData.accountingFlag){
@@ -74,7 +74,7 @@ function queryPurBillVouchs(purBillVouchId) {
 		dataType: "json",
 		async:false,
 		error:function(){
-			jAlert("请求失败!");
+			// jAlert("请求失败!");
 		},
 		success: function(jsonData){
 			//采购发票主表
@@ -660,13 +660,15 @@ function addPurchaseInvoice(type){
 		//税率
 		$("#ipbvtaxrate").val("0.00");
 		break;
-	case 2:
+	case 2://专用发票
 		putTitleName+="采购专用发票";
 		$("#putTitleName").removeClass("colred").addClass("colblack");
 		cpbvbilltypeHtml+="<option value='01' >专用发票</option>";
 		$("#cpbvbilltype").html(cpbvbilltypeHtml).attr("disabled",true);
 		//税率
 		$("#ipbvtaxrate").val("17.00");
+		//日期
+		$("#dpbvdate").val("2010-1-1");
 		break;
 	case 3:
 		putTitleName+="采购运费发票";
@@ -826,7 +828,7 @@ function savePurBill() {
 		dataType: "json",
 		async:false,
 		error:function(){
-			jAlert("请求失败！");
+			// jAlert("请求失败!");
 		},
 		success: function(data){
 			var currentpurBillVouchId = $("#topTextBoxContainer").attr("currentpurBillVouchId");
@@ -897,7 +899,7 @@ function checkSave() {
 		dataType: "json",
 		async:false,
 		error:function(){
-			jAlert("请求失败！");
+			// jAlert("请求失败!");
 		},
 		success: function(data){
 			uniqueFlag=data.uniqueFlag;
@@ -937,7 +939,7 @@ function delPurBill() {
 				dataType: "json",
 				async:false,
 				error:function(){
-					jAlert("请求失败！");
+					// jAlert("请求失败!");
 				},
 				success: function(data){
 					//重新查询
@@ -1355,7 +1357,7 @@ function auditPur() {
 				dataType: "json",
 				async:false,
 				error:function(){
-					jAlert("请求失败！");
+					// jAlert("请求失败!");
 				},
 				success: function(data){
 					queryPurBillVouchs(currentpurBillVouchId);	

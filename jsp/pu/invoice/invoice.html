@@ -21,7 +21,11 @@
 	<div class="container" style="float:left;width:610px;height:450px;background-color: #fff;position:absolute;top:0px;left:0px;">
 		<div class="buttongroup" style="position:relative;z-index:1;">
 			<div class="group">
-				<div style="width:45px;height:35px;padding:0px;">
+				<div><input type="button" value="设置" disabled="disabled" style="background-image:url('../../../images/icon/setting.gif');"/></div>
+				<div><input type="button" value="打印" disabled="disabled" style="background-image:url('../../../images/icon/print.gif');"/></div> 
+				<div><input type="button" value="输出" disabled="disabled" style="background-image:url('../../../images/icon/output.gif');"/></div>
+			
+				<div style="width:45px;height:35px;padding:0px;"> 
 					<div style="width:100%;padding:0px;">
 						<input type="button" id = "addPur" value="增加" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/add.gif');margin-top:0px;" onclick="addPurchaseInvoice('1');"/>
 						<input type="button" id = "addPur1" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
@@ -39,10 +43,10 @@
 					<input type="button" id = "updatePur" value="修改"  style="background-image:url('../../../images/icon/update.gif');" onclick="updatePurBill();"/>
 				</div>
 				<div>
-					<input type="button" id = "delPur"    value="删除"  style="background-image:url('../../../images/icon/delete.gif');" onclick="delPurBill();"/>
+					<input type="button" id = "savePur"   value="保存" style="background-image:url('../../../images/icon/save.gif');"  onclick="savePurBill()" />
 				</div>
 				<div>
-					<input type="button" id = "savePur"   value="保存" style="background-image:url('../../../images/icon/save.gif');"  onclick="savePurBill()" />
+					<input type="button" id = "delPur"    value="删除"  style="background-image:url('../../../images/icon/delete.gif');" onclick="delPurBill();"/>
 				</div>
 				<div>
 					<input type="button" id = "giveupPur" value="放弃" style="background-image:url('../../../images/icon/cancel.gif');" onclick="giveup()"/>
@@ -54,13 +58,7 @@
 					<input type="button" id = "delrowPur" value="删行" style="background-image:url('../../../images/icon/deleterow.gif');" onclick="deleteRow()" disabled="disabled"/>
 				</div>
 				<div>
-					<input type="button" id = "auditPur"  value="复核" style="background-image:url('../../../images/icon/audit.gif');" disabled="disabled" auditPurflag = "0" onclick = "auditPur()" />
-				</div>
-				<div>
 					<input type="button" id = "locationPur" value="定位" style="background-image:url('../../../images/icon/return.gif');"/>
-				</div>
-				<div>
-					<input type="button" id = "firstPur"  value="首张" style="background-image:url('../../../images/icon/firstcard.gif');" onclick="getPaging(this)"/>
 				</div>
 				<div>
 					<input type="button" id = "upPur"     value="上张" style="background-image:url('../../../images/icon/prevcard.gif');" onclick="getPaging(this)"/>
@@ -71,19 +69,16 @@
 				<div>
 					<input type="button" id = "lastPur"   value="末张" style="background-image:url('../../../images/icon/lastcard.gif');" onclick="getPaging(this)"/>
 				</div>
-				<div>
-					<input type="button" id = "refreshPur" value="刷新" style="background-image:url('../../../images/icon/refresh.gif');" onclick="refreshPur()"/>
+			<!-- <div style="width:45px;height:35px;padding:0px;">
+				<div style="width:100%;padding:0px;">
+					<input type="button" id = "transPur" disabled="disabled" value="流转" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/return.gif');margin-top:0px;" onmousedown="buttonGroupLeftButtonClick(this)"/>
+					<input type="button" id = "transPur1" disabled="disabled" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
 				</div>
-				<div style="width:45px;height:35px;padding:0px;">
-					<div style="width:100%;padding:0px;">
-						<input type="button" id = "transPur" disabled="disabled" value="流转" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/return.gif');margin-top:0px;" onmousedown="buttonGroupLeftButtonClick(this)"/>
-						<input type="button" id = "transPur1" disabled="disabled" style="float:left;width:12px;height:35px;margin-left:-1px;background-image:url('../../../images/icon/down1.gif');background-position:center center;" onclick="buttonGroupDropButtonClick(this)"/>
-					</div>
-					<ul style="display:none;">
-						<li onclick="alert(this.innerHTML);">生成采购入库单</li>
-						<li onclick="alert(this.innerHTML);">手工结算</li>
-					</ul>
-				</div>
+				<ul style="display:none;">
+					<li onclick="alert(this.innerHTML);">生成采购入库单</li>
+					<li onclick="alert(this.innerHTML);">手工结算</li>
+				</ul>
+			</div> 
 				<div style="width:45px;height:35px;padding:0px;">
 					<div style="width:100%;padding:0px;">
 						<input type="button" id = "queryPur" disabled="disabled" value="联查" style="float:left;width:31px;height:35px;background-image:url('../../../images/icon/refresh.gif');margin-top:0px;" onmousedown="buttonGroupLeftButtonClick(this)"/>
@@ -94,7 +89,10 @@
 						<li onclick="alert(this.innerHTML);">联查采购入库单</li>
 						<li onclick="alert(this.innerHTML);">联查采购结算单</li>
 					</ul>
-				</div>
+				</div>-->
+ 				<div>
+					<input type="button" value="帮助"  style="background-image:url('../../../images/icon/help.gif');" onclick="findDeptment()"/>
+				</div> 
 				<div>
 					<input type="button" value="退出" style="background-image:url('../../../images/icon/exit.gif');" onclick="exitPur()"/>
 				</div>
@@ -140,10 +138,12 @@
 									</td>
 									<td align="right"><label class="colblu">开票日期</label></td>
 									<td>
-										<div>
-											<input type="text" id="dpbvdate" class="querybox" onkeypress="limitInputNum()" onblur="validateDate(this)" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+										<input type="text" id="dpbvdate" class="querybox" value="0.00">
 											<div class="floatclear"></div>
-										</div>
+										<!-- <div>
+											<input type="text" id="dpbvdate" class="querybox " onkeypress="limitInputNum()" onblur="validateDate(this)" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
+											<div class="floatclear"></div>
+										</div> -->
 									</td>
 									<td align="right"><label>部门名称</label></td>
 									<td>
@@ -178,19 +178,11 @@
 								</tr>
 								<tr>
 									<td align="right"><label>采购类型</label></td>
-									<td>
-									
-									
-									
-									
-									
-									
+									<td>  
 										<div>
 											<input type="text" id="cptcode" dbvalue = ""  dbvalueId = "" class="querybox" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
-										</div>
-									
-									
+										</div> 
 									</td>
 									<td align="right"><label>付款条件</label></td>
 									<td>
@@ -422,7 +414,7 @@
 			</div>
 		</div>
 	</div>
-	<!----- 表格右键菜单 ---->
+	<!-- 表格右键菜单  -->
 	<div id="table_contextmenu" class="winui_contextmenu">
 		<a onclick="" style="color:#999;">预览</a>
 		<a onclick="" style="color:#999;">数据输出</a>
