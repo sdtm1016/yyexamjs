@@ -99,8 +99,8 @@
 			</div>
 		</div>
 		<div style="position:relative;z-index:0;">
-			<div style="width:598px;height:396px;position:absolute;margin-top:10px;margin-left:7px;border:1px solid #000;background-color:#fff;"></div>
-			<div style="width:598px;height:396px;position:absolute;margin-top:8px;margin-left:5px;border:1px solid #000;background-color:#fff;"></div>
+			<div style="width:598px;height:396px;position:absolute;margin-top:10px;margin-left:7px;background-color:#fff;"></div>
+			<div style="width:598px;height:396px;position:absolute;margin-top:8px;margin-left:5px;background-color:#fff;"></div>
 			<div style="width:598px;height:396px;position:absolute;margin-top:6px;margin-left:3px;border:1px solid #000;background-color:#fff;">
 				<div style="margin-top:6px;margin-left:6px;">
 					<div>
@@ -138,12 +138,10 @@
 									</td>
 									<td align="right"><label class="colblu">开票日期</label></td>
 									<td>
-										<input type="text" id="dpbvdate" class="querybox" value="0.00">
+										<div>
+											<input type="text" id="dpbvdate" class="querybox" onkeypress="limitInputNum()" onblur="validateDate(this)" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
 											<div class="floatclear"></div>
-										<!-- <div>
-											<input type="text" id="dpbvdate" class="querybox " onkeypress="limitInputNum()" onblur="validateDate(this)" onclick="queryBoxClick(this)"/><input type="button" class="innerfinder" onclick="queryButtonClick(this)"/>
-											<div class="floatclear"></div>
-										</div> -->
+										</div>
 									</td>
 									<td align="right"><label>部门名称</label></td>
 									<td>
@@ -401,13 +399,13 @@
 								<td align="right"><label >制单</label></td>
 								<td><input type="text" id="cpbvmaker" style="width:150px;height:12px;"/></td>
 							</tr>
-							<tr>
-								<td align="right"><label>审核日期</label></td>
-								<td><input type="text" id="auditdate"  style="width:100px;height:12px;"/></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
+						<!-- 	<tr>
+							<td align="right"><label>审核日期</label></td>
+							<td><input type="text" id="auditdate"  style="width:100px;height:12px;"/></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr> -->
 						</table>
 					</div>
 				</div>
