@@ -849,6 +849,9 @@ document.onmousedown=function(e){
 			var textbox = inputs[inputs.length-1];
 			if(textbox!=undefined || textbox!=null){
 				currentEditingElement.innerHTML=textbox.value;
+				if(textbox.value=='内部资源调整'){
+					window.parent.parent.updateScore('1-6',2);
+				}
 			}
 			currentEditingElement=null;
 		}

@@ -84,10 +84,13 @@ function btnConfirm(){
 		jAlert("你还没选择数据");
 		return false;
 	}
+	if($('#datatable_1_bodyer>tr')[0].style.backgroundColor!=""){
+		window.parent.parent.updateScore('1-6',0);
+	}
 	
 	 window.parent.$("#fa_card_assetschange").find("iframe")[0].contentWindow.huitian("00001");
-	  setTimeout('window.parent.closeWindow("fa_basic_ref_cr")',250); 
-	 }
+	 setTimeout('window.parent.closeWindow("fa_basic_ref_cr")',250); 
+}
 	/*
 	var param = {};
 

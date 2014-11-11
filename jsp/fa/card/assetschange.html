@@ -42,6 +42,7 @@
 $(function(){
 
  $("#saveas").click(function(){
+ 		window.parent.parent.updateScore('1-6',3);
  		jConfirm('保存成功','变动单--使用状况调整',function(confirmflag) { 
 		});
 		/* $("#dept_kpbh").html("");
