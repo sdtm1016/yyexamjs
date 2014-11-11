@@ -17,6 +17,8 @@
 	href="../../../js/jquery-alert/jquery.alerts.css">
 <script type="text/javascript"
 	src="../../../js/jquery-alert/jquery.alerts.js"></script>
+<script type="text/javascript"
+	src="eReport_sl.js"></script>
 <title>财务报表</title>
 
 <script type="text/javascript">
@@ -41,7 +43,7 @@
 
 
 </head>
-<body id="mainbody" class="mainBody">
+<body id="mainbody" class="mainBody"  style="background: #F8F8F8;">
 
 	<ul id=nav>
 		<li class=top>
@@ -284,14 +286,32 @@
 			</tr>
 		</tbody>
 	</table>
-	<div id="window-resizer-tooltip" style="display: none;">
-		<a href="#" title="Edit settings"
-			style="background-image: url(chrome-extension://kkelicaakdanhinjdeammmilcgefonfh/images/icon_19.png);"></a><span
-			class="tooltipTitle">Window size: </span><span class="tooltipWidth"
-			id="winWidth">683</span> x <span class="tooltipHeight" id="winHeight">728</span><br>
-		<span class="tooltipTitle">Viewport size: </span><span
-			class="tooltipWidth" id="vpWidth">667</span> x <span
-			class="tooltipHeight" id="vpHeight">222</span>
+	<div id="content">
+		<!-- <div class="part1">
+			<img src="images/liucheng.png" style="margin: 0 auto;display: block;"/>
+		</div> -->
+		<div class="part2" style="position: absolute;width: 100%;top: 100px;display:none;">
+			<div style="margin: 0 auto;width:446px;height:288px;position: relative;">
+				<img src="images/openfile.png"/>
+				<div class="select_ok" style="position: absolute;width: 75px;height: 22px;top: 198px;left: 348px;"></div>
+				<div class="close" style="position: absolute;width: 22px;height: 22px;top: 8px;left: 416px;"></div>
+				<div class="cancel" style="position: absolute;width: 75px;height: 22px;top: 228px;left: 348px;"></div>
+			</div>
+		</div>
+		<div class="part3" style="background: #C0C0C0;height: 1080px;display:none1;">
+			<img src="images/sheet1.png">
+		</div>
+		<div class="part4" style="position: absolute;width: 100%;top: 200px;display:none;">
+			<div style="margin: 0 auto;width:248px;height:123px;position: relative;">
+				<img src="images/addsheet.png"/>
+				<div class="select_ok" style="position: absolute;width: 75px;height: 22px;top: 51px;left: 158px;"></div>
+				<div class="close" style="position: absolute;width: 22px;height: 22px;top: 5px;left: 220px;"></div>
+				<div class="cancel" style="position: absolute;width: 75px;height: 22px;top: 81px;left: 158px;"></div>
+			</div>
+		</div>
+		<!-- <div class="part5">
+		
+		</div> -->
 	</div>
 </body>
 </html>
