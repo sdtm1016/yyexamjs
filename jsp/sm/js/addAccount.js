@@ -39,7 +39,7 @@ function next(){
 				return;
 			}
 			/*shulei*/
-			 if(textId=="201"&&textName=="北京启明科技公司"&&testIyear=="2010"&&testImonth=="1"){
+			 if(textId=="201"&&textName=="北京启明科技公司"&&testIyear=="2010"&&(testImonth=="1"||testImonth=="01")){
 				window.parent.updateScore('1-1',0);
 			 }
 			
