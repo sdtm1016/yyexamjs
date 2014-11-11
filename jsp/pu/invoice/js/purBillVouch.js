@@ -668,7 +668,7 @@ function addPurchaseInvoice(type){
 		//税率
 		$("#ipbvtaxrate").val("17.00");
 		//日期
-		$("#dpbvdate").val("2010-1-1");
+		$("#dpbvdate").val("2010-1-1"); 
 		break;
 	case 3:
 		putTitleName+="采购运费发票";
@@ -717,7 +717,7 @@ function addPurchaseInvoice(type){
 	}
 	
 	//设置开票日期
-	$("#dpbvdate").val(getCookie("operDate"));
+	//$("#dpbvdate").val(getCookie("operDate"));
 	//设置当前操作人
 	$("#cpbvmaker").val(getCookie("userName"));
 }
