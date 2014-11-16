@@ -125,7 +125,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 	WIDTH: 60px;
 	DISPLAY: block;
 	text-align: center;
-	BACKGROUND: url(/jscss/demoimg/201010/three1.gif) no-repeat right;
+	/* BACKGROUND: url(/jscss/demoimg/201010/three1.gif) no-repeat right; */
 	FLOAT: left;
 	//HEIGHT: 27px;
 	PADDING-TOP: 0px
@@ -144,7 +144,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover A.top_link SPAN.down {
 	background-color: #548bcf;
 	color: #fff2ee;
-	BACKGROUND: url(/jscss/demoimg/201010/three1a.gif) no-repeat right;
+	/* BACKGROUND: url(/jscss/demoimg/201010/three1a.gif) no-repeat right; */
 }
 
 #nav LI:hover {
@@ -196,19 +196,19 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 }
 
 #nav LI UL.sub LI A.fly {
-	BACKGROUND: url(/jscss/demoimg/201010/arrow.gif) #F8F8F8 no-repeat left
+	BACKGROUND: #F8F8F8 no-repeat left
 		center
 }
 
 #nav LI:hover UL.sub LI A:hover {
-	BACKGROUND: url(/jscss/demoimg/201010/subli_bg.gif) #548bcf repeat-x
+	BACKGROUND: #548bcf repeat-x
 		center center;
 	COLOR: #fff;
 }
 
 #nav LI:hover UL.sub LI A.fly:hover {
-	BACKGROUND: url(/jscss/demoimg/201010/arrow_over.gif) #548bcf no-repeat
-		left center;
+	BACKGROUND: #548bcf no-repeat
+		left center; 
 	COLOR: #fff
 }
 
@@ -361,7 +361,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover A.fly {
 	BORDER-BOTTOM-COLOR: #fff;
 	BORDER-TOP-COLOR: #fff;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow_over.gif) #548bcf no-repeat
+	BACKGROUND: #548bcf no-repeat
 		left center;
 	COLOR: #fff;
 	BORDER-RIGHT-COLOR: #fff;
@@ -371,7 +371,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI:hover A.fly {
 	BORDER-BOTTOM-COLOR: #fff;
 	BORDER-TOP-COLOR: #fff;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow_over.gif) #548bcf no-repeat
+	BACKGROUND: #548bcf no-repeat
 		left center;
 	COLOR: #fff;
 	BORDER-RIGHT-COLOR: #fff;
@@ -381,7 +381,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI:hover LI:hover A.fly {
 	BORDER-BOTTOM-COLOR: #fff;
 	BORDER-TOP-COLOR: #fff;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow_over.gif) #548bcf no-repeat
+	BACKGROUND: #548bcf no-repeat
 		left center;
 	COLOR: #fff;
 	BORDER-RIGHT-COLOR: #fff;
@@ -391,7 +391,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI:hover LI:hover LI:hover A.fly {
 	BORDER-BOTTOM-COLOR: #fff;
 	BORDER-TOP-COLOR: #fff;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow_over.gif) #548bcf no-repeat
+	BACKGROUND: #548bcf no-repeat
 		left center;
 	COLOR: #fff;
 	BORDER-RIGHT-COLOR: #fff;
@@ -401,7 +401,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI A.fly {
 	BORDER-BOTTOM-COLOR: #F8F8F8;
 	BORDER-TOP-COLOR: #F8F8F8;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow.gif) #F8F8F8 no-repeat left
+	BACKGROUND: #F8F8F8 no-repeat left
 		center;
 	COLOR: #000;
 	BORDER-RIGHT-COLOR: #F8F8F8;
@@ -411,7 +411,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI:hover LI A.fly {
 	BORDER-BOTTOM-COLOR: #F8F8F8;
 	BORDER-TOP-COLOR: #F8F8F8;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow.gif) #F8F8F8 no-repeat left
+	BACKGROUND: #F8F8F8 no-repeat left
 		center;
 	COLOR: #000;
 	BORDER-RIGHT-COLOR: #F8F8F8;
@@ -421,7 +421,7 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 #nav LI:hover LI:hover LI:hover LI:hover LI A.fly {
 	BORDER-BOTTOM-COLOR: #F8F8F8;
 	BORDER-TOP-COLOR: #F8F8F8;
-	BACKGROUND: url(/jscss/demoimg/201010/arrow.gif) #F8F8F8 no-repeat left
+	BACKGROUND: #F8F8F8 no-repeat left
 		center;
 	COLOR: #000;
 	BORDER-RIGHT-COLOR: #F8F8F8;
@@ -430,4 +430,8 @@ SELECT,INPUT,TEXTAREA,BUTTON,TABLE {
 .sub_icon{
 	float: right;
 	padding-right: 10px;
+}
+
+.nav_bb{
+	border-bottom: 1px solid #DDDDDD;
 }

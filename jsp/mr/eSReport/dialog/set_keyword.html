@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>设置关键字</title>
+<style>
+body{
+	font-size: 12px;
+}
+p{
+	margin: 10px 15px;
+}
+</style>
+<script>
+function set_keyword_ok(){
+	
+}
+</script>
+</head>
+<body style="background-color: #D4D0C8;">
+<p>
+  <input type="radio" name="radio" checked value="dwmc">
+  <label>单位名称</label>
+  <input type="radio" name="radio" value="year">
+  <label>年</label>
+  <input type="radio" name="radio" value="month">
+  <label>月</label>
+</p><p>
+   <input type="radio" name="radio" value="dwbh">
+  <label>单位编号</label>
+  <input type="radio" name="radio" value="ji">
+  <label>季</label>
+  <input type="radio" name="radio" value="day">
+  <label>日</label>
+  </p>
+  <fieldset style="width: 180px;">
+  	<legend>
+    	<input type="radio" name="radio" value="custom">
+  <label>自定义关键字</label>
+    </legend>
+    <p>类型：数值（1-30000）</p>
+    <p>名称：<input type="text" style="width: 100px;"/></p>
+  </fieldset>
+  <input type="button" style="cursor:pointer; position: absolute;top: 90px;left: 226px;width: 60px;" value="确定" onclick="set_keyword_ok();">
+  <input type="button" style="cursor:pointer;position: absolute;top: 128px;left: 226px;width: 60px;" value="取消" onclick="javascript:window.parent.closeWindow('set_keyword');">
+</body>
+</html>

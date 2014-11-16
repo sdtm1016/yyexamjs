@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>录入关键字</title>
+<style>
+body{
+	font-size: 12px;
+}
+p{
+	margin: 10px 15px;
+}
+</style>
+<script>
+function input_keyword_ok(){
+	window.parent.closeWindow('input_keyword');
+	window.parent.confirm_recaldata();
+}
+</script>
+</head>
+<body style="background-color: #D4D0C8;">
+<p>
+  <label>单位名称:</label>
+  <input style="width: 205px;" type="text" disabled name="unit_name">
+</p>
+<p>
+	<label>单位编号:</label>
+  <input style="width: 205px;" type="text" disabled name="unit_code">
+</p>
+<p>
+  <label style="padding-left: 36px;">年:</label>
+  <input style="width: 80px;" type="text" name="year" value="2014">
+	<label style="padding-left: 10px;">月:</label>
+  <input style="width: 80px;" type="text" name="month" value="10">
+</p>
+<p>
+  <label style="padding-left: 36px;">季:</label>
+  <input style="width: 80px;" type="text" disabled name="ji" value="4">
+	<label style="padding-left: 10px;">日:</label>
+  <input style="width: 80px;" type="text" name="day" value="23">
+</p>
+<p>
+  <label style="padding-left: 12px;">自定义:</label>
+  <input style="width: 80px;" type="text" disabled name="custom">
+</p>
+  <input type="button" style="cursor:pointer; position: absolute;top: 55px;left: 318px;width: 70px;" value="确定" onclick="input_keyword_ok();">
+  <input type="button" style="cursor:pointer;position: absolute;top: 108px;left: 318px;width: 70px;" value="取消" onclick="javascript:window.parent.closeWindow('input_keyword');">
+</body>
+</html>

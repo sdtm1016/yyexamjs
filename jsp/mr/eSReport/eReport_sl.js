@@ -33,6 +33,13 @@ $(function(){
 				$(n).text('格式');
 			});
 		}else{
+			jConfirm('是否确定全表数据重算?', '提示', function(r) {
+				if(r){
+					//TODO
+				}else{
+					//TODO
+				}
+			});
 			$('.action .model').each(function(i,n){
 				$(n).text('数据');
 			});
@@ -51,3 +58,21 @@ $(function(){
 		$('.page1').removeClass('active');
 	});
 });
+
+function set_keyword(){
+	openWindow('set_keyword');
+}
+
+function input_keyword(){
+	openWindow('input_keyword');
+}
+
+function confirm_recaldata(){
+	jConfirm('是否重算第2页?', '提示', function(r) {
+		if(r){
+			//TODO
+		}else{
+			//TODO
+		}
+	});
+}

@@ -17,6 +17,7 @@
 	href="../../../js/jquery-alert/jquery.alerts.css">
 <script type="text/javascript"
 	src="../../../js/jquery-alert/jquery.alerts.js"></script>
+<script type="text/javascript" src="../../../js/winui/plugin/winui.window.js"></script>
 <script type="text/javascript"
 	src="eReport_sl.js"></script>
 <title>财务报表</title>
@@ -113,11 +114,11 @@
 		      <li><a href="#">执行(E)</a></li>
 		      <li><a href="#">自定义菜单(D)</a></li>
 		      <li><a href="#">常用批命令(B)</a></li>
-		      <li><a href="#">模板调整</a></li>
+		      <li class="nav_bb"><a href="#">模板调整</a></li>
 		      <li><a href="#">货币符号(M)</a></li>
 		      <li><a href="#">其他财务软件数据</a></li>
-		      <li><a href="#">其他格式</a></li>
-		      <li><a href="#">命令窗(W)</a></li>
+		      <li class="nav_bb"><a href="#">其他格式</a></li>
+		      <li class="nav_bb"><a href="#">命令窗(W)</a></li>
 		      <li><a href="#">重新登录</a></li>
 		      <li><a href="#">退出(X)</a></li>
 			</ul>
@@ -162,26 +163,26 @@
 				<span class=down>数据(D)</span>
 			</a>
 			<ul class=sub>
-		      <li><a href="#" class="fly">关键字(K)<span class=sub_icon>&gt;</span></a>
+		      <li class="nav_bb"><a href="#" class="fly">关键字(K)<span class=sub_icon>&gt;</span></a>
 		        <ul>
-		          <li><a href="#">设置(S)</a></li>
-		          <li><a href="#">录入(I)</a></li>
+		          <li><a href="javascript:set_keyword();">设置(S)</a></li>
+		          <li><a href="javascript:input_keyword();">录入(I)</a></li>
 		          <li><a href="#">偏移(O)</a></li>
 		          <li><a href="#">打印颜色(Y)</a></li>
 		          <li><a href="#">取消(E)</a></li>
 		        </ul>
 		      </li>
 		      <li><a href="#">编辑公式(F)<span class=sub_icon>&gt;</span></a></li>
-		      <li><a href="#">公式列表(L)</a></li>
+		      <li class="nav_bb"><a href="#">公式列表(L)</a></li>
 		      <li><a href="#">透视(D)</a></li>
 		      <li><a href="#">排序<span class=sub_icon>&gt;</span></a></li>
 		      <li><a href="#">汇总(T)<span class=sub_icon>&gt;</span></a></li>
 		      <li><a href="#">审核(C)</a></li>
-		      <li><a href="#">舍位平衡(B)</a></li>
+		      <li class="nav_bb"><a href="#">舍位平衡(B)</a></li>
 		      <li><a href="#">整表重算(A)</a></li>
 		      <li><a href="#">表页重算(P)</a></li>
-		      <li><a href="#">表页不计算(N)</a></li>
-		      <li><a href="#">数据采集</a></li>
+		      <li class="nav_bb"><a href="#">表页不计算(N)</a></li>
+		      <li class="nav_bb"><a href="#">数据采集</a></li>
 		      <li><a href="#">帐套初始(Y)</a></li>
 		    </ul>
 		</li>
@@ -564,6 +565,19 @@
 					<div class="page page2" style="display:none;">第二页</div>
 				</div>
 			</div>
+		</div>
+		<div>
+		
+		</div>
+	</div>
+	<div style="position:absolute;top:75px;left:0;width:100%;">
+		<div>
+			<div id="set_keyword" style="margin-left:130px;margin-top:50px; padding: auto; display: none;"
+				type="window" width="300" height="200" title="设置关键字"
+				src="dialog/set_keyword.html"></div>
+			<div id="input_keyword" style="margin-left:130px;margin-top:50px; padding: auto; display: none;"
+				type="window" width="400" height="180" title="录入关键字"
+				src="dialog/input_keyword.html"></div>
 		</div>
 	</div>
 </body>
