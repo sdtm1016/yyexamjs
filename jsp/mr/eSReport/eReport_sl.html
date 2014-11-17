@@ -40,6 +40,9 @@
 .row_h .cell_input{
 	font-size:18px;
 }
+.cell_left{
+	text-align:left;
+}
 .cell_left .cell_input{
 	text-align:left;
 }
@@ -76,6 +79,12 @@
 }
 .action .page.active{
 	background:#FFF;
+}
+li.disabled>a{
+	color: gray !important;
+}
+.focus_border{
+	border:1px solid #0B0B86;
 }
 </style>
 
@@ -164,12 +173,12 @@
 			</a>
 			<ul class=sub>
 		      <li class="nav_bb"><a href="#" class="fly">关键字(K)<span class=sub_icon>&gt;</span></a>
-		        <ul>
-		          <li><a href="javascript:set_keyword();">设置(S)</a></li>
-		          <li><a href="javascript:input_keyword();">录入(I)</a></li>
-		          <li><a href="#">偏移(O)</a></li>
-		          <li><a href="#">打印颜色(Y)</a></li>
-		          <li><a href="#">取消(E)</a></li>
+		        <ul class="keyword_menus">
+		          <li class="keyword_fm"><a href="javascript:set_keyword();">设置(S)</a></li>
+		          <li class="keyword_dt"><a href="javascript:input_keyword();">录入(I)</a></li>
+		          <li class="keyword_fm keyword_dt"><a href="#">偏移(O)</a></li>
+		          <li class="keyword_fm keyword_dt"><a href="#">打印颜色(Y)</a></li>
+		          <li class="keyword_fm"><a href="#">取消(E)</a></li>
 		        </ul>
 		      </li>
 		      <li><a href="#">编辑公式(F)<span class=sub_icon>&gt;</span></a></li>
@@ -480,7 +489,7 @@
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">2</td>
-					<td colspan="4"><span style="float:left;width:350px;line-height: 22px;" class="cell_edit cell_left">编制单位：明道科技</span>  <span style="float:right;width:120px;line-height: 22px;" class="cell_edit">单位：元</span></td>
+					<td colspan="4" class="cell_focus"><span style="float:left;width:350px;line-height: 22px;" class="cell_left">编制单位：明道科技</span>  <span style="float:right;width:120px;line-height: 22px;" class="">单位：元</span></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">3</td>
@@ -492,65 +501,65 @@
 				<tr class="row_n">
 					<td class="cell_gray">4</td>
 					<td class="cell_edit">货币资金</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">短期借款</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">5</td>
 					<td class="cell_edit">应收账款</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">应付账款</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">6</td>
 					<td class="cell_edit">其他应收款</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">应交税费</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">7</td>
 					<td class="cell_edit">存货</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">应付利息</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">8</td>
 					<td class="cell_edit">固定资产</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">负债合计</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">9</td>
 					<td class="cell_edit">减：累计折旧</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">实收资本</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">10</td>
 					<td class="cell_edit">固定资产净值</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">未分配利润</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">11</td>
 					<td class="cell_edit">无形资产</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">所有者权益合计</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">12</td>
 					<td class="cell_edit">资产合计</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 					<td class="cell_edit">权益合计</td>
-					<td class="cell_edit"></td>
+					<td class="cell_edit cell_empty"></td>
 				</tr>
 				<tr class="row_n">
 					<td class="cell_gray">13</td>

@@ -13,7 +13,7 @@ p{
 </style>
 <script>
 function set_keyword_ok(){
-	
+	window.parent.closeWindow('set_keyword');
 }
 </script>
 </head>
@@ -39,7 +39,7 @@ function set_keyword_ok(){
   <label>自定义关键字</label>
     </legend>
     <p>类型：数值（1-30000）</p>
-    <p>名称：<input type="text" style="width: 100px;"/></p>
+    <p>名称：<input type="text" style="width: 100px;" readonly/></p>
   </fieldset>
   <input type="button" style="cursor:pointer; position: absolute;top: 90px;left: 226px;width: 60px;" value="确定" onclick="set_keyword_ok();">
   <input type="button" style="cursor:pointer;position: absolute;top: 128px;left: 226px;width: 60px;" value="取消" onclick="javascript:window.parent.closeWindow('set_keyword');">

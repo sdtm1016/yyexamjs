@@ -1,8 +1,22 @@
 $(function(){
+	$('.keyword_menus>li').addClass('disabled');
+	$('.keyword_dt').removeClass('disabled');
+	
+	$(document).on('click',function(){
+		var obj=obj = event.srcElement ? event.srcElement : event.target;
+		if($(obj).parent().hasClass('cell_focus')){
+			$(obj).parent().addClass('focus_border');
+		}else{
+			$('.cell_focus').removeClass('focus_border');
+		}
+	});
+	
 	$('#nav a').click(function(){
-		if($(this).text().indexOf('打开')>-1){
+		if($(this).parent().hasClass('disabled'))return;
+		var menuText=$(this).text();
+		if(menuText.indexOf('打开')>-1){
 			$('#content .part2').show();
-		}else if($(this).text().indexOf('表页')>-1){
+		}else if(menuText.indexOf('表页')>-1){
 			$('#content .part4').show();
 		}
 	});
@@ -15,6 +29,8 @@ $(function(){
 		$('.part2').hide();
 	});
 	$('.part4 .select_ok').click(function(){
+		$('.part1').hide();
+		$('.part2').hide();
 		$('.part4').hide();
 		$('.part3').hide();
 		$('.part5').show();
@@ -32,12 +48,15 @@ $(function(){
 			$('.action .model').each(function(i,n){
 				$(n).text('格式');
 			});
+			$('.keyword_menus>li').addClass('disabled');
+			$('.keyword_fm').removeClass('disabled');
+			$('.cell_empty input').val('公式单元');
 		}else{
 			jConfirm('是否确定全表数据重算?', '提示', function(r) {
 				if(r){
-					//TODO
-				}else{
-					//TODO
+					$('.cell_empty input').val('');
+					$('.keyword_menus>li').addClass('disabled');
+					$('.keyword_dt').removeClass('disabled');
 				}
 			});
 			$('.action .model').each(function(i,n){
