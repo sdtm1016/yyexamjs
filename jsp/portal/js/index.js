@@ -568,72 +568,71 @@ $(document).ready(function() {
 	
 	
 	
-	$.ajax({
+	/*$.ajax({
 		//url: "login!queryEnableModule.action",
 		url: "data/queryEnableModule.json",
 		type: 'post',
 		dataType: "json",
-		success: function(data){
-			var ml = data.enableModuleList.toString();
-			var left = 112;//“文件”和“基础设置”的宽度和
-			//var store = [];//模块按一定展示顺序排序
+		success: function(data){}
+	  });*/
+	var data={"acc_date":null,"computerName":null,"enableModuleList":["FA","GL","WA","SA"],"mark":null,"uaAccountList":null,"uaAccountYearList":null,"uaUser":null};
 
-			/*if(ml.indexOf("GL")!=-1){
-				store[store.length] = "GL";	
-				store[store.length] = "MR";	
-			}
+	var ml = data.enableModuleList.toString();
+	var left = 112;//“文件”和“基础设置”的宽度和
+	//var store = [];//模块按一定展示顺序排序
 
-			if(ml.indexOf("WA")!=-1){
-				store[store.length] = "WA";	
-			}
+	/*if(ml.indexOf("GL")!=-1){
+		store[store.length] = "GL";	
+		store[store.length] = "MR";	
+	}
 
-			if(ml.indexOf("FA")!=-1){
-				store[store.length] = "FA";	
-			}
+	if(ml.indexOf("WA")!=-1){
+		store[store.length] = "WA";	
+	}
 
-			if(ml.indexOf("GX")!=-1){
-				store[store.length] = "PU";	
-				store[store.length] = "SA";	
-			}*/
-			
-			var store=['GL','MR','WA','FA','PU','SA'];
+	if(ml.indexOf("FA")!=-1){
+		store[store.length] = "FA";	
+	}
 
-			var mcec = new hashMap();//Model click excute code map.
-			
-			for(var i=0;i<store.length;i++){
-				var mn = store[i];
-				
-				$("#"+mn).parent().show();
-				
-				//IE7兼容解决思路：
-				//在循环内为每个模块生成一级菜单点击事件要执行的源码字符串，存放进Map，然后点击后使用eval函数执行字符串。
-				var ec="";
-				if(mn=="FA"||mn=="MR"){
-					ec = ""+mn.toLowerCase()+"_navigation_filter()"+";";
-					fa_menu_left=left;
-				}else{
-					ec = "if("+mn.toLowerCase()+"_navigation_filter())"+"$(\"#menu_"+mn+"\").menu(\"show\",{left:"+left+",top:25});";
-				}
-				
-				mcec.put(mn,ec);
-				
-				$("#M_"+mn)[0].onclick=function(){
-					var mId = $(this).attr("id");
-					mId = mId.substring(2,mId.length);
-					eval(mcec.get(mId));
-				};
-				$("#M_"+mn).show();
-				
-				left = left + $("#M_"+mn).html().length*12+5*2;//名称长度*12像素宽+容器两边padding宽
-			}
-			
-			$("#M_WD")[0].onclick=function(){
-				eval("$('#menu_WD').menu('show',{left:" + left + ",top:25});");
-			};
-			
-			
+	if(ml.indexOf("GX")!=-1){
+		store[store.length] = "PU";	
+		store[store.length] = "SA";	
+	}*/
+	
+	var store=['GL','MR','WA','FA','PU','SA'];
+
+	var mcec = new hashMap();//Model click excute code map.
+	
+	for(var i=0;i<store.length;i++){
+		var mn = store[i];
+		
+		$("#"+mn).parent().show();
+		
+		//IE7兼容解决思路：
+		//在循环内为每个模块生成一级菜单点击事件要执行的源码字符串，存放进Map，然后点击后使用eval函数执行字符串。
+		var ec="";
+		if(mn=="FA"||mn=="MR"){
+			ec = ""+mn.toLowerCase()+"_navigation_filter()"+";";
+			fa_menu_left=left;
+		}else{
+			ec = "if("+mn.toLowerCase()+"_navigation_filter())"+"$(\"#menu_"+mn+"\").menu(\"show\",{left:"+left+",top:25});";
 		}
-	  });
+		
+		mcec.put(mn,ec);
+		
+		$("#M_"+mn)[0].onclick=function(){
+			var mId = $(this).attr("id");
+			mId = mId.substring(2,mId.length);
+			eval(mcec.get(mId));
+		};
+		$("#M_"+mn).show();
+		
+		left = left + $("#M_"+mn).html().length*12+5*2;//名称长度*12像素宽+容器两边padding宽
+	}
+	
+	$("#M_WD")[0].onclick=function(){
+		eval("$('#menu_WD').menu('show',{left:" + left + ",top:25});");
+	};
 	
 });
 

@@ -23,7 +23,7 @@ var dsignAccvouchPersonIdList = null;
  */
 function queryAuditBill() {
 	auditDts = valueObject.queryDsignData;
-	   $.ajax({
+	  /* $.ajax({
 			
 			  url: "data/queryAuditBillList.json",
 				type: 'post',
@@ -31,9 +31,20 @@ function queryAuditBill() {
 				dataType: "json",
 				//async:false,
 				success: function(data){
-					initBill(data);	
 				}
-			  });
+			  });*/
+	var data={
+			"billList":[
+			    		{
+			    			"cdbillDate":"2013-01-01",
+			    			"cpbzh":"收-0001",
+			    			"cdigest":"收到投资",
+			    			"sumMd":"30000000",
+			    			"sumMc":"30000000"
+			    		}
+			    	]
+			    };
+	   initBill(data);	
 	
 }
 

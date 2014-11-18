@@ -61,17 +61,18 @@ function gl_pzlb_init_filter(){
 //是否有凭证类别判断函数
 function hasDsignCategory(){
 	var flag = false;
-	$.ajax({
+	/*$.ajax({
 		url: "data/queryList.json",
 		type: 'post',
 		async:false,
 		dataType: "json",
 		success: function(data){
-			if (data.dsigns.length>0) {
-				flag = true;
-			}
 		}
-	});
+	});*/
+	var data={"cout":null,"dsign":null,"dsigns":[{"accid":590134,"csign":"收","ctext":"收款凭证","id":590918,"iotherused":null,"isignseq":0,"itype":1},{"accid":590134,"csign":"付","ctext":"付款凭证","id":590919,"iotherused":null,"isignseq":1,"itype":2},{"accid":590134,"csign":"转","ctext":"转账凭证","id":590920,"iotherused":null,"isignseq":2,"itype":3}],"dsigntype":0,"isdelete":false,"listCode":null,"success":null};
+	if (data.dsigns.length>0) {
+		flag = true;
+	}
 	return flag;
 }
 

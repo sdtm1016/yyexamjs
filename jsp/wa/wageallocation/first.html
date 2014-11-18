@@ -46,7 +46,7 @@
 					});
 	
 	function initData(){
-		$.ajax({
+		/* $.ajax({
 			url : 'data/queryWagesSharingIndex.json',
 			type : 'post',
 			data : 'cgzgradenum=' + cgzgradenum,
@@ -68,7 +68,40 @@
 				}
 				$("#datatable_1_bodyer").append(str);
 			}
-		});
+		}); */
+		
+		var data={"list":[{
+			"ijtId":"10",
+			"cjtName":"应付工资10"
+		},{
+			"ijtId":"11",
+			"cjtName":"应付工资11"
+		},{
+			"ijtId":"12",
+			"cjtName":"应付工资12"
+		},{
+			"ijtId":"4",
+			"cjtName":"应付工资4"
+		},{
+			"ijtId":"6",
+			"cjtName":"应付工资6"
+		}]};
+			
+		ftNameList = data.list;
+		if(ftNameList.length==0)return;
+		var str = "";
+		$("#datatable_1_bodyer").html("");
+		var ftName;
+		for ( var i = 0; i < ftNameList.length; i++) {
+			ftName = ftNameList[i];
+			str += '<tr><td>'
+					+ '<input name="jtlx" type="checkbox"  value="' + ftName.ijtId+":"+ftName.cjtName + '" />'
+					+ '<label for="type_cb_2">'
+					+ ftName.cjtName
+					+ '</label>'
+		}
+		$("#datatable_1_bodyer").append(str);
+	
 	}
 	
 	//初始化会计时间
@@ -169,7 +202,7 @@
 	}
 	var zNodes = [];
 	function queryTree(cgzgradename) {
-		$.ajax({
+		/* $.ajax({
 			url : 'data/loadWaDeptTree.json',
 			type : 'post',
 			data : 'cgzgradename=' + cgzgradename,
@@ -178,14 +211,35 @@
 			success : function(data) {
 				$("#dpt_tree").html("");
 				treeNodes = data.listTree;
-				/*for ( var i = 0; i < treeNodes.length; i++) {
-					
-					var nodeObj = eval('(' + treeNodes[i] + ')');
-					zNodes.push(nodeObj);
-				}*/
+				//for ( var i = 0; i < treeNodes.length; i++) {
+				//	
+				//	var nodeObj = eval('(' + treeNodes[i] + ')');
+				//	zNodes.push(nodeObj);
+				//}
 				$.fn.zTree.init($("#dpt_tree"), setting, treeNodes);
 			}
-		});
+		}); */
+		
+		var data= {"listTree":[
+		               		{"name":"正式人员2", "open":true, "children": [
+		               		                            			{ "name":"采购部"},
+		               		                            			{ "name":"生产部","checked":true},
+		               		                            			{ "name":"销售部"},
+		               		                            			{ "name":"财务部"},
+		               		                            			{ "name":"综合部"}
+		               		                            			]
+		               		                            		}
+		               		                            	]};
+		
+		$("#dpt_tree").html("");
+		treeNodes = data.listTree;
+		/*for ( var i = 0; i < treeNodes.length; i++) {
+			
+			var nodeObj = eval('(' + treeNodes[i] + ')');
+			zNodes.push(nodeObj);
+		}*/
+		$.fn.zTree.init($("#dpt_tree"), setting, treeNodes);
+		
 		/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/
 		//当前被点击选中的行全局变量
 		var currentSeletedRow = null;

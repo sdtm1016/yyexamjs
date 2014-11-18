@@ -17,93 +17,95 @@
 //“工资”模块相关导航过滤器
 function wa_navigation_filter(){
 	var flag = true;
-	$.ajax({
+	/*$.ajax({
 		url:'data/queryWageSets.json',
 		type:'post',
 		dataType:'json',
 		async:false,
-		success:function(data){
-			
-			wa_isWageSets = data.isWageSets;
-			wa_wageTypeId = (wa_wageTypeId == null?loginedModule.get("WA"):wa_wageTypeId);
-			var isOpenWa = loginedModule.get("WA"); //工资main页面是否已经打开
-			var accountName=data.accountName;//单个工资帐套打开的帐套名称
-			//只要工资类别为单个，不管是否已登录都禁用工资类别操作菜单
-			if(wa_isWageSets == '1'){ 
-				
-				
-				//隐藏 打开、关闭、新建、删除  工资类别菜单
-				var itm = $('#menu_WA').menu('findItem','工资类别').target;
-				$('#menu_WA').menu('disableItem',itm);
+		success:function(data){}
+	});*/
+	
 
-				//隐藏和显示相关菜单：
-				$('#menu_WA').menu('showItem','选项');
-				wa_currentWaAccount.cgzgradenum = '001';
-				wa_currentWaAccount.cgzgradename=accountName;
-			}else{
+	var data={"accountName":"121","isWageSets":"2"};
+	wa_isWageSets = data.isWageSets;
+	wa_wageTypeId = (wa_wageTypeId == null?loginedModule.get("WA"):wa_wageTypeId);
+	var isOpenWa = loginedModule.get("WA"); //工资main页面是否已经打开
+	var accountName=data.accountName;//单个工资帐套打开的帐套名称
+	//只要工资类别为单个，不管是否已登录都禁用工资类别操作菜单
+	if(wa_isWageSets == '1'){ 
+		
+		
+		//隐藏 打开、关闭、新建、删除  工资类别菜单
+		var itm = $('#menu_WA').menu('findItem','工资类别').target;
+		$('#menu_WA').menu('disableItem',itm);
 
-				
-				
-				//启用工资类别菜单
-				var itm = $('#menu_WA').menu('findItem','工资类别').target;
-				$('#menu_WA').menu('enableItem',itm);
-				wa_currentWaAccount.cgzgradenum = '001';
-				wa_currentWaAccount.cgzgradename=accountName;
-				
-			}
-			//未登录，且是单个工资类别的时候打开流程页面
-			if(wa_isWageSets == '1' && isOpenWa == 0){
-				toPage('WA','WA.html');
-				wa_wageTypeId = 1;
-				wa_currentWaAccount.cgzgradenum = '001';
-				wa_currentWaAccount.cgzgradename=accountName;
-			}
-			//未登录，且是多个工资类别的时候弹出工资类别选择窗
-			else if(wa_isWageSets == '2' && isOpenWa == 0){
-				
+		//隐藏和显示相关菜单：
+		$('#menu_WA').menu('showItem','选项');
+		wa_currentWaAccount.cgzgradenum = '001';
+		wa_currentWaAccount.cgzgradename=accountName;
+	}else{
 
-				
-				/*$.ajax({
-					url:'data/queryWageTypes.json',
-					type:'post',
-					dataType:'json',
-					async:false,
-					success:function(data){
-						var list=data.wageList;
-						var flag=0;
-						if(list.length==0){
-							jAlert("未建立工资类别!","提示",function(){
-								flag=0;//是否有工资类别
-								//隐藏和显示相关菜单：
-								$('#menu_WA').menu('hideItem','打开工资类别');
-								$('#menu_WA').menu('hideItem','关闭工资类别');
-								$('#menu_WA').menu('showItem','新建工资类别');
-								$('#menu_WA').menu('hideItem','删除工资类别');
-							});
-						}else{
-							flag=1;
-						}
-						var param={};
-						param.flag=flag;
-						openWindow("wa_wagecategory_wcw","wa_wagecategory_wagewizard",param);
-					}
-				});
-				flag = false;*/
-				toPage('WA','WA.html');
-			}else if(isOpenWa == 0){
-				//第一次进入工资模块时向导
-				openWindow('wa_wagecategory_wagewizard');
-				flag = false;
-			}else if(wa_wageTypeId == 1){
-				wa_currentWaAccount.cgzgradenum = '001';
-				wa_currentWaAccount.cgzgradename=accountName;
-				toPage('WA','WA.html');
-			}else{
-				toPage('WA','WA.html');
-				wa_wageTypeId = 0;
+		
+		
+		//启用工资类别菜单
+		var itm = $('#menu_WA').menu('findItem','工资类别').target;
+		$('#menu_WA').menu('enableItem',itm);
+		wa_currentWaAccount.cgzgradenum = '001';
+		wa_currentWaAccount.cgzgradename=accountName;
+		
+	}
+	//未登录，且是单个工资类别的时候打开流程页面
+	if(wa_isWageSets == '1' && isOpenWa == 0){
+		toPage('WA','WA.html');
+		wa_wageTypeId = 1;
+		wa_currentWaAccount.cgzgradenum = '001';
+		wa_currentWaAccount.cgzgradename=accountName;
+	}
+	//未登录，且是多个工资类别的时候弹出工资类别选择窗
+	else if(wa_isWageSets == '2' && isOpenWa == 0){
+		
+
+		
+		/*$.ajax({
+			url:'data/queryWageTypes.json',
+			type:'post',
+			dataType:'json',
+			async:false,
+			success:function(data){
+				var list=data.wageList;
+				var flag=0;
+				if(list.length==0){
+					jAlert("未建立工资类别!","提示",function(){
+						flag=0;//是否有工资类别
+						//隐藏和显示相关菜单：
+						$('#menu_WA').menu('hideItem','打开工资类别');
+						$('#menu_WA').menu('hideItem','关闭工资类别');
+						$('#menu_WA').menu('showItem','新建工资类别');
+						$('#menu_WA').menu('hideItem','删除工资类别');
+					});
+				}else{
+					flag=1;
+				}
+				var param={};
+				param.flag=flag;
+				openWindow("wa_wagecategory_wcw","wa_wagecategory_wagewizard",param);
 			}
-		}
-	});
+		});
+		flag = false;*/
+		toPage('WA','WA.html');
+	}else if(isOpenWa == 0){
+		//第一次进入工资模块时向导
+		openWindow('wa_wagecategory_wagewizard');
+		flag = false;
+	}else if(wa_wageTypeId == 1){
+		wa_currentWaAccount.cgzgradenum = '001';
+		wa_currentWaAccount.cgzgradename=accountName;
+		toPage('WA','WA.html');
+	}else{
+		toPage('WA','WA.html');
+		wa_wageTypeId = 0;
+	}
+
 	
 	return flag;
 	

@@ -8,7 +8,7 @@
 <script type="text/javascript" src="../../../js/publicFunction.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$.ajax({
+		/* $.ajax({
 			url:'data/queryWageTypes.json',
 			type:'post',
 			dataType:'json',
@@ -22,7 +22,25 @@
 					$("#datatable_1_bodyer").append(str);
 				});
 			}
+		}); */
+		
+		var data={
+				"wageList":[{
+					"cgzgradenum":"001",
+					"cgzgradename":"正式人员1"
+				},{
+					"cgzgradenum":"002",
+					"cgzgradename":"正式人员2"
+				}]};
+		
+		var list = data.wageList;
+		var str = "";
+		$("#datatable_1_bodyer").html("");
+		$.each(list,function(index,i){
+			str = '<tr><td width="60">' + i.cgzgradenum +'</td><td>' + i.cgzgradename +'</td></tr>';
+			$("#datatable_1_bodyer").append(str);
 		});
+		
 		currentTable();
 	});
 	function doSubmit(){

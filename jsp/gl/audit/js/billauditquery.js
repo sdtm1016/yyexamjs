@@ -310,17 +310,15 @@ function getQueryParamValue() {
   * 初始化查询组件
   */
  function initAuditBillQuery() {
-	 $.ajax({
+	 /*$.ajax({
 			url:"data/loadQueryInitData.json",
 			type:"post",
 			datatype:"json",
 			success:function(data,status){
-				if(typeof data =='string'){
-					data=JSON.parse(data);
-				}
-				setInitQueryValue(data);
 			}
-		});
+		});*/
+	 var data={"dsignQueryInitData":{"dsignList":[{"accid":590134,"csign":"收","ctext":"收款凭证","id":590918,"iotherused":null,"isignseq":0,"itype":1},{"accid":590134,"csign":"付","ctext":"付款凭证","id":590919,"iotherused":null,"isignseq":1,"itype":2},{"accid":590134,"csign":"转","ctext":"转账凭证","id":590920,"iotherused":null,"isignseq":2,"itype":3}],"itemClassList":[],"checkList":[{"ccheck":"张强","ccheckid":590132}],"billList":[{"cbill":"demo","cbillid":590131},{"cbill":"张强","cbillid":590132}],"settleList":[],"dataSourceList":[{"cdataSource":"工资系统","dataSourceid":1},{"cdataSource":"固定资产系统","dataSourceid":2},{"cdataSource":"核算系统","dataSourceid":3},{"cdataSource":"应收系统","dataSourceid":4},{"cdataSource":"应付系统","dataSourceid":5},{"cdataSource":"网上银行系统","dataSourceid":6}],"cashierList":[],"exchNameList":[]}};
+	 setInitQueryValue(data);
  }
  
  /**

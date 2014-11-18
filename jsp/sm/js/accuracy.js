@@ -1,31 +1,32 @@
 var account = window.parent.valueMap.get("accuracy");
 $(document).ready(function(){
-	$.ajax({
+	/*$.ajax({
 		url:"data/queryAccuracy.json",
 		type:"get",
 		data:"accid="+account.accid,
 		success:function(data,status){
-			var accInfoList = data.accInfoList;
-			$.each(accInfoList,function(index,i){
-				if(i.cname == 'iStrsQuanDecDgt'){
-					$("#iStrsQuanDecDgt").val(i.cvalue);
-					$("#iStrsQuanDecDgtId").val(i.id);
-				}else if(i.cname == 'iStrsPriDecDgt'){
-					$('#iStrsPriDecDgt').val(i.cvalue);
-					$('#iStrsPriDecDgtId').val(i.id);
-				}else if(i.cname == 'iBillPrice'){
-					$('#iBillPrice').val(i.cvalue);
-					$('#iBillPriceId').val(i.id);
-				}else if(i.cname == 'iNumDecDgt'){
-					$('#iNumDecDgt').val(i.cvalue);
-					$('#iNumDecDgtId').val(i.id);
-				}else if(i.cname == 'iExchRateDecDgt'){
-					$('#iExchRateDecDgt').val(i.cvalue);
-					$('#iExchRateDecDgtId').val(i.id);
-				}
-			});
 		},
 		dataType:'json'
+	});*/
+	var data={"accInfoList":[{"accid":4800197,"benable":0,"bvisible":0,"ccaption":"开票单价小数位","cdefault":"2","cid":"21","cname":"iBillPrice","csysid":"AA","ctype":"Long","cvalue":"2","id":4800694},{"accid":4800197,"benable":1,"bvisible":1,"ccaption":"换算率小数位数","cdefault":"2","cid":"43","cname":"iExchRateDecDgt","csysid":"AA","ctype":"Integer","cvalue":"2","id":4800467},{"accid":4800197,"benable":1,"bvisible":1,"ccaption":"件数小数位数","cdefault":"2","cid":"42","cname":"iNumDecDgt","csysid":"AA","ctype":"Integer","cvalue":"2","id":4800466},{"accid":4800197,"benable":0,"bvisible":0,"ccaption":"存货单价小数位","cdefault":"2","cid":"20","cname":"iStrsPriDecDgt","csysid":"AA","ctype":"Long","cvalue":"2","id":4800693},{"accid":4800197,"benable":0,"bvisible":0,"ccaption":"存货数量小数位","cdefault":"2","cid":"19","cname":"iStrsQuanDecDgt","csysid":"AA","ctype":"Long","cvalue":"2","id":4800681}],"accid":4800197,"accountBean":null,"enableList":null,"message":"1","startDate":null,"subId":null,"sysManagerId":null,"uaAccount":null,"uaAccountAboutData":null,"uaAccountList":null};
+	var accInfoList = data.accInfoList;
+	$.each(accInfoList,function(index,i){
+		if(i.cname == 'iStrsQuanDecDgt'){
+			$("#iStrsQuanDecDgt").val(i.cvalue);
+			$("#iStrsQuanDecDgtId").val(i.id);
+		}else if(i.cname == 'iStrsPriDecDgt'){
+			$('#iStrsPriDecDgt').val(i.cvalue);
+			$('#iStrsPriDecDgtId').val(i.id);
+		}else if(i.cname == 'iBillPrice'){
+			$('#iBillPrice').val(i.cvalue);
+			$('#iBillPriceId').val(i.id);
+		}else if(i.cname == 'iNumDecDgt'){
+			$('#iNumDecDgt').val(i.cvalue);
+			$('#iNumDecDgtId').val(i.id);
+		}else if(i.cname == 'iExchRateDecDgt'){
+			$('#iExchRateDecDgt').val(i.cvalue);
+			$('#iExchRateDecDgtId').val(i.id);
+		}
 	});
 		
 });

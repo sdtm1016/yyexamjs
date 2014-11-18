@@ -16,7 +16,7 @@ $(document).ready(function(){
 	}else{
 		$("#rd_1_2").attr("checked",true);
 	}
-	$.ajax({
+	/* $.ajax({
 		url:"../../portal/data/queryWageTypes.json",
 		type:"post",
 		success:function(data,status){
@@ -32,7 +32,28 @@ $(document).ready(function(){
 			tableTools();
 		},
 		dataType:"json"
+	}); */
+	
+	var data={
+			"wageList":[{
+				"cgzgradenum":"001",
+				"cgzgradename":"正式人员1"
+			},{
+				"cgzgradenum":"002",
+				"cgzgradename":"正式人员2"
+			}]};
+
+	var list = data.wageList;
+	$("#datatable_1_bodyer").html("");//清空下拉列表
+	var str = "";
+	$.each(list,function(index,i){
+		str = '<tr><td width="60">'+i.cgzgradenum +
+			  '</td><td>' + i.cgzgradename +
+			  '</td></tr>';
+		$("#datatable_1_bodyer").append(str);
 	});
+	tableTools();
+
 });
 //确认 
 function btnConfirm(){

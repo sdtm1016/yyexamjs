@@ -16,7 +16,7 @@ if(account == null || account.iyear == undefined || account.imonth == undefined)
 $(document).ready(function(){
 	var str = "[" + account.caccId +"]"+ account.caccName + " 账套启用会计期间 "+ account.iyear +" 年 "+ account.imonth +" 月";
 	$("#account").html(str);
-	$.ajax({
+	/*$.ajax({
 		async:false,
 		url: "data/queryModular.json",
 		type: 'post',
@@ -47,7 +47,33 @@ $(document).ready(function(){
 				$("#datatable_1_bodyer").append(str);
 			});
 		}
-	  });
+	  });*/
+	
+	var data={"enableList":[{"csubId":"GX","csubName":"购销","cvalue":null},{"csubId":"FA","csubName":"固定资产","cvalue":null},{"csubId":"GL","csubName":"账务处理","cvalue":null},{"csubId":"IA","csubName":"核算","cvalue":null},{"csubId":"WA","csubName":"工资管理","cvalue":null}],"message":"1"};
+	var list = data.enableList;
+	var str = "";
+	$("#datatable_1_bodyer").html("");
+	$.each(list,function(index,i){
+		var val="";
+		var valDate="";
+		if(i.cvalue != null){
+			val=i.cvalue.substring(0,7);
+			valDate=i.cvalue;
+			str = '<tr><td><input type="checkbox" checked="checked"';
+		}else{
+			str = '<tr><td><input type="checkbox" ';
+		}
+		initdate=initdate+"subId="+i.csubId+"&startDate="+valDate+"&";
+		str = str + 'onclick="dateFunc(this)"/><span>' + i.csubId
+			+ '</span></td><td>' + i.csubName
+			+ '</td><td>'+ val
+			+ '</td><td><input type="hidden" name="subId" value="' + i.csubId
+			+ '"/><input type="hidden" id="'+ i.csubId
+			+ '" name="startDate" value="' + valDate
+			+ '"/></td></tr>';
+		$("#datatable_1_bodyer").append(str);
+	});
+
 	
 	
 	/***** 选中行代码开始（如果不需要这些功能，直接将下面代码移出即可）*******/

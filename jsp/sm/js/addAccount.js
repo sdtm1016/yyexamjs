@@ -227,7 +227,7 @@ $(document).ready(function() {
 	//sysManagerId = 1;
 	
 	//页面加载后根据sysManagerId查询出企业类型、行业性质关联预置数据，以及所有预置已存账套和所有预置操作员
-	$.ajax({
+	/*$.ajax({
 	 	//url:"uaAccount!findAboutBySysManagerId.action", //?sysManagerId="+sysManagerId,
 		url:'data/findAboutBySysManagerId.json',
 	 	type:"get",
@@ -291,7 +291,65 @@ $(document).ready(function() {
 	 	error:function(data,status){
 	 		jAlert(data.message);
 	 	}
-	 });
+	 });*/
+	
+	var data={"accInfoList":null,"accid":null,"accountBean":null,"enableList":null,"message":null,"startDate":null,"subId":null,"sysManagerId":590129,"uaAccount":null,"uaAccountAboutData":{"glBtradeList":[{"ctradeEngl":null,"ctradeName":"2007年新会计准则","id":32,"itradeId":37,"orderid":0,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"新会计制度科目","id":37,"itradeId":25,"orderid":1,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"行政","id":1,"itradeId":0,"orderid":2,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"工业企业","id":2,"itradeId":1,"orderid":3,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"商品流通","id":3,"itradeId":2,"orderid":4,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"旅游饮食","id":4,"itradeId":3,"orderid":5,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"施工企业","id":5,"itradeId":4,"orderid":6,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"外商投资","id":6,"itradeId":5,"orderid":7,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"铁路运输","id":7,"itradeId":6,"orderid":8,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"对外合作","id":8,"itradeId":7,"orderid":9,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"房地产","id":9,"itradeId":8,"orderid":10,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"交通运输","id":10,"itradeId":9,"orderid":11,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"民航运输","id":11,"itradeId":10,"orderid":12,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"金融企业","id":12,"itradeId":11,"orderid":13,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"保险企业","id":13,"itradeId":12,"orderid":14,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"邮电通信","id":14,"itradeId":13,"orderid":15,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"农业企业","id":15,"itradeId":14,"orderid":16,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"股份制","id":16,"itradeId":15,"orderid":17,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"地质勘探","id":17,"itradeId":16,"orderid":18,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"普通事业","id":18,"itradeId":17,"orderid":19,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"科学事业","id":19,"itradeId":18,"orderid":20,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"医院","id":20,"itradeId":19,"orderid":21,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"建设单位","id":21,"itradeId":20,"orderid":22,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"种子","id":22,"itradeId":21,"orderid":23,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"国家物资储备","id":23,"itradeId":22,"orderid":24,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"中小学校","id":24,"itradeId":23,"orderid":25,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"高校","id":25,"itradeId":24,"orderid":26,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"社会保险-医疗","id":38,"itradeId":26,"orderid":28,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"社会保险-失业","id":39,"itradeId":27,"orderid":29,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"社会保险-养老","id":40,"itradeId":28,"orderid":30,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"社会保险-其他","id":41,"itradeId":29,"orderid":31,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"律师行业","id":42,"itradeId":30,"orderid":32,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"中国铁路","id":26,"itradeId":31,"orderid":33,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"医药","id":27,"itradeId":32,"orderid":34,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"小企业会计制度","id":28,"itradeId":33,"orderid":35,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"民间非营利组织","id":29,"itradeId":34,"orderid":36,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"村集体经济组织","id":30,"itradeId":35,"orderid":37,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"担保企业","id":31,"itradeId":36,"orderid":38,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"个体工商户","id":33,"itradeId":38,"orderid":40,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"个体工商户（简易）","id":34,"itradeId":39,"orderid":41,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"工会会计制度","id":36,"itradeId":40,"orderid":42,"sysManagerId":1},{"ctradeEngl":null,"ctradeName":"典当行业会计制度","id":35,"itradeId":43,"orderid":43,"sysManagerId":1}],"entTypeList":[{"entName":"商业","id":1,"remark1":null,"sysManagerId":1},{"entName":"工业","id":2,"remark1":null,"sysManagerId":1}],"uaAccountList":[{"caccId":"998","caccMaster":"demo","caccName":"天朗股份有限公司","caccPath":null,"ccurcode":"RMB","ccurname":"人民币","centtype":"工业","cfinkind":null,"cfintype":null,"ctradekind":"2007年新会计准则","cunitabbre":"天朗公司","cunitaddr":null,"cunitemail":null,"cunitfax":null,"cunitlp":null,"cunitname":"天朗股份有限公司","cunittaxno":null,"cunittel":null,"cunitzap":null,"id":4376102,"imonth":1,"iyear":2013,"original_id":null,"sysmanagerid":590129},{"caccId":"999","caccMaster":"demo","caccName":"电算化模拟考试账套","caccPath":null,"ccurcode":"RMB","ccurname":"人民币","centtype":"工业","cfinkind":null,"cfintype":null,"ctradekind":"2007年新会计准则","cunitabbre":"电算化模拟考试","cunitaddr":null,"cunitemail":null,"cunitfax":null,"cunitlp":null,"cunitname":"电算化模拟考试","cunittaxno":null,"cunittel":null,"cunitzap":null,"id":590134,"imonth":1,"iyear":2013,"original_id":null,"sysmanagerid":590129}],"uaUserList":[{"cdept":"演示部门","cpassword":"demo","cuserId":"demo","cuserName":"demo","iadmin":0,"id":590131,"nstate":0,"originalId":null,"sysmanagerid":590129},{"cdept":"财务部","cpassword":"1","cuserId":"901","cuserName":"张强","iadmin":0,"id":590132,"nstate":0,"originalId":null,"sysmanagerid":590129},{"cdept":"财务部","cpassword":"2","cuserId":"902","cuserName":"刘英","iadmin":0,"id":590133,"nstate":0,"originalId":null,"sysmanagerid":590129},{"cdept":"财务部","cpassword":"1","cuserId":"991","cuserName":"南方","iadmin":0,"id":593322,"nstate":0,"originalId":null,"sysmanagerid":590129},{"cdept":"会计部","cpassword":"123","cuserId":"001","cuserName":"罗罗","iadmin":0,"id":3798832,"nstate":0,"originalId":null,"sysmanagerid":590129}]},"uaAccountList":null};
+		
+		//existed 已存账套
+		var uaAccountList = data.uaAccountAboutData.uaAccountList;
+		$("#existed").empty();//清空下拉列表
+		$.each(uaAccountList,function(index,uaAccount){
+			
+			$("#existed")[0].options.add(new Option("["+uaAccount.caccId+"]"+uaAccount.caccName,uaAccount.caccId,false,false));
+			
+			//TODO 此处在出现浏览器兼容性问题时，尝试下面的方式
+			//$("#existed").append("<option>["+uaAccount.caccId+"]"+uaAccount.caccName+"</option>");
+		});
+		
+		//centtype_s 企业类型 centtype
+		var entTypeList = data.uaAccountAboutData.entTypeList;
+		$("#centtype_s").empty();//清空下拉列表
+		$.each(entTypeList,function(index,entType){
+			
+			$("#centtype_s")[0].options.add(new Option(entType.entName,entType.entName,false,false));
+			//TODO 此处在出现浏览器兼容性问题时，尝试下面的方式
+			//$("#existed").append("<option>["+uaAccount.caccId+"]"+uaAccount.caccName+"</option>");
+			if(entType.entName=="工业"){
+				$('#centtype').val(entType.entName);
+				$('#centtype_s').val(entType.entName);
+			}
+		});
+		
+		//ctradekind_s 行业性质 ctradekind
+		var glBtradeList = data.uaAccountAboutData.glBtradeList;
+		$("#ctradekind_s").empty();//清空下拉列表
+		$.each(glBtradeList,function(index,glBtrade){
+			
+			$("#ctradekind_s")[0].options.add(new Option(glBtrade.ctradeName,glBtrade.ctradeName,false,false));
+			
+			//TODO 此处在出现浏览器兼容性问题时，尝试下面的方式
+			//$("#existed").append("<option>["+uaAccount.caccId+"]"+uaAccount.caccName+"</option>");
+		});
+		$("#ctradekind").val(glBtradeList[0].ctradeName);
+		ctradekind=glBtradeList[0].ctradeName;//默认将下拉表第1项值赋值给全局变量，用于弹出科目预览窗体调用查询
+		
+		//caccMaster_s 操作员 caccMaster
+		var uaUserList = data.uaAccountAboutData.uaUserList;
+		$("#caccMaster_s").empty();//清空下拉列表
+		$.each(uaUserList,function(index,uaUser){
+			
+			//mod by lval 20130506
+			//$("#caccMaster_s")[0].options.add(new Option("["+uaUser.cuserId+"]"+uaUser.cuserName,uaUser.cuserName,false,false));  
+			$("#caccMaster_s")[0].options.add(new Option("["+uaUser.cuserId+"]"+uaUser.cuserName,uaUser.cuserId,false,false)); 
+			
+			//TODO 此处在出现浏览器兼容性问题时，尝试下面的方式
+			//$("#existed").append("<option>["+uaAccount.caccId+"]"+uaAccount.caccName+"</option>");
+		});
+		//mod by lval 20130506
+		//$("#caccMaster").val(uaUserList[0].cuserName);
+		$("#caccMaster").val(uaUserList[0].cuserId);
+	
+	
 	var date = ( new Date() || currentDate );
 	
 	//初始化会计期年
