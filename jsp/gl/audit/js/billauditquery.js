@@ -315,6 +315,9 @@ function getQueryParamValue() {
 			type:"post",
 			datatype:"json",
 			success:function(data,status){
+				if(typeof data =='string'){
+					data=JSON.parse(data);
+				}
 				setInitQueryValue(data);
 			}
 		});

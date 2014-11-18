@@ -188,7 +188,7 @@
 				/* if(treeNode.id!="SUPTYPE"){
 					vendorCode={code:treeNode.id};
 				} */
-				$.ajax({
+				/* $.ajax({
 					url:"data/queryVendorByCvccode.json",
 					data:vendorCode,
 					type:"post",
@@ -198,30 +198,45 @@
 				           jAlert('请求失败');   
 					},
 					success:function(data){
-						var vendorList = data.vendorList;
-						var length = vendorList.length;
-						var strHtml = "";
-						for (var i = 0; i<length; i++){
-							strHtml +="<tr id='"+vendorList[i].id+"' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvencode) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvenname) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvenabbname) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvenhelp) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvccode) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvenaddress) + "</td>";
-							strHtml +="<td >"+ getStrDate(vendorList[i].dvendevdate) + "</td>";
-							strHtml +="<td >"+ strNullProc(vendorList[i].cvenpperson) + "</td>";
-							strHtml +="<td >"+ getStrDate(vendorList[i].denddate) + "</td>";
-							strHtml+="</tr>";
-						}
-						$("#datatable_bodyer").empty().append(strHtml);
-						//选中第一行数据
-						if(length>0){
-							selectCurrentRow($("#datatable_bodyer >tr")[0]);
-						}
-						document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
 					}
-				});
+				}); */
+				var data={"vendorList":[
+					{
+						"cvencode":"001",
+						"cvenname":"北京光明中学",
+						"cvenabbname":"光明中学",
+						"cvccode":"00",
+						"cvenaddress":""
+					},{
+						"cvencode":"002",
+						"cvenname":"广州力宏公司",
+						"cvenabbname":"广州力宏",
+						"cvccode":"00",
+						"cvenaddress":""
+					}
+					]};
+				var vendorList = data.vendorList;
+				var length = vendorList.length;
+				var strHtml = "";
+				for (var i = 0; i<length; i++){
+					strHtml +="<tr id='"+vendorList[i].id+"' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvencode) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenname) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenabbname) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenhelp) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvccode) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenaddress) + "</td>";
+					strHtml +="<td >"+ getStrDate(vendorList[i].dvendevdate) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenpperson) + "</td>";
+					strHtml +="<td >"+ getStrDate(vendorList[i].denddate) + "</td>";
+					strHtml+="</tr>";
+				}
+				$("#datatable_bodyer").empty().append(strHtml);
+				//选中第一行数据
+				if(length>0){
+					selectCurrentRow($("#datatable_bodyer >tr")[0]);
+				}
+				document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
 			}
 		</script>
 	</head>

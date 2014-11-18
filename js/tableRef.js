@@ -57,7 +57,7 @@
    */
   function getCurAccidPeriod() {
 	  var uaPeriodList = null;
-	  $.ajax({
+	  /*$.ajax({
 		    url: "/yyexamjs/data/queryUaPeriods.json",
 		    type: 'post',
 		    dataType: "json",
@@ -65,7 +65,7 @@
 		    success: function(data){
 		    	uaPeriodList = data.uaPeriods;
 		    }
-	  });
+	  });*/
 	  var periodList = new Array(12);
 	  for (var i = 0; i<uaPeriodList.length; i++) {
 		  var UaPeriod = uaPeriodList[i];

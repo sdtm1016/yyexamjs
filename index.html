@@ -223,6 +223,7 @@ function gotoQuestion(currentIndex){
   	$(".Titlelist>textarea").val(questions[currentIndex][0]); 
 	$("#myModal").html(questions[currentIndex][1]);
 	$("#rightiframe").attr("src","default.html");
+	$('#score_area').text('0');
 }
  
 function getNowFormatDate() {
