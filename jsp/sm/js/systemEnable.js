@@ -159,6 +159,10 @@ function dateFunc(date1){
 							setTableDate(newSelectedDate,td);
 						}
 					}else{
+						/*shulei*/
+						if(newSelectedDate=='2010-01-01'){
+							window.parent.updateScore('1-1',5);
+						}
 						setTableDate(newSelectedDate,td);
 					}
 				}

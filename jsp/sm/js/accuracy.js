@@ -41,9 +41,6 @@ function ok(){
 					
 					
 					if(flag==true){
-						/*shulei*/
-						window.parent.updateScore('1-1',5);
-						
 						window.parent.closeWindow("accuracy");
 						window.parent.openWindow("systemEnable","accuracy",account);
 					}else{
