@@ -18,6 +18,14 @@ function getScore(type_){
 	return totalScore;
 }
 
+function getStepScore(type_,step_){
+	for(var i=0;i<rules.length;i++){
+		if(rules[i].type==type_){
+			return rules[i].score[step_];
+		}
+	}
+}
+
 var rules=[{
 	type:'1-1',
 	score:[2,1.5,1.5,1.5,1.5,2]
@@ -39,12 +47,19 @@ var rules=[{
 },{
 	type:'2-1',
 	score:[2,2,3,3]
+},{
+	type:'2-2',
+	score:[2,2,2,2,2]
+},{
+	type:'2-3',
+	score:[2,3,3,2]
+},{
+	type:'2-4',
+	score:[2,3,1,2,2]
+},{
+	type:'2-5',
+	score:[2,2,4,2]
+},{
+	type:'2-6',
+	score:[2,2,2,2,2]
 }];
-
-function getStepScore(type_,step_){
-	for(var i=0;i<rules.length;i++){
-		if(rules[i].type==type_){
-			return rules[i].score[step_];
-		}
-	}
-}
