@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../../js/jquery-1.7.2.js"></script>
 <title>录入关键字</title>
 <style>
 body{
@@ -13,6 +14,12 @@ p{
 </style>
 <script>
 function input_keyword_ok(){
+	var year=$('input[name=year]').val();
+	var month=$('input[name=month]').val();
+	var day=$('input[name=day]').val();
+	if((year=='2010')&&(month=='03'||month=='3')&&(day=='31')){
+		window.parent.parent.updateScore('1-3',3);
+	}
 	window.parent.closeWindow('input_keyword');
 	window.parent.confirm_recaldata();
 }

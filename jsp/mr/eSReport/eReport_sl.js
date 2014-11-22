@@ -1,3 +1,4 @@
+var keyword={};
 $(function(){
 	$('.keyword_menus>li').addClass('disabled');
 	$('.keyword_dt').removeClass('disabled');
@@ -17,6 +18,7 @@ $(function(){
 		if(menuText.indexOf('打开')>-1){
 			$('#content .part2').show();
 		}else if(menuText.indexOf('表页')>-1){
+			window.parent.updateScore('1-3',0);
 			$('#content .part4').show();
 		}
 	});
@@ -75,6 +77,10 @@ $(function(){
 		$('.part5').show();
 		$('.page2').addClass('active');
 		$('.page1').removeClass('active');
+	});
+	
+	$('#cmdFileSave').click(function(){
+		window.parent.updateScore('1-3',3);
 	});
 });
 

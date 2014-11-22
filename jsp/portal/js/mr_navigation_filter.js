@@ -21,7 +21,7 @@ function mr_navigation_filter(){
 	
 	toPage('MR','default.html');
 	//openWindow('mr_eSReport_eReport');
-	openWindow('mr_shulei_eReport');
+	openWindow('mr_eSReport_eReport_sl');
 	return true;
 }
 

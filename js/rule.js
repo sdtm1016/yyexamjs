@@ -25,6 +25,9 @@ var rules=[{
 	type:'1-2',
 	score:[10]
 },{
+	type:'1-3',
+	score:[2,4,2,2]
+},{
 	type:'1-4',
 	score:[10]
 },{
