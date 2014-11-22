@@ -2,13 +2,18 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>存货参照</title>
+		<title>货物参照</title>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
 		<style type="text/css">
 			#footer{width:100%;margin-left:4px;}
 			#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
 			#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
 			#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+	#inventoryClassTree_3_ico,#inventoryClassTree_2_ico,.ztree li span.button.ico_open {
+			margin-right: 2px;
+			background-position: -110px -16px;
+			vertical-align: top;
+			}
 		</style>
 	    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
 	    <script type="text/javascript" src="../../../js/tableRef.js"></script>
@@ -20,7 +25,6 @@
 		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
 		<script type="text/javascript">
 			//上个页面穿过来的参数
-			var parentParam = window.parent.valueMap.get("basic_comref_inventoryref");
 			//返回被选中的数据对象
 			function returnSelected(tr){
 				var param={};
@@ -36,12 +40,16 @@
 				window.parent.deliverValue("basic_comref_inventoryref",param);
 				window.parent.closeWindow("basic_comref_inventoryref");
 			}
+			var parentParam = window.parent.valueMap.get("basic_comref_inventoryref");
+
 			//单击表格时选中此行数据
 			function selectCurrentRow(obj){
 				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
 			}
 			//程序入口
 			$(document).ready(function(){
+			var zTree = $.fn.zTree.getZTreeObj("inventoryClassTree");
+
 				var gradeValue = grademarkValue('inventoryclass'); 
 				//存货分类编码原则
 				$("#bmgz").attr("gradeValue",gradeValue);
@@ -62,7 +70,7 @@
 					dataType:"json",
 					async:false,
 					error:function(){
-						jAlert("请求失败!");
+						//jAlert("请求失败!");
 					},
 					success: function(data){
 						isCusCategoryBz = data.isCategory;
@@ -94,15 +102,23 @@
 					}
 				};
 				//ztree加载树节点
-				$.ajax({
+		   var zNodes =[  
+	            {id:1, pId:0, name:"存货档案", open:true},  
+	            {id:2, pId:1, name:"1 办公设备"} ,
+	            {id:3, pId:1, name:"2 软件"} 
+ 	        ];  
+            $.fn.zTree.init($("#inventoryClassTree"), setting, zNodes);  
+        
+
+				/*$.ajax({
 					url:"inventoryClass!queryInventoryClass.action",
 					type:"post",
 					dataType:"json",
 					async : false,   
 					error: function () {
-			            jAlert('请求失败');   
+			            //jAlert('请求失败');   
 			        }, 
-					success:function(jsonData){
+					success:function(zNodes){
 						inventoryClassList = jsonData.inventoryClassList;
 						zNodes = getInventoryClassListNodes(inventoryClassList);
 						$.fn.zTree.init($("#inventoryClassTree"), setting, zNodes);
@@ -124,21 +140,21 @@
 	        			//显示存货档案列表
 	        			showInventoryrefInformation(selNode);
 					}
-				});	
+				 });	*/
 			}
 			//获取存货分类树节点的方法
 			function getInventoryClassListNodes(inventoryClassList){
 				zNodes = [];
 				var gradeValue= $("#bmgz").attr("gradeValue");
 				if(gradeValue==""){
-					jAlert("编码规则不能为空!");
+					//jAlert("编码规则不能为空!");
 					return;
 				}
 				var node = "";
 				var inventoryClass;
 				var nodeObj;
 				//根节点
-				node = "{id:'CHTYPE',name:'存货分类',open:true}";
+				node = "{id:'CHTYPE',name:'货物分类',open:true}";
 				nodeObj =  eval('(' + node + ')') ;
 	        	zNodes.push(nodeObj);
 				for(var i=0;i<inventoryClassList.length;i++){
@@ -194,7 +210,7 @@
 					datatype:"json",
 					async : false,   
 					error: function () {
-				           jAlert('请求失败');   
+				           //jAlert('请求失败');   
 					},
 					success:function(data){
 						var inventoryList = data.inventoryList;
@@ -235,37 +251,14 @@
 						<div><input type="button" value="栏目" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
 						<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
 						<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
-						<div><input type="button" value="刷新" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
-						<div><input type="button" value="返回" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
+						<div><input type="button" value="帮助" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/help.gif');"/></div>
 						<div><input type="button" value="退出"  onclick="window.parent.closeWindow('basic_comref_inventoryref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
 					</div>
 				</div>
-				<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
-					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
-						<div style="margin-top:3px;">
-							查询：<select disabled="disabled">
-								<option>供应商助记码</option>
-								<option>AAAAAAAA</option>
-								<option>BBBBBBBBB</option>
-							</select><input type="text" style="width:110px;"/><input disabled="disabled" type="button" class="finder"/>
-						</div>
-					</div>
-				</div>
-				<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
-					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
-						<legend>模糊匹配定位：</legend>
-						<div style="height:20px;">
-							<input type="radio" value = "1" disabled="disabled" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
-							<input type="radio" value = "2" disabled="disabled" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
-							<input type="radio" value = "3" disabled="disabled" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
-							<input type="radio" value = "4" disabled="disabled" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
-						</div>
-					</fieldset>
-					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
-				</div>
+			
 			</div>
 			<div style="width:100%;height:274px;margin-left:4px;">
-				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:10px;background-color:#fff;float:left;overflow-y:auto;">
 					<ul id="inventoryClassTree" class="ztree"></ul>
 				</div>
 				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
@@ -273,7 +266,7 @@
 						<thead>
 							<tr id="datatable_header">
 								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
-								<td style="width:150px;">存货编码</td>
+								<td style="width:150px;">存货编号</td>
 								<td style="width:150px;">存货代码</td>
 								<td style="width:300px;">存货名称</td>
 								<td style="width:350px;">规格型号</td>
@@ -287,6 +280,58 @@
 							</tr>
 						</thead>
 						<tbody id="datatable_bodyer">
+							<tr class="selectCurr" > 
+								<td style="width:150px;height: 20px;line-height: 20px;">001</td>
+								<td style="width:200px;">1001</td>
+								<td style="width:200px;">电脑</td>
+								<td style="width:150px;">DELL</td>
+								<td style="width:150px;">台</td>
+								<td style="width:100px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+							<tr class="selectCurr" ondblclick="returnSelected(this)" > 
+								<td style="width:150px;height: 20px;line-height: 20px;">002</td>
+								<td style="width:200px;">2002</td>
+								<td style="width:200px;">打印机</td>
+								<td style="width:150px;">南天PR9</td>
+								<td style="width:250px;">台</td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+							<tr class="selectCurr" > 
+								<td style="width:150px;height: 20px;line-height: 20px;">003</td>
+								<td style="width:200px;">3003</td>
+								<td style="width:200px;">杀毒软件</td>
+								<td style="width:150px;">瑞星2011</td>
+								<td style="width:250px;">套</td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+							<tr class="selectCurr" > 
+								<td style="width:150px;height: 20px;line-height: 20px;">004</td>
+								<td style="width:200px;">4004</td>
+								<td style="width:200px;">多媒体学习软件</td>
+								<td style="width:150px;">V3.0</td>
+								<td style="width:250px;">套</td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
 						</tbody>
 					</table>
 				</div>

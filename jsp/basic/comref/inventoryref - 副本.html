@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>货物参照</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<style type="text/css">
+			#footer{width:100%;margin-left:4px;}
+			#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+			#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+			#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+		</style>
+	    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+		<!-- 规则表 -->
+		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+		<script type="text/javascript">
+			//上个页面穿过来的参数
+			var parentParam = window.parent.valueMap.get("basic_comref_inventoryref");
+			//返回被选中的数据对象
+			function returnSelected(tr){
+				var param={};
+				//存货编码
+				param.ccode=tr.cells[0].innerHTML;
+				//存货名称
+				param.cname=tr.cells[2].innerHTML;
+				//规格型号
+				param.ctype=tr.cells[3].innerHTML;
+				//计量单位
+				param.cunit=tr.cells[4].innerHTML;
+				param.id=$(tr).attr("id");
+				window.parent.deliverValue("basic_comref_inventoryref",param);
+				window.parent.closeWindow("basic_comref_inventoryref");
+			}
+			//单击表格时选中此行数据
+			function selectCurrentRow(obj){
+				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+			}
+			//程序入口
+			$(document).ready(function(){
+				var gradeValue = grademarkValue('inventoryclass'); 
+				//存货分类编码原则
+				$("#bmgz").attr("gradeValue",gradeValue);
+				//判断是有允许分类(如果不允许则默认添加一条记录)
+				isInventoryCategory();
+				//加载存货分类树
+				queryInventoryClassTree(null);
+			});
+			/**
+			 * 是否允许存货分类，允许返回true，否则返回false
+			 * @returns {Boolean}
+			 */
+			var isCusCategoryBz = true;
+			function isInventoryCategory() {
+				$.ajax({
+					url:"inventory!isInventoryCategory",
+					type:"post",
+					dataType:"json",
+					async:false,
+					error:function(){
+						jAlert("请求失败!");
+					},
+					success: function(data){
+						isCusCategoryBz = data.isCategory;
+					}
+				});
+			}
+			//树节点集合的全局变量
+			var zNodes = [];
+			//当前选中的树节点
+			var currentTreeNode=null;
+			//保存时状态的全局变量
+			var action = null;
+			//所有存货分类对象的集合
+			var inventoryClassList=null;
+			//当前选中存货档案
+			var currentClickedRow=null;
+			//查询存货分类树
+			function queryInventoryClassTree(inventoryClassCode){
+				//ztree配置
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						onClick: ZtreeClick,
+						onDblClick: ZtreeDblClick
+					}
+				};
+				//ztree加载树节点
+				$.ajax({
+					url:"inventoryClass!queryInventoryClass.action",
+					type:"post",
+					dataType:"json",
+					async : false,   
+					error: function () {
+			            jAlert('请求失败');   
+			        }, 
+					success:function(jsonData){
+						inventoryClassList = jsonData.inventoryClassList;
+						zNodes = getInventoryClassListNodes(inventoryClassList);
+						$.fn.zTree.init($("#inventoryClassTree"), setting, zNodes);
+						//默认选中节点(根节点)
+						var zTree = $.fn.zTree.getZTreeObj("inventoryClassTree");
+						if(inventoryClassCode==null){
+							inventoryClassCode = "CHTYPE";
+							//获取第一个末级节点
+							for(var i=0;i<inventoryClassList.length;i++){
+								var theInventoryClass = inventoryClassList[i];
+								if(theInventoryClass.binvcend==1){
+									inventoryClassCode = theInventoryClass.cinvccode;
+									break;
+								}
+							}
+						}
+						var selNode = zTree.getNodeByParam("id", inventoryClassCode);
+	        			zTree.selectNode(selNode);
+	        			//显示存货档案列表
+	        			showInventoryrefInformation(selNode);
+					}
+				});	
+			}
+			//获取存货分类树节点的方法
+			function getInventoryClassListNodes(inventoryClassList){
+				zNodes = [];
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				if(gradeValue==""){
+					jAlert("编码规则不能为空!");
+					return;
+				}
+				var node = "";
+				var inventoryClass;
+				var nodeObj;
+				//根节点
+				node = "{id:'CHTYPE',name:'存货分类',open:true}";
+				nodeObj =  eval('(' + node + ')') ;
+	        	zNodes.push(nodeObj);
+				for(var i=0;i<inventoryClassList.length;i++){
+					inventoryClass = inventoryClassList[i];
+					//本级次
+					var iinvcgrade = inventoryClass.iinvcgrade;
+					//存货分类编码
+					var cinvccode = inventoryClass.cinvccode;
+					//父节点id
+					var parentid ;
+					if(iinvcgrade==1){
+						parentid = "CHTYPE";
+					}else{
+						var rule = gradeValue.charAt(iinvcgrade-1);
+						var endindex = cinvccode.length-rule;
+						parentid = cinvccode.substring(0,endindex);
+					}
+					node = "{" + "id:'" + cinvccode + "'," + "pId:'" + parentid + "',"
+					+ "iinvcgrade:'" + inventoryClass.iinvcgrade + "',"	
+					+ "inventoryClassId:'" + inventoryClass.id + "',"
+					+ "inventoryClassName:'" + inventoryClass.cinvcname + "',"
+					+ "binvcend:'" + inventoryClass.binvcend + "',"
+					+ "name:'(" +cinvccode+")"+ inventoryClass.cinvcname + "'" + ",open:true" + "}";
+					
+					nodeObj =  eval('(' + node + ')') ;
+	            	zNodes.push(nodeObj);
+				}
+				return zNodes;
+			}
+			//ztree单击事件
+			function ZtreeClick(event, treeId, treeNode, clickFlag){
+				showInventoryrefInformation(treeNode);
+			}
+			//ztee双击事件
+			function ZtreeDblClick(event, treeId, treeNode){
+				
+			}
+			//根据存货分类编码查询存货档案
+			function showInventoryrefInformation(treeNode){
+				var inventoryCode={};
+				var findType =""; 
+				if(typeof(parentParam.type)!="undefined"){
+					findType = parentParam.type;
+				}
+				if(treeNode.id!="CHTYPE"){
+					inventoryCode={code:treeNode.id};
+				}
+				inventoryCode.type=findType;
+				$.ajax({
+					url:"inventory!findInventoryBy",
+					data:inventoryCode,
+					type:"post",
+					datatype:"json",
+					async : false,   
+					error: function () {
+				           jAlert('请求失败');   
+					},
+					success:function(data){
+						var inventoryList = data.inventoryList;
+						var length = inventoryList.length;
+						var strHtml = "";
+						for (var i = 0; i<length; i++){
+							strHtml +="<tr id='"+inventoryList[i].id+"' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvcode) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvaddcode) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvname) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvstd) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvmUnit) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvaUnit) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].iinvexchrate) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvdefine1) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvdefine2) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvdefine3) + "</td>";
+							strHtml +="<td >"+ strNullProc(inventoryList[i].cinvhelp) + "</td>";
+							strHtml +="</tr>";
+						}
+						$("#datatable_bodyer").empty().append(strHtml);
+						//选中第一行数据
+						if(length>0){
+							selectCurrentRow($("#datatable_bodyer >tr")[0]);
+						}
+						document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
+					}
+				});
+			}
+		</script>
+	</head>
+	<body style="padding:0px;">
+		<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+			<div style="width:100%;height:36px;">
+				<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
+					<div class="group" style="margin-top:2px;">
+						<div><input type="button" value="栏目" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+						<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+						<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+						<div><input type="button" value="刷新" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+						<div><input type="button" value="返回" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
+						<div><input type="button" value="退出"  onclick="window.parent.closeWindow('basic_comref_inventoryref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+					</div>
+				</div>
+				<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
+					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
+						<div style="margin-top:3px;">
+							查询：<select disabled="disabled">
+								<option>供应商助记码</option>
+								<option>AAAAAAAA</option>
+								<option>BBBBBBBBB</option>
+							</select><input type="text" style="width:110px;"/><input disabled="disabled" type="button" class="finder"/>
+						</div>
+					</div>
+				</div>
+				<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+						<legend>模糊匹配定位：</legend>
+						<div style="height:20px;">
+							<input type="radio" value = "1" disabled="disabled" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+							<input type="radio" value = "2" disabled="disabled" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+							<input type="radio" value = "3" disabled="disabled" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+							<input type="radio" value = "4" disabled="disabled" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+						</div>
+					</fieldset>
+					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
+				</div>
+			</div>
+			<div style="width:100%;height:274px;margin-left:4px;">
+				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+					<ul id="inventoryClassTree" class="ztree"></ul>
+				</div>
+				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+					<table id="datatable" border=1 class="table_style" style="width:1000px;">
+						<thead>
+							<tr id="datatable_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:150px;">存货编码</td>
+								<td style="width:150px;">存货代码</td>
+								<td style="width:300px;">存货名称</td>
+								<td style="width:350px;">规格型号</td>
+								<td style="width:300px;">主计量单位</td>
+								<td style="width:200px;">辅计量单位</td>
+								<td style="width:150px;">换算率</td>
+								<td style="width:200px;">自由项1</td>
+								<td style="width:200px;">自由项2</td>
+								<td style="width:200px;">自由项3</td>
+								<td style="width:160px;">存货助记码</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_bodyer">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- 底部状态栏容器 S -->
+			<div id="footer">
+				<div  style="margin-left:0px;">定位列名：</div>
+				<div id="selColumn" >常用摘要正文</div>
+				<div id="loadRecord" > 已加载n条记录</div>
+				<div id = "selRecord" >已选中n条记录</div>
+			</div>
+			<!-- 底部状态栏容器 E -->
+		</div>
+		<input id="bmgz" type="hidden"/>
+	</body>
+</html>

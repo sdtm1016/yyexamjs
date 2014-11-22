@@ -1,6 +1,4 @@
-/**
- * 采购发票页面js
- */
+
 //全局变量 是是否记账标志 true:记账  false：未记账
 var accountingFlag=false;
 //全局变量 保存按钮的调用方法
@@ -67,7 +65,7 @@ function queryPurBillVouchs(purBillVouchId) {
 	}else{
 		purBillVouchData = "purBillVouch.id="+ purBillVouchId;	
 	}
-	$.ajax({
+	/*$.ajax({
 		url: "purBillVouch!queryList.action",
 		type: 'post',
 		data:purBillVouchData,
@@ -97,13 +95,13 @@ function queryPurBillVouchs(purBillVouchId) {
 				}
 			}
 			//设置数据
-			setpurBillVouchData(purBillVouch,purBillVouchsList);
+			//setpurBillVouchData(purBillVouch,purBillVouchsList);
 			//设置分页功能
 			setPaging(purBillVouchList,purBillVouch);
 			//页面数据不可操作
 			pageUnused();
 		}
-	});
+	});*/
 }
 //分页功能
 function setPaging(purBillVouchList,purBillVouch){
@@ -396,24 +394,25 @@ function setpurBillVouchData(purBillVouch,purBillVouchsList){
 		sumIorTaxMoney = 0;
 		//全局变量子表原币价税合计值
 		sumTaxMoney = 0;
+		var i=1; 
 		for(var i=0;i<purBillVouchsList.length;i++){
 			var inventory = getInventoryByCode(purBillVouchsList[i].cinvcode);
-			strHtml+="<tr purBillVouchsId='"+purBillVouchsList[i].id+"' onclick='rowSelection(this)' editerType='1' >";
-			strHtml+="	<td style='width:20px;' onclick='setEditerType(this)'>*</td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvcode)+"</td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvname)+"</td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvstd)+"</td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvmUnit)+"</td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ipbvquantity)+"</td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ioricost)+"</td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].iorimoney)+"</td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ioritaxprice)+"</td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].icost)+"</td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].imoney)+"</td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].itaxprice)+"</td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].isum)+"</td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].iorisum)+"</td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].itaxrate)+"</td>";  
+			strHtml+="<tr purBillVouchsId='"+purBillVouchsList[i].id+"'    class='tr'+(i)+'  onclick='rowSelection(this)' editerType='1' >";
+			strHtml+="	<td style='width:20px;'   class='td1'   onclick='setEditerType(this)'>"+(i++)+"</td>";
+			strHtml+="	<td style='width:70px;'   class='td2' class='td1' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvcode)+"</td>";
+			strHtml+="	<td style='width:90px;'   class='td3'  class='td1' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvname)+"</td>";
+			strHtml+="	<td style='width:80px;'   class='td4'  class='td1' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvstd)+"</td>";
+			strHtml+="	<td style='width:60px;'   class='td5'  class='td1' ondblclick='cellEditer(this)'>"+strNullProc(inventory.cinvmUnit)+"</td>";
+			strHtml+="	<td style='width:60px;'   class='td6'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ipbvquantity)+"</td>";
+			strHtml+="	<td style='width:70px;'   class='td7'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ioricost)+"</td>";
+			strHtml+="	<td style='width:80px;'   class='td8'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].iorimoney)+"</td>";
+			strHtml+="	<td style='width:60px;'   class='td9'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].ioritaxprice)+"</td>";
+			strHtml+="	<td style='width:70px;'   class='td10'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].icost)+"</td>";
+			strHtml+="	<td style='width:80px;'   class='td11'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].imoney)+"</td>";
+			strHtml+="	<td style='width:60px;'   class='td12'  class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].itaxprice)+"</td>";
+			strHtml+="	<td style='width:90px;'    class='td13' class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].isum)+"</td>";
+			strHtml+="	<td style='width:90px;'    class='td14' class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].iorisum)+"</td>";
+			strHtml+="	<td style='width:60px;'    class='td15' class='td1' ondblclick='cellEditer(this)'>"+DoubleNullPtoc(purBillVouchsList[i].itaxrate)+"</td>";  
 			strHtml+="</tr>";
 			sumAmount+=DoubleNullPtoc(purBillVouchsList[i].ipbvquantity);
 			sumIorimoney+=DoubleNullPtoc(purBillVouchsList[i].iorimoney);
@@ -425,22 +424,22 @@ function setpurBillVouchData(purBillVouch,purBillVouchsList){
 		}
 		//插入10行空行
 		for(var j=0;j<10;j++){
-			strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)' editerType='0' >";
-			strHtml+="	<td style='width:20px;' onclick='setEditerType(this)'></td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";  
+			strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)'   class='tr'+(i)+'   editerType='0' >";
+			strHtml+="	<td style='width:20px;' class='td1' onclick='setEditerType(this)'>(i++)</td>";
+			strHtml+="	<td style='width:70px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:90px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:80px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;'class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:70px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:80px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";  
 			strHtml+="</tr>";
 		}
 		$("#datatable_bodyer").empty().append(strHtml);
@@ -597,21 +596,21 @@ function clearInvoice(){
 	//插入10行空行
 	for(var j=0;j<10;j++){
 		strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)' editerType='0'>";
-		strHtml+="	<td style='width:20px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-		strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";  
+		strHtml+="	<td style='width:20px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";  
 		strHtml+="</tr>";
 	}
 	$("#datatable_bodyer").empty().append(strHtml);
@@ -719,7 +718,7 @@ function addPurchaseInvoice(type){
 	//设置开票日期
 	//$("#dpbvdate").val(getCookie("operDate"));
 	//设置当前操作人
-	$("#cpbvmaker").val(getCookie("userName"));
+	//$("#cpbvmaker").val(getCookie("userName"));
 }
 function giveup(){
 	//重新查一遍
@@ -801,10 +800,11 @@ var iflag = null;
 var fpfangxiang = 0;
 //保存发票信息
 function savePurBill() {
+	// jAlert("保存成功!");
 	//保存时校验
-	if (checkSave()==false) {
+/*	if (checkSave()==false) {
 		return false;
-	}
+	}*/
 	//获取主表信息
 	var purBillVouch = getPurBillvouchInfo();
 	//获取子表信息
@@ -812,16 +812,16 @@ function savePurBill() {
 	var data = purBillVouch+ "&purBillVouch.iamount=" + sumIorTaxMoney+ purBillVouchsList;
 	//保存方法的url
 	var url = "";
-	if (action=="add") {
+/*	if (action=="add") {
 		url="purBillVouch!create.action";
 	}else if (action=="update"){
 		url="purBillVouch!update.action";
 	}else{
 		return false;
-	}
+	}*/
 	//保存按钮不可用
 	$("#savePur").attr("disabled",true);
-	$.ajax({
+/*	$.ajax({
 		url: url,
 		type: 'post',
 		data:data,
@@ -837,12 +837,14 @@ function savePurBill() {
 			}
 			queryPurBillVouchs(currentpurBillVouchId);	
 		}
-	  });
+	  });*/
+			queryPurBillVouchs(currentpurBillVouchId);	
+
 }
 /**
  * 保存前校验
  */
-function checkSave() {
+/*function checkSave() {
 	if ($("#cpbvcode").val()=="") {
 		jAlert("发票号不允许为空！","提示信息",function(){
 			$("#cpbvcode").focus();
@@ -911,7 +913,7 @@ function checkSave() {
 	}
 	//第几行的数量和金额不能同时为零
 	return true;
-}
+}*/
 /**
  * 修改采购发票
  */
@@ -1141,21 +1143,21 @@ function addRow(theRow){
 function addEmptyRow(){
 	var strHtml="";
 	strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)' editerType='0'>";
-	strHtml+="	<td style='width:20px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:70px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:80px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:90px;' ondblclick='cellEditer(this)'></td>";
-	strHtml+="	<td style='width:60px;' ondblclick='cellEditer(this)'></td>";  
+	strHtml+="	<td style='width:20px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";  
 	strHtml+="</tr>";
 	$("#datatable_bodyer").append(strHtml);
 }
@@ -1180,9 +1182,15 @@ function deleteRow(){
 	}
 }
 //接收弹窗返回值
-/*function deliverValue(param){
+function deliverValue(param){
 	//jAlert("存货档案编码："+param.ccode+"，存货档案名称："+param.cname+"税率"+param.itaxrate+"计量单位："+param.cinvmUnit+"规格型号"+param.cinvstd);
-}*/
+}
+function deliverValue(param){
+	 $(".td1").eq(1).html(param.ccode);
+	  $(".td1").eq(2).html(param.cname); 
+	   $(".td1").eq(3).html("南天PR9");
+	    $(".td1").eq(4).html("台");
+}
 //双击表格的单元格的事件
 function cellEditer(cell){
 	if(action==null||$(cell).find("input").length!=0){
@@ -1194,10 +1202,22 @@ function cellEditer(cell){
 		var title = document.getElementById("datatable_header").rows[0].cells[cell.cellIndex].innerHTML;
 		var querybox="";
 		switch(title){
-			case "存货编码":
+			case "货物编码":
 				querybox = "<div><input type='text' id='currentEditorInput'  class='querybox' style='width:100%;border:none;' onfocus=\"dofocustoenter('Inventory',this,'','','','')\"  value='"+$(cell).text()+"' onclick='queryBoxClick(this)'  /><input type='button' class='innerfinder' style='display:block;margin-top:0px;' onclick='tableCellWindowMaper(\""+title+"\") '/><div class='floatclear'></div></div>";
 				$(cell).html(querybox);
 				break;
+			 case "货物名称":
+				querybox = "<div><input type='text' id='currentEditorInput'  class='querybox' style='width:100%;border:none;' onfocus=\"dofocustoenter('Inventory',this,'','','','')\"  value='"+$(cell).text()+"' onclick='queryBoxClick(this)'  /><input type='button' class='innerfinder' style='display:block;margin-top:0px;' onclick='tableCellWindowMaper(\""+title+"\") '/><div class='floatclear'></div></div>";
+				$(cell).html(querybox);
+				break;
+			 case "规格型号":
+				querybox = "<div><input type='text' id='currentEditorInput'  class='querybox' style='width:100%;border:none;' onfocus=\"dofocustoenter('Inventory',this,'','','','')\"  value='"+$(cell).text()+"' onclick='queryBoxClick(this)'  /><input type='button' class='innerfinder' style='display:block;margin-top:0px;' onclick='tableCellWindowMaper(\""+title+"\") '/><div class='floatclear'></div></div>";
+				$(cell).html(querybox);
+				break;
+			 case "主计量单位":
+				querybox = "<div><input type='text' id='currentEditorInput'  class='querybox' style='width:100%;border:none;' onfocus=\"dofocustoenter('Inventory',this,'','','','')\"  value='"+$(cell).text()+"' onclick='queryBoxClick(this)'  /><input type='button' class='innerfinder' style='display:block;margin-top:0px;' onclick='tableCellWindowMaper(\""+title+"\") '/><div class='floatclear'></div></div>";
+				$(cell).html(querybox);
+				break; 
 			case "数量":
 				querybox = "<div><input type='text' id='currentEditorInput' onkeyup='limitInputType()' class='querybox' style='width:100%;border:none;' value='"+$(cell).text()+"'/><div class='floatclear'></div></div>";
 				$(cell).html(querybox);
@@ -1248,7 +1268,7 @@ function tableCellWindowMaper(title){
 	queryid = "currentEditorInput";
 	var param = {};
 	switch(title){
-	case "存货编码":
+	case "货物名称":
 		param.type="pu";
 		window.parent.openWindow('basic_comref_inventoryref','pu_invoice_invoice',param);
 		break;
@@ -1383,7 +1403,6 @@ function tableScroll(container){
 	document.getElementById('datatable_footer').style.marginLeft="-"+container.scrollLeft+"px";
 }
 /****************** 表格组件相关代码 E *******************/
-/******************** 组件公共document.onclick方法 S **********************/
 document.onclick=function(e){
 	var evt=(window.event || e);//获得事件
 	var evtsrc = (evt.srcElement || evt.target);
@@ -1432,9 +1451,19 @@ document.onclick=function(e){
 			var tds = $(currentEditCell).parent("tr").children("td");
 			switch(currentEditCellName){
 				//存货编码失去焦点
-				case "存货编码":
+				case "货物编码":
 					checkTableFlag = false;
 					break;
+				case "货物名称":
+					checkTableFlag = false;
+					break;
+						case "规格型号":
+					checkTableFlag = false;
+					break;
+							case "计量单位":
+					checkTableFlag = false;
+					break;
+						
 				//数量失去焦点
 				case "数量":
 					var value = textMultiply(currentValue, tds.eq(6).text(), "");//计算数量*金额的值
@@ -1617,6 +1646,4 @@ function subErrorInput(value){
 		subErrorInput(value);
 	}
 	return value;
-}
-
-/******************** 组件公共document.onclick方法 E **********************/
+} 
