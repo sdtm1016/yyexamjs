@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>供应商参照</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<style type="text/css">
+			#footer{width:100%;margin-left:4px;}
+			#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+			#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+			#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+		</style>
+	    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+		<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+		<!-- 规则表 -->
+		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+		<script type="text/javascript">
+		 
+			//程序入口
+			$(document).ready(function(){
+				var gradeValue = grademarkValue('vendorclass'); 
+				//客户分类编码原则
+				$("#bmgz").attr("gradeValue",gradeValue);
+				//判断是有允许分类(如果不允许则默认添加一条记录)
+				isCusCategory();
+				//加载客户分类树
+				queryVendorClassTree(null);
+				/*
+					$(".selectCurr").click(function(){
+				
+ 					if ($(this).find("td").eq(1).html()=="北京华远公司") {
+ 						window.parent.$("#sa_markyun_skjs").find("iframe")[0].contentWindow.tianchong("北京华远公司");
+ 					};
+					 setTimeout('window.parent.closeWindow("basic_comref_supref")',250); 
+				});*/
+					
+			});
+			//返回被选中的数据对象
+			function returnSelected(tr){
+				var param={};
+				param.ccode=tr.cells[0].innerHTML;
+				param.cname=tr.cells[1].innerHTML;
+				param.id=$(tr).attr("id");
+				param.cvenabbname=tr.cells[2].innerHTML;
+				window.parent.deliverValue("basic_comref_supref2",param);
+				window.parent.closeWindow("basic_comref_supref2");
+			}
+			//单击表格时选中此行数据
+			function selectCurrentRow(obj){
+				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+			}
+			/**
+			 * 是否允许客户分类，允许返回true，否则返回false
+			 * @returns {Boolean}
+			 */
+			var isCusCategoryBz = true;
+			function isCusCategory() {
+				isCusCategoryBz=true;
+				/* $.ajax({
+					url:"vendor!isSupCategory",
+					type:"post",
+					dataType:"json",
+					error:function(){
+						jAlert("请求失败!");
+					},
+					async:false,
+					success: function(data){
+						isCusCategoryBz = data.isCategory;
+					}
+				}); */
+			}
+			//树节点集合的全局变量
+			var zNodes = [];
+			//当前选中的树节点
+			var currentTreeNode=null;
+			//保存时状态的全局变量
+			var action = null;
+			//所有存货分类对象的集合
+			var vendorClassList=null;
+			//当前选中客户档案
+			var currentClickedRow=null;
+			//当前弹窗动作目标
+			var xaction = null;
+			//查询存货分类树
+			function queryVendorClassTree(vendorClassCode){
+				//ztree配置
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						onClick: ZtreeClick,
+						onDblClick: ZtreeDblClick
+					}
+				};
+				//ztree加载树节点
+			
+
+			 var zNodes =[  
+	            {id:1, pId:0, name:"供应商档案", open:true},  
+	            {id:2, pId:1, name:"00无分类"} 
+ 	        ];  
+  
+            $.fn.zTree.init($("#vendorClassTree"), setting, zNodes);  
+				/*$.ajax({
+					url:"data/queryVendorClass.json",
+					type:"post",
+					dataType:"json",
+					async : false,   
+					error: function () {
+			          //  jAlert('请求失败');   
+			        }, 
+					success:function(jsonData){
+						vendorClassList = jsonData.vendorClassList;
+						zNodes = getVendorClassListNodes(vendorClassList);
+						$.fn.zTree.init($("#vendorClassTree"), setting, zNodes);
+						//默认选中节点(根节点)
+						var zTree = $.fn.zTree.getZTreeObj("vendorClassTree");
+						if(vendorClassCode==null){
+							vendorClassCode = "SUPTYPE";
+						}
+						var selNode = zTree.getNodeByParam("id", vendorClassCode);
+		    			zTree.selectNode(selNode);
+		    			//显示客户信息列表
+		    			showVendorInformation(selNode);
+					}
+				});	*/
+			}
+			//获取客户分类树节点的方法
+			function getVendorClassListNodes(vendorClassList){
+				zNodes = [];
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				/* if(gradeValue==""){
+					jAlert("编码规则不能为空!");
+					return;
+				} */
+				var node = "";
+				var vendorClass;
+				var nodeObj;
+				//根节点
+				node = "{id:'SUPTYPE',name:'客户分类',open:true}";
+				nodeObj =  eval('(' + node + ')') ;
+		    	zNodes.push(nodeObj);
+				for(var i=0;i<vendorClassList.length;i++){
+					vendorClass = vendorClassList[i];
+					//本级次
+					var ivcgrade = vendorClass.ivcgrade;
+					//客户分类编码
+					var cvccode = vendorClass.cvccode;
+					//父节点id
+					var parentid ;
+					if(ivcgrade==1){
+						parentid = "SUPTYPE";
+					}else{
+						var rule = gradeValue.charAt(ivcgrade-1);
+						var endindex = cvccode.length-rule;
+						parentid = cvccode.substring(0,endindex);
+					}
+					node = "{" + "id:'" + cvccode + "'," + "pId:'" + parentid + "',"
+					+ "ivcgrade:'" + vendorClass.ivcgrade + "',"	
+					+ "vendorClassId:'" + vendorClass.id + "',"
+					+ "vendorClassName:'" + vendorClass.cvcname + "',"
+					+ "bvcend:'" + vendorClass.bvcend + "',"
+					+ "name:'(" +cvccode+")"+ vendorClass.cvcname + "'" + ",open:true" + "}";
+					
+					nodeObj =  eval('(' + node + ')') ;
+		        	zNodes.push(nodeObj);
+				}
+				return zNodes;
+			}
+			//ztree单击事件
+			function ZtreeClick(event, treeId, treeNode, clickFlag){
+				showVendorInformation(treeNode);
+			}
+			//ztee双击事件
+			function ZtreeDblClick(event, treeId, treeNode){
+				
+			}
+			//根据客户类别编码查询客户档案
+			function showVendorInformation(treeNode){
+				var vendorCode={};
+				/* if(treeNode.id!="SUPTYPE"){
+					vendorCode={code:treeNode.id};
+				} */
+				/* $.ajax({
+					url:"data/queryVendorByCvccode.json",
+					data:vendorCode,
+					type:"post",
+					datatype:"json",
+					async : false,   
+					error: function () {
+				           jAlert('请求失败');   
+					},
+					success:function(data){
+					}
+				}); */
+				var data={"vendorList":[
+					{
+						"cvencode":"1001",
+						"cvenname":"北京华远公司",
+						"cvenabbname":"华远公司",
+						"cvccode":"00",
+						"cvenaddress":"2011-3-7"
+					},{
+						"cvencode":"1002",
+						"cvenname":"珠海光大公司",
+						"cvenabbname":"光大公司",
+						"cvccode":"00",
+						"cvenaddress":"2011-3-7"
+					}
+					]};
+				var vendorList = data.vendorList;
+				var length = vendorList.length;
+				var strHtml = "";
+				for (var i = 0; i<length; i++){
+					strHtml +="<tr id='"+vendorList[i].id+"' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvencode) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenname) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenabbname) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenhelp) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvccode) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenaddress) + "</td>";
+					strHtml +="<td >"+ getStrDate(vendorList[i].dvendevdate) + "</td>";
+					strHtml +="<td >"+ strNullProc(vendorList[i].cvenpperson) + "</td>";
+					strHtml +="<td >"+ getStrDate(vendorList[i].denddate) + "</td>";
+					strHtml+="</tr>";
+				}
+				$("#datatable_bodyer").empty().append(strHtml);
+				//选中第一行数据
+				if(length>0){
+					selectCurrentRow($("#datatable_bodyer >tr")[0]);
+				}
+				document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
+			}
+		</script>
+	</head>
+	<body style="padding:0px;">
+		<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+			<div style="width:100%;height:36px;">
+				<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
+					<div class="group" style="margin-top:2px;">
+						<div><input type="button" value="栏目" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+						<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+						<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+						<div><input type="button" value="帮助" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/help.gif');"/></div>
+						 
+						<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_supref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+					</div>
+				</div>
+				<!-- <div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
+					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
+						<div style="margin-top:3px;">
+							查询：<select disabled="disabled">
+								<option>客户助记码</option>
+								<option>AAAAAAAA</option>
+								<option>BBBBBBBBB</option>
+							</select><input type="text" disabled="disabled" style="width:110px;"/><input disabled="disabled" type="button" class="finder"/>
+						</div>
+					</div>
+				</div> -->
+				<!-- <div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+						<legend>模糊匹配定位：</legend>
+						<div style="height:20px;">
+							<input type="radio" disabled="disabled" value = "1" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+							<input type="radio" disabled="disabled" value = "2" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+							<input type="radio" disabled="disabled" value = "3" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+							<input type="radio" disabled="disabled" value = "4" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+						</div>
+					</fieldset>
+					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
+				</div> -->
+			</div>
+			<div style="width:100%;height:274px;margin-left:4px;">
+				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+					<ul id="vendorClassTree" class="ztree"></ul>
+				</div>
+				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+					<table id="datatable" border=1 class="table_style" style="width:1000px;">
+						<thead>
+							<tr id="datatable_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:150px;">客户编号</td>
+								<td style="width:200px;">客户名称</td>
+								<td style="width:200px;">客户简称</td>
+								<td style="width:150px;">发票日期</td>
+								<td style="width:250px;">客户分类编码</td>
+								<td style="width:200px;">地址</td>
+								<td style="width:150px;">发货日期</td>
+								<td style="width:200px;">专营业务员</td>
+								<td style="width:160px;">停用日期</td>
+							</tr>
+						</thead>
+						<tbody id="datatable_bodyer">
+							<tr class="selectCurr" ondblclick="returnSelected(this)"> 
+								<td style="width:150px;height: 20px;line-height: 20px;">1001</td>
+								<td style="width:200px;">北京华远公司</td>
+								<td style="width:200px;">华远公司</td>
+								<td style="width:150px;">00</td>
+								<td style="width:250px;">2011-3-7</td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+							<tr class="selectCurr"> 
+								
+								<td style="width:150px;height: 20px;line-height: 20px;">1002</td>
+								<td style="width:200px;">珠海光大公司</td>
+								<td style="width:200px;">光大公司</td>
+								<td style="width:150px;">00</td>
+								<td style="width:250px;">2011-3-7</td>
+								<td style="width:200px;"></td>
+								<td style="width:150px;"></td>
+								<td style="width:200px;"></td>
+								<td style="width:160px;"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- 底部状态栏容器 S -->
+		<!-- 	<div id="footer">
+			<div  style="margin-left:0px;">定位列名：</div>
+			<div id="selColumn" >常用摘要正文</div>
+			<div id="loadRecord" > 已加载n条记录</div>
+			<div id = "selRecord" >已选中n条记录</div>
+		</div> -->
+			<!-- 底部状态栏容器 E -->
+		</div>
+		<input id="bmgz" type="hidden"/>
+	</body>
+</html>

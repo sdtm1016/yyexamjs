@@ -62,9 +62,9 @@ function queryButtonClick(btn){
 	}else if (queryid=="cvencode") {//供货单位
 		param.subjectBusinessId = "";
 		param.subjectBusinessName = "";
-		window.parent.openWindow('basic_comref_supref','pu_invoice_invoice',param);
+		window.parent.openWindow('basic_comref_supref2','pu_invoice_invoice',param);
 	}else if (queryid=="cunitcode") {//贷垫单位
-		window.parent.openWindow('basic_comref_supref','pu_invoice_invoice');
+		window.parent.openWindow('basic_comref_supref2','pu_invoice_invoice');
 	}else if (queryid=="cpersoncode") {//业务员
 		param.subjecPersonId = "";
 		param.subjecPersonName = "";
