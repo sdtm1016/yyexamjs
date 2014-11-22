@@ -58,7 +58,7 @@ function queryButtonClick(btn){
 	}else if (queryid=="cdepcode") {//部门选择
 		param.subjectDeptId = "";
 		param.subjectDeptName = "";
-		window.parent.openWindow('basic_comref_dptref','pu_invoice_invoice',param);
+ 		window.parent.openWindow('basic_comref_dptref','pu_invoice_invoice',param);
 	}else if (queryid=="cvencode") {//供货单位
 		param.subjectBusinessId = "";
 		param.subjectBusinessName = "";

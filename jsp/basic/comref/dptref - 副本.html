@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>部门参照</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css">
+		<style type="text/css">
+			#footer{width:100%;margin-left:4px;}
+			#footer div{float:left;width:182px;height:20px;line-height:20px;background-color:#D4D0C8;margin-left:2px;margin-top:3px;border-top:1px solid #808080; border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;}
+			#tableview{width:350px;border:1px solid #000;border-collapse: collapse;cursor:default;}
+			#tableview td{height:16px;line-height:16px;border:1px solid #000;background-color:#ffffff;}
+		</style>
+	    <script type="text/javascript" src="../../../js/jquery-1.7.2.js"></script>
+	    <script type="text/javascript" src="../../../js/publicFunction.js"></script>
+	  	<script type="text/javascript" src="../../../js/helpCode.js"></script>
+	    <script type="text/javascript" src="../../../js/tableRef.js"></script>
+		<link rel="stylesheet" href="../../../js/ztree3.4/css/zTreeStyle/zTreeStyle.css" type="text/css">
+		<script type="text/javascript" src="../../../js/ztree3.4/js/jquery.ztree.core-3.4.min.js"></script>
+		<!-- 规则表 -->
+		<script type="text/javascript" src="../../sm/js/gradedef.js"></script>
+		<script type="text/javascript">
+			//返回被选中的数据对象
+			function returnSelected(tr){
+				var param={};
+				param.ccode=tr.cells[0].innerHTML;
+				param.cname=tr.cells[1].innerHTML;
+				param.id=$(tr).attr("id");
+				
+				window.parent.deliverValue("basic_comref_dptref",param);
+				window.parent.closeWindow("basic_comref_dptref");
+			}
+			//单击表格时选中此行数据
+			function selectCurrentRow(obj){
+				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
+			}
+			//程序入口
+			$(document).ready(function(){
+				var gradeValue = grademarkValue('department'); 
+				//部门编码原则
+				$("#bmgz").attr("gradeValue",gradeValue);
+				//加载部门树
+				queryDepartmentTree(null);
+			});
+			//树节点集合的全局变量
+			var zNodes = [];
+			//所有部门对象的集合
+			var departmentList=null;
+			//查询部门树
+			function queryDepartmentTree(departmentCode){
+				//ztree配置
+				var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},
+					callback: {
+						onClick: ZtreeClick,
+						onDblClick: ZtreeDblClick
+					}
+				};
+				//ztree加载树节点
+				$.ajax({
+					url:"department!queryDepartment.action",
+					type:"post",
+					dataType:"json",
+					async : false,   
+					error: function () {
+			            jAlert('请求失败');   
+			        }, 
+					success:function(jsonData){
+						departmentList = jsonData.departmentList;
+						zNodes = getdepartmentNodes(departmentList);
+						$.fn.zTree.init($("#deptTree"), setting, zNodes);
+						//默认选中节点(根节点)
+						var zTree = $.fn.zTree.getZTreeObj("deptTree");
+						if(departmentCode==null){
+							departmentCode = "DEPTCZ";
+						}
+						var selNode = zTree.getNodeByParam("id", departmentCode);
+	        			zTree.selectNode(selNode);
+		    			//显示部门信息列表
+		    			showDepartmentInformation(selNode);
+					}
+				});	
+			}
+			//获取部门树节点的方法
+			function getdepartmentNodes(departmentList){
+				zNodes = [];
+				var gradeValue= $("#bmgz").attr("gradeValue");
+				if(gradeValue==""){
+					jAlert("编码规则不能为空!");
+					return;
+				}
+				var node = "";
+				var department;
+				var nodeObj;
+				//根节点
+				node = "{id:'DEPTCZ',name:'部门列表',open:true}";
+				nodeObj =  eval('(' + node + ')') ;
+	        	zNodes.push(nodeObj);
+				for(var i=0;i<departmentList.length;i++){
+					department = departmentList[i];
+					//本级次
+					var idepgrade = department.idepgrade;
+					//部门编码
+					var cdepcode = department.cdepcode;
+					//父节点id
+					var parentid ;
+					if(idepgrade==1){
+						parentid = "DEPTCZ";
+					}else{
+						var rule = gradeValue.charAt(idepgrade-1);
+						var endindex = cdepcode.length-rule;
+						parentid = cdepcode.substring(0,endindex);
+					}
+					node = "{" + "id:'" + cdepcode + "'," + "pId:'" + parentid + "',"
+					+ "departmentId:'" + department.id + "',"
+					+ "departmentName:'" + department.cdepname + "',"
+					+ "idepgrade:'" + department.idepgrade + "',"
+					+ "bdepend:'" + department.bdepend + "',"
+					+ "cdepperson:'" + department.cdepperson + "',"
+					+ "cdepprop:'" + department.cdepprop + "',"
+					+ "cdepphone:'" + department.cdepphone + "',"
+					+ "cdepaddress:'" + department.cdepaddress + "',"
+					+ "cdepmemo:'" + department.cdepmemo + "',"
+					+ "cdephelp:'" + department.cdephelp + "',"
+					+ "name:'(" +cdepcode+")"+ department.cdepname + "'" + ",open:true" + "}";
+					
+					nodeObj =  eval('(' + node + ')') ;
+	            	zNodes.push(nodeObj);
+				}
+				return zNodes;
+			}
+			//ztree单击事件
+			function ZtreeClick(event, treeId, treeNode, clickFlag){
+				showDepartmentInformation(treeNode);
+			}
+			//ztee双击事件
+			function ZtreeDblClick(event, treeId, treeNode){
+				
+			}
+			//根据供应商类别编码查询供应商档案
+			function showDepartmentInformation(treeNode){
+				var departmentCode={};
+				if(treeNode.id!="DEPTCZ"){
+					departmentCode={deptCode:treeNode.id};
+				}
+				$.ajax({
+					url:"department!queryDepartmentByCode.action",
+					data:departmentCode,
+					type:"post",
+					datatype:"json",
+					async : false,   
+					error: function () {
+				           jAlert('请求失败');   
+					},
+					success:function(data){
+						var deptList = data.departmentList;
+						var length = deptList.length;
+						var strHtml = "";
+						for (var i = 0; i<length; i++){
+							strHtml +="<tr id='"+deptList[i].id+"' ondblclick=returnSelected(this);  onclick=selectCurrentRow(this); bgcolor='#ffffff'>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepcode) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepname) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdephelp) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepperson) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].idepgrade) + "</td>";
+							strHtml +="	<td >"+ showChnLogicValue(deptList[i].bdepend) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepprop) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepphone) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepaddress) + "</td>";
+							strHtml +="	<td >"+ strNullProc(deptList[i].cdepmemo) + "</td>";
+							strHtml +="</tr>";
+						}
+						$("#datatable_bodyer").empty().append(strHtml);
+						//选中第一行数据
+						if(length>0){
+							selectCurrentRow($("#datatable_bodyer >tr")[0]);
+						}
+						document.getElementById("loadRecord").innerHTML = "已加载" + length + "条记录";
+					}
+				});
+			}
+		</script>
+	</head>
+	<body style="padding:0px;">
+		<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
+			<div style="width:100%;height:36px;">
+				<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
+						<div class="group" style="margin-top:2px;">
+							<div><input type="button" value="栏目" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/classes.gif');"/></div>
+							<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
+							<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
+							<div><input type="button" value="刷新" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
+							<div><input type="button" value="返回" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
+							<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_dptref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
+						</div>
+				</div>
+				<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
+					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
+						<div style="margin-top:3px;">
+							查询：<select disabled="disabled">
+									<option>部门助记码</option>
+								</select>
+								<input type="text" disabled="disabled" style="width:110px;"/><input type="button" class="finder" disabled="disabled"/>
+						</div>
+					</div>
+				</div>
+				<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
+					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
+						<legend>模糊匹配定位：</legend>
+						<div style="height:20px;">
+							<input type="radio" disabled="disabled" value = "1" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
+							<input type="radio" disabled="disabled" value = "2" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
+							<input type="radio" disabled="disabled" value = "3" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
+							<input type="radio" disabled="disabled" value = "4" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
+						</div>
+					</fieldset>
+					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
+				</div>
+			</div>
+			<div style="width:100%;height:274px;margin-left:4px;">
+				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
+					<ul id="deptTree" class="ztree"></ul>
+				</div>
+				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+					<table id="datatable" border=1 class="table_style" style="width:700px;">
+						<thead>
+							<tr id="datatable_header">
+								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
+								<td style="width:150px;">部门编码</td>
+								<td style="width:150px;">部门名称</td>
+								<td style="width:80px;">部门助记码</td>
+								<td style="width:150px;">负责人</td>
+								<td style="width:150px;">编码级次</td>
+								<td style="width:80px;">是否末级</td>
+								<td style="width:150px;">部门属性</td>
+								<td style="width:150px;">电话</td>
+								<td style="width:80px;">地址</td>
+								<td style="width:150px;">备注</td>								
+							</tr>
+						</thead>
+						<tbody id="datatable_bodyer">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- 底部状态栏容器 S -->
+			<div id="footer">
+				<div  style="margin-left:0px;">定位列名：</div>
+				<div id="selColumn" >常用摘要正文</div>
+				<div id="loadRecord" > 已加载n条记录</div>
+				<div id = "selRecord" >已选中n条记录</div>
+			</div>
+			<!-- 底部状态栏容器 E -->
+		</div>
+		<input id="bmgz" type="hidden"/>
+	</body>
+</html>

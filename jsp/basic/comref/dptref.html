@@ -34,56 +34,18 @@
 				$(obj).css("backgroundColor","#00f").css("color","#fff").siblings().css("backgroundColor","#fff").css("color","#000");
 			}
 			//程序入口
-			$(document).ready(function(){
+		/*	$(document).ready(function(){
 				var gradeValue = grademarkValue('department'); 
 				//部门编码原则
 				$("#bmgz").attr("gradeValue",gradeValue);
 				//加载部门树
 				queryDepartmentTree(null);
-			});
+			});*/
 			//树节点集合的全局变量
 			var zNodes = [];
 			//所有部门对象的集合
-			var departmentList=null;
-			//查询部门树
-			function queryDepartmentTree(departmentCode){
-				//ztree配置
-				var setting = {
-					data: {
-						simpleData: {
-							enable: true
-						}
-					},
-					callback: {
-						onClick: ZtreeClick,
-						onDblClick: ZtreeDblClick
-					}
-				};
-				//ztree加载树节点
-				$.ajax({
-					url:"department!queryDepartment.action",
-					type:"post",
-					dataType:"json",
-					async : false,   
-					error: function () {
-			            jAlert('请求失败');   
-			        }, 
-					success:function(jsonData){
-						departmentList = jsonData.departmentList;
-						zNodes = getdepartmentNodes(departmentList);
-						$.fn.zTree.init($("#deptTree"), setting, zNodes);
-						//默认选中节点(根节点)
-						var zTree = $.fn.zTree.getZTreeObj("deptTree");
-						if(departmentCode==null){
-							departmentCode = "DEPTCZ";
-						}
-						var selNode = zTree.getNodeByParam("id", departmentCode);
-	        			zTree.selectNode(selNode);
-		    			//显示部门信息列表
-		    			showDepartmentInformation(selNode);
-					}
-				});	
-			}
+			var departmentList=null; 
+		 
 			//获取部门树节点的方法
 			function getdepartmentNodes(departmentList){
 				zNodes = [];
@@ -153,7 +115,7 @@
 					datatype:"json",
 					async : false,   
 					error: function () {
-				           jAlert('请求失败');   
+				           // jAlert('请求失败');   
 					},
 					success:function(data){
 						var deptList = data.departmentList;
@@ -185,7 +147,7 @@
 		</script>
 	</head>
 	<body style="padding:0px;">
-		<div style="width:750px;height:346px;position:absolute;top:0px;left:0px;">
+		<div style="width:450px;height:346px;position:absolute;top:0px;left:0px;">
 			<div style="width:100%;border-top:1px solid #808080;border-bottom:1px solid #ffffff;height:0px"></div>
 			<div style="width:100%;height:36px;">
 				<div class="buttongroup" style="width:196px;height:35px;float:left;margin-left:4px;">
@@ -194,67 +156,34 @@
 							<div><input type="button" value="编辑" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/edit.gif');"/></div>
 							<div><input type="button" value="全载" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/allload.gif');"/></div>
 							<div><input type="button" value="刷新" disabled="disabled" onfocus="this.blur();" style="background-image:url('../../../images/icon/refresh.gif');"/></div>
-							<div><input type="button" value="返回" disabled="disabled" onclick="returnSelected(currentSeletedRow);" onfocus="this.blur();" style="background-image:url('../../../images/icon/return.gif');"/></div>
 							<div><input type="button" value="退出" onclick="window.parent.closeWindow('basic_comref_dptref');" onfocus="this.blur();" style="background-image:url('../../../images/icon/exit.gif');"/></div>
 						</div>
 				</div>
-				<div class="border_outside" style="height:30px;width:286px;float:left;margin-top:4px;">
-					<div class="border_inside" style="height:28px;width:284px;line-height:18px;">
-						<div style="margin-top:3px;">
-							查询：<select disabled="disabled">
-									<option>部门助记码</option>
-								</select>
-								<input type="text" disabled="disabled" style="width:110px;"/><input type="button" class="finder" disabled="disabled"/>
-						</div>
-					</div>
-				</div>
-				<div style="width:254px;float:left;margin-right:0px;margin-top:4px;">
-					<fieldset style="padding:0px 0px 0px 3px;border-bottom:none;float:left;margin-top:-3px;">
-						<legend>模糊匹配定位：</legend>
-						<div style="height:20px;">
-							<input type="radio" disabled="disabled" value = "1" name="radio" id="radio1" style="vertical-align:middle; margin-bottom:3px;"><label for="radio1">精确</label>
-							<input type="radio" disabled="disabled" value = "2" name="radio" id="radio2" style="vertical-align:middle; margin-bottom:3px;"><label for="radio2">右</label>
-							<input type="radio" disabled="disabled" value = "3" name="radio" id="radio3" style="vertical-align:middle; margin-bottom:3px;"><label for="radio3">包含</label>
-							<input type="radio" disabled="disabled" value = "4" name="radio" id="radio4" style="vertical-align:middle; margin-bottom:3px;"><label for="radio4">左</label>
-						</div>
-					</fieldset>
-					<input type="text" id="inputvalue" disabled="disabled" style="height:20px;width:65px;margin-top:7px;"   onkeyup=" cellKeyControl(this)" >
-				</div>
 			</div>
 			<div style="width:100%;height:274px;margin-left:4px;">
-				<div style="width:134px;height:100%;border:2px inset #ccc;margin-top:2px;background-color:#fff;float:left;overflow-y:auto;">
-					<ul id="deptTree" class="ztree"></ul>
-				</div>
-				<div style="width:596px;height:100%;margin-left:4px;margin-top:2px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
-					<table id="datatable" border=1 class="table_style" style="width:700px;">
+				
+				<div style="width:496px;background-color: #808080; height:100%;margin-left:4px;margin-top:10px;border:2px inset #ccc;float:left;overflow-x:auto;overflow-y:auto;">
+					<table id="datatable" border=1 class="table_style" style="width:400px;height:16px;">
 						<thead>
-							<tr id="datatable_header">
+							<tr id="datatable_header" style="height:16px;">
 								<!-- 说明：新增TD后必须修改TABLE的width值（TABLE width的值为所有TD width的总和），不然不会有横向滚动条出现  -->
-								<td style="width:150px;">部门编码</td>
-								<td style="width:150px;">部门名称</td>
-								<td style="width:80px;">部门助记码</td>
-								<td style="width:150px;">负责人</td>
-								<td style="width:150px;">编码级次</td>
-								<td style="width:80px;">是否末级</td>
-								<td style="width:150px;">部门属性</td>
-								<td style="width:150px;">电话</td>
-								<td style="width:80px;">地址</td>
-								<td style="width:150px;">备注</td>								
+								<td style="width:50px;">部门编码</td>
+								<td style="width:50px;">部门名称</td>
+								<td style="width:50px;">负责人</td>						
 							</tr>
+						
 						</thead>
-						<tbody id="datatable_bodyer">
+						<tbody id="datatable_bodyer" >
+								<tr style="width:496px; height:20px; line-height:20px; text-align: center; background-color: #fff;"  onclick="returnSelected(this)">
+									<td>1</td>
+									<td>采购部</td>
+									<td></td>
+								</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
-			<!-- 底部状态栏容器 S -->
-			<div id="footer">
-				<div  style="margin-left:0px;">定位列名：</div>
-				<div id="selColumn" >常用摘要正文</div>
-				<div id="loadRecord" > 已加载n条记录</div>
-				<div id = "selRecord" >已选中n条记录</div>
-			</div>
-			<!-- 底部状态栏容器 E -->
+			
 		</div>
 		<input id="bmgz" type="hidden"/>
 	</body>
