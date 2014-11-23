@@ -17,7 +17,7 @@ function set_keyword_ok(){
 	var radioVal=$('input[name="radio"]:checked').val();
 	window.parent.keyword[radioVal]=true;
 	var keyword=window.parent.keyword;
-	if(keyword.year&&keyword.month&&keyword.day){
+	if(window.parent.selectedPage==2&&window.parent.edit1&&(keyword.year&&keyword.month&&keyword.day)){
 		window.parent.parent.updateScore('1-3',1);
 	}
 	window.parent.closeWindow('set_keyword');
