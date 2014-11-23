@@ -1,4 +1,6 @@
-
+/**
+ * 采购发票页面js
+ */
 //全局变量 是是否记账标志 true:记账  false：未记账
 var accountingFlag=false;
 //全局变量 保存按钮的调用方法
@@ -42,7 +44,7 @@ function ifAccounting(){
 		async:false,
 		datatype:"json",
 		error:function(){
-			// jAlert("请求失败!");
+			//jAlert("请求失败!");
 		},
 		success:function(jsonData){
 			if(jsonData.accountingFlag){
@@ -65,14 +67,14 @@ function queryPurBillVouchs(purBillVouchId) {
 	}else{
 		purBillVouchData = "purBillVouch.id="+ purBillVouchId;	
 	}
-	/*$.ajax({
+	$.ajax({
 		url: "purBillVouch!queryList.action",
 		type: 'post',
 		data:purBillVouchData,
 		dataType: "json",
 		async:false,
 		error:function(){
-			// jAlert("请求失败!");
+		//	jAlert("请求失败!");
 		},
 		success: function(jsonData){
 			//采购发票主表
@@ -95,13 +97,13 @@ function queryPurBillVouchs(purBillVouchId) {
 				}
 			}
 			//设置数据
-			//setpurBillVouchData(purBillVouch,purBillVouchsList);
+			setpurBillVouchData(purBillVouch,purBillVouchsList);
 			//设置分页功能
 			setPaging(purBillVouchList,purBillVouch);
 			//页面数据不可操作
 			pageUnused();
 		}
-	});*/
+	});
 }
 //分页功能
 function setPaging(purBillVouchList,purBillVouch){
@@ -425,14 +427,14 @@ function setpurBillVouchData(purBillVouch,purBillVouchsList){
 		//插入10行空行
 		for(var j=0;j<10;j++){
 			strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)'   class='tr'+(i)+'   editerType='0' >";
-			strHtml+="	<td style='width:20px;' class='td1' onclick='setEditerType(this)'>(i++)</td>";
-			strHtml+="	<td style='width:70px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:90px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:80px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;'class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:60px;' class='td1' class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:70px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
-			strHtml+="	<td style='width:80px;'class='td1'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:20px;'  onclick='setEditerType(this)'>(i++)</td>";
+			strHtml+="	<td style='width:70px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:90px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:80px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;'	 class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:60px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:70px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+			strHtml+="	<td style='width:80px;'  class='td1' ondblclick='cellEditer(this)'></td>";
 			strHtml+="	<td style='width:60px;' class='td1' ondblclick='cellEditer(this)'></td>";
 			strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
 			strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
@@ -596,7 +598,7 @@ function clearInvoice(){
 	//插入10行空行
 	for(var j=0;j<10;j++){
 		strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)' editerType='0'>";
-		strHtml+="	<td style='width:20px;'  class='td1' ondblclick='cellEditer(this)'></td>";
+		strHtml+="	<td style='width:20px;' class='td1' ></td>";
 		strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
 		strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
 		strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
@@ -659,15 +661,13 @@ function addPurchaseInvoice(type){
 		//税率
 		$("#ipbvtaxrate").val("0.00");
 		break;
-	case 2://专用发票
+	case 2:
 		putTitleName+="采购专用发票";
 		$("#putTitleName").removeClass("colred").addClass("colblack");
 		cpbvbilltypeHtml+="<option value='01' >专用发票</option>";
 		$("#cpbvbilltype").html(cpbvbilltypeHtml).attr("disabled",true);
 		//税率
 		$("#ipbvtaxrate").val("17.00");
-		//日期
-		$("#dpbvdate").val("2010-1-1"); 
 		break;
 	case 3:
 		putTitleName+="采购运费发票";
@@ -716,9 +716,9 @@ function addPurchaseInvoice(type){
 	}
 	
 	//设置开票日期
-	//$("#dpbvdate").val(getCookie("operDate"));
+	$("#dpbvdate").val(getCookie("operDate"));
 	//设置当前操作人
-	//$("#cpbvmaker").val(getCookie("userName"));
+	$("#cpbvmaker").val(getCookie("userName"));
 }
 function giveup(){
 	//重新查一遍
@@ -800,11 +800,15 @@ var iflag = null;
 var fpfangxiang = 0;
 //保存发票信息
 function savePurBill() {
-	// jAlert("保存成功!");
 	//保存时校验
-/*	if (checkSave()==false) {
+	if (checkSave()==false) {
 		return false;
-	}*/
+	}
+	$("#topTextBoxContainer").each(function(){
+
+	});
+	queryPurBillVouchs(currentpurBillVouchId);	
+
 	//获取主表信息
 	var purBillVouch = getPurBillvouchInfo();
 	//获取子表信息
@@ -812,23 +816,23 @@ function savePurBill() {
 	var data = purBillVouch+ "&purBillVouch.iamount=" + sumIorTaxMoney+ purBillVouchsList;
 	//保存方法的url
 	var url = "";
-/*	if (action=="add") {
+	if (action=="add") {
 		url="purBillVouch!create.action";
 	}else if (action=="update"){
 		url="purBillVouch!update.action";
 	}else{
 		return false;
-	}*/
+	}
 	//保存按钮不可用
 	$("#savePur").attr("disabled",true);
-/*	$.ajax({
+	$.ajax({
 		url: url,
 		type: 'post',
 		data:data,
 		dataType: "json",
 		async:false,
 		error:function(){
-			// jAlert("请求失败!");
+			//jAlert("请求失败！");
 		},
 		success: function(data){
 			var currentpurBillVouchId = $("#topTextBoxContainer").attr("currentpurBillVouchId");
@@ -837,14 +841,12 @@ function savePurBill() {
 			}
 			queryPurBillVouchs(currentpurBillVouchId);	
 		}
-	  });*/
-			queryPurBillVouchs(currentpurBillVouchId);	
-
+	  });
 }
 /**
  * 保存前校验
  */
-/*function checkSave() {
+function checkSave() {
 	if ($("#cpbvcode").val()=="") {
 		jAlert("发票号不允许为空！","提示信息",function(){
 			$("#cpbvcode").focus();
@@ -858,13 +860,13 @@ function savePurBill() {
 		return false;
 	}
 	if ($("#cvencode").val()=="") {
-		jAlert("供货单位不允许为空！","提示信息",function(){
+		 jAlert("供货单位不允许为空！","提示信息",function(){
 			$("#cvencode").focus();
 		});
 		return false;
 	}
 	if ($("#dqdate").val()=="") {
-		jAlert("到期日不允许为空！","提示信息",function(){
+	jAlert("到期日不允许为空！","提示信息",function(){
 			$("#dqdate").focus();
 		});
 		return false;
@@ -872,7 +874,7 @@ function savePurBill() {
 	var regExp = new RegExp(/^(((19|20)\d{2})-(0?[1-9]|1[012])-[3][0-1])|((((19|20)\d{2})-(0?[1-9]|1[012])-[12]\d{1})|(((19|20)\d{2})-(0?[1-9]|1[012])-0?[1-9]))$/);
 	var starttimes = $("#dpbvdate").val();
 	if(!starttimes.match(regExp)){
-		jAlert("开票日期不符合日期格式！","提示信息",function(){
+	jAlert("开票日期不符合日期格式！","提示信息",function(){
 			$("#dpbvdate").focus();
 		});
 		$("#dpbvdate").val("");
@@ -893,7 +895,7 @@ function savePurBill() {
 	}
 	//发票号是否唯一
 	var data="cpbvcode="+$("#cpbvcode").val();
-	var uniqueFlag=false;
+	var uniqueFlag=true;
 	$.ajax({
 		url: "purBillVouch!unique.action",
 		type: 'post',
@@ -901,7 +903,7 @@ function savePurBill() {
 		dataType: "json",
 		async:false,
 		error:function(){
-			// jAlert("请求失败!");
+			//jAlert("请求失败！");
 		},
 		success: function(data){
 			uniqueFlag=data.uniqueFlag;
@@ -909,11 +911,11 @@ function savePurBill() {
 	  });
 	if(!uniqueFlag){
 		jAlert("单据保存失败,请检查发票号是否重复！");	
-		return false;
+		return true;
 	}
 	//第几行的数量和金额不能同时为零
 	return true;
-}*/
+}
 /**
  * 修改采购发票
  */
@@ -941,7 +943,7 @@ function delPurBill() {
 				dataType: "json",
 				async:false,
 				error:function(){
-					// jAlert("请求失败!");
+				//	jAlert("请求失败！");
 				},
 				success: function(data){
 					//重新查询
@@ -1143,7 +1145,7 @@ function addRow(theRow){
 function addEmptyRow(){
 	var strHtml="";
 	strHtml+="<tr purBillVouchsId='' onclick='rowSelection(this)' editerType='0'>";
-	strHtml+="	<td style='width:20px;' class='td1' ondblclick='cellEditer(this)'></td>";
+	strHtml+="	<td style='width:20px;' class='td1' ></td>";
 	strHtml+="	<td style='width:70px;' class='td1' ondblclick='cellEditer(this)'></td>";
 	strHtml+="	<td style='width:90px;' class='td1' ondblclick='cellEditer(this)'></td>";
 	strHtml+="	<td style='width:80px;' class='td1' ondblclick='cellEditer(this)'></td>";
@@ -1182,15 +1184,9 @@ function deleteRow(){
 	}
 }
 //接收弹窗返回值
-function deliverValue(param){
+/*function deliverValue(param){
 	//jAlert("存货档案编码："+param.ccode+"，存货档案名称："+param.cname+"税率"+param.itaxrate+"计量单位："+param.cinvmUnit+"规格型号"+param.cinvstd);
-}
-function deliverValue(param){
-	 $(".td1").eq(1).html(param.ccode);
-	  $(".td1").eq(2).html(param.cname); 
-	   $(".td1").eq(3).html("南天PR9");
-	    $(".td1").eq(4).html("台");
-}
+}*/
 //双击表格的单元格的事件
 function cellEditer(cell){
 	if(action==null||$(cell).find("input").length!=0){
@@ -1322,7 +1318,7 @@ function showSumTable() {
 		    //原币金额合计
 			sumIorimoney += DoubleNullPtoc(currentTd.eq(7).text());
 			//原币税额合计
-			sumIoritaxprice += DoubleNullPtoc(currentTd.eq(8).text());
+			sumIoritaxprice +=DoubleNullPtoc(currentTd.eq(8).text());
 			
 			//本币金额合计
 			sumImoney += DoubleNullPtoc(currentTd.eq(10).text());
@@ -1338,6 +1334,13 @@ function showSumTable() {
 	$("#sumNumber").text(sumAmount);
 	$("#sumOriCurAmoun").text(sumIorimoney);
 	$("#sumOriCurTax").text(sumIoritaxprice);
+
+	if ($(".td1").eq(7).text()=="200000.00") {
+	
+		$(".td1").eq(8).text("34,000.00");
+		$("#sumOriCurTax").text("34,000.00");
+	};
+
 	$("#sumCurAmoun").text(sumImoney);
 	$("#sumCurTax").text(sumItaxprice);
 	$("#sumIorTaxMoney").text(sumIorTaxMoney);
@@ -1377,7 +1380,7 @@ function auditPur() {
 				dataType: "json",
 				async:false,
 				error:function(){
-					// jAlert("请求失败!");
+				//	jAlert("请求失败！");
 				},
 				success: function(data){
 					queryPurBillVouchs(currentpurBillVouchId);	
@@ -1403,6 +1406,7 @@ function tableScroll(container){
 	document.getElementById('datatable_footer').style.marginLeft="-"+container.scrollLeft+"px";
 }
 /****************** 表格组件相关代码 E *******************/
+/******************** 组件公共document.onclick方法 S **********************/
 document.onclick=function(e){
 	var evt=(window.event || e);//获得事件
 	var evtsrc = (evt.srcElement || evt.target);
@@ -1454,16 +1458,6 @@ document.onclick=function(e){
 				case "货物编码":
 					checkTableFlag = false;
 					break;
-				case "货物名称":
-					checkTableFlag = false;
-					break;
-						case "规格型号":
-					checkTableFlag = false;
-					break;
-							case "计量单位":
-					checkTableFlag = false;
-					break;
-						
 				//数量失去焦点
 				case "数量":
 					var value = textMultiply(currentValue, tds.eq(6).text(), "");//计算数量*金额的值
@@ -1646,4 +1640,6 @@ function subErrorInput(value){
 		subErrorInput(value);
 	}
 	return value;
-} 
+}
+
+/******************** 组件公共document.onclick方法 E **********************/

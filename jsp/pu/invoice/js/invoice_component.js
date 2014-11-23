@@ -105,9 +105,10 @@ function deliverValue(valueObject){
 		}else if(focusAreaId=="datatableContainer"){
 			var currentEditCellName = document.getElementById("datatable_header").rows[0].cells[currentEditCell.cellIndex].innerHTML;	
 			switch(currentEditCellName){
-				case "存货编码":
-					//存货编码
+			case "货物名称":
+						//存货编码
 					$(currentEditCell).find("input:first").val(valueObject.ccode);
+					$(currentEditCell).parent().find("td").eq(1).text(valueObject.ccode); 
 					//存货名称
 					$(currentEditCell).parent().find("td").eq(2).text(valueObject.cname);
 					//规格型号
