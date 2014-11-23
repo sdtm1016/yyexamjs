@@ -806,9 +806,10 @@ function savePurBill() {
 	}
 	//双击表格的单元格的事件
 	$("#topTextBoxContainer").find("input").each(function(){
-		$(this).attr("disabled");
+		$(this).attr("readonly","");
 		$(this).attr("style","color:#ccc;");
 	});
+	$("#cpbvbilltype").attr("style","color:#ccc;");
 	queryPurBillVouchs(currentpurBillVouchId);	
 
 	//获取主表信息
