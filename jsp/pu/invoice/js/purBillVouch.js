@@ -804,8 +804,9 @@ function savePurBill() {
 	if (checkSave()==false) {
 		return false;
 	}
-	$("#topTextBoxContainer").each(function(){
-
+	//双击表格的单元格的事件
+	$("#topTextBoxContainer").find("input").each(function(){
+		$(this).attr ("disabled")
 	});
 	queryPurBillVouchs(currentpurBillVouchId);	
 
