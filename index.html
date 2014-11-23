@@ -15,6 +15,7 @@ function getUrlParam(name) {
 }
 var id=getUrlParam('id');
 if(!id)id=1;
+examId=id;
 document.write("<script src='questions/data"+id+".js'><\/script>"); 
 document.write("<script src='js/index.js'><\/script>"); 
 </script>

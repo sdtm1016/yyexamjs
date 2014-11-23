@@ -36,7 +36,7 @@
 	};	 
 	var treeNodes;   
 	var zNodes = [];
-	$.ajax({
+	/*$.ajax({
 		 async : false,   
 	     cache:false,   
 		url:"ztree!loadSubJectTree.action",
@@ -54,9 +54,20 @@
             	
             }
 		}
-	});	
+	});	*/
 	$(document).ready(function(){
-		$.fn.zTree.init($("#subjectTree"), setting, zNodes);
+		var zNodes =[  
+	        {id:1, pId:0, name:"科目参照", open:true},  
+	        {id:2, pId:1, name:"常用"},
+	        {id:3, pId:1, name:"资产"},
+	        {id:4, pId:1, name:"负债"},
+	        {id:5, pId:1, name:"共同"},
+	        {id:6, pId:1, name:"权益"},
+	        {id:7, pId:1, name:"成本"},
+	        {id:8, pId:1, name:"损益"}
+ 	    ];  
+  
+        $.fn.zTree.init($("#subjectTree"), setting, zNodes); 
 	});
  }
 	 
@@ -120,7 +131,7 @@
   	 // alert("dts:" + dts);
       //alert(nodeId);
       //从后台获取子节点信息
-	  $.ajax({
+	  /*$.ajax({
 			async : false,   
 		    cache:false,   
 			url:"ztree!loadSubJectSubNodes.action?nodeId=" + nodeId,
@@ -135,7 +146,45 @@
 				subNodes = data.subListTree;
 	            
 			}
-	  });
+	  });*/
+      
+      if(nodeId=='3'){
+    	  subNodes=[
+    	            "{id:1001,name:'1001库存现金'}",
+    	            "{id:1002,name:'1002银行存款'}",
+    	            "{id:1003,name:'1003存放中央银行款项'}",
+    	            "{id:1011,name:'1011存放同业'}",
+    	            "{id:1012,name:'1012其他货币资金'}",
+    	            "{id:1021,name:'1021结算备付金'}",
+    	            "{id:1031,name:'1031存出保证金'}",
+    	            "{id:1101,name:'1101交易性金融资产'}",
+    	            "{id:1111,name:'1111买入返售金融资产'}",
+    	            "{id:1121,name:'1121应收票据'}",
+    	            "{id:1122,name:'1122应收账款'}",
+    	            "{id:1123,name:'1123预付账款'}",
+    	            "{id:1131,name:'1131应收股利'}",
+    	            "{id:1132,name:'1132应收利息'}",
+    	            "{id:1201,name:'1201应收代位追偿款'}",
+    	            "{id:1211,name:'1211应收分保账款'}",
+    	            "{id:1212,name:'1212应收分保合同准备金'}",
+    	            "{id:1221,name:'1221其他应收款'}",
+    	            "{id:1231,name:'1231坏账准备'}",
+    	            "{id:1301,name:'1301贴现资产'}",
+    	            "{id:1302,name:'1302拆出资金'}",
+    	            "{id:1303,name:'1303贷款'}",
+    	            "{id:1304,name:'1304贷款损失准备'}",
+    	            "{id:1311,name:'1311代理兑付证券'}",
+    	            "{id:1321,name:'1321代理业务资产'}",
+    	            "{id:1401,name:'1401材料采购'}",
+    	            "{id:1402,name:'1402在途物资'}",
+    	            "{id:1403,name:'1403原材料'}",
+    	            "{id:1404,name:'1404材料成本差异'}",
+    	            "{id:1405,name:'1405库存商品'}",
+    	            "{id:1406,name:'1406发出商品'}",
+    	            "{id:1407,name:'1407商品进销差价'}"
+    	            ];
+      }
+      
 	  var zTree = $.fn.zTree.getZTreeObj("subjectTree");  
       var nodes = zTree.getSelectedNodes();
       //alert(nodes.length);

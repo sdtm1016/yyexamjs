@@ -34,7 +34,7 @@
   * 得到凭证分录行的全部关键字列表
   */
  function queryAllAccvouchKey() {
-	 $.ajax({
+	 /*$.ajax({
 		 	url:"dsignAccvouch!queryAllDsignAccvouchKey.action",
 		 	type:"post",
 		    async:false,
@@ -43,7 +43,10 @@
 		 		accvouchKeyList = data.accvouchKeyList;
 		 		accvouchKeyCount = accvouchKeyList.length;
 		 	}
-		});
+		});*/
+	 
+	 accvouchKeyList = [];
+	 accvouchKeyCount = accvouchKeyList.length;
 
  }
  
@@ -177,9 +180,104 @@
   * 王丙建 2013-06-13
   */
  function showLastDsign() {
-	 queryAllAccvouchKey();
-	 lastAccvouchkey();
+	 //queryAllAccvouchKey();
+	 //lastAccvouchkey();
+	 
+	 loadData({
+		 'dsignName':'付款凭证',
+		 'dsignType':'付',
+		 'dsignNumber':'0001',
+		 'producerDate':'2013-01-02',
+		 'addNumber':'0',
+		 'r1_c1':'购设备',
+		 'r1_c2':'固定资产',
+		 'r1_c3_9':'5',
+		 'r1_c3_10':'0',
+		 'r1_c3_11':'0',
+		 'r1_c3_12':'0',
+		 'r1_c3_13':'0',
+		 'r1_c3_14':'0',
+		 'r1_c3_15':'0',
+		 'r2_c1':'购设备',
+		 'r2_c2':'银行存款',
+		 'r2_c3_24':'5',
+		 'r2_c3_25':'0',
+		 'r2_c3_26':'0',
+		 'r2_c3_27':'0',
+		 'r2_c3_28':'0',
+		 'r2_c3_29':'0',
+		 'r2_c3_30':'0',
+		 'rhj_c3_9':'5',
+		 'rhj_c3_10':'0',
+		 'rhj_c3_11':'0',
+		 'rhj_c3_12':'0',
+		 'rhj_c3_13':'0',
+		 'rhj_c3_14':'0',
+		 'rhj_c3_15':'0',
+		 'rhj_c3_24':'5',
+		 'rhj_c3_25':'0',
+		 'rhj_c3_26':'0',
+		 'rhj_c3_27':'0',
+		 'rhj_c3_28':'0',
+		 'rhj_c3_29':'0',
+		 'rhj_c3_30':'0'
+	 });
  }
+ 
+ function loadData(data){
+	 for(var a in data){
+		 if($('#'+a)){
+			 if($('#'+a)[0].tagName=='INPUT'||$('#'+a)[0].tagName=='TEXTAREA'){
+				 $('#'+a).val(data[a]);
+			 }else{
+				 $('#'+a).text(data[a]);
+			 }
+		 }
+	 }
+ }
+ 
+function clearPageData(){
+	$('.z_zy').val('');
+	loadData({
+		'dsignName':'',
+		'dsignType':'',
+		'dsignNumber':'',
+		'producerDate':'',
+		'addNumber':'',
+		'r1_c1':'',
+		'r1_c2':'',
+		'r1_c3_9':'',
+		'r1_c3_10':'',
+		'r1_c3_11':'',
+		'r1_c3_12':'',
+		'r1_c3_13':'',
+		'r1_c3_14':'',
+		'r1_c3_15':'',
+		'r2_c1':'',
+		'r2_c2':'',
+		'r2_c3_24':'',
+		'r2_c3_25':'',
+		'r2_c3_26':'',
+		'r2_c3_27':'',
+		'r2_c3_28':'',
+		'r2_c3_29':'',
+		'r2_c3_30':'',
+		'rhj_c3_9':'',
+		'rhj_c3_10':'',
+		'rhj_c3_11':'',
+		'rhj_c3_12':'',
+		'rhj_c3_13':'',
+		'rhj_c3_14':'',
+		'rhj_c3_15':'',
+		'rhj_c3_24':'',
+		'rhj_c3_25':'',
+		'rhj_c3_26':'',
+		'rhj_c3_27':'',
+		'rhj_c3_28':'',
+		'rhj_c3_29':'',
+		'rhj_c3_30':'',
+	});
+}
  
  
  

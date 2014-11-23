@@ -31,7 +31,7 @@ var parentParam = window.parent.valueMap.get("dsign_subjectsreference");
  */
 function getCodeAbsName(ccode) {
 	var absCodeName = null;
-	  $.ajax({
+	  /*$.ajax({
 		    url: "code!queryCodeAbsName.action?ccode=" + ccode,
 		    type: 'post',
 		    dataType: "json",
@@ -39,7 +39,12 @@ function getCodeAbsName(ccode) {
 		    success: function(data){
 		    	absCodeName = data.absCodeName;
 		    }
-	  });
+	  });*/
+	if(ccode=='1002'){
+		absCodeName='银行存款';
+	}else if(ccode=='1405'){
+		absCodeName='库存商品';
+	}
 	  return absCodeName;
 }
 

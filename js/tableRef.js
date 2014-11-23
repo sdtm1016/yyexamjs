@@ -264,7 +264,7 @@
    * @param ccode  科目编码
    */
   function getCurCodeObjByCodeOrName(inputValue) {
-	  var rtnCode = null;
+	  /*var rtnCode = null;
 	  var param = "codeOrName=" + inputValue;
 	  $.ajax({
 		    url: "code!queryCodeByCodeOrName.action" ,
@@ -275,7 +275,19 @@
 		    success: function(data){
 		    	rtnCode = data.code1;
 		    }
-	  });
+	  });*/
+	  var rtnCode=null;
+	  if(inputValue=='1002'){
+		  rtnCode={
+			bend:1,
+			ccode:'1002'
+		  };
+	  }else if(inputValue=='1405'){
+		  rtnCode={
+			  bend:1,
+			  ccode:'1405'
+		  };
+	  }
 	  return rtnCode;
 	  
   }
@@ -391,7 +403,7 @@
    */
   function getCodeAbsName(ccode) {
   	var absCodeName = null;
-  	  $.ajax({
+  	  /*$.ajax({
   		    url: "code!queryCodeAbsName.action?ccode=" + ccode,
   		    type: 'post',
   		    dataType: "json",
@@ -399,7 +411,12 @@
   		    success: function(data){
   		    	absCodeName = data.absCodeName;
   		    }
-  	  });
+  	  });*/
+  	if(ccode=='1002'){
+  		absCodeName='银行存款';
+  	}else if(ccode=='1405'){
+  		absCodeName='库存商品';
+  	}
   	  return absCodeName;
   }
   

@@ -148,6 +148,17 @@ function addDsign(){
    * 增加凭证按钮
    */
   function btnAddDsign(){
+	  btnAddClicked=true;
+	  jConfirm("你正在修改他人填制的凭证，确定要保存吗？","提示",function(flag){
+			  clearPageData();
+			 loadData({
+				 'dsignName':'收款凭证',
+				 'dsignType':'收',
+				 'producerDate':'2013-01-01'
+			 });
+	  });
+	  
+	  return;
 
 	  tempErrorMassage="";
 	  tempErrorDom=null;
@@ -237,11 +248,19 @@ function addDsign(){
    * 保存凭证按钮
    */
   function saveDsignAccvouch(pzlx){
-	  $('#yishengchengDsignimg').show();
-	  window.parent.parent.updateScore('1-5',3);
-	  jAlert("已完成计提工资的凭证保存工作！","计提工资",function(){
-		  window.parent.closeWindow("wa_operate_dsign");
-	  });
+	  var examId=window.parent.parent.parent.examId;
+	  if(examId==1){
+		  $('#yishengchengDsignimg').show();
+		  window.parent.parent.updateScore('1-5',3);
+		  jAlert("已完成计提工资的凭证保存工作！","计提工资",function(){
+			  window.parent.closeWindow("wa_operate_dsign");
+		  });
+	  }else if(examId==2){
+		  window.parent.parent.updateScore('2-2',4);
+		  jAlert("保存成功","提示",function(){
+			  window.parent.closeWindow("wa_operate_dsign");
+		  });
+	  }
 	  return;
 	  
 	  tempErrorMassage="";
@@ -502,7 +521,7 @@ function addDsign(){
   
   function changeDsignType(e){
 	  //如果凭证处于查询显示状态，则不允许修改凭证字
-	  if(dsign_display_status==1)return false;
+	//if(dsign_display_status==1)return false;
 
 	var evt=(window.event || e);//获得事件
 	var evtsrc = (evt.srcElement || evt.target);
@@ -515,7 +534,7 @@ function addDsign(){
 	  selectHTML  = "<select   onchange='dsignChange();'  value='"+tempValue+"' onblur='dsignTypeSelect(this);' style='height:18px;border:none;width:36px;margin-left:-5px;'/>";
 	
 	//凭证类别初始化
-		$.ajax({
+		/*$.ajax({
 			url: "dsignCategory!queryList",
 			type: 'post',
 			async:false,
@@ -528,12 +547,20 @@ function addDsign(){
 					
 				});
 			}
-		});  
+		});  */
+	  
+	  var data={dsigns:[{id:'01',csign:'收',ctext:'收款凭证'},{id:'02',csign:'付',ctext:'付款凭证'},{id:'03',csign:'转',ctext:'转账凭证'}]};
+	  dsignList =data.dsigns;
+		$.each(dsignList,function(index,dsign){
+			//$("#signList")[0].options.add(new Option(dsign.ctext,dsign.csign,false,false));
+			selectHTML += "<option value='" + dsign.id + "'>" + dsign.csign + "</option>";
+			
+		});
+	  
 	selectHTML += "</select>";
 	target.innerHTML=selectHTML;
 	target.getElementsByTagName("select")[0].value=tempValue;
 	target.getElementsByTagName("select")[0].focus();
-	
   }
   
   /**
@@ -541,7 +568,9 @@ function addDsign(){
    */
   function dsignChange() {
 	var tempValue = document.getElementById("dsignType").getElementsByTagName("select")[0].value;
-	 
+	if(btnAddClicked&&tempValue=='02'){
+		window.parent.parent.updateScore('2-2',1);
+	}
 	//记&nbsp;账&nbsp;凭&nbsp;证
 	for (var i = 0; i<dsignList.length; i++) {
 		var dsign = dsignList[i];
@@ -557,15 +586,16 @@ function addDsign(){
 	} ;
 	   
 	//获取凭证编号
-	newSelectedDate = document.getElementById("producerDate").value;
-	   $.ajax({
+	newSelectedDate = '2013-01-01';
+	document.getElementById("dsignNumber").innerHTML='0002';
+	   /*$.ajax({
 		 	url:"dsignAccvouch!queryInsDsignAccvouchInoId.action?newSelectedDate=" + newSelectedDate + "&attribute380=" + tempValue,
 		 	type:"post",
 		 	dataType:"json",
 		 	success:function(data,status){
 		 		document.getElementById("dsignNumber").innerHTML = data.title.dsignNumber;
 		 	}
-		});
+		});*/
         
 	
   }
@@ -887,4 +917,26 @@ function addDsign(){
 	  window.parent.openWindow('dsign_kjqjxz');
   
   }
+  
+  function getComplexVal(id){
+	  var val='';
+	  $('#'+id+' input').each(function(i,n){
+		  val+=$(n).val();
+	  });
+	  return val;
+  }
+  
+  $(function(){
+	  //window.parent.updateScore('2-2',0);
+	  $('#r1_c2,#r1_c3 input').blur(function(){
+		  if($('#r1_c2').val()=='库存商品'&&getComplexVal('r1_c3')=='800000'){
+			  window.parent.parent.updateScore('2-2',2);
+		  }
+	  });
+	  $('#r2_c2,#r2_c4 input').blur(function(){
+		  if($('#r2_c2').val()=='银行存款'&&getComplexVal('r2_c4')=='800000'){
+			  window.parent.parent.updateScore('2-2',3);
+		  }
+	  });
+  });
   
